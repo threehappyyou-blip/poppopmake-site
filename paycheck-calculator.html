@@ -96,7 +96,7 @@
 <main class="wrap">
   <span class="eyebrow">Money &amp; Tax · 2026</span>
   <h1>Paycheck Calculator</h1>
-  <p class="lede">Enter your salary to see what's actually left after federal tax, Social Security, Medicare, and state tax. Currently covers Texas, California, and Colorado — more states are being added.</p>
+  <p class="lede">Enter your salary to see what's actually left after federal tax, Social Security, Medicare, and state tax. Currently covers Texas, Florida, Washington, California, New York, New Jersey, Colorado, Illinois, and Pennsylvania — more states are being added.</p>
 
   <div class="layout">
     <div class="panel">
@@ -187,22 +187,7 @@
   var ADDL_MEDICARE_RATE = 0.009;
   var ADDL_MEDICARE_THRESHOLD = { single: 200000, mfj: 250000 };
 
-  // California: FTB-sourced approximate 2026 brackets + 1.3% SDI (no cap, per CA EDD)
-  // Note: exact CA bracket thresholds are re-indexed annually; verify against
-  // the official FTB schedule when it's finalized for precise figures.
-  var CA_BRACKETS = {
-    single: [[0,10412,.01],[10412,24684,.02],[24684,38959,.04],[38959,54081,.06],[54081,68350,.08],[68350,349137,.093],[349137,418961,.103],[418961,698271,.113],[698271,Infinity,.123]],
-    mfj:    [[0,20824,.01],[20824,49368,.02],[49368,77918,.04],[77918,108162,.06],[108162,136700,.08],[136700,698274,.093],[698274,837922,.103],[837922,1396542,.113],[1396542,Infinity,.123]]
-  };
-  var CA_STD_DEDUCTION = { single: 5706, mfj: 11412 };
-  var CA_EXEMPTION_CREDIT = { single: 144, mfj: 288 };
-  var CA_SDI_RATE = 0.013;
-  var CA_MENTAL_HEALTH_SURCHARGE_THRESHOLD = 1000000;
-
-  // Colorado: flat rate on federal taxable income (tax.colorado.gov)
-  var CO_RATE = 0.044;
-
-  function progressiveTax(income, brackets){
+  function pt(income, brackets){
     if (income <= 0) return 0;
     var tax = 0;
     for (var i=0;i<brackets.length;i++){
@@ -210,6 +195,63 @@
       if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
     }
     return tax;
+  }
+
+  // ---- State tax data (2026) ----
+  // CA: FTB-sourced approximate brackets + 1.3% SDI, no wage cap (CA EDD)
+  // NY: NY Dept. of Taxation and Finance 2026 rate schedule (post FY26 budget rate cut)
+  // NJ: NJ Div. of Taxation rate schedule + SDI (0.26%, wage base ~$161,400) + FLI (0.09%, uncapped)
+  // CO / IL: flat rate applied to federal taxable income (each state's own DOR guidance)
+  // PA: flat rate applied directly to gross wages, no state standard deduction
+  // TX / FL / WA: no state wage income tax
+  var STATES = {
+    TX: { name:'Texas', type:'none' },
+    FL: { name:'Florida', type:'none' },
+    WA: { name:'Washington', type:'none' },
+    CO: { name:'Colorado', type:'flatFedTaxable', rate:0.044, label:'Colorado state tax (4.4%)' },
+    IL: { name:'Illinois', type:'flatFedTaxable', rate:0.0495, label:'Illinois state tax (4.95%)' },
+    PA: { name:'Pennsylvania', type:'flatGross', rate:0.0307, label:'Pennsylvania state tax (3.07%)' },
+    CA: {
+      name:'California', type:'progressive',
+      brackets: { single:[[0,10412,.01],[10412,24684,.02],[24684,38959,.04],[38959,54081,.06],[54081,68350,.08],[68350,349137,.093],[349137,418961,.103],[418961,698271,.113],[698271,Infinity,.123]],
+                  mfj:[[0,20824,.01],[20824,49368,.02],[49368,77918,.04],[77918,108162,.06],[108162,136700,.08],[136700,698274,.093],[698274,837922,.103],[837922,1396542,.113],[1396542,Infinity,.123]] },
+      stdDed: { single:5706, mfj:11412 },
+      credit: { single:144, mfj:288 },
+      surchargeThreshold: 1000000, surchargeRate: 0.01,
+      addon: { rate:0.013, label:'California SDI (1.3%)', short:'SDI (1.3%, uncapped)' }
+    },
+    NY: {
+      name:'New York', type:'progressive',
+      brackets: { single:[[0,8500,.039],[8500,11700,.044],[11700,13900,.0515],[13900,80650,.054],[80650,215400,.059],[215400,1077550,.0685],[1077550,5000000,.0965],[5000000,25000000,.103],[25000000,Infinity,.109]],
+                  mfj:[[0,17150,.039],[17150,23600,.044],[23600,27900,.0515],[27900,161550,.054],[161550,323200,.059],[323200,2155350,.0685],[2155350,5000000,.0965],[5000000,25000000,.103],[25000000,Infinity,.109]] },
+      stdDed: { single:8000, mfj:16050 }
+    },
+    NJ: {
+      name:'New Jersey', type:'progressive',
+      brackets: { single:[[0,20000,.014],[20000,35000,.0175],[35000,40000,.035],[40000,75000,.05525],[75000,500000,.0637],[500000,1000000,.0897],[1000000,Infinity,.1075]],
+                  mfj:[[0,20000,.014],[20000,50000,.0175],[50000,70000,.0245],[70000,80000,.035],[80000,150000,.05525],[150000,500000,.0637],[500000,1000000,.0897],[1000000,Infinity,.1075]] },
+      stdDed: { single:1000, mfj:2000 },
+      addon: { rate:0.0035, cap:161400, label:'New Jersey SDI + FLI (0.35%)', short:'SDI + FLI (0.35%)' } // 0.26% SDI + 0.09% FLI combined
+    }
+  };
+
+  function calcState(code, gross, status, fedTaxable){
+    var s = STATES[code];
+    if (s.type === 'none') return { tax:0, addon:0, hint: s.name + ' has no state income tax.' };
+    if (s.type === 'flatFedTaxable') return { tax: fedTaxable*s.rate, addon:0, hint: s.name+' applies a flat '+(s.rate*100)+'% rate to your federal taxable income.' };
+    if (s.type === 'flatGross') return { tax: gross*s.rate, addon:0, hint: s.name+' applies a flat '+(s.rate*100)+'% rate directly to gross wages (no state standard deduction).' };
+    // progressive
+    var taxable = Math.max(0, gross - s.stdDed[status]);
+    var tax = pt(taxable, s.brackets[status]);
+    if (s.credit) tax -= s.credit[status];
+    if (s.surchargeThreshold && taxable > s.surchargeThreshold) tax += (taxable - s.surchargeThreshold) * s.surchargeRate;
+    tax = Math.max(0, tax);
+    var addon = 0;
+    if (s.addon){
+      var base = s.addon.cap ? Math.min(gross, s.addon.cap) : gross;
+      addon = base * s.addon.rate;
+    }
+    return { tax: tax, addon: addon, hint: s.name + ' state income tax' + (s.addon ? ', plus ' + s.addon.short : '') + '.' };
   }
 
   function marginalRateOf(income, brackets){
@@ -220,15 +262,26 @@
     return rate;
   }
 
+  function populateStates(){
+    var sel = document.getElementById('state');
+    sel.innerHTML = '';
+    Object.keys(STATES).forEach(function(code){
+      var opt = document.createElement('option');
+      opt.value = code; opt.textContent = STATES[code].name;
+      sel.appendChild(opt);
+    });
+    sel.value = 'TX';
+  }
+
   function calc(){
     var gross = Math.max(0, parseFloat(document.getElementById('salary').value) || 0);
     var status = document.getElementById('filingStatus').value;
-    var state = document.getElementById('state').value;
+    var stateCode = document.getElementById('state').value;
     var periods = parseInt(document.getElementById('frequency').value, 10);
 
     var fedStd = FEDERAL_STD_DEDUCTION[status];
     var fedTaxable = Math.max(0, gross - fedStd);
-    var fedTax = progressiveTax(fedTaxable, FEDERAL_BRACKETS[status]);
+    var fedTax = pt(fedTaxable, FEDERAL_BRACKETS[status]);
     var marginal = marginalRateOf(fedTaxable, FEDERAL_BRACKETS[status]);
 
     var ssTax = Math.min(gross, SS_WAGE_BASE) * SS_RATE;
@@ -236,27 +289,11 @@
     var addlMedicare = Math.max(0, gross - ADDL_MEDICARE_THRESHOLD[status]) * ADDL_MEDICARE_RATE;
     var ficaTotal = ssTax + medicareTax + addlMedicare;
 
-    var stateTax = 0, sdiTax = 0, stateHint = '';
-    if (state === 'TX'){
-      stateHint = 'Texas has no state income tax.';
-    } else if (state === 'CO'){
-      stateTax = fedTaxable * CO_RATE;
-      stateHint = 'Colorado applies a flat 4.4% rate to your federal taxable income.';
-    } else if (state === 'CA'){
-      var caStd = CA_STD_DEDUCTION[status];
-      var caTaxable = Math.max(0, gross - caStd);
-      var caTax = progressiveTax(caTaxable, CA_BRACKETS[status]) - CA_EXEMPTION_CREDIT[status];
-      if (caTaxable > CA_MENTAL_HEALTH_SURCHARGE_THRESHOLD){
-        caTax += (caTaxable - CA_MENTAL_HEALTH_SURCHARGE_THRESHOLD) * 0.01;
-      }
-      caTax = Math.max(0, caTax);
-      sdiTax = gross * CA_SDI_RATE;
-      stateTax = caTax + sdiTax;
-      stateHint = 'Includes CA state income tax plus 1.3% SDI (no wage cap).';
-    }
-    document.getElementById('stateHint').textContent = stateHint;
+    var st = calcState(stateCode, gross, status, fedTaxable);
+    document.getElementById('stateHint').textContent = st.hint;
 
-    var totalTax = fedTax + ficaTotal + stateTax;
+    var stateTotal = st.tax + st.addon;
+    var totalTax = fedTax + ficaTotal + stateTotal;
     var netAnnual = gross - totalTax;
     var effRate = gross > 0 ? (totalTax/gross*100) : 0;
 
@@ -272,12 +309,8 @@
       ['Medicare (1.45%)', -medicareTax, -medicareTax/periods, true]
     ];
     if (addlMedicare > 0) rows.push(['Additional Medicare (0.9%)', -addlMedicare, -addlMedicare/periods, true]);
-    if (state === 'CA'){
-      rows.push(['California state tax', -(stateTax-sdiTax), -(stateTax-sdiTax)/periods, true]);
-      rows.push(['California SDI (1.3%)', -sdiTax, -sdiTax/periods, true]);
-    } else if (state === 'CO'){
-      rows.push(['Colorado state tax (4.4%)', -stateTax, -stateTax/periods, true]);
-    }
+    if (st.tax > 0 || STATES[stateCode].type !== 'none') rows.push([STATES[stateCode].name+' state tax', -st.tax, -st.tax/periods, true]);
+    if (st.addon > 0) rows.push([STATES[stateCode].addon ? STATES[stateCode].addon.label : (STATES[stateCode].name+' payroll addon'), -st.addon, -st.addon/periods, true]);
     rows.push(['Take-home pay', netAnnual, netAnnual/periods, false]);
 
     var body = document.getElementById('breakdownBody');
@@ -296,6 +329,7 @@
     return sign + '$' + Math.abs(n).toLocaleString('en-US', {maximumFractionDigits:0});
   }
 
+  populateStates();
   ['salary','filingStatus','state','frequency'].forEach(function(id){
     document.getElementById(id).addEventListener('input', calc);
     document.getElementById(id).addEventListener('change', calc);
