@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PopPopMake — Free tools, made fast</title>
+<meta name="description" content="Free document, money, career, and writing tools. No account. New tools added every week.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF;
+    --paper-2:#E4E9E6;
+    --ink:#1C2321;
+    --ink-soft:#4B534F;
+    --orange:#F2542D;
+    --teal:#0F8B8D;
+    --yellow:#F4B740;
+    --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+
+  /* ---------- Header ---------- */
+  header{
+    padding:22px 0;
+    border-bottom:1px solid var(--line);
+  }
+  header .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:1.3rem;
+    letter-spacing:-0.01em;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .logo-dot{width:9px;height:9px;border-radius:50%;background:var(--orange);display:inline-block;}
+  nav{display:flex;gap:28px;flex-wrap:wrap;}
+  nav a{
+    font-size:0.95rem;
+    font-weight:500;
+    text-decoration:none;
+    color:var(--ink-soft);
+    padding-bottom:3px;
+    border-bottom:2px solid transparent;
+    transition:color .15s ease, border-color .15s ease;
+  }
+  nav a:hover{color:var(--ink);border-color:var(--orange);}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:relative;
+    padding:96px 0 76px;
+    overflow:hidden;
+    background-image:radial-gradient(var(--paper-2) 1.6px, transparent 1.6px);
+    background-size:22px 22px;
+    background-position:-6px -6px;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem;
+    font-weight:500;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    color:var(--teal);
+    background:rgba(15,139,141,0.1);
+    display:inline-block;
+    padding:6px 12px;
+    border-radius:999px;
+    margin-bottom:22px;
+  }
+  h1{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(2.4rem, 6vw, 4.2rem);
+    line-height:1.04;
+    letter-spacing:-0.02em;
+    margin:0 0 22px;
+    max-width:14ch;
+  }
+  .cycle{
+    position:relative;
+    display:inline-block;
+    color:var(--orange);
+    height:1.04em;
+    overflow:hidden;
+    vertical-align:top;
+    min-width:6.6ch;
+  }
+  .cycle span{
+    position:absolute;
+    left:0;top:0;
+    opacity:0;
+    animation:cycle 8s infinite;
+  }
+  .cycle span:nth-child(1){animation-delay:0s;}
+  .cycle span:nth-child(2){animation-delay:2s;}
+  .cycle span:nth-child(3){animation-delay:4s;}
+  .cycle span:nth-child(4){animation-delay:6s;}
+  @keyframes cycle{
+    0%{opacity:0; transform:translateY(6px);}
+    4%{opacity:1; transform:translateY(0);}
+    22%{opacity:1; transform:translateY(0);}
+    26%{opacity:0; transform:translateY(-6px);}
+    100%{opacity:0;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .cycle span{animation:none;opacity:0;}
+    .cycle span:nth-child(1){opacity:1;}
+  }
+  .lede{
+    font-size:1.15rem;
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin:0 0 34px;
+  }
+  .strip{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.82rem;
+    color:var(--ink-soft);
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:9px 16px 9px 10px;
+  }
+  .strip b{color:var(--ink);font-weight:600;}
+  .strip .pip{width:7px;height:7px;border-radius:50%;background:var(--teal);}
+
+  /* ---------- Category grid ---------- */
+  .shelf{padding:64px 0 88px;}
+  .shelf-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px;}
+  .shelf-head h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.6rem;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .shelf-head p{margin:0;color:var(--ink-soft);font-size:0.95rem;}
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));
+    gap:18px;
+  }
+  .tile{
+    position:relative;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 20px 20px;
+    border-top:4px solid var(--accent, var(--orange));
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .tile:hover{
+    transform:translateY(-4px) rotate(-0.4deg);
+    box-shadow:0 14px 26px -14px rgba(28,35,33,0.28);
+  }
+  .tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.7rem;
+    font-weight:500;
+    letter-spacing:0.07em;
+    color:var(--accent, var(--orange));
+  }
+  .tile h3{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.2rem;
+    margin:10px 0 8px;
+  }
+  .tile p{margin:0 0 16px;color:var(--ink-soft);font-size:0.93rem;}
+  .soon{
+    font-size:0.72rem;
+    font-weight:600;
+    letter-spacing:0.04em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    background:var(--paper);
+    border:1px solid var(--line);
+    padding:4px 10px;
+    border-radius:999px;
+    display:inline-block;
+  }
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top:1px solid var(--line);
+    padding:32px 0;
+  }
+  footer .wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-wrap:wrap;
+    gap:12px;
+  }
+  footer .brand{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+  }
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+
+  @media (max-width:640px){
+    nav{display:none;}
+    .hero{padding:64px 0 52px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="logo" href="/"><span class="logo-dot"></span>PopPopMake</a>
+    <nav>
+      <a href="#documents">Documents</a>
+      <a href="#money">Money</a>
+      <a href="#career">Career</a>
+      <a href="#business">Business</a>
+      <a href="#writing">Writing</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <span class="eyebrow">Free · No account · Built in the open</span>
+    <h1>
+      <span class="cycle" aria-hidden="false">
+        <span>Convert it.</span>
+        <span>Calculate it.</span>
+        <span>Fix it.</span>
+        <span>Make it.</span>
+      </span><br>
+      Then get on with your day.
+    </h1>
+    <p class="lede">Small, fast tools for the everyday stuff — documents, money math, resumes, and more. No sign-up. New ones added every week.</p>
+    <span class="strip"><span class="pip"></span>Free tools are paid for by a short ad, not your data.</span>
+  </div>
+</section>
+
+<section class="shelf" id="documents">
+  <div class="wrap">
+    <div class="shelf-head">
+      <h2>What's on the bench</h2>
+      <p>Five shelves, growing one tool at a time.</p>
+    </div>
+    <div class="grid">
+
+      <div class="tile" style="--accent:#F2542D">
+        <span class="tag">DOCUMENTS</span>
+        <h3>Document &amp; Image Tools</h3>
+        <p>Merge and split PDFs, convert JPG/PNG to PDF, remove backgrounds. Files stay on your device.</p>
+        <span class="soon">Coming soon</span>
+      </div>
+
+      <div class="tile" id="money" style="--accent:#0F8B8D">
+        <span class="tag">MONEY</span>
+        <h3>Money &amp; Tax Calculators</h3>
+        <p>Paycheck, mortgage, retirement, and capital-gains math for the US — plain numbers, no jargon.</p>
+        <span class="soon">Coming soon</span>
+      </div>
+
+      <div class="tile" id="career" style="--accent:#F4B740">
+        <span class="tag">CAREER</span>
+        <h3>Career Tools</h3>
+        <p>Build a resume and check it against the same filters an ATS uses before a person ever sees it.</p>
+        <span class="soon">Coming soon</span>
+      </div>
+
+      <div class="tile" id="business" style="--accent:#F2542D">
+        <span class="tag">BUSINESS</span>
+        <h3>Business Tools</h3>
+        <p>Invoices and QR codes — the small, unglamorous parts of running something on your own.</p>
+        <span class="soon">Coming soon</span>
+      </div>
+
+      <div class="tile" id="writing" style="--accent:#0F8B8D">
+        <span class="tag">WRITING</span>
+        <h3>Writing &amp; AI Tools</h3>
+        <p>Check what reads as AI-written, and smooth out the sentences that don't sound like you.</p>
+        <span class="soon">Coming soon</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+  </div>
+</footer>
+
+</body>
+</html>
