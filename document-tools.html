@@ -180,7 +180,18 @@
   <!-- BACKGROUND REMOVAL PANEL -->
   <section class="panel" id="panel-bgremove">
     <h2>Remove Background</h2>
-    <p class="sub">Choose a photo. An AI model downloads once (about 25 MB, cached after that), then removes the background right in your browser.</p>
+    <p class="sub">Choose a photo. An AI model downloads once (cached after that), then removes the background right in your browser.</p>
+    <div class="field">
+      <label>Photo type</label>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem;font-weight:500;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;">
+          <input type="radio" name="bg-model" value="portrait" checked style="margin:0;"> Portrait / simple background <span style="color:var(--ink-soft);font-weight:400;">(~25 MB)</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:6px;font-size:0.9rem;font-weight:500;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer;">
+          <input type="radio" name="bg-model" value="general" style="margin:0;"> Complex scene / multiple subjects <span style="color:var(--ink-soft);font-weight:400;">(~220 MB, slower)</span>
+        </label>
+      </div>
+    </div>
     <div class="drop" id="bgremove-drop">
       <div>Drag a photo here, or</div>
       <label class="btn-label" for="bgremove-input">Choose a photo</label>
@@ -205,7 +216,7 @@
     <button class="action-btn" id="bgremove-btn" disabled>Remove Background</button>
     <button class="action-btn" id="bgremove-download-btn" style="display:none;background:var(--teal);">Download PNG</button>
     <div class="status" id="bgremove-status"></div>
-    <div class="hint" style="margin-top:10px;">Works best on clear photos with a person or a distinct main subject. Illustrations and busy scenes are hit-or-miss for now.</div>
+    <div class="hint" style="margin-top:10px;">"Portrait" is faster and works best on a person against a fairly simple background. "Complex scene" is slower to load but handles busy backgrounds, multiple subjects, or products better.</div>
   </section>
 
   <div class="disclaimer">
@@ -480,23 +491,24 @@
   });
 
   // ================= REMOVE BACKGROUND =================
+  var BG_MODELS = { portrait: 'Xenova/modnet', general: 'onnx-community/BEN2-ONNX' };
   var BG_WORKER_SRC = [
-    'let segmenterPromise = null;',
-    'function getSegmenter(){',
-    '  if (!segmenterPromise){',
-    '    segmenterPromise = (async function(){',
+    'const segmenters = {};',
+    'function getSegmenter(modelId){',
+    '  if (!segmenters[modelId]){',
+    '    segmenters[modelId] = (async function(){',
     '      const mod = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.4.0");',
     '      self.postMessage({ type: "progress", stage: "loading-model" });',
-    '      const segmenter = await mod.pipeline("background-removal", "Xenova/modnet", { dtype: "fp32" });',
+    '      const segmenter = await mod.pipeline("background-removal", modelId, { dtype: "fp32" });',
     '      return segmenter;',
     '    })();',
     '  }',
-    '  return segmenterPromise;',
+    '  return segmenters[modelId];',
     '}',
     'self.onmessage = async function(e){',
-    '  var id = e.data.id, blob = e.data.blob;',
+    '  var id = e.data.id, blob = e.data.blob, modelId = e.data.modelId;',
     '  try {',
-    '    var segmenter = await getSegmenter();',
+    '    var segmenter = await getSegmenter(modelId);',
     '    self.postMessage({ type: "progress", stage: "processing", id: id });',
     '    var url = URL.createObjectURL(blob);',
     '    var output = await segmenter(url);',
@@ -577,17 +589,20 @@
 
   bgBtn.addEventListener('click', function(){
     if (!bgFile) return;
+    var modelChoice = document.querySelector('input[name="bg-model"]:checked').value;
+    var modelId = BG_MODELS[modelChoice];
+    var modelSizeLabel = modelChoice === 'general' ? 'about 220 MB' : 'about 25 MB';
     bgBtn.disabled = true;
     bgReqId++;
     var thisReq = bgReqId;
-    setStatus(bgStatus, 'info', 'Downloading AI model (first time only, about 25 MB)\u2026');
+    setStatus(bgStatus, 'info', 'Downloading AI model (first time only, ' + modelSizeLabel + ')\u2026');
     var worker = getBgWorker();
 
     function handleMessage(e){
       if (e.data.id !== thisReq && e.data.stage !== 'loading-model') return;
       if (e.data.type === 'progress'){
-        if (e.data.stage === 'loading-model') setStatus(bgStatus, 'info', 'Downloading AI model (first time only, about 25 MB)\u2026');
-        if (e.data.stage === 'processing') setStatus(bgStatus, 'info', 'Removing the background\u2026 this can take up to a minute on the first run.');
+        if (e.data.stage === 'loading-model') setStatus(bgStatus, 'info', 'Downloading AI model (first time only, ' + modelSizeLabel + ')\u2026');
+        if (e.data.stage === 'processing') setStatus(bgStatus, 'info', 'Removing the background\u2026 this can take up to a couple of minutes on the first run.');
       } else if (e.data.type === 'done'){
         worker.removeEventListener('message', handleMessage);
         (async function(){
@@ -598,17 +613,17 @@
           bgResultImg.style.display = 'block';
           bgPlaceholder.style.display = 'none';
           bgDownloadBtn.style.display = 'inline-block';
-          setStatus(bgStatus, 'success', 'Done. Check the result on the right, then download if it looks good.');
+          setStatus(bgStatus, 'success', 'Done. Check the result on the right, then download if it looks good. If it still looks off, try the other photo type option above.');
           bgBtn.disabled = false;
         })();
       } else if (e.data.type === 'error'){
         worker.removeEventListener('message', handleMessage);
-        setStatus(bgStatus, 'error', 'Could not process this image: ' + e.data.message + '. Try a smaller image, or a different browser (this needs WebAssembly support).');
+        setStatus(bgStatus, 'error', 'Could not process this image: ' + e.data.message + '. Try a smaller image, the other photo type option, or a different browser (this needs WebAssembly support).');
         bgBtn.disabled = false;
       }
     }
     worker.addEventListener('message', handleMessage);
-    worker.postMessage({ id: thisReq, blob: bgFile });
+    worker.postMessage({ id: thisReq, blob: bgFile, modelId: modelId });
   });
 
   bgDownloadBtn.addEventListener('click', function(){
