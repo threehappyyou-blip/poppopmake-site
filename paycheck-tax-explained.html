@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Your Paycheck Tax Actually Works (2026) — PopPopMake</title>
+<meta name="description" content="A plain-English walkthrough of federal tax, FICA, and state tax — and why your paycheck is smaller than your salary suggests.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-dot{width:9px;height:9px;border-radius:50%;background:var(--orange);display:inline-block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:56px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .updated{color:var(--ink-soft);font-size:0.9rem;margin:0 0 12px;}
+  .lede{font-size:1.1rem;color:var(--ink-soft);max-width:60ch;margin:0 0 36px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;margin:44px 0 14px;letter-spacing:-0.01em;}
+  p, li{font-size:1.02rem;}
+  .figure{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin:28px 0;}
+  .figure figcaption{font-size:0.85rem;color:var(--ink-soft);margin-top:14px;text-align:center;}
+  .callout{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:18px 20px;margin:24px 0;}
+  .callout p{margin:0;}
+  .cta{
+    background:var(--card);border:1px solid var(--line);border-top:4px solid var(--orange);
+    border-radius:var(--radius);padding:24px;margin:40px 0;text-align:center;
+  }
+  .cta a{
+    display:inline-block;margin-top:10px;background:var(--orange);color:#fff;text-decoration:none;
+    font-weight:600;padding:11px 22px;border-radius:999px;font-size:0.95rem;
+  }
+  footer{border-top:1px solid var(--line);padding:32px 0;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><span class="logo-dot"></span>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">Guide · Money &amp; Tax</span>
+  <h1>How Your Paycheck Tax Actually Works</h1>
+  <p class="updated">Updated for 2026 tax rules</p>
+  <p class="lede">Your salary is one number. Your paycheck is a smaller one. Here's exactly where the difference goes, in the order it actually gets taken out.</p>
+
+  <p>If you've ever looked at your offer letter and then your first pay stub and wondered where a fifth of your money went, you're not imagining it. A $65,000 salary in the US doesn't arrive as $65,000 — it passes through three separate layers of tax before it reaches your bank account, and each layer works differently.</p>
+
+  <div class="figure">
+    <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram showing gross pay flowing through federal tax, FICA, and state tax to become take-home pay">
+      <rect x="130" y="10" width="440" height="56" rx="10" fill="var(--ink)"/>
+      <text x="350" y="44" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="19" font-weight="700" fill="#fff">Gross Pay</text>
+
+      <line x1="350" y1="66" x2="350" y2="100" stroke="var(--ink-soft)" stroke-width="2"/>
+      <polygon points="350,108 342,96 358,96" fill="var(--ink-soft)"/>
+
+      <rect x="20" y="116" width="205" height="70" rx="10" fill="var(--card)" stroke="var(--orange)" stroke-width="2"/>
+      <text x="122" y="145" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="var(--ink)">Federal Tax</text>
+      <text x="122" y="164" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="var(--ink-soft)">7 brackets, 10%–37%</text>
+
+      <rect x="247" y="116" width="205" height="70" rx="10" fill="var(--card)" stroke="var(--teal)" stroke-width="2"/>
+      <text x="349" y="145" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="var(--ink)">FICA</text>
+      <text x="349" y="164" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="var(--ink-soft)">Social Security + Medicare</text>
+
+      <rect x="474" y="116" width="205" height="70" rx="10" fill="var(--card)" stroke="var(--yellow)" stroke-width="2"/>
+      <text x="576" y="145" text-anchor="middle" font-family="Inter,sans-serif" font-size="14" font-weight="700" fill="var(--ink)">State Tax</text>
+      <text x="576" y="164" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" fill="var(--ink-soft)">$0 to ~13%, by state</text>
+
+      <line x1="122" y1="186" x2="122" y2="215" stroke="var(--ink-soft)" stroke-width="2"/>
+      <line x1="349" y1="186" x2="349" y2="215" stroke="var(--ink-soft)" stroke-width="2"/>
+      <line x1="576" y1="186" x2="576" y2="215" stroke="var(--ink-soft)" stroke-width="2"/>
+      <line x1="122" y1="215" x2="576" y2="215" stroke="var(--ink-soft)" stroke-width="2"/>
+      <line x1="350" y1="215" x2="350" y2="240" stroke="var(--ink-soft)" stroke-width="2"/>
+      <polygon points="350,248 342,236 358,236" fill="var(--ink-soft)"/>
+
+      <rect x="110" y="256" width="480" height="60" rx="10" fill="var(--teal)"/>
+      <text x="350" y="292" text-anchor="middle" font-family="Space Grotesk,sans-serif" font-size="19" font-weight="700" fill="#fff">Take-Home Pay</text>
+
+      <text x="350" y="345" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="12" fill="var(--ink-soft)">Three separate deductions, each with its own rules</text>
+    </svg>
+    <figcaption>The three layers your gross pay passes through, in order, before it becomes your take-home pay.</figcaption>
+  </div>
+
+  <h2>Layer 1: Federal income tax</h2>
+  <p>This is the one most people have heard of, and the one most people misunderstand. Federal tax doesn't take one flat percentage of your whole salary — it works in slices. For 2026, there are seven slices (the IRS calls them brackets): 10%, 12%, 22%, 24%, 32%, 35%, and 37%. Your first dollars are taxed at 10%, the next chunk at 12%, and so on, only reaching the higher rates once you've earned enough to get there.</p>
+  <p>Before any of that math happens, you subtract the standard deduction — $16,100 for a single filer in 2026, $32,200 for a married couple filing jointly. That comes off the top first, so a $65,000 salary is actually taxed as if it were $48,900 (for a single filer). This is also why your <strong>effective rate</strong> (what you actually pay, on average) is always lower than your <strong>marginal rate</strong> (the rate on your last dollar earned) — a distinction that trips up a lot of first-time earners.</p>
+
+  <h2>Layer 2: FICA (Social Security and Medicare)</h2>
+  <p>FICA is really two taxes wearing one name. Social Security takes 6.2% of your wages, but only up to a cap — $184,500 for 2026. Earn more than that in a year, and Social Security tax stops for the rest of the year (though it starts again in January). Medicare takes 1.45% of every dollar you earn, with no cap at all, plus an extra 0.9% once you cross $200,000 (or $250,000 for married couples filing jointly).</p>
+  <p>Unlike federal tax, FICA isn't progressive and doesn't care about a standard deduction — it's a flat percentage of your gross wages from the first dollar.</p>
+
+  <h2>Layer 3: State tax (the one that varies the most)</h2>
+  <p>This is where two people with identical salaries can end up with very different paychecks, purely based on where they live. Nine states — including Texas, Florida, and Washington — charge no state income tax at all. Others use a single flat rate (Pennsylvania's 3.07% is the lowest of the states we cover; Colorado and Illinois also use flat rates). A handful of states, including California and New York, use their own progressive bracket systems that can rival the federal one in complexity.</p>
+  <div class="callout">
+    <p>Want the full breakdown by state, side by side? See <a href="/state-tax-comparison-2026.html">9 States Compared: Where Your Paycheck Goes Furthest</a>.</p>
+  </div>
+
+  <h2>Why this matters for your actual paycheck</h2>
+  <p>Your pay stub also depends on how often you're paid. A $65,000 salary paid biweekly (26 times a year) splits differently than the same salary paid semi-monthly (24 times a year) — the annual totals are identical, but the per-paycheck amount isn't, since 26 doesn't divide evenly into most numbers the way 24 does. None of this is a mistake on your employer's part; it's just arithmetic.</p>
+  <p>It's also worth knowing that none of the three layers above account for things like 401(k) contributions, health insurance premiums, or HSA contributions — those typically come out <em>before</em> federal tax is calculated, which is part of why contributing to a 401(k) can lower your visible tax bill even though the money isn't gone, just deferred.</p>
+
+  <div class="cta">
+    <p><strong>See your own numbers</strong><br>Plug in your salary, filing status, and state to see exactly what each layer takes.</p>
+    <a href="/paycheck-calculator.html">Open the Paycheck Calculator</a>
+  </div>
+
+  <p style="font-size:0.85rem;color:var(--ink-soft);">This article is for general information, not tax advice. Rates and thresholds shown are for the 2026 tax year (IRS Rev. Proc. 2025-32 and SSA.gov). See our <a href="/terms.html">Terms</a> for details.</p>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+</body>
+</html>
