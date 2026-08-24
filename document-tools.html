@@ -125,6 +125,7 @@
     <button class="tab-btn active" data-tab="merge" role="tab" aria-selected="true">Merge PDFs</button>
     <button class="tab-btn" data-tab="split" role="tab" aria-selected="false">Split PDF</button>
     <button class="tab-btn" data-tab="images" role="tab" aria-selected="false">Images to PDF</button>
+    <button class="tab-btn" data-tab="bgremove" role="tab" aria-selected="false">Remove Background</button>
   </div>
 
   <!-- MERGE PANEL -->
@@ -176,8 +177,39 @@
     <div class="status" id="images-status"></div>
   </section>
 
+  <!-- BACKGROUND REMOVAL PANEL -->
+  <section class="panel" id="panel-bgremove">
+    <h2>Remove Background</h2>
+    <p class="sub">Choose a photo. An AI model downloads once (about 25 MB, cached after that), then removes the background right in your browser.</p>
+    <div class="drop" id="bgremove-drop">
+      <div>Drag a photo here, or</div>
+      <label class="btn-label" for="bgremove-input">Choose a photo</label>
+      <div class="hint">JPG or PNG</div>
+      <input type="file" id="bgremove-input" accept="image/jpeg,image/png">
+    </div>
+    <div id="bgremove-preview" style="display:none;margin-top:18px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+        <div>
+          <div style="font-size:0.78rem;font-weight:600;color:var(--ink-soft);margin-bottom:6px;">ORIGINAL</div>
+          <img id="bgremove-original" style="width:100%;border-radius:8px;border:1px solid var(--line);background:var(--paper-2);">
+        </div>
+        <div>
+          <div style="font-size:0.78rem;font-weight:600;color:var(--ink-soft);margin-bottom:6px;">RESULT</div>
+          <div id="bgremove-result-wrap" style="width:100%;border-radius:8px;border:1px solid var(--line);background:repeating-conic-gradient(#e4e9e6 0% 25%,#fff 0% 50%) 50%/16px 16px;min-height:80px;display:flex;align-items:center;justify-content:center;">
+            <img id="bgremove-result" style="width:100%;display:none;">
+            <span id="bgremove-placeholder" style="font-size:0.82rem;color:var(--ink-soft);padding:20px;">Result appears here</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="action-btn" id="bgremove-btn" disabled>Remove Background</button>
+    <button class="action-btn" id="bgremove-download-btn" style="display:none;background:var(--teal);">Download PNG</button>
+    <div class="status" id="bgremove-status"></div>
+    <div class="hint" style="margin-top:10px;">Works best on clear photos with a person or a distinct main subject. Illustrations and busy scenes are hit-or-miss for now.</div>
+  </section>
+
   <div class="disclaimer">
-    <strong>How this works:</strong> These tools use a JavaScript library (pdf-lib) that runs entirely on your device. Your files are read locally and never sent to any server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. See our <a href="/privacy.html">Privacy Policy</a> for more.
+    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. See our <a href="/privacy.html">Privacy Policy</a> for more.
   </div>
 </main>
 
@@ -445,6 +477,145 @@
       }
       imagesBtn.disabled = imgFiles.length === 0;
     })();
+  });
+
+  // ================= REMOVE BACKGROUND =================
+  var BG_WORKER_SRC = [
+    'let segmenterPromise = null;',
+    'function getSegmenter(){',
+    '  if (!segmenterPromise){',
+    '    segmenterPromise = (async function(){',
+    '      const mod = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.4.0");',
+    '      self.postMessage({ type: "progress", stage: "loading-model" });',
+    '      const segmenter = await mod.pipeline("background-removal", "Xenova/modnet", { dtype: "fp32" });',
+    '      return segmenter;',
+    '    })();',
+    '  }',
+    '  return segmenterPromise;',
+    '}',
+    'self.onmessage = async function(e){',
+    '  var id = e.data.id, blob = e.data.blob;',
+    '  try {',
+    '    var segmenter = await getSegmenter();',
+    '    self.postMessage({ type: "progress", stage: "processing", id: id });',
+    '    var url = URL.createObjectURL(blob);',
+    '    var output = await segmenter(url);',
+    '    URL.revokeObjectURL(url);',
+    '    var resultBlob = await output[0].toBlob();',
+    '    var buf = await resultBlob.arrayBuffer();',
+    '    self.postMessage({ type: "done", id: id, buffer: buf }, [buf]);',
+    '  } catch(err){',
+    '    self.postMessage({ type: "error", id: id, message: (err && err.message) ? err.message : String(err) });',
+    '  }',
+    '};'
+  ].join('\n');
+
+  var bgWorker = null;
+  function getBgWorker(){
+    if (!bgWorker){
+      var blob = new Blob([BG_WORKER_SRC], { type: 'application/javascript' });
+      bgWorker = new Worker(URL.createObjectURL(blob));
+    }
+    return bgWorker;
+  }
+
+  function cleanupAlpha(blob){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      img.onload = function(){
+        var canvas = document.createElement('canvas');
+        canvas.width = img.naturalWidth; canvas.height = img.naturalHeight;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        var imageData;
+        try { imageData = ctx.getImageData(0, 0, canvas.width, canvas.height); }
+        catch(e){ resolve(blob); return; }
+        var data = imageData.data;
+        var lowT = 0.08*255, highT = 0.85*255;
+        for (var i = 3; i < data.length; i += 4){
+          var a = data[i];
+          if (a <= lowT) a = 0;
+          else if (a >= highT) a = 255;
+          else {
+            var t = (a - lowT) / (highT - lowT);
+            a = Math.round((t*t*(3-2*t)) * 255);
+          }
+          data[i] = a;
+        }
+        ctx.putImageData(imageData, 0, 0);
+        canvas.toBlob(function(outBlob){ resolve(outBlob || blob); }, 'image/png');
+      };
+      img.onerror = function(){ resolve(blob); };
+      img.src = URL.createObjectURL(blob);
+    });
+  }
+
+  var bgFile = null, bgReqId = 0;
+  var bgDrop = document.getElementById('bgremove-drop');
+  var bgInput = document.getElementById('bgremove-input');
+  var bgBtn = document.getElementById('bgremove-btn');
+  var bgDownloadBtn = document.getElementById('bgremove-download-btn');
+  var bgStatus = document.getElementById('bgremove-status');
+  var bgPreview = document.getElementById('bgremove-preview');
+  var bgOriginalImg = document.getElementById('bgremove-original');
+  var bgResultImg = document.getElementById('bgremove-result');
+  var bgPlaceholder = document.getElementById('bgremove-placeholder');
+  var bgResultBlobUrl = null;
+
+  setupDrop(bgDrop, bgInput, function(files){
+    var f = files[0];
+    if (!f || (f.type !== 'image/jpeg' && f.type !== 'image/png')) return;
+    bgFile = f;
+    bgOriginalImg.src = URL.createObjectURL(f);
+    bgPreview.style.display = 'block';
+    bgResultImg.style.display = 'none';
+    bgPlaceholder.style.display = 'block';
+    bgDownloadBtn.style.display = 'none';
+    bgBtn.disabled = false;
+    clearStatus(bgStatus);
+  });
+
+  bgBtn.addEventListener('click', function(){
+    if (!bgFile) return;
+    bgBtn.disabled = true;
+    bgReqId++;
+    var thisReq = bgReqId;
+    setStatus(bgStatus, 'info', 'Downloading AI model (first time only, about 25 MB)\u2026');
+    var worker = getBgWorker();
+
+    function handleMessage(e){
+      if (e.data.id !== thisReq && e.data.stage !== 'loading-model') return;
+      if (e.data.type === 'progress'){
+        if (e.data.stage === 'loading-model') setStatus(bgStatus, 'info', 'Downloading AI model (first time only, about 25 MB)\u2026');
+        if (e.data.stage === 'processing') setStatus(bgStatus, 'info', 'Removing the background\u2026 this can take up to a minute on the first run.');
+      } else if (e.data.type === 'done'){
+        worker.removeEventListener('message', handleMessage);
+        (async function(){
+          var rawBlob = new Blob([e.data.buffer], { type: 'image/png' });
+          var cleaned = await cleanupAlpha(rawBlob);
+          bgResultBlobUrl = URL.createObjectURL(cleaned);
+          bgResultImg.src = bgResultBlobUrl;
+          bgResultImg.style.display = 'block';
+          bgPlaceholder.style.display = 'none';
+          bgDownloadBtn.style.display = 'inline-block';
+          setStatus(bgStatus, 'success', 'Done. Check the result on the right, then download if it looks good.');
+          bgBtn.disabled = false;
+        })();
+      } else if (e.data.type === 'error'){
+        worker.removeEventListener('message', handleMessage);
+        setStatus(bgStatus, 'error', 'Could not process this image: ' + e.data.message + '. Try a smaller image, or a different browser (this needs WebAssembly support).');
+        bgBtn.disabled = false;
+      }
+    }
+    worker.addEventListener('message', handleMessage);
+    worker.postMessage({ id: thisReq, blob: bgFile });
+  });
+
+  bgDownloadBtn.addEventListener('click', function(){
+    if (!bgResultBlobUrl) return;
+    var a = document.createElement('a');
+    a.href = bgResultBlobUrl; a.download = 'no-background.png';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
   });
 })();
 </script>
