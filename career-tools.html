@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Career Tools — PopPopMake</title>
+<meta name="description" content="Build a resume as a clean, ATS-friendly PDF, then check how well it matches a job description before you apply.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 28px;}
+  .tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .tab-btn{font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
+  .tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .tab-btn:hover:not(.active){border-color:var(--teal);color:var(--ink);}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;display:none;}
+  .panel.active{display:block;}
+  .panel h2{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;margin:0 0 6px;}
+  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:0.82rem;font-weight:600;margin-bottom:5px;}
+  .field input[type=text], .field input[type=email], .field textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;background:#fff;color:var(--ink);
+  }
+  .field textarea{resize:vertical;min-height:70px;font-family:'Inter',sans-serif;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  @media (max-width:640px){ .row2, .row3{grid-template-columns:1fr;} }
+
+  .entry-card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px;position:relative;}
+  .entry-card .remove-entry{position:absolute;top:12px;right:12px;background:none;border:1px solid var(--line);border-radius:6px;width:26px;height:26px;cursor:pointer;color:var(--ink-soft);}
+  .entry-card .remove-entry:hover{border-color:var(--orange);color:var(--orange);}
+  .add-btn{background:none;border:1px dashed var(--line);border-radius:8px;padding:10px 16px;font-size:0.88rem;font-weight:600;color:var(--teal);cursor:pointer;width:100%;margin-bottom:20px;}
+  .add-btn:hover{border-color:var(--teal);background:rgba(15,139,141,0.05);}
+
+  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
+  h3.section-title:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.98rem;padding:12px 24px;border-radius:999px;cursor:pointer;margin-top:8px;}
+  .action-btn:hover{opacity:0.92;}
+  .action-btn.teal{background:var(--teal);}
+
+  .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .status.error{background:rgba(242,84,45,0.08);color:var(--orange);}
+
+  .score-box{display:flex;align-items:center;gap:20px;background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:20px;}
+  .score-num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2.6rem;color:var(--orange);}
+  .score-label{color:var(--ink-soft);font-size:0.9rem;}
+  .kw-group h4{font-size:0.8rem;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-soft);margin:18px 0 8px;}
+  .kw-chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;padding:4px 10px;border-radius:999px;}
+  .chip.matched{background:rgba(15,139,141,0.12);color:var(--teal);}
+  .chip.missing{background:rgba(242,84,45,0.1);color:var(--orange);}
+
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.86rem;color:var(--ink-soft);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">Career</span>
+  <h1>Career Tools</h1>
+  <p class="lede">Build a clean, ATS-friendly resume, then check it against a real job description before you hit apply.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="builder" role="tab" aria-selected="true">Resume Builder</button>
+    <button class="tab-btn" data-tab="ats" role="tab" aria-selected="false">ATS Score Checker</button>
+  </div>
+
+  <!-- RESUME BUILDER -->
+  <section class="panel active" id="panel-builder">
+    <h2>Resume Builder</h2>
+    <p class="sub">Fill this in, then download a clean single-column PDF — the format most ATS software can actually read.</p>
+
+    <h3 class="section-title">Contact info</h3>
+    <div class="field"><label for="rb-name">Full name</label><input type="text" id="rb-name" placeholder="Jane Doe"></div>
+    <div class="row3">
+      <div class="field"><label for="rb-email">Email</label><input type="text" id="rb-email" placeholder="jane@example.com"></div>
+      <div class="field"><label for="rb-phone">Phone</label><input type="text" id="rb-phone" placeholder="(555) 123-4567"></div>
+      <div class="field"><label for="rb-location">Location</label><input type="text" id="rb-location" placeholder="Seattle, WA"></div>
+    </div>
+    <div class="field"><label for="rb-links">LinkedIn / portfolio (optional)</label><input type="text" id="rb-links" placeholder="linkedin.com/in/janedoe"></div>
+
+    <h3 class="section-title">Summary</h3>
+    <div class="field"><textarea id="rb-summary" placeholder="Two or three sentences on who you are and what you're looking for."></textarea></div>
+
+    <h3 class="section-title">Experience</h3>
+    <div id="rb-experience-list"></div>
+    <button class="add-btn" id="rb-add-exp" type="button">+ Add work experience</button>
+
+    <h3 class="section-title">Education</h3>
+    <div id="rb-education-list"></div>
+    <button class="add-btn" id="rb-add-edu" type="button">+ Add education</button>
+
+    <h3 class="section-title">Skills</h3>
+    <div class="field"><label for="rb-skills">Comma-separated</label><input type="text" id="rb-skills" placeholder="SQL, Figma, A/B testing, stakeholder communication"></div>
+
+    <button class="action-btn" id="rb-download-btn" type="button">Download Resume PDF</button>
+    <div class="status" id="rb-status"></div>
+  </section>
+
+  <!-- ATS CHECKER -->
+  <section class="panel" id="panel-ats">
+    <h2>ATS Score Checker</h2>
+    <p class="sub">Paste your resume text and a job description. This checks for keyword overlap the way a basic ATS keyword filter would — it's a useful sanity check, not a guarantee.</p>
+    <div class="field"><label for="ats-resume">Your resume (paste as plain text)</label><textarea id="ats-resume" style="min-height:160px;"></textarea></div>
+    <div class="field"><label for="ats-jd">Job description</label><textarea id="ats-jd" style="min-height:160px;"></textarea></div>
+    <button class="action-btn teal" id="ats-check-btn" type="button">Check Match</button>
+
+    <div id="ats-results" style="display:none;margin-top:22px;">
+      <div class="score-box">
+        <div><div class="score-num" id="ats-score">0%</div></div>
+        <div class="score-label" id="ats-score-label">Keyword match against this job description.</div>
+      </div>
+      <div class="kw-group">
+        <h4>Matched keywords</h4>
+        <div class="kw-chips" id="ats-matched"></div>
+        <h4>Missing keywords</h4>
+        <div class="kw-chips" id="ats-missing"></div>
+      </div>
+    </div>
+    <div class="status" id="ats-status"></div>
+  </section>
+
+  <div class="disclaimer">
+    <strong>How this works:</strong> Both tools run entirely in your browser — nothing you type is uploaded anywhere. The ATS checker uses simple keyword-frequency matching, which is the core mechanic most basic ATS keyword filters use, but it isn't a simulation of any specific company's actual software. Treat a missing keyword as a prompt to ask "should this genuinely be on my resume?" — not as something to stuff in regardless.
+  </div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="/cookie-consent.js"></script>
+<script>
+(function(){
+  var PDFDocument = PDFLib.PDFDocument;
+  var StandardFonts = PDFLib.StandardFonts;
+  var rgb = PDFLib.rgb;
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  function setStatus(el, kind, msg){ el.className = 'status show ' + kind; el.textContent = msg; }
+
+  // ================= RESUME BUILDER =================
+  var expList = document.getElementById('rb-experience-list');
+  var eduList = document.getElementById('rb-education-list');
+  var expCount = 0, eduCount = 0;
+
+  function addExperience(){
+    expCount++;
+    var div = document.createElement('div');
+    div.className = 'entry-card';
+    div.innerHTML =
+      '<button type="button" class="remove-entry" title="Remove">&times;</button>' +
+      '<div class="row2">' +
+        '<div class="field"><label>Job title</label><input type="text" class="exp-title" placeholder="Senior Product Manager"></div>' +
+        '<div class="field"><label>Company</label><input type="text" class="exp-company" placeholder="Acme Corp"></div>' +
+      '</div>' +
+      '<div class="field"><label>Dates</label><input type="text" class="exp-dates" placeholder="Jan 2022 - Present"></div>' +
+      '<div class="field"><label>Description (one bullet per line)</label><textarea class="exp-desc" placeholder="Led a cross-functional team of 8 to redesign the checkout flow..."></textarea></div>';
+    div.querySelector('.remove-entry').addEventListener('click', function(){ div.remove(); });
+    expList.appendChild(div);
+  }
+  function addEducation(){
+    eduCount++;
+    var div = document.createElement('div');
+    div.className = 'entry-card';
+    div.innerHTML =
+      '<button type="button" class="remove-entry" title="Remove">&times;</button>' +
+      '<div class="row2">' +
+        '<div class="field"><label>Degree</label><input type="text" class="edu-degree" placeholder="B.S. Computer Science"></div>' +
+        '<div class="field"><label>School</label><input type="text" class="edu-school" placeholder="University of Washington"></div>' +
+      '</div>' +
+      '<div class="field"><label>Dates</label><input type="text" class="edu-dates" placeholder="2016 - 2020"></div>';
+    div.querySelector('.remove-entry').addEventListener('click', function(){ div.remove(); });
+    eduList.appendChild(div);
+  }
+  document.getElementById('rb-add-exp').addEventListener('click', addExperience);
+  document.getElementById('rb-add-edu').addEventListener('click', addEducation);
+  addExperience(); addEducation();
+
+  function wrapText(text, font, fontSize, maxWidth){
+    var words = text.split(/\s+/).filter(Boolean);
+    var lines = []; var current = '';
+    words.forEach(function(word){
+      var test = current ? current + ' ' + word : word;
+      if (font.widthOfTextAtSize(test, fontSize) > maxWidth && current){
+        lines.push(current); current = word;
+      } else { current = test; }
+    });
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  document.getElementById('rb-download-btn').addEventListener('click', function(){
+    var statusEl = document.getElementById('rb-status');
+    (async function(){
+      try {
+        var doc = await PDFDocument.create();
+        var font = await doc.embedFont(StandardFonts.Helvetica);
+        var bold = await doc.embedFont(StandardFonts.HelveticaBold);
+        var marginX = 56, pageW = 612, pageH = 792;
+        var maxWidth = pageW - marginX*2;
+        var page = doc.addPage([pageW, pageH]);
+        var y = pageH - 50;
+
+        function ensureSpace(need){
+          if (y - need < 50){ page = doc.addPage([pageW, pageH]); y = pageH - 50; }
+        }
+        function drawLine(text, size, useFont, color, gap){
+          ensureSpace(size*1.4);
+          page.drawText(text || '', { x: marginX, y: y, size: size, font: useFont, color: color || rgb(0.11,0.14,0.13) });
+          y -= (gap != null ? gap : size*1.4);
+        }
+        function drawWrapped(text, size, useFont){
+          var lines = wrapText(text, useFont, size, maxWidth - 14);
+          lines.forEach(function(l){
+            ensureSpace(size*1.35);
+            page.drawText('\u2022 ' + l, { x: marginX+14, y: y, size: size, font: useFont });
+            y -= size*1.35;
+          });
+        }
+
+        var name = document.getElementById('rb-name').value.trim() || 'Your Name';
+        var contactParts = [document.getElementById('rb-email').value.trim(), document.getElementById('rb-phone').value.trim(), document.getElementById('rb-location').value.trim()].filter(Boolean);
+        var links = document.getElementById('rb-links').value.trim();
+        var summary = document.getElementById('rb-summary').value.trim();
+        var skills = document.getElementById('rb-skills').value.trim();
+
+        drawLine(name, 20, bold, null, 26);
+        if (contactParts.length) drawLine(contactParts.join('  |  '), 9.5, font, rgb(0.3,0.34,0.33), 16);
+        if (links) drawLine(links, 9.5, font, rgb(0.3,0.34,0.33), 20);
+        y -= 4;
+
+        if (summary){
+          drawLine('SUMMARY', 11.5, bold, null, 16);
+          wrapText(summary, font, 10, maxWidth).forEach(function(l){ drawLine(l, 10, font, null, 14); });
+          y -= 10;
+        }
+
+        var expCards = expList.querySelectorAll('.entry-card');
+        if (expCards.length){
+          drawLine('EXPERIENCE', 11.5, bold, null, 16);
+          expCards.forEach(function(card){
+            var title = card.querySelector('.exp-title').value.trim();
+            var company = card.querySelector('.exp-company').value.trim();
+            var dates = card.querySelector('.exp-dates').value.trim();
+            var desc = card.querySelector('.exp-desc').value.trim();
+            if (!title && !company && !desc) return;
+            var headline = [title, company].filter(Boolean).join(', ');
+            drawLine(headline, 10.5, bold, null, 13);
+            if (dates) drawLine(dates, 9, font, rgb(0.4,0.44,0.43), 14);
+            desc.split('\n').map(function(s){return s.trim();}).filter(Boolean).forEach(function(bullet){
+              drawWrapped(bullet, 10, font);
+            });
+            y -= 8;
+          });
+        }
+
+        var eduCards = eduList.querySelectorAll('.entry-card');
+        if (eduCards.length){
+          drawLine('EDUCATION', 11.5, bold, null, 16);
+          eduCards.forEach(function(card){
+            var degree = card.querySelector('.edu-degree').value.trim();
+            var school = card.querySelector('.edu-school').value.trim();
+            var dates = card.querySelector('.edu-dates').value.trim();
+            if (!degree && !school) return;
+            drawLine([degree, school].filter(Boolean).join(', '), 10.5, bold, null, 13);
+            if (dates) drawLine(dates, 9, font, rgb(0.4,0.44,0.43), 16);
+          });
+          y -= 6;
+        }
+
+        if (skills){
+          drawLine('SKILLS', 11.5, bold, null, 16);
+          wrapText(skills, font, 10, maxWidth).forEach(function(l){ drawLine(l, 10, font, null, 14); });
+        }
+
+        var bytes = await doc.save();
+        var blob = new Blob([bytes], { type: 'application/pdf' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = (name.replace(/[^a-zA-Z0-9]+/g,'_') || 'resume') + '_Resume.pdf';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+        setStatus(statusEl, 'success', 'Done. Your resume PDF has started downloading.');
+      } catch(err){
+        setStatus(statusEl, 'error', 'Could not build the PDF: ' + err.message);
+      }
+    })();
+  });
+
+  // ================= ATS CHECKER =================
+  var STOP_WORDS = ("a an the and or but in on at to for of with by from as is are was were be been "+
+    "being have has had do does did will would could should may might must can this that these those "+
+    "i you he she it we they what which who whom your our their its not no nor so than then too very "+
+    "just about into over under again further out up down off will looking join own work closely using "+
+    "use used help ensure across organization ability strong excellent including etc please note new "+
+    "most all any some more other such only own same each every both few most other some such also able "+
+    "looking join role team teams part every day daily weekly monthly required requirements preferred "+
+    "plus responsibilities responsible qualifications description job jobs company companies years year "+
+    "experience experienced strongly ideal candidates candidate apply application applicants must nice "+
+    "good great high level ability skills skill knowledge understanding familiarity familiar").split(/\s+/);
+  var STOP_SET = {};
+  STOP_WORDS.forEach(function(w){ STOP_SET[w] = true; });
+
+  function cleanWord(w){ return w.replace(/^[^a-zA-Z0-9+#]+|[^a-zA-Z0-9+#]+$/g, ''); }
+
+  function extractKeywords(text, limit){
+    var raw = text.split(/\s+/);
+    var freq = {}, isAcronym = {};
+    raw.forEach(function(rw){
+      var cleaned = cleanWord(rw);
+      if (!cleaned) return;
+      // Detect acronyms BEFORE lowercasing: all-caps, 2+ letters (SQL, API, AWS, ML...)
+      if (/^[A-Z][A-Z0-9+#]{1,9}$/.test(cleaned)) isAcronym[cleaned.toLowerCase()] = true;
+      var w = cleaned.toLowerCase();
+      if (!w || w.length < 2 || STOP_SET[w] || /^[0-9]+$/.test(w)) return;
+      freq[w] = (freq[w] || 0) + 1;
+    });
+    return Object.keys(freq)
+      .filter(function(w){ return isAcronym[w] || freq[w] >= 2 || w.length >= 6; })
+      .sort(function(a,b){ return (isAcronym[b]?1:0)-(isAcronym[a]?1:0) || freq[b]-freq[a] || b.length - a.length; })
+      .slice(0, limit);
+  }
+
+  document.getElementById('ats-check-btn').addEventListener('click', function(){
+    var resumeText = document.getElementById('ats-resume').value;
+    var jdText = document.getElementById('ats-jd').value;
+    var statusEl = document.getElementById('ats-status');
+    if (!resumeText.trim() || !jdText.trim()){
+      setStatus(statusEl, 'error', 'Paste both your resume text and a job description first.');
+      document.getElementById('ats-results').style.display = 'none';
+      return;
+    }
+    statusEl.className = 'status';
+    var keywords = extractKeywords(jdText, 20);
+    var resumeLower = resumeText.toLowerCase();
+    var matched = keywords.filter(function(k){ return resumeLower.indexOf(k) > -1; });
+    var missing = keywords.filter(function(k){ return resumeLower.indexOf(k) === -1; });
+    var score = keywords.length ? Math.round((matched.length / keywords.length) * 100) : 0;
+
+    document.getElementById('ats-score').textContent = score + '%';
+    document.getElementById('ats-score-label').textContent = matched.length + ' of ' + keywords.length + ' keywords from this job description appear in your resume.';
+    var matchedEl = document.getElementById('ats-matched');
+    var missingEl = document.getElementById('ats-missing');
+    matchedEl.innerHTML = matched.length ? matched.map(function(k){ return '<span class="chip matched">'+k+'</span>'; }).join('') : '<span style="color:var(--ink-soft);font-size:0.85rem;">None yet.</span>';
+    missingEl.innerHTML = missing.length ? missing.map(function(k){ return '<span class="chip missing">'+k+'</span>'; }).join('') : '<span style="color:var(--ink-soft);font-size:0.85rem;">None — nice overlap.</span>';
+    document.getElementById('ats-results').style.display = 'block';
+  });
+})();
+</script>
+</body>
+</html>

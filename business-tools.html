@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Tools — PopPopMake</title>
+<meta name="description" content="Create a professional invoice PDF and generate custom QR codes — free, right in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 28px;}
+  .tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
+  .tab-btn{font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
+  .tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .tab-btn:hover:not(.active){border-color:var(--teal);color:var(--ink);}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;display:none;}
+  .panel.active{display:block;}
+  .panel h2{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;margin:0 0 6px;}
+  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:0.82rem;font-weight:600;margin-bottom:5px;}
+  .field input[type=text], .field input[type=number], .field textarea{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;background:#fff;color:var(--ink);
+  }
+  .field textarea{resize:vertical;min-height:60px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  @media (max-width:640px){ .row2, .row3{grid-template-columns:1fr;} }
+  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:24px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
+  h3.section-title:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+
+  table.items{width:100%;border-collapse:collapse;margin-bottom:10px;}
+  table.items th{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);text-align:left;padding:0 8px 6px;}
+  table.items td{padding:4px 8px 4px 0;vertical-align:top;}
+  table.items input{width:100%;}
+  table.items .col-desc{width:46%;}
+  table.items .col-qty, table.items .col-price{width:16%;}
+  table.items .col-total{width:16%;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:0.9rem;padding-top:11px;}
+  table.items .col-remove{width:24px;}
+  .icon-btn{background:none;border:1px solid var(--line);border-radius:6px;width:26px;height:26px;cursor:pointer;color:var(--ink-soft);margin-top:2px;}
+  .icon-btn:hover{border-color:var(--orange);color:var(--orange);}
+  .add-btn{background:none;border:1px dashed var(--line);border-radius:8px;padding:8px 14px;font-size:0.85rem;font-weight:600;color:var(--teal);cursor:pointer;margin-bottom:16px;}
+  .add-btn:hover{border-color:var(--teal);background:rgba(15,139,141,0.05);}
+
+  .totals{margin-left:auto;max-width:280px;font-size:0.92rem;}
+  .totals div{display:flex;justify-content:space-between;padding:4px 0;}
+  .totals .grand{font-weight:700;font-size:1.05rem;border-top:1px solid var(--line);margin-top:4px;padding-top:8px;}
+
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.98rem;padding:12px 24px;border-radius:999px;cursor:pointer;margin-top:12px;}
+  .action-btn:hover{opacity:0.92;}
+  .action-btn.teal{background:var(--teal);}
+  .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .status.error{background:rgba(242,84,45,0.08);color:var(--orange);}
+
+  .qr-layout{display:grid;grid-template-columns:1fr 260px;gap:28px;}
+  @media (max-width:700px){ .qr-layout{grid-template-columns:1fr;} }
+  .qr-preview{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+  #qr-canvas-holder{background:#fff;padding:10px;border-radius:8px;min-height:180px;min-width:180px;display:flex;align-items:center;justify-content:center;}
+  .color-field{display:flex;align-items:center;gap:8px;}
+  .color-field input[type=color]{width:40px;height:36px;padding:2px;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer;}
+
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.86rem;color:var(--ink-soft);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">Business</span>
+  <h1>Business Tools</h1>
+  <p class="lede">Invoices and QR codes — the small, unglamorous parts of running something on your own.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="invoice" role="tab" aria-selected="true">Invoice Generator</button>
+    <button class="tab-btn" data-tab="qr" role="tab" aria-selected="false">QR Code Generator</button>
+  </div>
+
+  <!-- INVOICE GENERATOR -->
+  <section class="panel active" id="panel-invoice">
+    <h2>Invoice Generator</h2>
+    <p class="sub">Fill this in and download a clean, ready-to-send PDF invoice.</p>
+
+    <h3 class="section-title">From / To</h3>
+    <div class="row2">
+      <div>
+        <div class="field"><label for="inv-from-name">Your name / business</label><input type="text" id="inv-from-name" placeholder="Jane Doe Design"></div>
+        <div class="field"><label for="inv-from-email">Your email</label><input type="text" id="inv-from-email" placeholder="jane@example.com"></div>
+        <div class="field"><label for="inv-from-addr">Your address (optional)</label><textarea id="inv-from-addr" placeholder="123 Market St&#10;Seattle, WA 98101"></textarea></div>
+      </div>
+      <div>
+        <div class="field"><label for="inv-to-name">Bill to</label><input type="text" id="inv-to-name" placeholder="Acme Corp"></div>
+        <div class="field"><label for="inv-to-email">Client email</label><input type="text" id="inv-to-email" placeholder="billing@acme.com"></div>
+        <div class="field"><label for="inv-to-addr">Client address (optional)</label><textarea id="inv-to-addr" placeholder="456 Client Ave&#10;Portland, OR 97201"></textarea></div>
+      </div>
+    </div>
+
+    <h3 class="section-title">Details</h3>
+    <div class="row3">
+      <div class="field"><label for="inv-number">Invoice #</label><input type="text" id="inv-number" placeholder="INV-001"></div>
+      <div class="field"><label for="inv-date">Date</label><input type="text" id="inv-date" placeholder="2026-08-24"></div>
+      <div class="field"><label for="inv-due">Due date</label><input type="text" id="inv-due" placeholder="2026-09-07"></div>
+    </div>
+
+    <h3 class="section-title">Line items</h3>
+    <table class="items">
+      <thead><tr><th class="col-desc">Description</th><th class="col-qty">Qty</th><th class="col-price">Unit price</th><th class="col-total">Total</th><th class="col-remove"></th></tr></thead>
+      <tbody id="inv-items-body"></tbody>
+    </table>
+    <button class="add-btn" id="inv-add-item" type="button">+ Add line item</button>
+
+    <div class="row2" style="align-items:start;">
+      <div class="field"><label for="inv-notes">Notes (optional)</label><textarea id="inv-notes" placeholder="Thank you for your business! Payment due within 14 days."></textarea></div>
+      <div>
+        <div class="field"><label for="inv-tax">Tax rate (%)</label><input type="number" id="inv-tax" value="0" step="0.01" min="0"></div>
+        <div class="totals" id="inv-totals">
+          <div><span>Subtotal</span><span id="inv-subtotal">$0.00</span></div>
+          <div><span>Tax</span><span id="inv-tax-amt">$0.00</span></div>
+          <div class="grand"><span>Total</span><span id="inv-grand-total">$0.00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <button class="action-btn" id="inv-download-btn" type="button">Download Invoice PDF</button>
+    <div class="status" id="inv-status"></div>
+  </section>
+
+  <!-- QR CODE GENERATOR -->
+  <section class="panel" id="panel-qr">
+    <h2>QR Code Generator</h2>
+    <p class="sub">Type a link or text, customize the colors, and download a high-resolution PNG.</p>
+    <div class="qr-layout">
+      <div>
+        <div class="field"><label for="qr-text">Link or text</label><input type="text" id="qr-text" value="https://poppopmake.com" placeholder="https://example.com"></div>
+        <div class="row2">
+          <div class="field">
+            <label for="qr-color-dark">Code color</label>
+            <div class="color-field"><input type="color" id="qr-color-dark" value="#1C2321"><span id="qr-color-dark-hex" style="font-family:'IBM Plex Mono',monospace;font-size:0.85rem;">#1C2321</span></div>
+          </div>
+          <div class="field">
+            <label for="qr-color-light">Background</label>
+            <div class="color-field"><input type="color" id="qr-color-light" value="#FFFFFF"><span id="qr-color-light-hex" style="font-family:'IBM Plex Mono',monospace;font-size:0.85rem;">#FFFFFF</span></div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="qr-size">Size</label>
+          <select id="qr-size" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;">
+            <option value="256">256 &times; 256 px</option>
+            <option value="512" selected>512 &times; 512 px</option>
+            <option value="1024">1024 &times; 1024 px</option>
+          </select>
+        </div>
+      </div>
+      <div class="qr-preview">
+        <div id="qr-canvas-holder"></div>
+        <button class="action-btn teal" id="qr-download-btn" type="button" style="margin-top:0;">Download PNG</button>
+      </div>
+    </div>
+    <div class="status" id="qr-status"></div>
+  </section>
+
+  <div class="disclaimer">
+    <strong>How this works:</strong> Both tools run entirely in your browser — your invoice details and QR content are never sent anywhere. The invoice PDF is built with pdf-lib; the QR code is generated with the open-source qrcodejs library.
+  </div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="/cookie-consent.js"></script>
+<script>
+(function(){
+  var PDFDocument = PDFLib.PDFDocument;
+  var StandardFonts = PDFLib.StandardFonts;
+  var rgb = PDFLib.rgb;
+
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  function setStatus(el, kind, msg){ el.className = 'status show ' + kind; el.textContent = msg; }
+  function money(n){ var r = Math.round(n*100)/100; if (r === 0) r = 0; return '$' + r.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+  // ================= INVOICE GENERATOR =================
+  var itemsBody = document.getElementById('inv-items-body');
+  var itemRowId = 0;
+
+  function addItemRow(desc, qty, price){
+    itemRowId++;
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td class="col-desc"><input type="text" class="item-desc" placeholder="Website design"></td>' +
+      '<td class="col-qty"><input type="number" class="item-qty" value="1" step="0.01" min="0"></td>' +
+      '<td class="col-price"><input type="number" class="item-price" value="0" step="0.01" min="0"></td>' +
+      '<td class="col-total"><span class="item-total">$0.00</span></td>' +
+      '<td class="col-remove"><button type="button" class="icon-btn" title="Remove">&times;</button></td>';
+    tr.querySelector('.item-desc').value = desc || '';
+    tr.querySelector('.item-qty').value = qty != null ? qty : 1;
+    tr.querySelector('.item-price').value = price != null ? price : 0;
+    tr.querySelector('.icon-btn').addEventListener('click', function(){ tr.remove(); recalcInvoice(); });
+    tr.querySelectorAll('.item-qty, .item-price').forEach(function(inp){ inp.addEventListener('input', recalcInvoice); });
+    itemsBody.appendChild(tr);
+    recalcInvoice();
+  }
+  document.getElementById('inv-add-item').addEventListener('click', function(){ addItemRow(); });
+  document.getElementById('inv-tax').addEventListener('input', recalcInvoice);
+
+  function getInvoiceItems(){
+    var rows = itemsBody.querySelectorAll('tr');
+    var items = [];
+    rows.forEach(function(row){
+      var desc = row.querySelector('.item-desc').value.trim();
+      var qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+      var price = parseFloat(row.querySelector('.item-price').value) || 0;
+      var lineTotal = qty * price;
+      row.querySelector('.item-total').textContent = money(lineTotal);
+      items.push({ description: desc, qty: qty, price: price, lineTotal: lineTotal });
+    });
+    return items;
+  }
+
+  function recalcInvoice(){
+    var items = getInvoiceItems();
+    var subtotal = items.reduce(function(sum, it){ return sum + it.lineTotal; }, 0);
+    var taxRate = parseFloat(document.getElementById('inv-tax').value) || 0;
+    var tax = subtotal * (taxRate/100);
+    var total = subtotal + tax;
+    document.getElementById('inv-subtotal').textContent = money(subtotal);
+    document.getElementById('inv-tax-amt').textContent = money(tax);
+    document.getElementById('inv-grand-total').textContent = money(total);
+    return { items: items, subtotal: subtotal, tax: tax, total: total };
+  }
+
+  addItemRow('Website design', 1, 1200);
+  addItemRow('Hosting setup', 2, 75.50);
+
+  function wrapText(text, font, fontSize, maxWidth){
+    var words = text.split(/\s+/).filter(Boolean);
+    var lines = []; var current = '';
+    words.forEach(function(word){
+      var test = current ? current + ' ' + word : word;
+      if (font.widthOfTextAtSize(test, fontSize) > maxWidth && current){ lines.push(current); current = word; }
+      else { current = test; }
+    });
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  document.getElementById('inv-download-btn').addEventListener('click', function(){
+    var statusEl = document.getElementById('inv-status');
+    (async function(){
+      try {
+        var calc = recalcInvoice();
+        var doc = await PDFDocument.create();
+        var font = await doc.embedFont(StandardFonts.Helvetica);
+        var bold = await doc.embedFont(StandardFonts.HelveticaBold);
+        var pageW = 612, pageH = 792, marginX = 56;
+        var page = doc.addPage([pageW, pageH]);
+        var y = pageH - 56;
+
+        function draw(text, x, size, useFont, color){
+          page.drawText(text || '', { x: x, y: y, size: size, font: useFont, color: color || rgb(0.11,0.14,0.13) });
+        }
+
+        draw('INVOICE', marginX, 22, bold);
+        var invNum = document.getElementById('inv-number').value.trim();
+        draw(invNum ? '#' + invNum : '', pageW - marginX - 120, 11, font, rgb(0.4,0.44,0.43));
+        y -= 34;
+
+        var fromName = document.getElementById('inv-from-name').value.trim();
+        var fromEmail = document.getElementById('inv-from-email').value.trim();
+        var fromAddr = document.getElementById('inv-from-addr').value.trim();
+        var toName = document.getElementById('inv-to-name').value.trim();
+        var toEmail = document.getElementById('inv-to-email').value.trim();
+        var toAddr = document.getElementById('inv-to-addr').value.trim();
+        var dateVal = document.getElementById('inv-date').value.trim();
+        var dueVal = document.getElementById('inv-due').value.trim();
+
+        var colY = y;
+        draw('FROM', marginX, 9, bold, rgb(0.3,0.55,0.55)); y -= 14;
+        [fromName, fromEmail].concat(fromAddr.split('\n')).filter(Boolean).forEach(function(l){ draw(l, marginX, 10, font); y -= 13; });
+
+        y = colY;
+        var col2X = marginX + 260;
+        draw('BILL TO', col2X, 9, bold, rgb(0.3,0.55,0.55)); y -= 14;
+        [toName, toEmail].concat(toAddr.split('\n')).filter(Boolean).forEach(function(l){ page.drawText(l, {x:col2X, y:y, size:10, font:font}); y -= 13; });
+
+        y = Math.min(y, colY - 60) - 16;
+        if (dateVal) { page.drawText('Date: ' + dateVal, {x:marginX, y:y, size:9.5, font:font, color:rgb(0.4,0.44,0.43)}); }
+        if (dueVal) { page.drawText('Due: ' + dueVal, {x:marginX+150, y:y, size:9.5, font:font, color:rgb(0.4,0.44,0.43)}); }
+        y -= 22;
+
+        // Table header
+        page.drawRectangle({ x: marginX, y: y-6, width: pageW-marginX*2, height: 20, color: rgb(0.93,0.94,0.94) });
+        page.drawText('DESCRIPTION', {x:marginX+8, y:y, size:8.5, font:bold});
+        page.drawText('QTY', {x:marginX+300, y:y, size:8.5, font:bold});
+        page.drawText('PRICE', {x:marginX+360, y:y, size:8.5, font:bold});
+        page.drawText('TOTAL', {x:pageW-marginX-60, y:y, size:8.5, font:bold});
+        y -= 22;
+
+        calc.items.forEach(function(item){
+          if (!item.description && !item.qty && !item.price) return;
+          var descLines = wrapText(item.description || '', font, 9.5, 280);
+          var startY = y;
+          descLines.forEach(function(l, i){
+            if (y < 80) { page = doc.addPage([pageW, pageH]); y = pageH - 56; startY = y; }
+            page.drawText(l, {x:marginX+8, y:y, size:9.5, font:font});
+            y -= 13;
+          });
+          page.drawText(String(item.qty), {x:marginX+300, y:startY, size:9.5, font:font});
+          page.drawText(money(item.price).replace('$',''), {x:marginX+360, y:startY, size:9.5, font:font});
+          page.drawText(money(item.lineTotal), {x:pageW-marginX-60, y:startY, size:9.5, font:font});
+          y -= 6;
+        });
+
+        y -= 10;
+        page.drawLine({ start:{x:marginX+300,y:y}, end:{x:pageW-marginX,y:y}, thickness:0.5, color:rgb(0.8,0.8,0.8) });
+        y -= 16;
+        page.drawText('Subtotal', {x:marginX+300, y:y, size:9.5, font:font});
+        page.drawText(money(calc.subtotal), {x:pageW-marginX-60, y:y, size:9.5, font:font});
+        y -= 15;
+        page.drawText('Tax', {x:marginX+300, y:y, size:9.5, font:font});
+        page.drawText(money(calc.tax), {x:pageW-marginX-60, y:y, size:9.5, font:font});
+        y -= 18;
+        page.drawText('Total', {x:marginX+300, y:y, size:11, font:bold});
+        page.drawText(money(calc.total), {x:pageW-marginX-60, y:y, size:11, font:bold});
+        y -= 34;
+
+        var notes = document.getElementById('inv-notes').value.trim();
+        if (notes){
+          page.drawText('NOTES', {x:marginX, y:y, size:9, font:bold, color:rgb(0.3,0.55,0.55)}); y -= 14;
+          wrapText(notes, font, 9.5, pageW-marginX*2).forEach(function(l){ page.drawText(l, {x:marginX, y:y, size:9.5, font:font}); y -= 13; });
+        }
+
+        var bytes = await doc.save();
+        var blob = new Blob([bytes], { type: 'application/pdf' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = (invNum ? invNum : 'invoice') + '.pdf';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+        setStatus(statusEl, 'success', 'Done. Your invoice PDF has started downloading.');
+      } catch(err){
+        setStatus(statusEl, 'error', 'Could not build the invoice: ' + err.message);
+      }
+    })();
+  });
+
+  // ================= QR CODE GENERATOR =================
+  var qrHolder = document.getElementById('qr-canvas-holder');
+  var qrInstance = null;
+  var qrTextInput = document.getElementById('qr-text');
+  var qrDark = document.getElementById('qr-color-dark');
+  var qrLight = document.getElementById('qr-color-light');
+  var qrSize = document.getElementById('qr-size');
+  var qrStatus = document.getElementById('qr-status');
+
+  function renderQR(){
+    var text = qrTextInput.value.trim() || 'https://poppopmake.com';
+    var previewSize = 220;
+    qrHolder.innerHTML = '';
+    try {
+      qrInstance = new QRCode(qrHolder, {
+        text: text,
+        width: previewSize,
+        height: previewSize,
+        colorDark: qrDark.value,
+        colorLight: qrLight.value,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+      qrStatus.className = 'status';
+    } catch(err){
+      setStatus(qrStatus, 'error', 'Could not generate a QR code for this text: ' + err.message);
+    }
+  }
+
+  qrTextInput.addEventListener('input', renderQR);
+  qrDark.addEventListener('input', function(){ document.getElementById('qr-color-dark-hex').textContent = qrDark.value.toUpperCase(); renderQR(); });
+  qrLight.addEventListener('input', function(){ document.getElementById('qr-color-light-hex').textContent = qrLight.value.toUpperCase(); renderQR(); });
+
+  document.getElementById('qr-download-btn').addEventListener('click', function(){
+    var text = qrTextInput.value.trim() || 'https://poppopmake.com';
+    var size = parseInt(qrSize.value, 10);
+    var offscreen = document.createElement('div');
+    offscreen.style.position = 'fixed';
+    offscreen.style.left = '-9999px';
+    document.body.appendChild(offscreen);
+    try {
+      new QRCode(offscreen, {
+        text: text, width: size, height: size,
+        colorDark: qrDark.value, colorLight: qrLight.value,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+      setTimeout(function(){
+        var canvas = offscreen.querySelector('canvas');
+        if (!canvas){
+          setStatus(qrStatus, 'error', 'Could not render a downloadable QR code in this browser.');
+          document.body.removeChild(offscreen);
+          return;
+        }
+        var url = canvas.toDataURL('image/png');
+        var a = document.createElement('a');
+        a.href = url; a.download = 'qr-code.png';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        document.body.removeChild(offscreen);
+        setStatus(qrStatus, 'success', 'Done. Your ' + size + '\u00d7' + size + ' QR code has started downloading.');
+      }, 50);
+    } catch(err){
+      setStatus(qrStatus, 'error', 'Could not generate the QR code: ' + err.message);
+      document.body.removeChild(offscreen);
+    }
+  });
+
+  renderQR();
+})();
+</script>
+</body>
+</html>
