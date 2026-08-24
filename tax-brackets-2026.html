@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 Federal Tax Brackets Explained (With a Worked Example) — PopPopMake</title>
+<meta name="description" content="The 2026 federal income tax brackets, what 'marginal rate' actually means, and a full worked example showing exactly how the math is done.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);margin-left:16px;}
+  main{padding:56px 0 90px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;line-height:1.15;}
+  .meta{color:var(--ink-soft);font-size:0.9rem;margin:0 0 32px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;margin:38px 0 12px;letter-spacing:-0.01em;}
+  p, li{color:var(--ink);font-size:1.03rem;}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:0.92rem;}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);}
+  th{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);}
+  td.num, th.num{text-align:right;font-family:'IBM Plex Mono',monospace;}
+  .callout{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:8px;padding:18px 20px;margin:24px 0;}
+  .callout p{margin:0;}
+  .cta{
+    display:block;background:var(--card);border:1px solid var(--line);border-top:4px solid var(--teal);
+    border-radius:var(--radius);padding:20px 22px;margin:32px 0;text-decoration:none;color:var(--ink);
+  }
+  .cta b{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;display:block;margin-bottom:4px;}
+  .cta span{color:var(--teal);font-weight:600;}
+  figure{margin:28px 0;}
+  figcaption{font-size:0.85rem;color:var(--ink-soft);text-align:center;margin-top:10px;}
+  footer{border-top:1px solid var(--line);padding:32px 0;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/guides.html">All guides</a><a href="/">Home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">Guide · Money &amp; Tax</span>
+  <h1>2026 Federal Tax Brackets Explained (With a Worked Example)</h1>
+  <p class="meta">Source: IRS Revenue Procedure 2025-32 · 7 min read</p>
+
+  <p>"What tax bracket am I in?" is one of the most commonly misunderstood questions in personal finance — mostly because bracket doesn't mean what people assume it means. Here's the actual 2026 IRS schedule, what "marginal rate" really means, and a full example showing the math.</p>
+
+  <h2>The seven 2026 brackets</h2>
+  <p>These apply to <em>taxable income</em> — your income after the standard deduction ($16,100 single / $32,200 married filing jointly for 2026) or itemized deductions, whichever is larger.</p>
+  <table>
+    <thead><tr><th>Rate</th><th class="num">Single</th><th class="num">Married filing jointly</th></tr></thead>
+    <tbody>
+      <tr><td>10%</td><td class="num">$0 – $12,400</td><td class="num">$0 – $24,800</td></tr>
+      <tr><td>12%</td><td class="num">$12,400 – $50,400</td><td class="num">$24,800 – $100,800</td></tr>
+      <tr><td>22%</td><td class="num">$50,400 – $105,700</td><td class="num">$100,800 – $211,400</td></tr>
+      <tr><td>24%</td><td class="num">$105,700 – $201,775</td><td class="num">$211,400 – $403,550</td></tr>
+      <tr><td>32%</td><td class="num">$201,775 – $256,225</td><td class="num">$403,550 – $512,450</td></tr>
+      <tr><td>35%</td><td class="num">$256,225 – $640,600</td><td class="num">$512,450 – $768,700</td></tr>
+      <tr><td>37%</td><td class="num">over $640,600</td><td class="num">over $768,700</td></tr>
+    </tbody>
+  </table>
+
+  <h2>The part everyone gets wrong: brackets are marginal, not flat</h2>
+  <p>Landing in the 22% bracket does <em>not</em> mean 22% of your whole income goes to federal tax. It means only the slice of income that falls inside that bracket is taxed at 22% — the dollars below it were already taxed at the lower rates on the way up. Nobody's entire paycheck jumps to a higher rate just because they crossed into a new bracket.</p>
+
+  <h2>Worked example: $100,000 salary, single filer</h2>
+  <p>Start with taxable income: $100,000 minus the $16,100 standard deduction = <strong>$83,900</strong>. That amount fills up the brackets from the bottom:</p>
+
+  <figure>
+    <svg viewBox="0 0 640 200" width="100%" role="img" aria-label="Stacked bar showing $83,900 of taxable income split across three tax brackets: $12,400 at 10 percent, $38,000 at 12 percent, and $33,500 at 22 percent.">
+      <rect x="0" y="0" width="640" height="200" fill="#FFFFFF" stroke="#1C2321" stroke-opacity="0.12" rx="12"/>
+      <text x="24" y="30" font-family="IBM Plex Mono, monospace" font-size="11" fill="#4B534F">TAXABLE INCOME: $83,900</text>
+
+      <rect x="24" y="46" width="88" height="46" fill="#F4B740"/>
+      <rect x="112" y="46" width="268" height="46" fill="#F2542D"/>
+      <rect x="380" y="46" width="236" height="46" fill="#0F8B8D"/>
+
+      <g font-family="Space Grotesk, sans-serif" font-weight="700" font-size="13" fill="#1C2321">
+        <text x="68" y="74" text-anchor="middle" fill="#1C2321">10%</text>
+        <text x="246" y="74" text-anchor="middle" fill="#fff">12%</text>
+        <text x="498" y="74" text-anchor="middle" fill="#fff">22%</text>
+      </g>
+
+      <g font-family="IBM Plex Mono, monospace" font-size="10.5" fill="#4B534F">
+        <text x="68" y="112" text-anchor="middle">$12,400</text>
+        <text x="68" y="126" text-anchor="middle">→ $1,240 tax</text>
+        <text x="246" y="112" text-anchor="middle">$38,000</text>
+        <text x="246" y="126" text-anchor="middle">→ $4,560 tax</text>
+        <text x="498" y="112" text-anchor="middle">$33,500</text>
+        <text x="498" y="126" text-anchor="middle">→ $7,370 tax</text>
+      </g>
+
+      <line x1="24" y1="150" x2="616" y2="150" stroke="#1C2321" stroke-opacity="0.15"/>
+      <text x="24" y="172" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#1C2321">Total federal tax: $13,170</text>
+      <text x="616" y="172" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="12" fill="#4B534F">Effective rate: 13.2% of $100,000</text>
+    </svg>
+    <figcaption>The 24% bracket is never reached here — taxable income runs out partway through the 22% bracket.</figcaption>
+  </figure>
+
+  <ul>
+    <li>10% on the first $12,400 → <strong>$1,240</strong></li>
+    <li>12% on the next $38,000 (from $12,400 to $50,400) → <strong>$4,560</strong></li>
+    <li>22% on the remaining $33,500 (from $50,400 to $83,900) → <strong>$7,370</strong></li>
+  </ul>
+  <p>Add it up: $1,240 + $4,560 + $7,370 = <strong>$13,170 in federal tax</strong>. That's a marginal rate of 22% (the rate on the last dollar earned) but an <strong>effective rate of just 13.2%</strong> of the full $100,000 — the number that actually reflects the overall bite.</p>
+
+  <div class="callout">
+    <p><strong>General information, not tax advice.</strong> This example uses the standard deduction only. Credits, other deductions, and additional income types can change your real result. For anything that affects your filing, confirm with a tax professional.</p>
+  </div>
+
+  <a class="cta" href="/paycheck-calculator.html">
+    <b>Run your own numbers</b>
+    <span>See your 2026 federal, state, and FICA breakdown →</span>
+  </a>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/guides.html">Guides</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+</body>
+</html>

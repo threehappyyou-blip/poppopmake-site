@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Read Your Paycheck: A Plain-English Guide — PopPopMake</title>
+<meta name="description" content="What gross pay, net pay, FICA, and withholding actually mean — a plain-English walkthrough of every line on a US paycheck, updated for 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);margin-left:16px;}
+  main{padding:56px 0 90px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;line-height:1.15;}
+  .meta{color:var(--ink-soft);font-size:0.9rem;margin:0 0 32px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;margin:38px 0 12px;letter-spacing:-0.01em;}
+  p, li{color:var(--ink);font-size:1.03rem;}
+  ul, ol{padding-left:22px;}
+  li{margin-bottom:6px;}
+  .callout{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:8px;padding:18px 20px;margin:24px 0;}
+  .callout p{margin:0;}
+  .cta{
+    display:block;background:var(--card);border:1px solid var(--line);border-top:4px solid var(--teal);
+    border-radius:var(--radius);padding:20px 22px;margin:32px 0;text-decoration:none;color:var(--ink);
+  }
+  .cta b{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;display:block;margin-bottom:4px;}
+  .cta span{color:var(--teal);font-weight:600;}
+  figure{margin:28px 0;}
+  figcaption{font-size:0.85rem;color:var(--ink-soft);text-align:center;margin-top:10px;}
+  footer{border-top:1px solid var(--line);padding:32px 0;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/guides.html">All guides</a><a href="/">Home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">Guide · Money &amp; Tax</span>
+  <h1>How to Read Your Paycheck: A Plain-English Guide</h1>
+  <p class="meta">Updated for 2026 · 6 min read</p>
+
+  <p>Your pay stub has a lot more on it than the number that hits your bank account. If you've ever looked at one and wondered why "gross pay" and "net pay" are so far apart, this walks through every line — in plain English, no tax-course jargon.</p>
+
+  <figure>
+    <svg viewBox="0 0 640 220" width="100%" role="img" aria-label="Diagram of a paycheck stub showing gross pay at the top splitting into four deductions, and net pay at the bottom.">
+      <rect x="0" y="0" width="640" height="220" fill="#FFFFFF" stroke="#1C2321" stroke-opacity="0.12" rx="12"/>
+      <rect x="24" y="24" width="592" height="36" rx="6" fill="#F2542D"/>
+      <text x="320" y="47" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="#fff">GROSS PAY — everything you earned</text>
+
+      <g font-family="IBM Plex Mono, monospace" font-size="11" fill="#1C2321">
+        <rect x="24" y="80" width="136" height="52" rx="6" fill="#EEF1EF" stroke="#1C2321" stroke-opacity="0.15"/>
+        <text x="92" y="101" text-anchor="middle" font-weight="600">Federal</text>
+        <text x="92" y="116" text-anchor="middle">income tax</text>
+
+        <rect x="172" y="80" width="136" height="52" rx="6" fill="#EEF1EF" stroke="#1C2321" stroke-opacity="0.15"/>
+        <text x="240" y="101" text-anchor="middle" font-weight="600">Social</text>
+        <text x="240" y="116" text-anchor="middle">Security 6.2%</text>
+
+        <rect x="320" y="80" width="136" height="52" rx="6" fill="#EEF1EF" stroke="#1C2321" stroke-opacity="0.15"/>
+        <text x="388" y="101" text-anchor="middle" font-weight="600">Medicare</text>
+        <text x="388" y="116" text-anchor="middle">1.45%</text>
+
+        <rect x="468" y="80" width="148" height="52" rx="6" fill="#EEF1EF" stroke="#1C2321" stroke-opacity="0.15"/>
+        <text x="542" y="101" text-anchor="middle" font-weight="600">State tax</text>
+        <text x="542" y="116" text-anchor="middle">(if your state has it)</text>
+      </g>
+
+      <rect x="24" y="160" width="592" height="36" rx="6" fill="#0F8B8D"/>
+      <text x="320" y="183" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="15" fill="#fff">NET PAY — what actually lands in your account</text>
+    </svg>
+    <figcaption>Gross pay splits into four common deductions before what's left becomes your net (take-home) pay.</figcaption>
+  </figure>
+
+  <h2>Gross pay vs. net pay</h2>
+  <p><strong>Gross pay</strong> is your full earnings for the period — your salary or hourly wages before anything is taken out. <strong>Net pay</strong> (also called take-home pay) is what's left after taxes and any other deductions. The gap between the two is usually bigger than people expect, especially the first time they see a real paycheck instead of a quoted salary.</p>
+
+  <h2>Federal income tax</h2>
+  <p>This is the big one, and it's progressive — meaning different slices of your income are taxed at different rates, not your whole paycheck at one flat percentage. For 2026, the federal brackets run from 10% up to 37%, and everyone gets a standard deduction ($16,100 for a single filer, $32,200 for a married couple filing jointly) subtracted before any of it is taxed. We go through this in more detail, with a full worked example, in our <a href="/tax-brackets-2026.html">2026 federal tax bracket guide</a>.</p>
+
+  <h2>Social Security and Medicare (FICA)</h2>
+  <p>These two are grouped together as "FICA" taxes, and unlike federal income tax, they're flat percentages with no deductions:</p>
+  <ul>
+    <li><strong>Social Security:</strong> 6.2% of your pay, up to a yearly cap ($184,500 in 2026). Once you cross that in a calendar year, this deduction stops for the rest of the year.</li>
+    <li><strong>Medicare:</strong> 1.45% of your pay, with no cap at all. High earners (over $200,000 single, $250,000 married filing jointly) pay an extra 0.9% on the amount above that threshold.</li>
+  </ul>
+
+  <h2>State tax (if it applies to you)</h2>
+  <p>Whether you owe state income tax — and how much — depends entirely on where you live and work. Nine states, including Texas, Florida, and Washington, charge no state income tax at all. Others use a single flat rate, and some use their own progressive brackets that can look quite different from the federal ones. This is the deduction that varies the most from person to person, and it's a big part of why two people with the same salary in different states can take home noticeably different amounts.</p>
+
+  <h2>Why your paycheck can change even when your salary doesn't</h2>
+  <p>A few common reasons: you crossed the Social Security wage cap partway through the year, your employer updated withholding tables for the new tax year, you changed your W-4 (the form that tells your employer how much to withhold), or you started contributing to a pre-tax benefit like a 401(k) or health insurance, which lowers the income that gets taxed in the first place.</p>
+
+  <div class="callout">
+    <p><strong>This is general information, not tax advice.</strong> Your actual withholding also depends on your W-4 elections, any pre-tax benefits you're enrolled in, and your specific state and local rules. For anything that affects your filing, check with a tax professional or your payroll department.</p>
+  </div>
+
+  <a class="cta" href="/paycheck-calculator.html">
+    <b>See these numbers with your own salary</b>
+    <span>Try the free 2026 Paycheck Calculator →</span>
+  </a>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/guides.html">Guides</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+</body>
+</html>

@@ -53,7 +53,7 @@
     align-items:center;
     gap:8px;
   }
-  .logo-dot{width:9px;height:9px;border-radius:50%;background:var(--orange);display:inline-block;}
+  .logo-mark{flex-shrink:0;display:block;}
   nav{display:flex;gap:28px;flex-wrap:wrap;}
   nav a{
     font-size:0.95rem;
@@ -232,7 +232,7 @@
 
 <header>
   <div class="wrap">
-    <a class="logo" href="/"><span class="logo-dot"></span>PopPopMake</a>
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
     <nav>
       <a href="#documents">Documents</a>
       <a href="#money">Money</a>
