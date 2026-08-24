@@ -497,7 +497,7 @@
     'function getSegmenter(modelId){',
     '  if (!segmenters[modelId]){',
     '    segmenters[modelId] = (async function(){',
-    '      const mod = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.4.0");',
+    '      const mod = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@latest");',
     '      self.postMessage({ type: "progress", stage: "loading-model" });',
     '      const segmenter = await mod.pipeline("background-removal", modelId, { dtype: "fp32" });',
     '      return segmenter;',
