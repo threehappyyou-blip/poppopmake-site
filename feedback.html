@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Feedback — PopPopMake</title>
+<meta name="description" content="Report a bug, request a tool, or send feedback about PopPopMake — goes straight to the inbox, nothing public.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 28px;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:0.82rem;font-weight:600;margin-bottom:5px;}
+  .field input[type=email], .field textarea, .field select{
+    width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;background:#fff;color:var(--ink);
+  }
+  .field select{cursor:pointer;}
+  .field textarea{resize:vertical;min-height:130px;font-family:'Inter',sans-serif;}
+  .field .hint{margin:6px 0 0;font-size:0.8rem;color:var(--ink-soft);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:640px){ .row2{grid-template-columns:1fr;} }
+
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.98rem;padding:12px 24px;border-radius:999px;cursor:pointer;margin-top:8px;}
+  .action-btn:hover{opacity:0.92;}
+  .action-btn:disabled{opacity:0.55;cursor:not-allowed;}
+
+  .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .status.error{background:rgba(242,84,45,0.08);color:var(--orange);}
+
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.86rem;color:var(--ink-soft);}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">Feedback</span>
+  <h1>Feedback &amp; Bug Reports</h1>
+  <p class="lede">Found something broken, or missing a tool you needed? This goes straight to the inbox — no ticket number, no auto-reply queue.</p>
+
+  <section class="panel">
+    <form method="POST" id="fb-form">
+      <input type="hidden" name="access_key" value="82a3687d-a2bf-40b5-87bb-96e622f55f9b">
+      <input type="hidden" name="from_name" value="PopPopMake Feedback Form">
+      <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+
+      <div class="row2">
+        <div class="field">
+          <label for="fb-type">What's this about?</label>
+          <select id="fb-type" name="type">
+            <option value="Bug report">Something's broken</option>
+            <option value="Feature request">A tool or feature I'd like</option>
+            <option value="Something else">Something else</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="fb-tool">Which tool? (optional)</label>
+          <select id="fb-tool" name="tool">
+            <option>Not sure / site-wide</option>
+            <option>Document &amp; Image Tools</option>
+            <option>Money &amp; Tax Calculators</option>
+            <option>Career Tools</option>
+            <option>Business Tools</option>
+            <option>Writing &amp; AI Tools</option>
+            <option>Guides</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="fb-message">Details</label>
+        <textarea id="fb-message" name="message" required placeholder="What happened, or what would help? The more specific, the easier it is to fix or build."></textarea>
+      </div>
+
+      <div class="field">
+        <label for="fb-email">Your email (optional)</label>
+        <input type="email" id="fb-email" name="email" placeholder="Only if you'd like a reply">
+        <p class="hint">Leave this blank to stay anonymous — replies just won't be possible.</p>
+      </div>
+
+      <button class="action-btn" id="fb-submit-btn" type="submit">Send Feedback</button>
+      <div class="status" id="fb-status"></div>
+    </form>
+  </section>
+
+  <div class="disclaimer">
+    <strong>How this works:</strong> This form sends straight to the inbox through Web3Forms — it isn't a public board, nothing gets posted, and nothing is stored on this site. Leave an email only if you'd like a reply; otherwise the report stays anonymous.
+  </div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script>
+(function(){
+  var form = document.getElementById('fb-form');
+  var statusEl = document.getElementById('fb-status');
+  var submitBtn = document.getElementById('fb-submit-btn');
+
+  function setStatus(kind, msg){ statusEl.className = 'status show ' + kind; statusEl.textContent = msg; }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    var message = document.getElementById('fb-message').value.trim();
+    if (!message){
+      setStatus('error', 'Add a few details before sending.');
+      return;
+    }
+
+    var typeLabel = document.getElementById('fb-type').selectedOptions[0].textContent;
+    var formData = new FormData(form);
+    formData.set('subject', 'PopPopMake Feedback: ' + typeLabel);
+    var payload = Object.fromEntries(formData);
+
+    submitBtn.disabled = true;
+    setStatus('success', 'Sending…');
+
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(async function(response){
+      var result = await response.json();
+      if (response.status === 200 && result.success){
+        setStatus('success', "Thanks — that just landed in the inbox.");
+        form.reset();
+      } else {
+        setStatus('error', "Couldn't send that. Try again, or email hello@poppopmake.com directly.");
+      }
+    })
+    .catch(function(){
+      setStatus('error', "Couldn't send that — check your connection and try again.");
+    })
+    .then(function(){
+      submitBtn.disabled = false;
+    });
+  });
+})();
+</script>
+</body>
+</html>
