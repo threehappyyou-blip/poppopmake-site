@@ -491,24 +491,25 @@
   });
 
   // ================= REMOVE BACKGROUND =================
-  var BG_MODELS = { portrait: 'Xenova/modnet', general: 'onnx-community/BEN2-ONNX' };
+  var BG_MODELS = { portrait: { id:'Xenova/modnet', dtype:'fp32' }, general: { id:'onnx-community/BEN2-ONNX', dtype:'fp16' } };
   var BG_WORKER_SRC = [
     'const segmenters = {};',
-    'function getSegmenter(modelId){',
-    '  if (!segmenters[modelId]){',
-    '    segmenters[modelId] = (async function(){',
+    'function getSegmenter(modelId, dtype){',
+    '  var key = modelId + "|" + dtype;',
+    '  if (!segmenters[key]){',
+    '    segmenters[key] = (async function(){',
     '      const mod = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@latest");',
     '      self.postMessage({ type: "progress", stage: "loading-model" });',
-    '      const segmenter = await mod.pipeline("background-removal", modelId, { dtype: "fp32" });',
+    '      const segmenter = await mod.pipeline("background-removal", modelId, { dtype: dtype });',
     '      return segmenter;',
     '    })();',
     '  }',
-    '  return segmenters[modelId];',
+    '  return segmenters[key];',
     '}',
     'self.onmessage = async function(e){',
-    '  var id = e.data.id, blob = e.data.blob, modelId = e.data.modelId;',
+    '  var id = e.data.id, blob = e.data.blob, modelId = e.data.modelId, dtype = e.data.dtype;',
     '  try {',
-    '    var segmenter = await getSegmenter(modelId);',
+    '    var segmenter = await getSegmenter(modelId, dtype);',
     '    self.postMessage({ type: "progress", stage: "processing", id: id });',
     '    var url = URL.createObjectURL(blob);',
     '    var output = await segmenter(url);',
@@ -590,7 +591,7 @@
   bgBtn.addEventListener('click', function(){
     if (!bgFile) return;
     var modelChoice = document.querySelector('input[name="bg-model"]:checked').value;
-    var modelId = BG_MODELS[modelChoice];
+    var modelCfg = BG_MODELS[modelChoice];
     var modelSizeLabel = modelChoice === 'general' ? 'about 220 MB' : 'about 25 MB';
     bgBtn.disabled = true;
     bgReqId++;
@@ -623,7 +624,7 @@
       }
     }
     worker.addEventListener('message', handleMessage);
-    worker.postMessage({ id: thisReq, blob: bgFile, modelId: modelId });
+    worker.postMessage({ id: thisReq, blob: bgFile, modelId: modelCfg.id, dtype: modelCfg.dtype });
   });
 
   bgDownloadBtn.addEventListener('click', function(){
