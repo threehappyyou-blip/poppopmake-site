@@ -1,0 +1,6 @@
+/*
+  X-Frame-Options: SAMEORIGIN
+  Content-Security-Policy: frame-ancestors 'self'
+
+/embed/*
+  Content-Security-Policy: frame-ancestors *
