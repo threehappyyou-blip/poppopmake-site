@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Writing & AI Tools — PopPopMake</title>
+<meta name="description" content="Check text for common AI-writing clichés and get plain-language swaps to make it sound like you again. Free, no account, runs in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:62ch;margin:0 0 28px;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:0.82rem;font-weight:600;margin-bottom:5px;}
+  .field textarea{
+    width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;background:#fff;color:var(--ink);resize:vertical;min-height:190px;
+  }
+
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.98rem;padding:12px 24px;border-radius:999px;cursor:pointer;margin-top:4px;}
+  .action-btn:hover{opacity:0.92;}
+  .action-btn.teal{background:var(--teal);}
+
+  .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .status.error{background:rgba(242,84,45,0.08);color:var(--orange);}
+
+  .tabs{display:flex;gap:8px;margin:24px 0 20px;flex-wrap:wrap;}
+  .tab-btn{font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
+  .tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .tab-btn:hover:not(.active){border-color:var(--teal);color:var(--ink);}
+
+  .empty-note{color:var(--ink-soft);font-size:0.9rem;padding:28px 4px;text-align:center;}
+
+  .legend{font-size:0.8rem;color:var(--ink-soft);margin:0 0 14px;}
+  .tier-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .tier-dot.t1{background:var(--orange);}
+  .tier-dot.t2{background:var(--yellow);}
+  .tier-dot.t3{background:var(--teal);}
+
+  .highlighted-text{background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:16px 18px;font-size:0.94rem;line-height:1.75;white-space:pre-wrap;margin-bottom:18px;max-height:360px;overflow-y:auto;}
+  .highlighted-text mark{padding:1px 3px;border-radius:3px;cursor:help;}
+  .highlighted-text mark.t1{background:rgba(242,84,45,0.22);}
+  .highlighted-text mark.t2{background:rgba(244,183,64,0.4);}
+  .highlighted-text mark.t3{background:rgba(15,139,141,0.18);}
+
+  .stats-row{display:flex;gap:18px;flex-wrap:wrap;font-size:0.86rem;color:var(--ink-soft);margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+  .stats-row strong{color:var(--ink);}
+
+  .notes-list{margin:0 0 16px;padding-left:20px;font-size:0.88rem;color:var(--ink-soft);}
+  .notes-list li{margin-bottom:5px;}
+
+  .phrase-list, .suggestion-list{list-style:none;padding:0;margin:0;}
+  .phrase-list li, .suggestion-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:0.92rem;}
+  .phrase-list li:last-child, .suggestion-list li:last-child{border-bottom:none;}
+  .count{color:var(--ink-soft);font-size:0.85rem;}
+  .arrow{color:var(--ink-soft);margin:0 3px;}
+
+  .smooth-note{font-size:0.86rem;color:var(--ink-soft);margin-top:18px;padding-top:16px;border-top:1px solid var(--line);}
+
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.86rem;color:var(--ink-soft);}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">Writing</span>
+  <h1>Writing &amp; AI Tools</h1>
+  <p class="lede">Paste a paragraph or more. This flags common AI-writing clichés and stiff patterns, then suggests plainer swaps — everything runs on this page, nothing you paste is uploaded anywhere.</p>
+
+  <section class="panel">
+    <div class="field">
+      <label for="wr-input">Your text</label>
+      <textarea id="wr-input" placeholder="Paste a paragraph or more — the more text, the more useful the patterns are."></textarea>
+    </div>
+    <button class="action-btn" id="wr-analyze-btn" type="button">Analyze Text</button>
+    <div class="status" id="wr-status"></div>
+  </section>
+
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="check" role="tab" aria-selected="true">Flagged Phrases</button>
+    <button class="tab-btn" data-tab="smooth" role="tab" aria-selected="false">Smooth It Out</button>
+  </div>
+
+  <section class="panel active" id="panel-check">
+    <div id="wr-check-empty" class="empty-note">Paste some text above and click <strong>Analyze Text</strong> — flagged phrases will show up here, highlighted in context.</div>
+    <div id="wr-check-results" style="display:none;">
+      <p class="legend"><span class="tier-dot t1"></span>strong signal&nbsp;&nbsp;<span class="tier-dot t2"></span>promotional&nbsp;&nbsp;<span class="tier-dot t3"></span>light signal (only matters in clusters)</p>
+      <div class="highlighted-text" id="wr-highlighted-check"></div>
+      <div class="stats-row" id="wr-stats"></div>
+      <ul class="notes-list" id="wr-notes"></ul>
+      <div id="wr-phrase-list"></div>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-smooth">
+    <div id="wr-smooth-empty" class="empty-note">Paste some text above and click <strong>Analyze Text</strong> — swap suggestions will show up here.</div>
+    <div id="wr-smooth-results" style="display:none;">
+      <div class="highlighted-text" id="wr-highlighted-smooth"></div>
+      <div id="wr-suggestion-list"></div>
+      <p class="smooth-note">Word swaps are a starting point, not the whole fix. Stiff writing is usually more about uniform sentence rhythm and vague claims than any single word — if every sentence runs about the same length and nothing is concrete, that reads as AI even with zero phrases flagged above.</p>
+    </div>
+  </section>
+
+  <div class="disclaimer">
+    <strong>How this works:</strong> This scans for common AI-writing clichés and patterns — it's a pattern-matcher, not a real AI detector, and it runs entirely in your browser. It can't prove text is or isn't AI-written: human writers use plenty of these words too, and polished AI writing can avoid every one of them. Treat flags as a nudge to reconsider a phrase, not a verdict — that matters especially for careful, formal, or non-native English writing, which these kinds of checks can unfairly flag.
+  </div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script>
+(function(){
+
+  // ---- Phrase database ----
+  // tier 1 = rare in natural writing, strong signal on its own
+  // tier 2 = suspicious in clusters (promotional register)
+  // tier 3 = light signal, only meaningful when clustered
+  var PHRASES = [
+    {re:/\bdelv(e|es|ed|ing)\b/gi, tier:1, label:'delve', sug:'look into / dig into'},
+    {re:/\btapestr(y|ies)\b/gi, tier:1, label:'tapestry', sug:'be concrete instead of this metaphor'},
+    {re:/\btestament to\b/gi, tier:1, label:'testament to', sug:'shows / proves'},
+    {re:/\bunderscor(e|es|ed|ing)\b/gi, tier:1, label:'underscore(s)', sug:'highlight(s) / show(s)'},
+    {re:/\bmultifaceted\b/gi, tier:1, label:'multifaceted', sug:'name the specific facets instead'},
+    {re:/\brealm\b/gi, tier:1, label:'realm', sug:'field / area / world'},
+    {re:/\bboundaries\b/gi, tier:1, label:'boundaries', sug:'limits'},
+    {re:/\bever-evolving\b/gi, tier:1, label:'ever-evolving', sug:'changing / growing'},
+    {re:/\bgame[\s-]?chang(er|ing)\b/gi, tier:1, label:'game-changer', sug:'say specifically what changed'},
+    {re:/\bparadigm shift\b/gi, tier:1, label:'paradigm shift', sug:'major change'},
+    {re:/\bsynergy\b/gi, tier:1, label:'synergy', sug:'teamwork / combined effect'},
+    {re:/\bholistic(ally)?\b/gi, tier:1, label:'holistic', sug:'complete / well-rounded'},
+    {re:/\bcutting-edge\b/gi, tier:1, label:'cutting-edge', sug:'new / advanced'},
+    {re:/\bin the realm of\b/gi, tier:1, label:'in the realm of', sug:'in'},
+
+    {re:/\brobust(ness|ly)?\b/gi, tier:2, label:'robust', sug:'solid / reliable'},
+    {re:/\bseamless(ly)?\b/gi, tier:2, label:'seamless', sug:'smooth / easy'},
+    {re:/\bvibrant(ly)?\b/gi, tier:2, label:'vibrant', sug:'lively / colorful'},
+    {re:/\bdynamic(ally)?\b/gi, tier:2, label:'dynamic', sug:'active / changing'},
+    {re:/\bcomprehensive(ly)?\b/gi, tier:2, label:'comprehensive', sug:'complete / full'},
+    {re:/\binnovative(ly)?\b/gi, tier:2, label:'innovative', sug:'new / original'},
+    {re:/\btransformative\b/gi, tier:2, label:'transformative', sug:'say specifically what changed'},
+    {re:/\binvaluable\b/gi, tier:2, label:'invaluable', sug:'valuable / very useful'},
+    {re:/\bmeticulous(ly)?\b/gi, tier:2, label:'meticulous', sug:'careful / detailed'},
+    {re:/\bleverag(e|es|ed|ing)\b/gi, tier:2, label:'leverage', sug:'use'},
+    {re:/\butiliz(e|es|ed|ing|ation)\b/gi, tier:2, label:'utilize', sug:'use'},
+    {re:/\bfoster(s|ed|ing)?\b/gi, tier:2, label:'foster', sug:'build / support'},
+    {re:/\bcultivat(e|es|ed|ing)\b/gi, tier:2, label:'cultivate', sug:'build / grow'},
+    {re:/\bempower(s|ed|ing|ment)?\b/gi, tier:2, label:'empower', sug:'help / enable'},
+    {re:/\belevat(e|es|ed|ing)\b/gi, tier:2, label:'elevate', sug:'improve / raise'},
+    {re:/\bpivotal\b/gi, tier:2, label:'pivotal', sug:'key / important'},
+    {re:/\bunlock(s|ed|ing)? the (potential|power)\b/gi, tier:2, label:'unlock the potential/power', sug:'improve (say how)'},
+
+    {re:/\badditionally\b/gi, tier:3, label:'additionally', sug:'also / and'},
+    {re:/\bfurthermore\b/gi, tier:3, label:'furthermore', sug:'also / and'},
+    {re:/\bmoreover\b/gi, tier:3, label:'moreover', sug:'also / and'},
+    {re:/\bnotabl(y|e)\b/gi, tier:3, label:'notably', sug:'especially, or cut it'},
+    {re:/\bcrucial(ly)?\b/gi, tier:3, label:'crucial', sug:'important / key'},
+    {re:/\bessential(ly)?\b/gi, tier:3, label:'essential', sug:'needed / key'},
+
+    {re:/\bin today'?s fast-paced( digital)? world\b/gi, tier:1, label:"in today's fast-paced world", sug:'cut it, or name the actual trend'},
+    {re:/\bin (today'?s|this) (digital age|ever-evolving landscape)\b/gi, tier:1, label:'in this digital age / ever-evolving landscape', sug:'cut it'},
+    {re:/\bin the (dynamic|ever-evolving) world of\b/gi, tier:1, label:'in the ever-evolving world of', sug:'cut it, start with the point'},
+    {re:/\bit'?s important to note that\b/gi, tier:1, label:"it's important to note that", sug:'cut it — just state the fact'},
+    {re:/\bit'?s worth noting that\b/gi, tier:1, label:"it's worth noting that", sug:'cut it'},
+    {re:/\bwhen it comes to\b/gi, tier:2, label:'when it comes to', sug:'about / for'},
+    {re:/\bat the end of the day\b/gi, tier:2, label:'at the end of the day', sug:'cut it, or say what you mean directly'},
+    {re:/\blet'?s (delve|dive) into\b/gi, tier:1, label:"let's delve/dive into", sug:'cut the wind-up, start with the point'},
+    {re:/\bplays? an? (pivotal|crucial|key) role\b/gi, tier:2, label:'plays a pivotal/crucial role', sug:'say specifically why it matters'},
+    {re:/\bi hope this helps\b/gi, tier:2, label:'I hope this helps!', sug:'cut it, or personalize'},
+    {re:/\bas we move forward\b/gi, tier:2, label:'as we move forward', sug:'cut it, or "next,"'},
+    {re:/\bonly time will tell\b/gi, tier:2, label:'only time will tell', sug:'cut it'},
+    {re:/\bthe key takeaway\b/gi, tier:2, label:'the key takeaway', sug:'in short, / just state it'},
+    {re:/\bunlock(s|ed|ing)? the potential of\b/gi, tier:1, label:'unlock the potential of', sug:'improve (say how)'},
+    {re:/\bnavigate the complex(ities|ity)\b/gi, tier:1, label:'navigate the complexities', sug:'handle / work through'}
+  ];
+
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  }
+
+  function analyzeText(text){
+    var matches = [];
+    PHRASES.forEach(function(entry){
+      var re = new RegExp(entry.re.source, entry.re.flags);
+      var m;
+      while((m = re.exec(text)) !== null){
+        matches.push({start:m.index, end:m.index + m[0].length, text:m[0], tier:entry.tier, label:entry.label, sug:entry.sug});
+        if (m[0].length === 0) re.lastIndex++;
+      }
+    });
+    matches.sort(function(a,b){ return a.start - b.start; });
+
+    var cleaned = [];
+    var lastEnd = -1;
+    matches.forEach(function(m){
+      if (m.start >= lastEnd){ cleaned.push(m); lastEnd = m.end; }
+    });
+
+    var byLabel = {};
+    cleaned.forEach(function(m){
+      if (!byLabel[m.label]) byLabel[m.label] = {count:0, tier:m.tier, sug:m.sug};
+      byLabel[m.label].count++;
+    });
+
+    var words = text.trim().split(/\s+/).filter(Boolean);
+    var wordCount = words.length;
+    var sentences = text.split(/[.!?]+(?:\s+|$)/).map(function(s){return s.trim();}).filter(Boolean);
+    var sentenceLengths = sentences.map(function(s){ return s.split(/\s+/).filter(Boolean).length; });
+    var avgLen = sentenceLengths.length ? sentenceLengths.reduce(function(a,b){return a+b;},0) / sentenceLengths.length : 0;
+    var variance = sentenceLengths.length ? sentenceLengths.reduce(function(a,b){return a + Math.pow(b-avgLen,2);},0) / sentenceLengths.length : 0;
+    var stdDev = Math.sqrt(variance);
+
+    var contractionMatches = text.match(/\b\w+'(t|s|re|ve|ll|d)\b/gi) || [];
+    var emDashCount = (text.match(/—/g) || []).length;
+
+    var openerFlag = null;
+    var openerPatterns = [
+      {re:/^in today'?s/i, label:"opens with \u201cin today's...\u201d"},
+      {re:/^in (the|this) (ever-evolving|dynamic|digital)/i, label:'opens with "in the ever-evolving/dynamic..."'},
+      {re:/^(let'?s (delve|dive)|when it comes to)/i, label:'opens with throat-clearing before the point'}
+    ];
+    var firstChunk = text.trim().slice(0,80);
+    openerPatterns.forEach(function(p){ if(!openerFlag && p.re.test(firstChunk)) openerFlag = p.label; });
+
+    var closerFlag = null;
+    var closerPatterns = [
+      {re:/(in conclusion|to conclude)[,.]?\s*\S*$/i, label:'closes with "in conclusion"'},
+      {re:/at the end of the day[,.]?\s*\S*$/i, label:'closes with "at the end of the day"'},
+      {re:/only time will tell\.?\s*$/i, label:'closes with "only time will tell"'}
+    ];
+    var lastChunk = text.trim().slice(-80);
+    closerPatterns.forEach(function(p){ if(!closerFlag && p.re.test(lastChunk)) closerFlag = p.label; });
+
+    return {
+      wordCount: wordCount,
+      sentenceCount: sentences.length,
+      avgSentenceLength: avgLen,
+      sentenceStdDev: stdDev,
+      contractionCount: contractionMatches.length,
+      emDashCount: emDashCount,
+      emDashPer100: wordCount ? (emDashCount / wordCount) * 100 : 0,
+      openerFlag: openerFlag,
+      closerFlag: closerFlag,
+      matches: cleaned,
+      byLabel: byLabel
+    };
+  }
+
+  function renderHighlighted(text, matches){
+    var out = '';
+    var pos = 0;
+    matches.forEach(function(m){
+      out += escapeHtml(text.slice(pos, m.start));
+      out += '<mark class="t' + m.tier + '" title="' + escapeHtml(m.sug) + '">' + escapeHtml(text.slice(m.start, m.end)) + '</mark>';
+      pos = m.end;
+    });
+    out += escapeHtml(text.slice(pos));
+    return out || '<span style="color:var(--ink-soft)">(no text)</span>';
+  }
+
+  function sortedEntries(byLabel){
+    return Object.keys(byLabel).map(function(k){
+      return {label:k, count:byLabel[k].count, tier:byLabel[k].tier, sug:byLabel[k].sug};
+    }).sort(function(a,b){ if(a.tier!==b.tier) return a.tier-b.tier; return b.count-a.count; });
+  }
+
+  function renderPhraseList(entries){
+    if (!entries.length) return '<p class="empty-note" style="padding:10px 0;">No flagged phrases — looks clean by this check.</p>';
+    return '<ul class="phrase-list">' + entries.map(function(e){
+      return '<li><span class="tier-dot t'+e.tier+'"></span>' + escapeHtml(e.label) + (e.count>1?' <span class="count">\u00d7'+e.count+'</span>':'') + '</li>';
+    }).join('') + '</ul>';
+  }
+
+  function renderSuggestionList(entries){
+    if (!entries.length) return '<p class="empty-note" style="padding:10px 0;">No flagged phrases to suggest swaps for — looks clean.</p>';
+    return '<ul class="suggestion-list">' + entries.map(function(e){
+      return '<li><span class="tier-dot t'+e.tier+'"></span><strong>' + escapeHtml(e.label) + '</strong>' + (e.count>1?' <span class="count">\u00d7'+e.count+'</span>':'') + '<span class="arrow"> \u2192 </span>' + escapeHtml(e.sug) + '</li>';
+    }).join('') + '</ul>';
+  }
+
+  function buildNotes(r){
+    var notes = [];
+    if (r.openerFlag) notes.push('Opens with a stock phrase — ' + r.openerFlag.replace('opens with ',''));
+    if (r.closerFlag) notes.push('Closes with a stock phrase — ' + r.closerFlag.replace('closes with ',''));
+    if (r.sentenceCount >= 5 && r.sentenceStdDev < r.avgSentenceLength * 0.35){
+      notes.push('Sentence lengths are unusually uniform (avg ' + r.avgSentenceLength.toFixed(0) + ' words, not much variation) — natural writing tends to swing more between short and long.');
+    }
+    if (r.wordCount >= 80 && r.contractionCount === 0){
+      notes.push('No contractions anywhere in this length of text — common in AI output, but also just how some people write formally.');
+    }
+    if (r.emDashCount >= 3 && r.emDashPer100 > 1.5){
+      notes.push('Em dashes (\u2014) show up more than usual — ' + r.emDashCount + ' across ' + r.wordCount + ' words.');
+    }
+    return notes;
+  }
+
+  // ---- Tab switching ----
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      document.querySelectorAll('#panel-check, #panel-smooth').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  function setStatus(kind, msg){
+    var el = document.getElementById('wr-status');
+    el.className = 'status show ' + kind;
+    el.textContent = msg;
+  }
+
+  document.getElementById('wr-analyze-btn').addEventListener('click', function(){
+    var text = document.getElementById('wr-input').value;
+    var words = text.trim().split(/\s+/).filter(Boolean);
+
+    if (words.length < 12){
+      setStatus('error', 'Paste a bit more text — a few words isn\u2019t enough to say anything useful.');
+      return;
+    }
+
+    var r = analyzeText(text);
+    var entries = sortedEntries(r.byLabel);
+    var totalMatches = r.matches.length;
+
+    // Check tab
+    document.getElementById('wr-check-empty').style.display = 'none';
+    document.getElementById('wr-check-results').style.display = 'block';
+    document.getElementById('wr-highlighted-check').innerHTML = renderHighlighted(text, r.matches);
+    document.getElementById('wr-stats').innerHTML =
+      '<span><strong>' + r.wordCount + '</strong> words</span>' +
+      '<span><strong>' + r.sentenceCount + '</strong> sentences</span>' +
+      '<span><strong>' + totalMatches + '</strong> flagged instance' + (totalMatches===1?'':'s') + '</span>' +
+      '<span><strong>' + entries.length + '</strong> unique phrase' + (entries.length===1?'':'s') + '</span>';
+    var notes = buildNotes(r);
+    document.getElementById('wr-notes').innerHTML = notes.map(function(n){ return '<li>' + escapeHtml(n) + '</li>'; }).join('');
+    document.getElementById('wr-phrase-list').innerHTML = renderPhraseList(entries);
+
+    // Smooth tab
+    document.getElementById('wr-smooth-empty').style.display = 'none';
+    document.getElementById('wr-smooth-results').style.display = 'block';
+    document.getElementById('wr-highlighted-smooth').innerHTML = renderHighlighted(text, r.matches);
+    document.getElementById('wr-suggestion-list').innerHTML = renderSuggestionList(entries);
+
+    setStatus('success', 'Analyzed ' + r.wordCount + ' words \u2014 ' + totalMatches + ' flagged instance' + (totalMatches===1?'':'s') + ' across ' + entries.length + ' unique phrase' + (entries.length===1?'':'s') + '.');
+  });
+
+})();
+</script>
+</body>
+</html>
