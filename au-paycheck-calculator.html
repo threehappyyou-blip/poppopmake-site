@@ -7,8 +7,8 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<title>UK Paycheck Calculator (2026/27) — PopPopMake</title>
-<meta name="description" content="Free UK take-home pay calculator for 2026/27. See what's left after Income Tax and National Insurance, for the rest of the UK or Scotland.">
+<title>Australia Paycheck Calculator (2026-27) — PopPopMake</title>
+<meta name="description" content="Free Australian take-home pay calculator for 2026-27. See what's left after income tax, the Low Income Tax Offset, and the Medicare levy.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -23,8 +23,8 @@
   a{color:var(--teal);}
   .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
   :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
-  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}.skip-link:focus{left:0;}
-
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
 
   header{padding:22px 0;border-bottom:1px solid var(--line);}
   header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
@@ -37,7 +37,8 @@
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
   .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 16px;}
 
-  .switcher{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;margin-bottom:32px;text-decoration:none;}
+  .switcher-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:32px;}
+  .switcher{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;text-decoration:none;}
   .switcher:hover{border-color:var(--teal);color:var(--ink);}
 
   .layout{display:grid;grid-template-columns:1fr;gap:24px;}
@@ -73,6 +74,7 @@
   table.breakdown tbody tr:last-child td{border-bottom:none;}
   table.breakdown tr.net td{font-weight:700;background:rgba(15,139,141,0.06);}
   table.breakdown .neg{color:var(--orange);}
+  table.breakdown .pos{color:var(--teal);}
 
   .rate-strip{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;}
   .rate-strip .chip{
@@ -104,35 +106,30 @@
 </header>
 
 <main class="wrap" id="main-content">
-  <span class="eyebrow">Money &amp; Tax · 2026/27</span>
-  <h1>UK Paycheck Calculator</h1>
-  <p class="lede">Enter your salary to see what's actually left after Income Tax and National Insurance — covers the rest of the UK and Scotland's separate bands.</p>
-  <a class="switcher" href="/paycheck-calculator.html">🇺🇸 Need the US version instead? →</a>
-  <a class="switcher" href="/au-paycheck-calculator.html" style="margin-left:10px;">🇦🇺 Or Australia? →</a>
+  <span class="eyebrow">Money &amp; Tax · 2026-27</span>
+  <h1>Australia Paycheck Calculator</h1>
+  <p class="lede">Enter your salary to see what's actually left after income tax, the Low Income Tax Offset, and the Medicare levy — federal rates only, no state income tax in Australia.</p>
+  <div class="switcher-row">
+    <a class="switcher" href="/paycheck-calculator.html">🇺🇸 US version →</a>
+    <a class="switcher" href="/uk-paycheck-calculator.html">🇬🇧 UK version →</a>
+  </div>
 
   <div class="layout">
     <div class="panel">
       <div class="field">
         <label for="salary">Annual salary</label>
         <div class="salary-wrap">
-          <span>£</span>
-          <input type="number" id="salary" value="35000" min="0" step="500">
+          <span>$</span>
+          <input type="number" id="salary" value="70000" min="0" step="500">
         </div>
-      </div>
-      <div class="field">
-        <label for="region">Where you live</label>
-        <select id="region">
-          <option value="ruk">England, Wales, or Northern Ireland</option>
-          <option value="scotland">Scotland</option>
-        </select>
-        <div class="hint">Income Tax bands differ in Scotland; National Insurance is the same everywhere.</div>
+        <div class="hint">Base salary — superannuation is normally paid on top by your employer, not out of this.</div>
       </div>
       <div class="field">
         <label for="frequency">Pay frequency</label>
         <select id="frequency">
           <option value="52">Weekly</option>
-          <option value="12" selected>Monthly</option>
-          <option value="13">4-weekly</option>
+          <option value="26" selected>Fortnightly</option>
+          <option value="12">Monthly</option>
           <option value="1">Annual</option>
         </select>
       </div>
@@ -141,7 +138,7 @@
     <div class="results">
       <div class="take-home">
         <h2>Take-home pay per payslip</h2>
-        <div class="amount" id="netPerPeriod">£0</div>
+        <div class="amount" id="netPerPeriod">$0</div>
         <div class="sub" id="netAnnualSub"></div>
       </div>
 
@@ -154,11 +151,11 @@
 
       <div class="rate-strip">
         <span class="chip">Effective tax rate: <b id="effRate">0%</b></span>
-        <span class="chip">Personal Allowance used: <b id="paUsed">£0</b></span>
+        <span class="chip">Marginal bracket: <b id="marginalRate">0%</b></span>
       </div>
 
       <div class="disclaimer">
-        <strong>This is an estimate, not tax advice.</strong> It uses 2026/27 Income Tax bands and National Insurance thresholds (verified against gov.uk and gov.scot) and the standard tax-free Personal Allowance only — it doesn't account for pension contributions, student loan repayments, benefits-in-kind, or your actual tax code, which can change your real payslip. Confirm anything important with HMRC or your payroll department. Your income and region never leave your device — <a href="/how-it-works.html">see how to check that yourself</a>. See our <a href="/terms.html">Terms</a> for more.
+        <strong>This is an estimate, not tax advice.</strong> It uses 2026-27 resident tax brackets, the Low Income Tax Offset, and the standard 2% Medicare levy (verified against ato.gov.au) — it doesn't account for HECS/HELP repayments, salary-sacrificed super, private health insurance and the Medicare Levy Surcharge, or work-related deductions, any of which can change your real payslip. Confirm anything important with the ATO or your payroll department. Your income never leaves your device — <a href="/how-it-works.html">see how to check that yourself</a>. See our <a href="/terms.html">Terms</a> for more.
       </div>
     </div>
   </div>
@@ -184,18 +181,9 @@ if ('serviceWorker' in navigator) {
 </script>
 <script>
 (function(){
-  // ---- Verified 2026/27 UK tax data ----
-  // Income Tax (England/Wales/NI): gov.uk — Income Tax rates and Personal Allowances
-  var RUK_BANDS = [[0,37700,0.20],[37700,125140,0.40],[125140,Infinity,0.45]];
-  // Income Tax (Scotland): gov.scot — Scottish Income Tax rates and bands 2026 to 2027
-  var SCOT_BANDS = [[0,3967,0.19],[3967,16956,0.20],[16956,31092,0.21],[31092,62430,0.42],[62430,112570,0.45],[112570,Infinity,0.48]];
-  // National Insurance (Class 1, Category A): gov.uk — National Insurance rates and categories
-  var NI_PRIMARY_THRESHOLD = 12570;
-  var NI_UPPER_LIMIT = 50270;
-  var NI_MAIN_RATE = 0.08;
-  var NI_UPPER_RATE = 0.02;
-  var PA_FULL = 12570;
-  var PA_TAPER_START = 100000;
+  // ---- Verified FY2026-27 Australian tax data (ato.gov.au) ----
+  var AU_BRACKETS = [[0,18200,0],[18200,45000,0.15],[45000,135000,0.30],[135000,190000,0.37],[190000,Infinity,0.45]];
+  var ML_LOWER = 28011, ML_UPPER = 35013;
 
   function pt(income, brackets){
     if (income <= 0) return 0;
@@ -207,65 +195,70 @@ if ('serviceWorker' in navigator) {
     return tax;
   }
 
-  function personalAllowance(gross){
-    if (gross <= PA_TAPER_START) return PA_FULL;
-    return Math.max(0, PA_FULL - (gross - PA_TAPER_START)/2);
+  function calcLITO(income){
+    if (income <= 37500) return 700;
+    if (income <= 45000) return Math.max(0, 700 - (income-37500)*0.05);
+    if (income <= 66667) return Math.max(0, 325 - (income-45000)*0.015);
+    return 0;
   }
 
-  function calcIncomeTax(gross, scottish){
-    var pa = personalAllowance(gross);
-    var taxable = Math.max(0, gross - pa);
-    var bands = scottish ? SCOT_BANDS : RUK_BANDS;
-    return { tax: pt(taxable, bands), pa: pa, taxable: taxable };
+  function calcMedicareLevy(income){
+    if (income <= ML_LOWER) return 0;
+    if (income <= ML_UPPER) return (income - ML_LOWER) * 0.10;
+    return income * 0.02;
   }
 
-  function calcNI(gross){
-    var ni = 0;
-    if (gross > NI_PRIMARY_THRESHOLD) ni += (Math.min(gross, NI_UPPER_LIMIT) - NI_PRIMARY_THRESHOLD) * NI_MAIN_RATE;
-    if (gross > NI_UPPER_LIMIT) ni += (gross - NI_UPPER_LIMIT) * NI_UPPER_RATE;
-    return ni;
+  function marginalRateOf(income, brackets){
+    var rate = brackets[0][2];
+    for (var i=0;i<brackets.length;i++){
+      if (income > brackets[i][0]) rate = brackets[i][2];
+    }
+    return rate;
   }
 
   function fmt(n){
     var sign = n < 0 ? '-' : '';
-    return sign + '£' + Math.abs(n).toLocaleString('en-GB', {maximumFractionDigits:0});
+    return sign + '$' + Math.abs(n).toLocaleString('en-AU', {maximumFractionDigits:0});
   }
 
   function calc(){
     var gross = Math.max(0, parseFloat(document.getElementById('salary').value) || 0);
-    var scottish = document.getElementById('region').value === 'scotland';
     var periods = parseInt(document.getElementById('frequency').value, 10);
 
-    var it = calcIncomeTax(gross, scottish);
-    var ni = calcNI(gross);
-    var totalDeductions = it.tax + ni;
-    var netAnnual = gross - totalDeductions;
-    var effRate = gross > 0 ? (totalDeductions/gross*100) : 0;
+    var grossTax = pt(gross, AU_BRACKETS);
+    var lito = calcLITO(gross);
+    var taxAfterOffset = Math.max(0, grossTax - lito);
+    var medicare = calcMedicareLevy(gross);
+    var totalTax = taxAfterOffset + medicare;
+    var netAnnual = gross - totalTax;
+    var effRate = gross > 0 ? (totalTax/gross*100) : 0;
+    var marginal = marginalRateOf(gross, AU_BRACKETS);
 
     document.getElementById('netPerPeriod').textContent = fmt(netAnnual/periods);
-    document.getElementById('netAnnualSub').textContent = fmt(netAnnual) + ' per year, after tax and NI';
+    document.getElementById('netAnnualSub').textContent = fmt(netAnnual) + ' per year, after tax and Medicare levy';
     document.getElementById('effRate').textContent = effRate.toFixed(1) + '%';
-    document.getElementById('paUsed').textContent = fmt(it.pa);
+    document.getElementById('marginalRate').textContent = (marginal*100).toFixed(0) + '%';
 
     var rows = [
-      ['Gross pay', gross, gross/periods, false],
-      ['Income Tax (' + (scottish ? 'Scotland' : 'rest of UK') + ')', -it.tax, -it.tax/periods, true],
-      ['National Insurance', -ni, -ni/periods, true],
-      ['Take-home pay', netAnnual, netAnnual/periods, false]
+      ['Gross pay', gross, gross/periods, false]
     ];
+    if (grossTax > 0) rows.push(['Income tax', -grossTax, -grossTax/periods, true]);
+    if (lito > 0) rows.push(['Low Income Tax Offset', lito, lito/periods, false, true]);
+    if (medicare > 0) rows.push(['Medicare levy (2%)', -medicare, -medicare/periods, true]);
+    rows.push(['Take-home pay', netAnnual, netAnnual/periods, false]);
 
     var body = document.getElementById('breakdownBody');
     body.innerHTML = '';
     rows.forEach(function(r, idx){
       var tr = document.createElement('tr');
       if (idx === rows.length-1) tr.className = 'net';
-      var cls = r[3] ? 'neg' : '';
+      var cls = r[3] ? 'neg' : (r[4] ? 'pos' : '');
       tr.innerHTML = '<td>'+r[0]+'</td><td class="'+cls+'">'+fmt(r[1])+'</td><td class="'+cls+'">'+fmt(r[2])+'</td>';
       body.appendChild(tr);
     });
   }
 
-  ['salary','region','frequency'].forEach(function(id){
+  ['salary','frequency'].forEach(function(id){
     document.getElementById(id).addEventListener('input', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
     document.getElementById(id).addEventListener('change', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
   });
