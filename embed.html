@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Embed Our Tools — PopPopMake</title>
+<meta name="description" content="Drop a free, live PopPopMake calculator into your own site with one script tag. No signup, no API key, no branding you can't see coming.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.2rem;margin:0 0 4px;}
+  .lede{color:var(--ink-soft);max-width:62ch;margin:0 0 32px;}
+
+  .widget-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  .widget-card .desc{color:var(--ink-soft);font-size:0.92rem;margin:2px 0 18px;}
+  .demo-frame{border:1px dashed var(--line);border-radius:10px;padding:12px;background:var(--paper);margin-bottom:18px;}
+  .demo-frame .demo-label{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-soft);margin-bottom:8px;}
+
+  .snippet{position:relative;}
+  pre{background:var(--ink);color:#E8F0EF;border-radius:8px;padding:16px 18px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;overflow-x:auto;margin:0;line-height:1.6;}
+  .copy-btn{
+    position:absolute;top:10px;right:10px;background:var(--card);color:var(--ink);border:1px solid var(--line);
+    border-radius:6px;padding:6px 12px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;
+  }
+  .copy-btn:hover{border-color:var(--teal);}
+  .copy-btn.copied{background:var(--teal);color:#fff;border-color:var(--teal);}
+
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:8px;font-size:0.88rem;color:var(--ink-soft);}
+
+  .coming-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px;}
+  .coming-chip{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;color:var(--ink-soft);}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">For developers</span>
+  <h1>Embed Our Tools</h1>
+  <p class="lede">Drop a live, working PopPopMake tool into your own site with one script tag. No signup, no API key, no iframe wrangling on your end — it resizes itself. Free to use, forever, on any site.</p>
+
+  <div class="widget-card">
+    <h2>Paycheck Calculator</h2>
+    <p class="desc">All 50 states plus D.C., federal tax, FICA — the same calculator that's on this site, just sized to fit in a sidebar or inside an article.</p>
+
+    <div class="demo-frame">
+      <div class="demo-label">Live preview</div>
+      <div data-poppopmake-widget="paycheck-calculator"></div>
+    </div>
+
+    <div class="snippet">
+      <button class="copy-btn" id="copyBtn" type="button">Copy</button>
+      <pre id="snippetCode">&lt;div data-poppopmake-widget="paycheck-calculator"&gt;&lt;/div&gt;
+&lt;script src="https://poppopmake.com/embed-loader.js" async&gt;&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>How it works:</strong> The script finds any <code>&lt;div data-poppopmake-widget&gt;</code> on your page, drops in an iframe pointed at our servers, and listens for a resize message so it never leaves dead space or a scrollbar. It only loads on pages where you've actually placed the snippet — nothing runs site-wide. The one thing we ask in return is the small "Powered by PopPopMake" line at the bottom; it's how people find their way back here.
+  </div>
+
+  <h2 style="margin-top:36px;">More on the way</h2>
+  <p class="lede" style="margin-bottom:8px;">Same deal, once they're built:</p>
+  <div class="coming-row">
+    <span class="coming-chip">QR Code Generator</span>
+    <span class="coming-chip">Document Tools</span>
+  </div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script src="https://poppopmake.com/embed-loader.js" async></script>
+<script>
+(function(){
+  var btn = document.getElementById('copyBtn');
+  var code = document.getElementById('snippetCode');
+  btn.addEventListener('click', function(){
+    var text = code.textContent;
+    function done(){
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function(){
+        fallbackCopy(text, done);
+      });
+    } else {
+      fallbackCopy(text, done);
+    }
+  });
+  function fallbackCopy(text, done){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); } catch(e){}
+    document.body.removeChild(ta);
+  }
+})();
+</script>
+</body>
+</html>

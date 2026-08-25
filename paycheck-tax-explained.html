@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>How Your Paycheck Tax Actually Works (2026) — PopPopMake</title>
 <meta name="description" content="A plain-English walkthrough of federal tax, FICA, and state tax — and why your paycheck is smaller than your salary suggests.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -138,5 +141,12 @@
 </footer>
 
 <script src="/cookie-consent.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
 </body>
 </html>
