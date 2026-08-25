@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Changelog — PopPopMake</title>
+<meta name="description" content="What's shipped, what's fixed, and what got reported and fixed because someone said something.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 36px;}
+
+  .entry{position:relative;padding:0 0 32px 26px;border-left:2px solid var(--line);}
+  .entry:last-child{border-left-color:transparent;padding-bottom:0;}
+  .entry::before{content:'';position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--teal);border:2px solid var(--paper);}
+  .entry-date{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;letter-spacing:0.04em;color:var(--ink-soft);text-transform:uppercase;}
+  .entry h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;margin:6px 0 6px;}
+  .entry p{margin:0 0 8px;color:var(--ink-soft);font-size:0.95rem;}
+  .tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin-top:2px;}
+  .tag.caught{background:rgba(244,183,64,0.25);color:#7a5b06;}
+  .tag.shipped{background:rgba(15,139,141,0.12);color:var(--teal);}
+  .tag.reported{background:rgba(242,84,45,0.12);color:var(--orange);}
+
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-bottom:36px;font-size:0.9rem;color:var(--ink-soft);}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">Changelog</span>
+  <h1>What's Changed</h1>
+  <p class="lede">"Built in the open" is easy to put in a tagline. This page is what that actually means: what shipped, what broke and got caught before anyone saw it, and — once they start coming in — what got fixed because someone used the <a href="/feedback.html">Feedback</a> form.</p>
+
+  <div class="disclaimer">
+    Three kinds of entries show up here: <span class="tag shipped">Shipped</span> for something new, <span class="tag caught">Caught in testing</span> for a bug found and fixed before launch, and <span class="tag reported">Reported</span> for a fix that started with someone else noticing first. That last tag is empty today — it won't stay that way.
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 25, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h3>Jump to any tool with Cmd+K</h3>
+    <p>Press <strong>Cmd+K</strong> (or <strong>Ctrl+K</strong> on Windows/Linux) anywhere on the site to search and jump straight to any tool, guide, or page. There's also a small search button in the header for anyone who'd rather click.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 25, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h3>Send a converted PDF straight into Merge</h3>
+    <p>Convert images to a PDF, then send the result directly into the Merge tool without downloading and re-uploading it. First of a few tool-to-tool handoffs planned.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 25, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h3>UK Paycheck Calculator</h3>
+    <p>First country beyond the US. Covers Income Tax and National Insurance for 2026/27, with England/Wales/Northern Ireland and Scotland's separate six-band system both handled. Cross-checked the Scottish bands against an official worked example from gov.scot before shipping.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 24, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h3>A way to say thanks, if you want to</h3>
+    <p>A small card appears after a tool finishes something successfully, with a link to leave a tip if it helped. It shows once per visit, and the "no thanks" button is exactly as easy to hit as the tip one.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 24, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h3>Works offline, installs like an app</h3>
+    <p>Add PopPopMake to your home screen or desktop. Any tool you've already opened once keeps working with no connection at all.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 24, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h3>Embed the Paycheck Calculator on your own site</h3>
+    <p>One script tag, free, no signup, resizes itself automatically. Details on the <a href="/embed.html">Embed</a> page. More tools are getting the same treatment over time.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 24, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h3>A page that proves the privacy claim instead of just stating it</h3>
+    <p><a href="/how-it-works.html">How This Works</a> walks through checking, yourself, in your browser's own dev tools, that nothing you type into a tool ever gets sent anywhere.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 24, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h3>Feedback form</h3>
+    <p>Found something broken, or missing a tool you needed? There's finally a place to say so — goes straight to an inbox, not a queue.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 22, 2026</div>
+    <span class="tag caught">Caught in testing</span>
+    <h3>ATS checker was dropping real keywords</h3>
+    <p>While building the Career Tools launch, testing turned up two problems before anyone else saw them: short uppercase acronyms like <code>SQL</code> or <code>AWS</code> were getting filtered out if they only appeared once, and trailing punctuation was stopping some real keywords from matching at all. Both fixed before ship.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 22, 2026</div>
+    <span class="tag caught">Caught in testing</span>
+    <h3>Invoice totals could show &minus;$0.00</h3>
+    <p>A floating-point rounding edge case in the invoice calculator could produce a negative-zero total on certain line-item combinations. Caught during testing, fixed before the Business Tools launch.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 22, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h3>Career Tools and Business Tools</h3>
+    <p>Resume builder, ATS score checker, invoice generator, and QR code generator — all four running client-side, no accounts.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
