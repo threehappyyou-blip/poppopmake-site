@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Writing & AI Tools — PopPopMake</title>
 <meta name="description" content="Check text for common AI-writing clichés and get plain-language swaps to make it sound like you again. Free, no account, runs in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -151,6 +154,13 @@
 </footer>
 
 <script src="/cookie-consent.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
 <script>
 (function(){
 

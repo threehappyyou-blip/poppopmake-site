@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Guides — PopPopMake</title>
 <meta name="description" content="Plain-English guides on paycheck tax, take-home pay, and how the numbers behind PopPopMake's calculators actually work.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -79,5 +82,12 @@
 </footer>
 
 <script src="/cookie-consent.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
 </body>
 </html>

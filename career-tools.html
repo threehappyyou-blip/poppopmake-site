@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Career Tools — PopPopMake</title>
 <meta name="description" content="Build a resume as a clean, ATS-friendly PDF, then check how well it matches a job description before you apply.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -172,6 +175,13 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="/cookie-consent.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
 <script>
 (function(){
   var PDFDocument = PDFLib.PDFDocument;

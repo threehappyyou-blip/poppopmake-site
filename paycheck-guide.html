@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>How to Read Your Paycheck: A Plain-English Guide — PopPopMake</title>
 <meta name="description" content="What gross pay, net pay, FICA, and withholding actually mean — a plain-English walkthrough of every line on a US paycheck, updated for 2026.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -133,5 +137,12 @@
 </footer>
 
 <script src="/cookie-consent.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
 </body>
 </html>

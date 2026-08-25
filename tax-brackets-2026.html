@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>2026 Federal Tax Brackets Explained (With a Worked Example) — PopPopMake</title>
 <meta name="description" content="The 2026 federal income tax brackets, what 'marginal rate' actually means, and a full worked example showing exactly how the math is done.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -145,5 +149,12 @@
 </footer>
 
 <script src="/cookie-consent.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
 </body>
 </html>
