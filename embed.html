@@ -87,21 +87,46 @@
     </div>
 
     <div class="snippet">
-      <button class="copy-btn" id="copyBtn" type="button">Copy</button>
-      <pre id="snippetCode">&lt;div data-poppopmake-widget="paycheck-calculator"&gt;&lt;/div&gt;
+      <button class="copy-btn" type="button">Copy</button>
+      <pre class="snippet-code">&lt;div data-poppopmake-widget="paycheck-calculator"&gt;&lt;/div&gt;
+&lt;script src="https://poppopmake.com/embed-loader.js" async&gt;&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <div class="widget-card">
+    <h2>QR Code Generator</h2>
+    <p class="desc">Type a link, pick colors, download a PNG — the same generator from Business Tools, without the invoice half.</p>
+
+    <div class="demo-frame">
+      <div class="demo-label">Live preview</div>
+      <div data-poppopmake-widget="qr-generator"></div>
+    </div>
+
+    <div class="snippet">
+      <button class="copy-btn" type="button">Copy</button>
+      <pre class="snippet-code">&lt;div data-poppopmake-widget="qr-generator"&gt;&lt;/div&gt;
+&lt;script src="https://poppopmake.com/embed-loader.js" async&gt;&lt;/script&gt;</pre>
+    </div>
+  </div>
+
+  <div class="widget-card">
+    <h2>Merge PDFs</h2>
+    <p class="desc">Drag in two or more PDFs, reorder them, merge into one file — the Merge tool from Document Tools, on its own.</p>
+
+    <div class="demo-frame">
+      <div class="demo-label">Live preview</div>
+      <div data-poppopmake-widget="document-tools"></div>
+    </div>
+
+    <div class="snippet">
+      <button class="copy-btn" type="button">Copy</button>
+      <pre class="snippet-code">&lt;div data-poppopmake-widget="document-tools"&gt;&lt;/div&gt;
 &lt;script src="https://poppopmake.com/embed-loader.js" async&gt;&lt;/script&gt;</pre>
     </div>
   </div>
 
   <div class="disclaimer">
     <strong>How it works:</strong> The script finds any <code>&lt;div data-poppopmake-widget&gt;</code> on your page, drops in an iframe pointed at our servers, and listens for a resize message so it never leaves dead space or a scrollbar. It only loads on pages where you've actually placed the snippet — nothing runs site-wide. The one thing we ask in return is the small "Powered by PopPopMake" line at the bottom; it's how people find their way back here.
-  </div>
-
-  <h2 style="margin-top:36px;">More on the way</h2>
-  <p class="lede" style="margin-bottom:8px;">Same deal, once they're built:</p>
-  <div class="coming-row">
-    <span class="coming-chip">QR Code Generator</span>
-    <span class="coming-chip">Document Tools</span>
   </div>
 </main>
 
@@ -125,22 +150,23 @@ if ('serviceWorker' in navigator) {
 <script src="https://poppopmake.com/embed-loader.js" async></script>
 <script>
 (function(){
-  var btn = document.getElementById('copyBtn');
-  var code = document.getElementById('snippetCode');
-  btn.addEventListener('click', function(){
-    var text = code.textContent;
-    function done(){
-      btn.textContent = 'Copied!';
-      btn.classList.add('copied');
-      setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
-    }
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done).catch(function(){
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    var code = btn.parentElement.querySelector('.snippet-code');
+    btn.addEventListener('click', function(){
+      var text = code.textContent;
+      function done(){
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(function(){ btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function(){
+          fallbackCopy(text, done);
+        });
+      } else {
         fallbackCopy(text, done);
-      });
-    } else {
-      fallbackCopy(text, done);
-    }
+      }
+    });
   });
   function fallbackCopy(text, done){
     var ta = document.createElement('textarea');

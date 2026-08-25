@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QR Code Generator — PopPopMake</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:transparent;color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:2px;}
+  .embed{padding:14px;max-width:400px;margin:0 auto;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+  .field{margin-bottom:12px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-size:0.78rem;font-weight:600;margin-bottom:5px;}
+  input[type=text], select{
+    width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:0.9rem;background:#fff;color:var(--ink);
+  }
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .color-field{display:flex;align-items:center;gap:8px;}
+  input[type=color]{width:36px;height:32px;padding:2px;border:1px solid var(--line);border-radius:6px;cursor:pointer;background:#fff;}
+  .color-hex{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--ink-soft);}
+
+  .preview{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-align:center;margin-bottom:12px;}
+  #qr-holder{display:flex;align-items:center;justify-content:center;min-height:180px;background:#fff;border-radius:8px;padding:10px;}
+  #qr-holder img, #qr-holder canvas{max-width:100%;height:auto;}
+
+  .action-btn{width:100%;background:var(--teal);color:#fff;border:none;font-weight:600;font-size:0.9rem;padding:10px 16px;border-radius:999px;cursor:pointer;}
+  .action-btn:hover{opacity:0.92;}
+
+  .fine-print{font-size:0.68rem;color:var(--ink-soft);margin-top:10px;text-align:center;}
+  .badge{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 0 2px;font-size:0.76rem;color:var(--ink-soft);}
+  .badge a{color:var(--ink);text-decoration:none;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+  .badge a:hover{color:var(--teal);}
+</style>
+</head>
+<body>
+
+<div class="embed">
+  <div class="panel">
+    <div class="field">
+      <label for="qr-text">Link or text</label>
+      <input type="text" id="qr-text" value="https://poppopmake.com" placeholder="https://example.com">
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="qr-color-dark">Code color</label>
+        <div class="color-field">
+          <input type="color" id="qr-color-dark" value="#1C2321">
+          <span class="color-hex" id="qr-color-dark-hex">#1C2321</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="qr-color-light">Background</label>
+        <div class="color-field">
+          <input type="color" id="qr-color-light" value="#FFFFFF">
+          <span class="color-hex" id="qr-color-light-hex">#FFFFFF</span>
+        </div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="qr-size">Download size</label>
+      <select id="qr-size">
+        <option value="256">256 &times; 256 px</option>
+        <option value="512" selected>512 &times; 512 px</option>
+        <option value="1024">1024 &times; 1024 px</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="preview">
+    <div id="qr-holder" role="img" aria-label="QR code preview"></div>
+  </div>
+
+  <button class="action-btn" id="qr-download-btn" type="button">Download PNG</button>
+  <p class="fine-print">Runs in this frame only — nothing you type is sent anywhere.</p>
+
+  <div class="badge">
+    <svg width="16" height="16" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>
+    <span>Powered by <a href="https://poppopmake.com/business-tools.html" target="_blank" rel="noopener">PopPopMake</a></span>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var instanceId = params.get('instance') || '';
+
+  function sendHeight(){
+    var h = document.documentElement.scrollHeight;
+    window.parent.postMessage({type:'poppopmake-embed-resize', instance:instanceId, height:h}, '*');
+  }
+
+  var holder = document.getElementById('qr-holder');
+  var textInput = document.getElementById('qr-text');
+  var dark = document.getElementById('qr-color-dark');
+  var light = document.getElementById('qr-color-light');
+  var sizeSelect = document.getElementById('qr-size');
+
+  function renderQR(){
+    var text = textInput.value.trim() || 'https://poppopmake.com';
+    holder.innerHTML = '';
+    try {
+      new QRCode(holder, {
+        text: text, width: 200, height: 200,
+        colorDark: dark.value, colorLight: light.value,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } catch (e) { /* leave holder empty on bad input */ }
+  }
+
+  textInput.addEventListener('input', renderQR);
+  dark.addEventListener('input', function(){ document.getElementById('qr-color-dark-hex').textContent = dark.value.toUpperCase(); renderQR(); });
+  light.addEventListener('input', function(){ document.getElementById('qr-color-light-hex').textContent = light.value.toUpperCase(); renderQR(); });
+
+  document.getElementById('qr-download-btn').addEventListener('click', function(){
+    var text = textInput.value.trim() || 'https://poppopmake.com';
+    var size = parseInt(sizeSelect.value, 10);
+    var offscreen = document.createElement('div');
+    offscreen.style.position = 'fixed';
+    offscreen.style.left = '-9999px';
+    document.body.appendChild(offscreen);
+    try {
+      new QRCode(offscreen, { text: text, width: size, height: size, colorDark: dark.value, colorLight: light.value, correctLevel: QRCode.CorrectLevel.H });
+      setTimeout(function(){
+        var canvas = offscreen.querySelector('canvas');
+        if (canvas){
+          var url = canvas.toDataURL('image/png');
+          var a = document.createElement('a');
+          a.href = url; a.download = 'qr-code.png';
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+        document.body.removeChild(offscreen);
+      }, 50);
+    } catch(e){ document.body.removeChild(offscreen); }
+  });
+
+  renderQR();
+  window.addEventListener('load', sendHeight);
+  if (window.ResizeObserver) {
+    new ResizeObserver(sendHeight).observe(document.body);
+  } else {
+    setTimeout(sendHeight, 300);
+  }
+})();
+</script>
+</body>
+</html>
