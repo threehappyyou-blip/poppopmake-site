@@ -178,6 +178,9 @@
     <ul class="file-list" id="images-list"></ul>
     <button class="action-btn" id="images-btn" disabled>Convert to PDF</button>
     <div class="status" id="images-status"></div>
+    <div id="images-chain" style="display:none;margin-top:12px;">
+      <button class="action-btn" id="images-chain-btn" type="button" style="background:var(--teal);">Send this PDF to Merge &rarr;</button>
+    </div>
   </section>
 
   <!-- BACKGROUND REMOVAL PANEL -->
@@ -223,7 +226,7 @@
   </section>
 
   <div class="disclaimer">
-    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. <a href="/how-it-works.html">See how to check that yourself</a>, or read our <a href="/privacy.html">Privacy Policy</a> for more.
+    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, you can send the result straight into Merge without downloading it first. <a href="/how-it-works.html">See how to check that yourself</a>, or read our <a href="/privacy.html">Privacy Policy</a> for more.
   </div>
 </main>
 
@@ -439,9 +442,19 @@ if ('serviceWorker' in navigator) {
 
   // ================= IMAGES TO PDF =================
   var imgFiles = [];
+  var lastImagesPdfBytes = null;
   var imagesList = document.getElementById('images-list');
   var imagesBtn = document.getElementById('images-btn');
   var imagesStatus = document.getElementById('images-status');
+
+  document.getElementById('images-chain-btn').addEventListener('click', function(){
+    if (!lastImagesPdfBytes) return;
+    var chainedFile = new File([lastImagesPdfBytes], 'converted-images.pdf', { type: 'application/pdf' });
+    mergeFiles.push(chainedFile);
+    renderMergeList();
+    document.querySelector('.tab-btn[data-tab="merge"]').click();
+    setStatus(mergeStatus, 'success', 'Added your converted PDF to the merge list \u2014 add at least one more file, then hit Merge PDFs.');
+  });
 
   function renderImagesList(){
     imagesList.innerHTML = '';
@@ -496,6 +509,8 @@ if ('serviceWorker' in navigator) {
         var outBytes = await outDoc.save();
         downloadBlob(outBytes, 'images.pdf', 'application/pdf');
         setStatus(imagesStatus, 'success', 'Done. Your PDF (' + outDoc.getPageCount() + ' pages) has started downloading.');
+        lastImagesPdfBytes = outBytes;
+        document.getElementById('images-chain').style.display = 'block';
       } catch(err){
         setStatus(imagesStatus, 'error', 'Could not convert these images: ' + err.message);
       }
