@@ -5,7 +5,7 @@
    per browser session — it will not nag on a second or third success. */
 (function () {
   var SHOWN_KEY = 'ppm_thanks_shown';
-  var KOFI_USERNAME = 'YOUR_KOFI_USERNAME'; // <-- replace with your real ko-fi.com username
+  var KOFI_USERNAME = 'poppopmake';
 
   function alreadyShown() {
     try { return sessionStorage.getItem(SHOWN_KEY) === '1'; } catch (e) { return false; }
