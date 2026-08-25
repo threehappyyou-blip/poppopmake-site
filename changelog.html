@@ -77,6 +77,20 @@
   <div class="entry">
     <div class="entry-date">Aug 25, 2026</div>
     <span class="tag shipped">Shipped</span>
+    <h2>Canada Paycheck Calculator — all 10 provinces, 3 territories</h2>
+    <p>Fourth country, and the most complex one: federal tax with the Basic Personal Amount credit (including its high-income phase-out), all 13 provincial/territorial bracket tables, Ontario's two-tier surtax, CPP/CPP2, and EI (with Quebec's reduced rate). Quebec uses an approximation for QPP rather than a fully separate model — noted in the disclaimer.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 25, 2026</div>
+    <span class="tag caught">Caught in testing</span>
+    <h2>Ontario surtax was compounding incorrectly</h2>
+    <p>The two Ontario surtax tiers (20% and 36%) were being applied one on top of the other instead of both independently against the original provincial tax — a subtle bug that only showed up when checked against a known reference rate (20.53% combined marginal at the top bracket; the buggy version gave 21.48%). Fixed before the Canada calculator shipped.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 25, 2026</div>
+    <span class="tag shipped">Shipped</span>
     <h2>Australia Paycheck Calculator</h2>
     <p>Third country. Federal income tax, the Low Income Tax Offset, and the 2% Medicare levy (with the low-income shade-in) for FY2026-27 — no state income tax to model, since Australia doesn't have one. Checked against an ATO-published worked example ($80,000 income &rarr; $16,120 tax and levy) before shipping; matched exactly.</p>
   </div>

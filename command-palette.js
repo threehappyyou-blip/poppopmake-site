@@ -9,6 +9,7 @@
     { title: 'Paycheck Calculator (US)', desc: 'Federal tax, FICA, all 50 states', href: '/paycheck-calculator.html', kw: 'tax salary income take-home money usa america paycheck' },
     { title: 'UK Paycheck Calculator', desc: 'Income Tax and National Insurance, England/Wales/NI or Scotland', href: '/uk-paycheck-calculator.html', kw: 'tax salary income take-home money uk britain scotland paycheck' },
     { title: 'Australia Paycheck Calculator', desc: 'Income tax, LITO, and the Medicare levy', href: '/au-paycheck-calculator.html', kw: 'tax salary income take-home money australia medicare levy paycheck' },
+    { title: 'Canada Paycheck Calculator', desc: 'Federal + provincial tax, CPP/CPP2, EI, all provinces', href: '/ca-paycheck-calculator.html', kw: 'tax salary income take-home money canada cpp ei ontario quebec alberta paycheck' },
     { title: 'Career Tools', desc: 'Resume builder · ATS score checker', href: '/career-tools.html', kw: 'resume cv job ats career keyword' },
     { title: 'Business Tools', desc: 'Invoice generator · QR code generator', href: '/business-tools.html', kw: 'invoice qr code business billing' },
     { title: 'Writing & AI Tools', desc: 'Flag AI-ish phrases, get plain-language swaps', href: '/writing-tools.html', kw: 'ai writing detector checker text cliche' },

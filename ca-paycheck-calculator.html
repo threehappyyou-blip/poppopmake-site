@@ -7,8 +7,8 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<title>Australia Paycheck Calculator (2026-27) — PopPopMake</title>
-<meta name="description" content="Free Australian take-home pay calculator for 2026-27. See what's left after income tax, the Low Income Tax Offset, and the Medicare levy.">
+<title>Canada Paycheck Calculator (2026) — PopPopMake</title>
+<meta name="description" content="Free Canadian take-home pay calculator for 2026. Federal and provincial/territorial tax, CPP/CPP2, and EI for all 10 provinces and 3 territories.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -74,7 +74,6 @@
   table.breakdown tbody tr:last-child td{border-bottom:none;}
   table.breakdown tr.net td{font-weight:700;background:rgba(15,139,141,0.06);}
   table.breakdown .neg{color:var(--orange);}
-  table.breakdown .pos{color:var(--teal);}
 
   .rate-strip{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;}
   .rate-strip .chip{
@@ -106,13 +105,13 @@
 </header>
 
 <main class="wrap" id="main-content">
-  <span class="eyebrow">Money &amp; Tax · 2026-27</span>
-  <h1>Australia Paycheck Calculator</h1>
-  <p class="lede">Enter your salary to see what's actually left after income tax, the Low Income Tax Offset, and the Medicare levy — federal rates only, no state income tax in Australia.</p>
+  <span class="eyebrow">Money &amp; Tax · 2026</span>
+  <h1>Canada Paycheck Calculator</h1>
+  <p class="lede">Enter your salary and province to see what's left after federal tax, provincial tax, CPP/CPP2, and EI — all 10 provinces and 3 territories.</p>
   <div class="switcher-row">
     <a class="switcher" href="/paycheck-calculator.html">🇺🇸 US version →</a>
     <a class="switcher" href="/uk-paycheck-calculator.html">🇬🇧 UK version →</a>
-    <a class="switcher" href="/ca-paycheck-calculator.html">🇨🇦 Canada version →</a>
+    <a class="switcher" href="/au-paycheck-calculator.html">🇦🇺 Australia version →</a>
   </div>
 
   <div class="layout">
@@ -123,13 +122,32 @@
           <span>$</span>
           <input type="number" id="salary" value="70000" min="0" step="500">
         </div>
-        <div class="hint">Base salary — superannuation is normally paid on top by your employer, not out of this.</div>
+      </div>
+      <div class="field">
+        <label for="province">Province or territory</label>
+        <select id="province">
+          <option value="AB">Alberta</option>
+          <option value="BC">British Columbia</option>
+          <option value="MB">Manitoba</option>
+          <option value="NB">New Brunswick</option>
+          <option value="NL">Newfoundland and Labrador</option>
+          <option value="NS">Nova Scotia</option>
+          <option value="NT">Northwest Territories</option>
+          <option value="NU">Nunavut</option>
+          <option value="ON" selected>Ontario</option>
+          <option value="PE">Prince Edward Island</option>
+          <option value="QC">Quebec</option>
+          <option value="SK">Saskatchewan</option>
+          <option value="YT">Yukon</option>
+        </select>
+        <div class="hint" id="provinceHint"></div>
       </div>
       <div class="field">
         <label for="frequency">Pay frequency</label>
         <select id="frequency">
           <option value="52">Weekly</option>
-          <option value="26" selected>Fortnightly</option>
+          <option value="26" selected>Biweekly</option>
+          <option value="24">Semi-monthly</option>
           <option value="12">Monthly</option>
           <option value="1">Annual</option>
         </select>
@@ -138,25 +156,25 @@
 
     <div class="results">
       <div class="take-home">
-        <h2>Take-home pay per payslip</h2>
+        <h2>Take-home pay per paycheque</h2>
         <div class="amount" id="netPerPeriod">$0</div>
         <div class="sub" id="netAnnualSub"></div>
       </div>
 
       <table class="breakdown">
         <thead>
-          <tr><th>Item</th><th>Per year</th><th>Per payslip</th></tr>
+          <tr><th>Item</th><th>Per year</th><th>Per paycheque</th></tr>
         </thead>
         <tbody id="breakdownBody"></tbody>
       </table>
 
       <div class="rate-strip">
         <span class="chip">Effective tax rate: <b id="effRate">0%</b></span>
-        <span class="chip">Marginal bracket: <b id="marginalRate">0%</b></span>
+        <span class="chip">Federal + provincial: <b id="combinedRate">0%</b></span>
       </div>
 
       <div class="disclaimer">
-        <strong>This is an estimate, not tax advice.</strong> It uses 2026-27 resident tax brackets, the Low Income Tax Offset, and the standard 2% Medicare levy (verified against ato.gov.au) — it doesn't account for HECS/HELP repayments, salary-sacrificed super, private health insurance and the Medicare Levy Surcharge, or work-related deductions, any of which can change your real payslip. Confirm anything important with the ATO or your payroll department. Your income never leaves your device — <a href="/how-it-works.html">see how to check that yourself</a>. See our <a href="/terms.html">Terms</a> for more.
+        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal and provincial/territorial tax brackets, the federal Basic Personal Amount, Ontario's surtax, and CPP/CPP2/EI (verified against canada.ca and revenuquebec.ca). It doesn't include provincial basic personal amount credits, RRSP or other deductions, or Quebec's QPIP premium — Quebec uses an approximation (standard CPP/CPP2 rates and the federal abatement) rather than a fully separate QPP model. Any of these can change your real paycheque. Confirm anything important with the CRA (or Revenu Québec) or your payroll department. Your income and province never leave your device — <a href="/how-it-works.html">see how to check that yourself</a>. See our <a href="/terms.html">Terms</a> for more.
       </div>
     </div>
   </div>
@@ -182,84 +200,142 @@ if ('serviceWorker' in navigator) {
 </script>
 <script>
 (function(){
-  // ---- Verified FY2026-27 Australian tax data (ato.gov.au) ----
-  var AU_BRACKETS = [[0,18200,0],[18200,45000,0.15],[45000,135000,0.30],[135000,190000,0.37],[190000,Infinity,0.45]];
-  var ML_LOWER = 28011, ML_UPPER = 35013;
-
-  function pt(income, brackets){
-    if (income <= 0) return 0;
-    var tax = 0;
-    for (var i=0;i<brackets.length;i++){
-      var lo=brackets[i][0], hi=brackets[i][1], rate=brackets[i][2];
-      if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
-    }
-    return tax;
+  // ---- Verified 2026 Canadian tax data (canada.ca / revenuquebec.ca, verified 2026-08-25) ----
+function pt(income, brackets){
+  if (income <= 0) return 0;
+  var tax = 0;
+  for (var i=0;i<brackets.length;i++){
+    var lo=brackets[i][0], hi=brackets[i][1], rate=brackets[i][2];
+    if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
   }
+  return tax;
+}
 
-  function calcLITO(income){
-    if (income <= 37500) return 700;
-    if (income <= 45000) return Math.max(0, 700 - (income-37500)*0.05);
-    if (income <= 66667) return Math.max(0, 325 - (income-45000)*0.015);
-    return 0;
-  }
+// ---- Federal 2026 (CRA, verified 2026-08-25) ----
+var FED_BRACKETS = [[0,58523,0.14],[58523,117045,0.205],[117045,181440,0.26],[181440,258482,0.29],[258482,Infinity,0.33]];
+var BPA_MAX = 16452, BPA_MIN = 14829, BPA_PHASE_START = 181440, BPA_PHASE_END = 258482;
+var BPA_CREDIT_RATE = 0.14; // lowest federal bracket rate
 
-  function calcMedicareLevy(income){
-    if (income <= ML_LOWER) return 0;
-    if (income <= ML_UPPER) return (income - ML_LOWER) * 0.10;
-    return income * 0.02;
-  }
+function federalBPA(income){
+  if (income <= BPA_PHASE_START) return BPA_MAX;
+  if (income >= BPA_PHASE_END) return BPA_MIN;
+  var frac = (income - BPA_PHASE_START) / (BPA_PHASE_END - BPA_PHASE_START);
+  return BPA_MAX - (BPA_MAX - BPA_MIN) * frac;
+}
 
-  function marginalRateOf(income, brackets){
-    var rate = brackets[0][2];
-    for (var i=0;i<brackets.length;i++){
-      if (income > brackets[i][0]) rate = brackets[i][2];
-    }
-    return rate;
+function federalTax(income, isQuebec){
+  var gross = pt(income, FED_BRACKETS);
+  var credit = federalBPA(income) * BPA_CREDIT_RATE;
+  var tax = Math.max(0, gross - credit);
+  if (isQuebec) tax = tax * (1 - 0.165); // Quebec federal abatement
+  return tax;
+}
+
+// ---- Provinces/territories 2026 (CRA + Revenu Quebec, verified 2026-08-25) ----
+var PROVINCES = {
+  AB: { name:"Alberta", brackets:[[0,61200,0.08],[61200,154259,0.10],[154259,185111,0.12],[185111,246813,0.13],[246813,370220,0.14],[370220,Infinity,0.15]] },
+  BC: { name:"British Columbia", brackets:[[0,50363,0.056],[50363,100728,0.077],[100728,115648,0.105],[115648,140430,0.1229],[140430,190405,0.147],[190405,265545,0.168],[265545,Infinity,0.205]] },
+  MB: { name:"Manitoba", brackets:[[0,47564,0.108],[47564,101200,0.1275],[101200,Infinity,0.174]] },
+  NB: { name:"New Brunswick", brackets:[[0,52333,0.094],[52333,104666,0.14],[104666,193861,0.16],[193861,Infinity,0.195]] },
+  NL: { name:"Newfoundland and Labrador", brackets:[[0,44678,0.087],[44678,89354,0.145],[89354,159528,0.158],[159528,223340,0.178],[223340,285319,0.198],[285319,570638,0.208],[570638,1141275,0.213],[1141275,Infinity,0.218]] },
+  NS: { name:"Nova Scotia", brackets:[[0,30995,0.0879],[30995,61991,0.1495],[61991,97417,0.1667],[97417,157124,0.175],[157124,Infinity,0.21]] },
+  NT: { name:"Northwest Territories", brackets:[[0,53003,0.059],[53003,106009,0.086],[106009,172346,0.122],[172346,Infinity,0.1405]] },
+  NU: { name:"Nunavut", brackets:[[0,55801,0.04],[55801,111602,0.07],[111602,181439,0.09],[181439,Infinity,0.115]] },
+  ON: { name:"Ontario", brackets:[[0,53891,0.0505],[53891,107785,0.0915],[107785,150000,0.1116],[150000,220000,0.1216],[220000,Infinity,0.1316]], surtax:[[5818,0.20],[7446,0.36]] },
+  PE: { name:"Prince Edward Island", brackets:[[0,33928,0.095],[33928,65820,0.1347],[65820,106890,0.166],[106890,142520,0.1762],[142520,200000,0.19],[200000,Infinity,0.20]] },
+  QC: { name:"Quebec", brackets:[[0,54345,0.14],[54345,108680,0.19],[108680,132245,0.24],[132245,Infinity,0.2575]] },
+  SK: { name:"Saskatchewan", brackets:[[0,54532,0.105],[54532,155805,0.125],[155805,Infinity,0.145]] },
+  YT: { name:"Yukon", brackets:[[0,58523,0.064],[58523,117045,0.09],[117045,181440,0.109],[181440,500000,0.128],[500000,Infinity,0.15]] }
+};
+
+function provincialTax(code, income){
+  var p = PROVINCES[code];
+  var basicTax = pt(income, p.brackets);
+  var tax = basicTax;
+  if (p.surtax){
+    p.surtax.forEach(function(tier){
+      if (basicTax > tier[0]) tax += (basicTax - tier[0]) * tier[1];
+    });
   }
+  return tax;
+}
+
+// ---- CPP / CPP2 / EI 2026 (CRA, verified 2026-08-25) ----
+var CPP_EXEMPT = 3500, CPP_YMPE = 74600, CPP_RATE = 0.0595;
+var CPP2_YAMPE = 85000, CPP2_RATE = 0.04;
+var EI_MIE = 68900, EI_RATE = 0.0163, EI_RATE_QC = 0.0130;
+
+function calcCPP(income){
+  var base = Math.max(0, Math.min(income, CPP_YMPE) - CPP_EXEMPT) * CPP_RATE;
+  var cpp2 = Math.max(0, Math.min(income, CPP2_YAMPE) - CPP_YMPE) * CPP2_RATE;
+  return { base: base, cpp2: cpp2, total: base + cpp2 };
+}
+
+function calcEI(income, isQuebec){
+  var rate = isQuebec ? EI_RATE_QC : EI_RATE;
+  return Math.min(income, EI_MIE) * rate;
+}
+
+function calcCanadaTax(gross, provinceCode){
+  var isQC = provinceCode === 'QC';
+  var fed = federalTax(gross, isQC);
+  var prov = provincialTax(provinceCode, gross);
+  var cpp = calcCPP(gross);
+  var ei = calcEI(gross, isQC);
+  var totalDeductions = fed + prov + cpp.total + ei;
+  return {
+    federal: fed, provincial: prov, cpp: cpp.base, cpp2: cpp.cpp2, ei: ei,
+    totalDeductions: totalDeductions, net: gross - totalDeductions
+  };
+}
+
 
   function fmt(n){
     var sign = n < 0 ? '-' : '';
-    return sign + '$' + Math.abs(n).toLocaleString('en-AU', {maximumFractionDigits:0});
+    return sign + '$' + Math.abs(n).toLocaleString('en-CA', {maximumFractionDigits:0});
   }
 
   function calc(){
     var gross = Math.max(0, parseFloat(document.getElementById('salary').value) || 0);
+    var provinceCode = document.getElementById('province').value;
     var periods = parseInt(document.getElementById('frequency').value, 10);
 
-    var grossTax = pt(gross, AU_BRACKETS);
-    var lito = calcLITO(gross);
-    var taxAfterOffset = Math.max(0, grossTax - lito);
-    var medicare = calcMedicareLevy(gross);
-    var totalTax = taxAfterOffset + medicare;
-    var netAnnual = gross - totalTax;
-    var effRate = gross > 0 ? (totalTax/gross*100) : 0;
-    var marginal = marginalRateOf(gross, AU_BRACKETS);
+    var r = calcCanadaTax(gross, provinceCode);
+    var netAnnual = gross - r.totalDeductions;
+    var effRate = gross > 0 ? (r.totalDeductions/gross*100) : 0;
+    var combinedRate = gross > 0 ? ((r.federal + r.provincial)/gross*100) : 0;
+
+    document.getElementById('provinceHint').textContent = provinceCode === 'QC'
+      ? 'Quebec: federal abatement applied; CPP/CPP2 rates used as an approximation for QPP.'
+      : PROVINCES[provinceCode].name + ' provincial tax' + (PROVINCES[provinceCode].surtax ? ' (includes Ontario surtax)' : '') + '.';
 
     document.getElementById('netPerPeriod').textContent = fmt(netAnnual/periods);
-    document.getElementById('netAnnualSub').textContent = fmt(netAnnual) + ' per year, after tax and Medicare levy';
+    document.getElementById('netAnnualSub').textContent = fmt(netAnnual) + ' per year, after all deductions';
     document.getElementById('effRate').textContent = effRate.toFixed(1) + '%';
-    document.getElementById('marginalRate').textContent = (marginal*100).toFixed(0) + '%';
+    document.getElementById('combinedRate').textContent = combinedRate.toFixed(1) + '%';
 
     var rows = [
-      ['Gross pay', gross, gross/periods, false]
+      ['Gross pay', gross, gross/periods, false],
+      ['Federal tax', -r.federal, -r.federal/periods, true],
+      [PROVINCES[provinceCode].name + ' tax', -r.provincial, -r.provincial/periods, true],
+      ['CPP', -r.cpp, -r.cpp/periods, true]
     ];
-    if (grossTax > 0) rows.push(['Income tax', -grossTax, -grossTax/periods, true]);
-    if (lito > 0) rows.push(['Low Income Tax Offset', lito, lito/periods, false, true]);
-    if (medicare > 0) rows.push(['Medicare levy (2%)', -medicare, -medicare/periods, true]);
+    if (r.cpp2 > 0) rows.push(['CPP2', -r.cpp2, -r.cpp2/periods, true]);
+    rows.push(['EI', -r.ei, -r.ei/periods, true]);
     rows.push(['Take-home pay', netAnnual, netAnnual/periods, false]);
 
     var body = document.getElementById('breakdownBody');
     body.innerHTML = '';
-    rows.forEach(function(r, idx){
+    rows.forEach(function(row, idx){
       var tr = document.createElement('tr');
       if (idx === rows.length-1) tr.className = 'net';
-      var cls = r[3] ? 'neg' : (r[4] ? 'pos' : '');
-      tr.innerHTML = '<td>'+r[0]+'</td><td class="'+cls+'">'+fmt(r[1])+'</td><td class="'+cls+'">'+fmt(r[2])+'</td>';
+      var cls = row[3] ? 'neg' : '';
+      tr.innerHTML = '<td>'+row[0]+'</td><td class="'+cls+'">'+fmt(row[1])+'</td><td class="'+cls+'">'+fmt(row[2])+'</td>';
       body.appendChild(tr);
     });
   }
 
-  ['salary','frequency'].forEach(function(id){
+  ['salary','province','frequency'].forEach(function(id){
     document.getElementById(id).addEventListener('input', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
     document.getElementById(id).addEventListener('change', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
   });
