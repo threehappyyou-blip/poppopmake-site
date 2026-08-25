@@ -15,7 +15,7 @@
 <style>
   :root{
     --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
-    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
     --line:rgba(28,35,33,0.12); --radius:14px;
   }
   *{box-sizing:border-box;}
@@ -23,6 +23,8 @@
   a{color:var(--teal);}
   .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
   :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}.skip-link:focus{left:0;}
+
   header{padding:22px 0;border-bottom:1px solid var(--line);}
   header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
@@ -87,6 +89,7 @@
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <header>
   <div class="inner">
@@ -95,7 +98,7 @@
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main-content">
   <span class="eyebrow">Career</span>
   <h1>Career Tools</h1>
   <p class="lede">Build a clean, ATS-friendly resume, then check it against a real job description before you hit apply.</p>
@@ -151,9 +154,9 @@
         <div class="score-label" id="ats-score-label">Keyword match against this job description.</div>
       </div>
       <div class="kw-group">
-        <h4>Matched keywords</h4>
+        <h3>Matched keywords</h3>
         <div class="kw-chips" id="ats-matched"></div>
-        <h4>Missing keywords</h4>
+        <h3>Missing keywords</h3>
         <div class="kw-chips" id="ats-missing"></div>
       </div>
     </div>
@@ -211,7 +214,7 @@ if ('serviceWorker' in navigator) {
     var div = document.createElement('div');
     div.className = 'entry-card';
     div.innerHTML =
-      '<button type="button" class="remove-entry" title="Remove">&times;</button>' +
+      '<button type="button" class="remove-entry" title="Remove" aria-label="Remove">&times;</button>' +
       '<div class="row2">' +
         '<div class="field"><label>Job title</label><input type="text" class="exp-title" placeholder="Senior Product Manager"></div>' +
         '<div class="field"><label>Company</label><input type="text" class="exp-company" placeholder="Acme Corp"></div>' +
@@ -226,7 +229,7 @@ if ('serviceWorker' in navigator) {
     var div = document.createElement('div');
     div.className = 'entry-card';
     div.innerHTML =
-      '<button type="button" class="remove-entry" title="Remove">&times;</button>' +
+      '<button type="button" class="remove-entry" title="Remove" aria-label="Remove">&times;</button>' +
       '<div class="row2">' +
         '<div class="field"><label>Degree</label><input type="text" class="edu-degree" placeholder="B.S. Computer Science"></div>' +
         '<div class="field"><label>School</label><input type="text" class="edu-school" placeholder="University of Washington"></div>' +

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Accessibility — PopPopMake</title>
+<meta name="description" content="What this site targets for accessibility (WCAG 2.1 AA), what's been checked, and what hasn't yet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.2rem;margin:32px 0 10px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 28px;}
+  p{margin:0 0 14px;}
+  ul{margin:0 0 14px;padding-left:22px;}
+  li{margin-bottom:6px;}
+  .status-list{list-style:none;padding:0;margin:0 0 8px;}
+  .status-list li{display:flex;gap:10px;align-items:flex-start;margin-bottom:10px;padding:0;}
+  .status-list .dot{flex-shrink:0;width:20px;text-align:center;}
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin:24px 0;font-size:0.9rem;color:var(--ink-soft);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Accessibility</span>
+  <h1>Accessibility Statement</h1>
+  <p class="lede">The target is WCAG 2.1 Level AA. Here's what that's meant in practice, what's actually been checked, and — just as important — what hasn't been checked yet. No overlay plugin, no automated badge; just a plain account of the work.</p>
+
+  <h2>What's been done</h2>
+  <ul class="status-list">
+    <li><span class="dot">&check;</span><span>Every text and background color pair on the site had its contrast ratio calculated directly, not estimated by eye. Anything under 4.5:1 for normal text was darkened until it passed — this covers body text, links, button labels, and small tag labels.</span></li>
+    <li><span class="dot">&check;</span><span>A "Skip to main content" link is the first focusable thing on every page, for keyboard and screen-reader users who don't want to tab through the header every time.</span></li>
+    <li><span class="dot">&check;</span><span>Every input has a real, associated <code>&lt;label&gt;</code> — not just a placeholder standing in for one.</span></li>
+    <li><span class="dot">&check;</span><span>Icon-only buttons (the little &uarr; &darr; &times; controls for reordering files) carry an <code>aria-label</code>, not just a hover tooltip.</span></li>
+    <li><span class="dot">&check;</span><span>Headings step down in order (h1 &rarr; h2 &rarr; h3) with nothing skipped, page by page, so screen-reader users navigating by heading get an accurate outline.</span></li>
+    <li><span class="dot">&check;</span><span>Focus is always visible — every interactive element gets a clear outline when reached by keyboard, and it isn't suppressed anywhere.</span></li>
+    <li><span class="dot">&check;</span><span>Motion respects <code>prefers-reduced-motion</code> where the site animates anything.</span></li>
+  </ul>
+
+  <h2>What hasn't been done yet</h2>
+  <p>This is the honest part. Everything above was checked systematically in code — contrast math, label associations, heading order. None of it has been walked through with an actual screen reader (VoiceOver, NVDA, JAWS) by someone who uses one daily, which is the only way to catch the things code review can't: awkward reading order, a control that's technically labeled but confusingly so, a live region that announces at the wrong moment. That testing hasn't happened yet. If you use assistive technology and something here doesn't work the way it should, that's exactly the kind of report that's most useful — see below.</p>
+
+  <div class="disclaimer">
+    <strong>Where this matters most:</strong> the document tools involve genuinely visual tasks — cropping a photo, checking a background-removal result — that don't reduce to a fully non-visual equivalent. The calculators, career tools, and writing tools are the ones most likely to work well end-to-end with a screen reader.
+  </div>
+
+  <h2>Report a problem</h2>
+  <p>If a tool doesn't work with your keyboard, your screen reader, or anything else — that's a bug, and it goes on the <a href="/changelog.html">Changelog</a> once it's fixed. <a href="/feedback.html">Tell us</a> what happened and what you were trying to do.</p>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

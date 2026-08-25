@@ -15,6 +15,7 @@
     { title: 'Embed Our Tools', desc: 'Put a live calculator on your own site, free', href: '/embed.html', kw: 'widget developer iframe embed code' },
     { title: 'Feedback', desc: 'Report a bug or request a tool', href: '/feedback.html', kw: 'bug report contact support request' },
     { title: 'Changelog', desc: 'What shipped, what got fixed, and why', href: '/changelog.html', kw: 'updates news history built in the open' },
+    { title: 'Accessibility', desc: 'WCAG 2.1 AA target, what\u2019s checked, what isn\u2019t yet', href: '/accessibility.html', kw: 'a11y screen reader keyboard contrast wcag' },
     { title: 'How This Works', desc: 'Privacy, no limits, no dark patterns', href: '/how-it-works.html', kw: 'privacy trust verify data limits' },
     { title: 'Terms', desc: 'Terms of use', href: '/terms.html', kw: 'legal terms' },
     { title: 'Privacy Policy', desc: 'What data is and isn\u2019t collected', href: '/privacy.html', kw: 'legal data cookies' }

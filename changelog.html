@@ -15,7 +15,7 @@
 <style>
   :root{
     --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
-    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
     --line:rgba(28,35,33,0.12); --radius:14px;
   }
   *{box-sizing:border-box;}
@@ -23,6 +23,8 @@
   a{color:var(--teal);}
   .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
   :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}.skip-link:focus{left:0;}
+
   header{padding:22px 0;border-bottom:1px solid var(--line);}
   header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
@@ -37,12 +39,12 @@
   .entry:last-child{border-left-color:transparent;padding-bottom:0;}
   .entry::before{content:'';position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--teal);border:2px solid var(--paper);}
   .entry-date{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;letter-spacing:0.04em;color:var(--ink-soft);text-transform:uppercase;}
-  .entry h3{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;margin:6px 0 6px;}
+  .entry h2{font-family:'Space Grotesk',sans-serif;font-size:1.1rem;margin:6px 0 6px;}
   .entry p{margin:0 0 8px;color:var(--ink-soft);font-size:0.95rem;}
   .tag{display:inline-block;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;padding:3px 9px;border-radius:999px;margin-top:2px;}
   .tag.caught{background:rgba(244,183,64,0.25);color:#7a5b06;}
-  .tag.shipped{background:rgba(15,139,141,0.12);color:var(--teal);}
-  .tag.reported{background:rgba(242,84,45,0.12);color:var(--orange);}
+  .tag.shipped{background:rgba(15,139,141,0.12);color:#0C6F70;}
+  .tag.reported{background:rgba(242,84,45,0.12);color:#B03D20;}
 
   .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-bottom:36px;font-size:0.9rem;color:var(--ink-soft);}
 
@@ -54,6 +56,7 @@
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <header>
   <div class="inner">
@@ -62,7 +65,7 @@
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main-content">
   <span class="eyebrow">Changelog</span>
   <h1>What's Changed</h1>
   <p class="lede">"Built in the open" is easy to put in a tagline. This page is what that actually means: what shipped, what broke and got caught before anyone saw it, and — once they start coming in — what got fixed because someone used the <a href="/feedback.html">Feedback</a> form.</p>
@@ -74,77 +77,84 @@
   <div class="entry">
     <div class="entry-date">Aug 25, 2026</div>
     <span class="tag shipped">Shipped</span>
-    <h3>Jump to any tool with Cmd+K</h3>
+    <h2>Accessibility pass: contrast, keyboard, screen readers</h2>
+    <p>Every text/background color combination on the site had its contrast ratio calculated, not eyeballed — the link color and primary button color were both failing WCAG AA (4.12:1 and 3.45:1, needed 4.5:1) and got darkened just enough to pass. Added skip-to-content links, fixed two skipped heading levels, added labels to icon-only buttons, and wrote up an honest <a href="/accessibility.html">Accessibility Statement</a> — including what hasn't been tested yet.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 25, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>Jump to any tool with Cmd+K</h2>
     <p>Press <strong>Cmd+K</strong> (or <strong>Ctrl+K</strong> on Windows/Linux) anywhere on the site to search and jump straight to any tool, guide, or page. There's also a small search button in the header for anyone who'd rather click.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 25, 2026</div>
     <span class="tag shipped">Shipped</span>
-    <h3>Send a converted PDF straight into Merge</h3>
+    <h2>Send a converted PDF straight into Merge</h2>
     <p>Convert images to a PDF, then send the result directly into the Merge tool without downloading and re-uploading it. First of a few tool-to-tool handoffs planned.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 25, 2026</div>
     <span class="tag shipped">Shipped</span>
-    <h3>UK Paycheck Calculator</h3>
+    <h2>UK Paycheck Calculator</h2>
     <p>First country beyond the US. Covers Income Tax and National Insurance for 2026/27, with England/Wales/Northern Ireland and Scotland's separate six-band system both handled. Cross-checked the Scottish bands against an official worked example from gov.scot before shipping.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 24, 2026</div>
     <span class="tag shipped">Shipped</span>
-    <h3>A way to say thanks, if you want to</h3>
+    <h2>A way to say thanks, if you want to</h2>
     <p>A small card appears after a tool finishes something successfully, with a link to leave a tip if it helped. It shows once per visit, and the "no thanks" button is exactly as easy to hit as the tip one.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 24, 2026</div>
     <span class="tag shipped">Shipped</span>
-    <h3>Works offline, installs like an app</h3>
+    <h2>Works offline, installs like an app</h2>
     <p>Add PopPopMake to your home screen or desktop. Any tool you've already opened once keeps working with no connection at all.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 24, 2026</div>
     <span class="tag shipped">Shipped</span>
-    <h3>Embed the Paycheck Calculator on your own site</h3>
+    <h2>Embed the Paycheck Calculator on your own site</h2>
     <p>One script tag, free, no signup, resizes itself automatically. Details on the <a href="/embed.html">Embed</a> page. More tools are getting the same treatment over time.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 24, 2026</div>
     <span class="tag shipped">Shipped</span>
-    <h3>A page that proves the privacy claim instead of just stating it</h3>
+    <h2>A page that proves the privacy claim instead of just stating it</h2>
     <p><a href="/how-it-works.html">How This Works</a> walks through checking, yourself, in your browser's own dev tools, that nothing you type into a tool ever gets sent anywhere.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 24, 2026</div>
     <span class="tag shipped">Shipped</span>
-    <h3>Feedback form</h3>
+    <h2>Feedback form</h2>
     <p>Found something broken, or missing a tool you needed? There's finally a place to say so — goes straight to an inbox, not a queue.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 22, 2026</div>
     <span class="tag caught">Caught in testing</span>
-    <h3>ATS checker was dropping real keywords</h3>
+    <h2>ATS checker was dropping real keywords</h2>
     <p>While building the Career Tools launch, testing turned up two problems before anyone else saw them: short uppercase acronyms like <code>SQL</code> or <code>AWS</code> were getting filtered out if they only appeared once, and trailing punctuation was stopping some real keywords from matching at all. Both fixed before ship.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 22, 2026</div>
     <span class="tag caught">Caught in testing</span>
-    <h3>Invoice totals could show &minus;$0.00</h3>
+    <h2>Invoice totals could show &minus;$0.00</h2>
     <p>A floating-point rounding edge case in the invoice calculator could produce a negative-zero total on certain line-item combinations. Caught during testing, fixed before the Business Tools launch.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 22, 2026</div>
     <span class="tag shipped">Shipped</span>
-    <h3>Career Tools and Business Tools</h3>
+    <h2>Career Tools and Business Tools</h2>
     <p>Resume builder, ATS score checker, invoice generator, and QR code generator — all four running client-side, no accounts.</p>
   </div>
 </main>

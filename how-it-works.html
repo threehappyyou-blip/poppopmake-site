@@ -15,7 +15,7 @@
 <style>
   :root{
     --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
-    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
     --line:rgba(28,35,33,0.12); --radius:14px;
   }
   *{box-sizing:border-box;}
@@ -23,6 +23,8 @@
   a{color:var(--teal);}
   .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
   :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}.skip-link:focus{left:0;}
+
   header{padding:22px 0;border-bottom:1px solid var(--line);}
   header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
@@ -48,6 +50,7 @@
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <header>
   <div class="inner">
@@ -56,7 +59,7 @@
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main-content">
   <span class="eyebrow">Transparency</span>
   <h1>How This Actually Works</h1>
   <p class="lede">Every disclaimer on this site says some version of "runs in your browser, nothing is uploaded." That's a promise. Here's how to stop taking our word for it and check yourself — it takes about a minute.</p>
@@ -91,7 +94,7 @@
     <li>No ad between one click and the next — ads sit around the tools, never inside the flow of using one</li>
     <li>No burying the "no thanks" option smaller or greyer than the "yes" one, anywhere on this site — including the little thank-you card you might see after a tool finishes</li>
   </ul>
-  <p>If you ever find a place this site does one of those things anyway, that's a bug, not a feature — <a href="/feedback.html">tell us</a> and we'll fix it. Fixes, catches, and everything shipped are logged on the <a href="/changelog.html">Changelog</a>.</p>
+  <p>If you ever find a place this site does one of those things anyway, that's a bug, not a feature — <a href="/feedback.html">tell us</a> and we'll fix it. Fixes, catches, and everything shipped are logged on the <a href="/changelog.html">Changelog</a>. For keyboard and screen-reader support specifically, see the <a href="/accessibility.html">Accessibility Statement</a>.</p>
 
   <div class="disclaimer">
     This page is about what happens to the <em>content</em> you put into a tool — your files, numbers, and text. For the full picture, including cookies and analytics, see the <a href="/privacy.html">Privacy Policy</a>.

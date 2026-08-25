@@ -15,7 +15,7 @@
 <style>
   :root{
     --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
-    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
     --line:rgba(28,35,33,0.12); --radius:14px;
   }
   *{box-sizing:border-box;}
@@ -23,6 +23,8 @@
   a{color:var(--teal);}
   .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
   :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}.skip-link:focus{left:0;}
+
 
   header{padding:22px 0;border-bottom:1px solid var(--line);}
   header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
@@ -110,6 +112,7 @@
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <header>
   <div class="inner">
@@ -118,7 +121,7 @@
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main-content">
   <span class="eyebrow">Documents</span>
   <h1>Document &amp; Image Tools</h1>
   <p class="lede">Merge PDFs, split PDFs, and turn JPG/PNG images into a PDF. No sign-up, no watch-it-upload progress bar.</p>
@@ -208,12 +211,12 @@
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
         <div>
           <div style="font-size:0.78rem;font-weight:600;color:var(--ink-soft);margin-bottom:6px;">ORIGINAL</div>
-          <img id="bgremove-original" style="width:100%;border-radius:8px;border:1px solid var(--line);background:var(--paper-2);">
+          <img id="bgremove-original" alt="Your original photo, before background removal" style="width:100%;border-radius:8px;border:1px solid var(--line);background:var(--paper-2);">
         </div>
         <div>
           <div style="font-size:0.78rem;font-weight:600;color:var(--ink-soft);margin-bottom:6px;">RESULT</div>
           <div id="bgremove-result-wrap" style="width:100%;border-radius:8px;border:1px solid var(--line);background:repeating-conic-gradient(#e4e9e6 0% 25%,#fff 0% 50%) 50%/16px 16px;min-height:80px;display:flex;align-items:center;justify-content:center;">
-            <img id="bgremove-result" style="width:100%;display:none;">
+            <img id="bgremove-result" alt="Your photo with the background removed" style="width:100%;display:none;">
             <span id="bgremove-placeholder" style="font-size:0.82rem;color:var(--ink-soft);padding:20px;">Result appears here</span>
           </div>
         </div>
@@ -321,9 +324,9 @@ if ('serviceWorker' in navigator) {
       li.innerHTML =
         '<span class="fname">' + f.name + '</span>' +
         '<span class="fmeta">' + fmtSize(f.size) + '</span>' +
-        '<button class="icon-btn" data-act="up" title="Move up">&uarr;</button>' +
-        '<button class="icon-btn" data-act="down" title="Move down">&darr;</button>' +
-        '<button class="icon-btn" data-act="remove" title="Remove">&times;</button>';
+        '<button class="icon-btn" data-act="up" title="Move up" aria-label="Move up">&uarr;</button>' +
+        '<button class="icon-btn" data-act="down" title="Move down" aria-label="Move down">&darr;</button>' +
+        '<button class="icon-btn" data-act="remove" title="Remove" aria-label="Remove">&times;</button>';
       li.querySelector('[data-act=up]').addEventListener('click', function(){
         if (idx > 0){ var t = mergeFiles[idx-1]; mergeFiles[idx-1] = mergeFiles[idx]; mergeFiles[idx] = t; renderMergeList(); }
       });
@@ -462,12 +465,12 @@ if ('serviceWorker' in navigator) {
       var li = document.createElement('li');
       var thumbUrl = URL.createObjectURL(f);
       li.innerHTML =
-        '<img class="thumb" src="' + thumbUrl + '" alt="">' +
+        '<img class="thumb" src="' + thumbUrl + '" alt="Preview of ' + f.name.replace(/"/g,'&quot;') + '">' +
         '<span class="fname">' + f.name + '</span>' +
         '<span class="fmeta">' + fmtSize(f.size) + '</span>' +
-        '<button class="icon-btn" data-act="up" title="Move up">&uarr;</button>' +
-        '<button class="icon-btn" data-act="down" title="Move down">&darr;</button>' +
-        '<button class="icon-btn" data-act="remove" title="Remove">&times;</button>';
+        '<button class="icon-btn" data-act="up" title="Move up" aria-label="Move up">&uarr;</button>' +
+        '<button class="icon-btn" data-act="down" title="Move down" aria-label="Move down">&darr;</button>' +
+        '<button class="icon-btn" data-act="remove" title="Remove" aria-label="Remove">&times;</button>';
       li.querySelector('[data-act=up]').addEventListener('click', function(){
         if (idx > 0){ var t = imgFiles[idx-1]; imgFiles[idx-1] = imgFiles[idx]; imgFiles[idx] = t; renderImagesList(); }
       });

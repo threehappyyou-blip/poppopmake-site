@@ -15,7 +15,7 @@
 <style>
   :root{
     --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
-    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
     --line:rgba(28,35,33,0.12); --radius:14px;
   }
   *{box-sizing:border-box;}
@@ -23,6 +23,8 @@
   a{color:var(--teal);}
   .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
   :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}.skip-link:focus{left:0;}
+
   header{padding:22px 0;border-bottom:1px solid var(--line);}
   header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
@@ -56,6 +58,7 @@
 </style>
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <header>
   <div class="inner">
@@ -64,7 +67,7 @@
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main-content">
   <span class="eyebrow">Guide · Money &amp; Tax</span>
   <h1>2026 Federal Tax Brackets Explained (With a Worked Example)</h1>
   <p class="meta">Source: IRS Revenue Procedure 2025-32 · 7 min read</p>
