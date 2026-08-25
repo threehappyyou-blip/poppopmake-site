@@ -169,6 +169,8 @@
 </footer>
 
 <script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
@@ -260,8 +262,8 @@ if ('serviceWorker' in navigator) {
   }
 
   ['salary','region','frequency'].forEach(function(id){
-    document.getElementById(id).addEventListener('input', calc);
-    document.getElementById(id).addEventListener('change', calc);
+    document.getElementById(id).addEventListener('input', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
+    document.getElementById(id).addEventListener('change', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
   });
   calc();
 })();

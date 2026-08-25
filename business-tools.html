@@ -211,6 +211,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
@@ -233,7 +235,7 @@ if ('serviceWorker' in navigator) {
     });
   });
 
-  function setStatus(el, kind, msg){ el.className = 'status show ' + kind; el.textContent = msg; }
+  function setStatus(el, kind, msg){ el.className = 'status show ' + kind; el.textContent = msg; if (kind === 'success' && window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); }
   function money(n){ var r = Math.round(n*100)/100; if (r === 0) r = 0; return '$' + r.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 
   // ================= INVOICE GENERATOR =================

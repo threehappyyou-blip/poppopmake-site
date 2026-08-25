@@ -154,6 +154,8 @@
 </footer>
 
 <script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
@@ -360,6 +362,7 @@ if ('serviceWorker' in navigator) {
     var el = document.getElementById('wr-status');
     el.className = 'status show ' + kind;
     el.textContent = msg;
+    if (kind === 'success' && window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
   }
 
   document.getElementById('wr-analyze-btn').addEventListener('click', function(){
