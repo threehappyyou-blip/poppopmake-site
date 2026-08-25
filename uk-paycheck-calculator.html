@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>UK Paycheck Calculator (2026/27) — PopPopMake</title>
+<meta name="description" content="Free UK take-home pay calculator for 2026/27. See what's left after Income Tax and National Insurance, for the rest of the UK or Scotland.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 16px;}
+
+  .switcher{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;margin-bottom:32px;text-decoration:none;}
+  .switcher:hover{border-color:var(--teal);color:var(--ink);}
+
+  .layout{display:grid;grid-template-columns:1fr;gap:24px;}
+  @media (min-width:800px){ .layout{grid-template-columns:340px 1fr;align-items:start;} }
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;}
+  .field .hint{font-size:0.78rem;color:var(--ink-soft);margin-top:4px;}
+  input[type=number], select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:1rem;background:#fff;color:var(--ink);
+  }
+  .salary-wrap{position:relative;}
+  .salary-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-soft);}
+  .salary-wrap input{padding-left:24px;}
+
+  .results h2{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin:0 0 4px;}
+  .take-home{
+    background:var(--card);border:1px solid var(--line);border-top:4px solid var(--orange);
+    border-radius:var(--radius);padding:26px 24px;margin-bottom:18px;
+  }
+  .take-home .amount{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.2rem,5vw,3rem);color:var(--orange);letter-spacing:-0.02em;}
+  .take-home .sub{color:var(--ink-soft);font-size:0.95rem;}
+
+  table.breakdown{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  table.breakdown th, table.breakdown td{padding:12px 16px;text-align:right;font-size:0.92rem;border-bottom:1px solid var(--line);}
+  table.breakdown th:first-child, table.breakdown td:first-child{text-align:left;}
+  table.breakdown thead th{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);
+    background:var(--paper-2);
+  }
+  table.breakdown tbody tr:last-child td{border-bottom:none;}
+  table.breakdown tr.net td{font-weight:700;background:rgba(15,139,141,0.06);}
+  table.breakdown .neg{color:var(--orange);}
+
+  .rate-strip{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;}
+  .rate-strip .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:7px 14px;color:var(--ink-soft);
+  }
+  .rate-strip .chip b{color:var(--ink);}
+
+  .disclaimer{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
+    border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.88rem;color:var(--ink-soft);
+  }
+  .disclaimer strong{color:var(--ink);}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <span class="eyebrow">Money &amp; Tax · 2026/27</span>
+  <h1>UK Paycheck Calculator</h1>
+  <p class="lede">Enter your salary to see what's actually left after Income Tax and National Insurance — covers the rest of the UK and Scotland's separate bands.</p>
+  <a class="switcher" href="/paycheck-calculator.html">🇺🇸 Need the US version instead? →</a>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="field">
+        <label for="salary">Annual salary</label>
+        <div class="salary-wrap">
+          <span>£</span>
+          <input type="number" id="salary" value="35000" min="0" step="500">
+        </div>
+      </div>
+      <div class="field">
+        <label for="region">Where you live</label>
+        <select id="region">
+          <option value="ruk">England, Wales, or Northern Ireland</option>
+          <option value="scotland">Scotland</option>
+        </select>
+        <div class="hint">Income Tax bands differ in Scotland; National Insurance is the same everywhere.</div>
+      </div>
+      <div class="field">
+        <label for="frequency">Pay frequency</label>
+        <select id="frequency">
+          <option value="52">Weekly</option>
+          <option value="12" selected>Monthly</option>
+          <option value="13">4-weekly</option>
+          <option value="1">Annual</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="results">
+      <div class="take-home">
+        <h2>Take-home pay per payslip</h2>
+        <div class="amount" id="netPerPeriod">£0</div>
+        <div class="sub" id="netAnnualSub"></div>
+      </div>
+
+      <table class="breakdown">
+        <thead>
+          <tr><th>Item</th><th>Per year</th><th>Per payslip</th></tr>
+        </thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+
+      <div class="rate-strip">
+        <span class="chip">Effective tax rate: <b id="effRate">0%</b></span>
+        <span class="chip">Personal Allowance used: <b id="paUsed">£0</b></span>
+      </div>
+
+      <div class="disclaimer">
+        <strong>This is an estimate, not tax advice.</strong> It uses 2026/27 Income Tax bands and National Insurance thresholds (verified against gov.uk and gov.scot) and the standard tax-free Personal Allowance only — it doesn't account for pension contributions, student loan repayments, benefits-in-kind, or your actual tax code, which can change your real payslip. Confirm anything important with HMRC or your payroll department. Your income and region never leave your device — <a href="/how-it-works.html">see how to check that yourself</a>. See our <a href="/terms.html">Terms</a> for more.
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+(function(){
+  // ---- Verified 2026/27 UK tax data ----
+  // Income Tax (England/Wales/NI): gov.uk — Income Tax rates and Personal Allowances
+  var RUK_BANDS = [[0,37700,0.20],[37700,125140,0.40],[125140,Infinity,0.45]];
+  // Income Tax (Scotland): gov.scot — Scottish Income Tax rates and bands 2026 to 2027
+  var SCOT_BANDS = [[0,3967,0.19],[3967,16956,0.20],[16956,31092,0.21],[31092,62430,0.42],[62430,112570,0.45],[112570,Infinity,0.48]];
+  // National Insurance (Class 1, Category A): gov.uk — National Insurance rates and categories
+  var NI_PRIMARY_THRESHOLD = 12570;
+  var NI_UPPER_LIMIT = 50270;
+  var NI_MAIN_RATE = 0.08;
+  var NI_UPPER_RATE = 0.02;
+  var PA_FULL = 12570;
+  var PA_TAPER_START = 100000;
+
+  function pt(income, brackets){
+    if (income <= 0) return 0;
+    var tax = 0;
+    for (var i=0;i<brackets.length;i++){
+      var lo=brackets[i][0], hi=brackets[i][1], rate=brackets[i][2];
+      if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
+    }
+    return tax;
+  }
+
+  function personalAllowance(gross){
+    if (gross <= PA_TAPER_START) return PA_FULL;
+    return Math.max(0, PA_FULL - (gross - PA_TAPER_START)/2);
+  }
+
+  function calcIncomeTax(gross, scottish){
+    var pa = personalAllowance(gross);
+    var taxable = Math.max(0, gross - pa);
+    var bands = scottish ? SCOT_BANDS : RUK_BANDS;
+    return { tax: pt(taxable, bands), pa: pa, taxable: taxable };
+  }
+
+  function calcNI(gross){
+    var ni = 0;
+    if (gross > NI_PRIMARY_THRESHOLD) ni += (Math.min(gross, NI_UPPER_LIMIT) - NI_PRIMARY_THRESHOLD) * NI_MAIN_RATE;
+    if (gross > NI_UPPER_LIMIT) ni += (gross - NI_UPPER_LIMIT) * NI_UPPER_RATE;
+    return ni;
+  }
+
+  function fmt(n){
+    var sign = n < 0 ? '-' : '';
+    return sign + '£' + Math.abs(n).toLocaleString('en-GB', {maximumFractionDigits:0});
+  }
+
+  function calc(){
+    var gross = Math.max(0, parseFloat(document.getElementById('salary').value) || 0);
+    var scottish = document.getElementById('region').value === 'scotland';
+    var periods = parseInt(document.getElementById('frequency').value, 10);
+
+    var it = calcIncomeTax(gross, scottish);
+    var ni = calcNI(gross);
+    var totalDeductions = it.tax + ni;
+    var netAnnual = gross - totalDeductions;
+    var effRate = gross > 0 ? (totalDeductions/gross*100) : 0;
+
+    document.getElementById('netPerPeriod').textContent = fmt(netAnnual/periods);
+    document.getElementById('netAnnualSub').textContent = fmt(netAnnual) + ' per year, after tax and NI';
+    document.getElementById('effRate').textContent = effRate.toFixed(1) + '%';
+    document.getElementById('paUsed').textContent = fmt(it.pa);
+
+    var rows = [
+      ['Gross pay', gross, gross/periods, false],
+      ['Income Tax (' + (scottish ? 'Scotland' : 'rest of UK') + ')', -it.tax, -it.tax/periods, true],
+      ['National Insurance', -ni, -ni/periods, true],
+      ['Take-home pay', netAnnual, netAnnual/periods, false]
+    ];
+
+    var body = document.getElementById('breakdownBody');
+    body.innerHTML = '';
+    rows.forEach(function(r, idx){
+      var tr = document.createElement('tr');
+      if (idx === rows.length-1) tr.className = 'net';
+      var cls = r[3] ? 'neg' : '';
+      tr.innerHTML = '<td>'+r[0]+'</td><td class="'+cls+'">'+fmt(r[1])+'</td><td class="'+cls+'">'+fmt(r[2])+'</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  ['salary','region','frequency'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', calc);
+    document.getElementById(id).addEventListener('change', calc);
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
