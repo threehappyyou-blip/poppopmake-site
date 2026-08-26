@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>401(k) Retirement Calculator (2026) — PopPopMake</title>
+<meta name="description" content="Free 401(k) growth calculator. See your projected balance at retirement from your contributions, employer match, and investment growth, using 2026 IRS limits.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 32px;}
+
+  .layout{display:grid;grid-template-columns:1fr;gap:24px;}
+  @media (min-width:800px){ .layout{grid-template-columns:360px 1fr;align-items:start;} }
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;}
+  .panel h3{font-family:'Space Grotesk',sans-serif;font-size:0.92rem;margin:0 0 14px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.03em;font-weight:600;}
+  .panel h3:not(:first-child){margin-top:22px;padding-top:18px;border-top:1px solid var(--line);}
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;}
+  .field .hint{font-size:0.78rem;color:var(--ink-soft);margin-top:4px;}
+  input[type=number]{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:1rem;background:#fff;color:var(--ink);
+  }
+  .prefix-wrap{position:relative;}
+  .prefix-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-soft);}
+  .prefix-wrap input{padding-left:24px;}
+  .suffix-wrap{position:relative;}
+  .suffix-wrap span{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--ink-soft);font-size:0.85rem;}
+  .suffix-wrap input{padding-right:32px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:520px){ .row2{grid-template-columns:1fr;} }
+
+  .results h2{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin:0 0 4px;}
+  .take-home{
+    background:var(--card);border:1px solid var(--line);border-top:4px solid var(--orange);
+    border-radius:var(--radius);padding:26px 24px;margin-bottom:18px;
+  }
+  .take-home .amount{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.2rem,5vw,3rem);color:var(--orange);letter-spacing:-0.02em;}
+  .take-home .sub{color:var(--ink-soft);font-size:0.95rem;}
+
+  .bar-chart{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;margin-bottom:18px;}
+  .bar-chart h3{font-family:'Space Grotesk',sans-serif;font-size:0.92rem;margin:0 0 14px;}
+  .bar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-label{width:130px;flex-shrink:0;font-size:0.82rem;color:var(--ink-soft);}
+  .bar-track{flex:1;background:var(--paper-2);border-radius:6px;height:22px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:6px;}
+  .bar-value{width:100px;flex-shrink:0;text-align:right;font-size:0.85rem;font-weight:600;font-family:'IBM Plex Mono',monospace;}
+
+  table.breakdown{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  table.breakdown th, table.breakdown td{padding:12px 16px;text-align:right;font-size:0.92rem;border-bottom:1px solid var(--line);}
+  table.breakdown th:first-child, table.breakdown td:first-child{text-align:left;}
+  table.breakdown thead th{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);
+    background:var(--paper-2);
+  }
+  table.breakdown tbody tr:last-child td{border-bottom:none;}
+  table.breakdown tr.net td{font-weight:700;background:rgba(15,139,141,0.06);}
+
+  .rate-strip{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;}
+  .rate-strip .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:7px 14px;color:var(--ink-soft);
+  }
+  .rate-strip .chip b{color:var(--ink);}
+  .limit-note{font-size:0.8rem;color:var(--orange);margin-top:4px;}
+
+  .disclaimer{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
+    border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.88rem;color:var(--ink-soft);
+  }
+  .disclaimer strong{color:var(--ink);}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Money &amp; Tax · 2026</span>
+  <h1>401(k) Retirement Calculator</h1>
+  <p class="lede">Enter your numbers to see a projected balance at retirement — your contributions, your employer's match, and investment growth, kept separate so you can see what's actually doing the work.</p>
+
+  <div class="layout">
+    <div class="panel">
+      <h3>You</h3>
+      <div class="row2">
+        <div class="field">
+          <label for="currentAge">Current age</label>
+          <input type="number" id="currentAge" value="30" min="18" max="80" step="1">
+        </div>
+        <div class="field">
+          <label for="retirementAge">Retirement age</label>
+          <input type="number" id="retirementAge" value="65" min="19" max="85" step="1">
+        </div>
+      </div>
+      <div class="field">
+        <label for="currentBalance">Current 401(k) balance</label>
+        <div class="prefix-wrap"><span>$</span><input type="number" id="currentBalance" value="20000" min="0" step="500"></div>
+      </div>
+      <div class="field">
+        <label for="salary">Annual salary</label>
+        <div class="prefix-wrap"><span>$</span><input type="number" id="salary" value="70000" min="0" step="1000"></div>
+      </div>
+
+      <h3>Contributions</h3>
+      <div class="row2">
+        <div class="field">
+          <label for="contribPct">Your contribution</label>
+          <div class="suffix-wrap"><input type="number" id="contribPct" value="6" min="0" max="100" step="0.5"><span>% of pay</span></div>
+        </div>
+        <div class="field">
+          <label for="matchRate">Employer match</label>
+          <div class="suffix-wrap"><input type="number" id="matchRate" value="50" min="0" max="200" step="5"><span>%</span></div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="matchCapPct">Match caps out at</label>
+        <div class="suffix-wrap"><input type="number" id="matchCapPct" value="6" min="0" max="100" step="0.5"><span>% of pay</span></div>
+        <div class="hint">E.g. "50% match up to 6%" means your employer adds 50¢ per dollar you contribute, on the first 6% of your pay.</div>
+      </div>
+
+      <h3>Assumptions</h3>
+      <div class="row2">
+        <div class="field">
+          <label for="returnRate">Annual return</label>
+          <div class="suffix-wrap"><input type="number" id="returnRate" value="7" min="-10" max="20" step="0.5"><span>%</span></div>
+        </div>
+        <div class="field">
+          <label for="salaryGrowth">Annual raise</label>
+          <div class="suffix-wrap"><input type="number" id="salaryGrowth" value="3" min="0" max="20" step="0.5"><span>%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="results">
+      <div class="take-home">
+        <h2>Projected balance at retirement</h2>
+        <div class="amount" id="finalBalance">$0</div>
+        <div class="sub" id="finalBalanceSub"></div>
+      </div>
+
+      <div class="bar-chart">
+        <h3>Where it came from</h3>
+        <div id="barRows"></div>
+      </div>
+
+      <table class="breakdown">
+        <thead><tr><th>Age</th><th>Start of year</th><th>You contribute</th><th>Employer match</th><th>Growth</th><th>End of year</th></tr></thead>
+        <tbody id="yearBody"></tbody>
+      </table>
+      <div class="limit-note" id="limitNote"></div>
+
+      <div class="disclaimer">
+        <strong>This is a projection, not a promise.</strong> Investment returns aren't guaranteed and will vary year to year — 7% is a common long-run planning assumption, not a forecast. Contribution limits use the 2026 IRS figures ($24,500 base, plus age-based catch-up) held flat in today's dollars for every future year, rather than guessing at future inflation adjustments. It doesn't account for taxes on withdrawal, vesting schedules on employer match, or fees. Your numbers never leave your device — <a href="/how-it-works.html">see how to check that yourself</a>. See our <a href="/terms.html">Terms</a> for more.
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+(function(){
+  // ---- 2026 IRS 401(k) limits (IRS Notice 2025-70), verified 2026-08-25 ----
+var BASE_LIMIT = 24500;
+var CATCHUP_50 = 8000;      // ages 50-59 and 64+
+var CATCHUP_60_63 = 11250;  // ages 60-63 (SECURE 2.0 super catch-up)
+
+function contributionLimitForAge(age){
+  if (age >= 60 && age <= 63) return BASE_LIMIT + CATCHUP_60_63;
+  if (age >= 50) return BASE_LIMIT + CATCHUP_50;
+  return BASE_LIMIT;
+}
+
+function projectRetirement(opts){
+  var age = opts.currentAge;
+  var salary = opts.salary;
+  var balance = opts.currentBalance;
+  var contribPct = opts.contribPct / 100;
+  var matchRate = opts.matchRate / 100;     // e.g. 0.5 for "50% match"
+  var matchCapPct = opts.matchCapPct / 100; // e.g. 0.06 for "up to 6% of salary"
+  var returnRate = opts.returnRate / 100;
+  var salaryGrowth = opts.salaryGrowth / 100;
+
+  var years = [];
+  var totalEmployeeContrib = 0;
+  var totalEmployerContrib = 0;
+  var totalGrowth = 0;
+
+  while (age < opts.retirementAge) {
+    var limit = contributionLimitForAge(age);
+    var desiredEmployee = salary * contribPct;
+    var employeeContrib = Math.min(desiredEmployee, limit);
+
+    var matchedPct = Math.min(contribPct, matchCapPct);
+    var employerContrib = salary * matchedPct * matchRate;
+
+    var startBalance = balance;
+    var contribThisYear = employeeContrib + employerContrib;
+    var endBalance = (startBalance + contribThisYear) * (1 + returnRate);
+    var growthThisYear = endBalance - startBalance - contribThisYear;
+
+    totalEmployeeContrib += employeeContrib;
+    totalEmployerContrib += employerContrib;
+    totalGrowth += growthThisYear;
+
+    years.push({
+      age: age, startBalance: startBalance, employeeContrib: employeeContrib,
+      employerContrib: employerContrib, growth: growthThisYear, endBalance: endBalance
+    });
+
+    balance = endBalance;
+    salary = salary * (1 + salaryGrowth);
+    age += 1;
+  }
+
+  return {
+    years: years,
+    finalBalance: balance,
+    totalEmployeeContrib: totalEmployeeContrib,
+    totalEmployerContrib: totalEmployerContrib,
+    totalGrowth: totalGrowth,
+    totalContributed: totalEmployeeContrib + totalEmployerContrib + opts.currentBalance
+  };
+}
+
+
+  function fmt(n){
+    return '$' + Math.max(0,n).toLocaleString('en-US', {maximumFractionDigits:0});
+  }
+
+  function calc(){
+    var opts = {
+      currentAge: parseInt(document.getElementById('currentAge').value, 10) || 0,
+      retirementAge: parseInt(document.getElementById('retirementAge').value, 10) || 0,
+      currentBalance: Math.max(0, parseFloat(document.getElementById('currentBalance').value) || 0),
+      salary: Math.max(0, parseFloat(document.getElementById('salary').value) || 0),
+      contribPct: Math.max(0, parseFloat(document.getElementById('contribPct').value) || 0),
+      matchRate: Math.max(0, parseFloat(document.getElementById('matchRate').value) || 0),
+      matchCapPct: Math.max(0, parseFloat(document.getElementById('matchCapPct').value) || 0),
+      returnRate: parseFloat(document.getElementById('returnRate').value) || 0,
+      salaryGrowth: Math.max(0, parseFloat(document.getElementById('salaryGrowth').value) || 0)
+    };
+
+    if (opts.retirementAge <= opts.currentAge) {
+      document.getElementById('finalBalance').textContent = fmt(opts.currentBalance);
+      document.getElementById('finalBalanceSub').textContent = 'Retirement age must be after your current age.';
+      document.getElementById('barRows').innerHTML = '';
+      document.getElementById('yearBody').innerHTML = '';
+      document.getElementById('limitNote').textContent = '';
+      return;
+    }
+
+    var r = projectRetirement(opts);
+    var yearsToGo = opts.retirementAge - opts.currentAge;
+
+    document.getElementById('finalBalance').textContent = fmt(r.finalBalance);
+    document.getElementById('finalBalanceSub').textContent = 'In ' + yearsToGo + ' years, at age ' + opts.retirementAge + ' (today\'s dollars, before any withdrawal taxes)';
+
+    var startBal = opts.currentBalance;
+    var parts = [
+      ['Starting balance', startBal, '#4B534F'],
+      ['Your contributions', r.totalEmployeeContrib, '#C14324'],
+      ['Employer match', r.totalEmployerContrib, '#F4B740'],
+      ['Investment growth', r.totalGrowth, '#0D7A7C']
+    ];
+    var maxPart = Math.max.apply(null, parts.map(function(p){ return p[1]; }));
+    var barsHtml = '';
+    parts.forEach(function(p){
+      var pct = maxPart > 0 ? (p[1]/maxPart*100) : 0;
+      barsHtml += '<div class="bar-row"><div class="bar-label">'+p[0]+'</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+p[2]+';"></div></div>' +
+        '<div class="bar-value">'+fmt(p[1])+'</div></div>';
+    });
+    document.getElementById('barRows').innerHTML = barsHtml;
+
+    var hitLimit = r.years.some(function(y){ return y.employeeContrib < opts.salary * (opts.contribPct/100) - 0.5; });
+    document.getElementById('limitNote').textContent = hitLimit
+      ? 'In at least one year, your desired contribution was capped at the IRS annual limit for your age.'
+      : '';
+
+    var body = document.getElementById('yearBody');
+    body.innerHTML = '';
+    var toShow = r.years.filter(function(y, i){
+      return i === 0 || i === r.years.length-1 || (i+1) % 5 === 0;
+    });
+    toShow.forEach(function(y, idx){
+      var tr = document.createElement('tr');
+      if (idx === toShow.length-1) tr.className = 'net';
+      tr.innerHTML = '<td>'+y.age+'</td><td>'+fmt(y.startBalance)+'</td><td>'+fmt(y.employeeContrib)+'</td><td>'+fmt(y.employerContrib)+'</td><td>'+fmt(y.growth)+'</td><td>'+fmt(y.endBalance)+'</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  ['currentAge','retirementAge','currentBalance','salary','contribPct','matchRate','matchCapPct','returnRate','salaryGrowth'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
+    document.getElementById(id).addEventListener('change', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
