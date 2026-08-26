@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Capital Gains Tax Calculator (2026) — PopPopMake</title>
+<meta name="description" content="Free capital gains tax calculator for stocks and crypto. Short-term vs long-term rates, NIIT, and how your gain stacks on top of your other income, for 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 32px;}
+
+  .layout{display:grid;grid-template-columns:1fr;gap:24px;}
+  @media (min-width:800px){ .layout{grid-template-columns:360px 1fr;align-items:start;} }
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;}
+  .panel h3{font-family:'Space Grotesk',sans-serif;font-size:0.92rem;margin:0 0 14px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.03em;font-weight:600;}
+  .panel h3:not(:first-child){margin-top:22px;padding-top:18px;border-top:1px solid var(--line);}
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;}
+  .field .hint{font-size:0.78rem;color:var(--ink-soft);margin-top:4px;}
+  input[type=number], select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:1rem;background:#fff;color:var(--ink);
+  }
+  .prefix-wrap{position:relative;}
+  .prefix-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-soft);}
+  .prefix-wrap input{padding-left:24px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:520px){ .row2{grid-template-columns:1fr;} }
+
+  .toggle-group{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  .toggle-group button{flex:1;padding:10px 8px;background:#fff;border:none;font-size:0.85rem;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;}
+  .toggle-group button.active{background:var(--teal);color:#fff;font-weight:600;}
+  .toggle-group button:not(:last-child){border-right:1px solid var(--line);}
+
+  .results h2{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin:0 0 4px;}
+  .take-home{
+    background:var(--card);border:1px solid var(--line);border-top:4px solid var(--orange);
+    border-radius:var(--radius);padding:26px 24px;margin-bottom:18px;
+  }
+  .take-home .amount{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.2rem,5vw,3rem);color:var(--orange);letter-spacing:-0.02em;}
+  .take-home .sub{color:var(--ink-soft);font-size:0.95rem;}
+
+  table.breakdown{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
+  table.breakdown th, table.breakdown td{padding:12px 16px;text-align:right;font-size:0.92rem;border-bottom:1px solid var(--line);}
+  table.breakdown th:first-child, table.breakdown td:first-child{text-align:left;}
+  table.breakdown thead th{
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);
+    background:var(--paper-2);
+  }
+  table.breakdown tbody tr:last-child td{border-bottom:none;}
+  table.breakdown tr.net td{font-weight:700;background:rgba(15,139,141,0.06);}
+  table.breakdown .neg{color:var(--orange);}
+
+  .rate-strip{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;}
+  .rate-strip .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:7px 14px;color:var(--ink-soft);
+  }
+  .rate-strip .chip b{color:var(--ink);}
+  .loss-note{background:rgba(15,139,141,0.08);border-radius:8px;padding:12px 16px;font-size:0.88rem;color:var(--ink-soft);margin-top:14px;}
+
+  .disclaimer{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
+    border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.88rem;color:var(--ink-soft);
+  }
+  .disclaimer strong{color:var(--ink);}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Money &amp; Tax · 2026</span>
+  <h1>Capital Gains Tax Calculator</h1>
+  <p class="lede">For stocks or crypto — the IRS taxes both the same way. See what you'd owe on a sale, and how the gain stacks on top of your other income rather than getting its own separate bucket.</p>
+
+  <div class="layout">
+    <div class="panel">
+      <h3>Your income</h3>
+      <div class="field">
+        <label for="filingStatus">Filing status</label>
+        <select id="filingStatus">
+          <option value="single" selected>Single</option>
+          <option value="mfj">Married filing jointly</option>
+          <option value="hoh">Head of household</option>
+          <option value="mfs">Married filing separately</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="grossOrdinaryIncome">Other income this year</label>
+        <div class="prefix-wrap"><span>$</span><input type="number" id="grossOrdinaryIncome" value="80000" min="0" step="1000"></div>
+        <div class="hint">Wages and other income, before this sale &mdash; gross, not taxable. We apply your standard deduction for you.</div>
+      </div>
+
+      <h3>This sale</h3>
+      <div class="field">
+        <label for="assetType">Asset</label>
+        <select id="assetType">
+          <option value="Stock" selected>Stock / ETF</option>
+          <option value="crypto">Crypto</option>
+        </select>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="costBasis">Cost basis</label>
+          <div class="prefix-wrap"><span>$</span><input type="number" id="costBasis" value="10000" min="0" step="100"></div>
+        </div>
+        <div class="field">
+          <label for="proceeds">Sale proceeds</label>
+          <div class="prefix-wrap"><span>$</span><input type="number" id="proceeds" value="25000" min="0" step="100"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label>Holding period</label>
+        <div class="toggle-group" role="group" aria-label="Holding period">
+          <button type="button" id="btnShort" data-term="short">1 year or less</button>
+          <button type="button" id="btnLong" data-term="long" class="active">More than 1 year</button>
+        </div>
+        <div class="hint">Long-term gets the lower 0/15/20% rates. Short-term is taxed as ordinary income.</div>
+      </div>
+    </div>
+
+    <div class="results">
+      <div class="take-home">
+        <h2 id="resultTitle">Estimated tax on this gain</h2>
+        <div class="amount" id="totalTax">$0</div>
+        <div class="sub" id="totalTaxSub"></div>
+      </div>
+
+      <table class="breakdown">
+        <thead><tr><th>Item</th><th>Amount</th></tr></thead>
+        <tbody id="breakdownBody"></tbody>
+      </table>
+
+      <div class="rate-strip">
+        <span class="chip">Effective rate on the gain: <b id="effRate">0%</b></span>
+        <span class="chip">Net proceeds after tax: <b id="netProceeds">$0</b></span>
+      </div>
+      <div class="loss-note" id="lossNote" style="display:none;"></div>
+
+      <div class="disclaimer">
+        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal brackets (IRS Rev. Proc. 2025-32) and the 3.8% Net Investment Income Tax, correctly stacking your gain on top of your other taxable income &mdash; but MAGI for NIIT is approximated as gross income plus gain, which can differ from your real MAGI. It doesn't include state tax, loss carryforwards, wash-sale rules, or Section 1202/QSBS treatment. Confirm anything important with a tax professional before you sell. Your numbers never leave your device &mdash; <a href="/how-it-works.html">see how to check that yourself</a>. See our <a href="/terms.html">Terms</a> for more.
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+(function(){
+  // ---- 2026 federal figures (IRS Rev. Proc. 2025-32, IRC 1411), verified 2026-08-25 ----
+var STD_DEDUCTION = { single: 16100, mfj: 32200, hoh: 24150, mfs: 16100 };
+
+var ORDINARY_BRACKETS = {
+  single: [[0,12400,0.10],[12400,50400,0.12],[50400,105475,0.22],[105475,201775,0.24],[201775,256225,0.32],[256225,640600,0.35],[640600,Infinity,0.37]],
+  mfj:    [[0,24800,0.10],[24800,100800,0.12],[100800,210950,0.22],[210950,403550,0.24],[403550,512450,0.32],[512450,768700,0.35],[768700,Infinity,0.37]],
+  hoh:    [[0,17700,0.10],[17700,67450,0.12],[67450,105700,0.22],[105700,201750,0.24],[201750,256200,0.32],[256200,640600,0.35],[640600,Infinity,0.37]],
+  mfs:    [[0,12400,0.10],[12400,50400,0.12],[50400,105475,0.22],[105475,201775,0.24],[201775,256225,0.32],[256225,384350,0.35],[384350,Infinity,0.37]]
+};
+
+var LTCG_BRACKETS = {
+  single: [[0,49450,0],[49450,545500,0.15],[545500,Infinity,0.20]],
+  mfj:    [[0,98900,0],[98900,613700,0.15],[613700,Infinity,0.20]],
+  hoh:    [[0,66200,0],[66200,579600,0.15],[579600,Infinity,0.20]],
+  mfs:    [[0,49450,0],[49450,306850,0.15],[306850,Infinity,0.20]]
+};
+
+var NIIT_THRESHOLD = { single: 200000, mfj: 250000, hoh: 200000, mfs: 125000 };
+var NIIT_RATE = 0.038;
+
+function pt(income, brackets){
+  if (income <= 0) return 0;
+  var tax = 0;
+  for (var i=0;i<brackets.length;i++){
+    var lo=brackets[i][0], hi=brackets[i][1], rate=brackets[i][2];
+    if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
+  }
+  return tax;
+}
+
+// Tax owed on a "stacked" slice [floor, floor+amount] using a bracket table.
+// This is the core mechanic: capital gains stack ON TOP of ordinary taxable income.
+function stackedTax(floor, amount, brackets){
+  if (amount <= 0) return 0;
+  return pt(floor + amount, brackets) - pt(floor, brackets);
+}
+
+function calcCapitalGains(opts){
+  var status = opts.filingStatus;
+  var stdDed = STD_DEDUCTION[status];
+  var ordinaryTaxableIncome = Math.max(0, opts.grossOrdinaryIncome - stdDed);
+  var gain = opts.proceeds - opts.costBasis;
+
+  var result = {
+    gain: gain, ordinaryTaxableIncome: ordinaryTaxableIncome,
+    federalTax: 0, niit: 0, isLongTerm: opts.isLongTerm
+  };
+
+  if (gain <= 0) {
+    result.federalTax = 0;
+    result.niit = 0;
+    result.effectiveRate = 0;
+    return result;
+  }
+
+  if (opts.isLongTerm) {
+    result.federalTax = stackedTax(ordinaryTaxableIncome, gain, LTCG_BRACKETS[status]);
+  } else {
+    result.federalTax = stackedTax(ordinaryTaxableIncome, gain, ORDINARY_BRACKETS[status]);
+  }
+
+  // NIIT: 3.8% on the lesser of (net investment income) or (MAGI - threshold)
+  // MAGI approximated as gross ordinary income + gain (a simplification, disclosed)
+  var magi = opts.grossOrdinaryIncome + gain;
+  var threshold = NIIT_THRESHOLD[status];
+  if (magi > threshold) {
+    var excessMagi = magi - threshold;
+    var niitBase = Math.min(gain, excessMagi);
+    result.niit = Math.max(0, niitBase) * NIIT_RATE;
+  }
+
+  result.totalTax = result.federalTax + result.niit;
+  result.effectiveRate = gain > 0 ? (result.totalTax / gain) * 100 : 0;
+  result.netProceeds = gain - result.totalTax;
+  return result;
+}
+
+
+  function fmt(n){
+    var sign = n < 0 ? '-' : '';
+    return sign + '$' + Math.abs(n).toLocaleString('en-US', {maximumFractionDigits:0});
+  }
+
+  var isLongTerm = true;
+  document.getElementById('btnShort').addEventListener('click', function(){
+    isLongTerm = false;
+    this.classList.add('active');
+    document.getElementById('btnLong').classList.remove('active');
+    calc();
+  });
+  document.getElementById('btnLong').addEventListener('click', function(){
+    isLongTerm = true;
+    this.classList.add('active');
+    document.getElementById('btnShort').classList.remove('active');
+    calc();
+  });
+
+  function calc(){
+    var opts = {
+      filingStatus: document.getElementById('filingStatus').value,
+      grossOrdinaryIncome: Math.max(0, parseFloat(document.getElementById('grossOrdinaryIncome').value) || 0),
+      costBasis: Math.max(0, parseFloat(document.getElementById('costBasis').value) || 0),
+      proceeds: Math.max(0, parseFloat(document.getElementById('proceeds').value) || 0),
+      isLongTerm: isLongTerm
+    };
+
+    var r = calcCapitalGains(opts);
+
+    if (r.gain <= 0) {
+      document.getElementById('resultTitle').textContent = 'No tax on this sale';
+      document.getElementById('totalTax').textContent = '$0';
+      document.getElementById('totalTaxSub').textContent = 'You sold at or below your cost basis — that\'s a loss, not a gain.';
+      document.getElementById('breakdownBody').innerHTML = '<tr><td>Loss</td><td class="neg">' + fmt(r.gain) + '</td></tr>';
+      document.getElementById('effRate').textContent = '—';
+      document.getElementById('netProceeds').textContent = fmt(opts.proceeds);
+      document.getElementById('lossNote').style.display = 'block';
+      document.getElementById('lossNote').textContent = 'Capital losses can typically offset other gains, and up to $3,000 of ordinary income per year, with the rest carried forward — that matching isn\'t modeled here.';
+      return;
+    }
+
+    document.getElementById('lossNote').style.display = 'none';
+    document.getElementById('resultTitle').textContent = 'Estimated tax on this gain';
+    document.getElementById('totalTax').textContent = fmt(r.totalTax);
+    document.getElementById('totalTaxSub').textContent = (opts.isLongTerm ? 'Long-term' : 'Short-term') + ' gain of ' + fmt(r.gain) + ', stacked on ' + fmt(r.ordinaryTaxableIncome) + ' of other taxable income';
+    document.getElementById('effRate').textContent = r.effectiveRate.toFixed(1) + '%';
+    document.getElementById('netProceeds').textContent = fmt(r.netProceeds);
+
+    var rows = [
+      ['Capital gain', r.gain],
+      [opts.isLongTerm ? 'Federal long-term capital gains tax' : 'Federal tax (ordinary rates)', -r.federalTax]
+    ];
+    if (r.niit > 0) rows.push(['Net Investment Income Tax (3.8%)', -r.niit]);
+    rows.push(['Net proceeds after tax', r.netProceeds]);
+
+    var body = document.getElementById('breakdownBody');
+    body.innerHTML = '';
+    rows.forEach(function(row, idx){
+      var tr = document.createElement('tr');
+      if (idx === rows.length-1) tr.className = 'net';
+      var cls = row[1] < 0 ? 'neg' : '';
+      tr.innerHTML = '<td>'+row[0]+'</td><td class="'+cls+'">'+fmt(row[1])+'</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  ['filingStatus','grossOrdinaryIncome','assetType','costBasis','proceeds'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
+    document.getElementById(id).addEventListener('change', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
