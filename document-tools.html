@@ -167,6 +167,9 @@
     </div>
     <button class="action-btn" id="split-btn" disabled>Extract Pages</button>
     <div class="status" id="split-status"></div>
+    <div id="split-chain" style="display:none;margin-top:12px;">
+      <button class="action-btn" id="split-chain-btn" type="button" style="background:var(--teal);">Send extracted pages to Merge &rarr;</button>
+    </div>
   </section>
 
   <!-- IMAGES TO PDF PANEL -->
@@ -225,12 +228,15 @@
     </div>
     <button class="action-btn" id="bgremove-btn" disabled>Remove Background</button>
     <button class="action-btn" id="bgremove-download-btn" style="display:none;background:var(--teal);">Download PNG</button>
+    <div id="bgremove-chain" style="display:none;margin-top:12px;">
+      <button class="action-btn" id="bgremove-chain-btn" type="button" style="background:var(--orange);">Send this photo to Images to PDF &rarr;</button>
+    </div>
     <div class="status" id="bgremove-status"></div>
     <div class="hint" style="margin-top:10px;">"Portrait" is faster and works best on a person against a fairly simple background. "Complex scene" is slower to load but handles busy backgrounds, multiple subjects, or products better.</div>
   </section>
 
   <div class="disclaimer">
-    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, you can send the result straight into Merge without downloading it first. <a href="/how-it-works.html">See how to check that yourself</a>, or read our <a href="/privacy.html">Privacy Policy</a> for more.
+    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, extracting pages, or removing a background, you can send the result straight into another tool without downloading it first. <a href="/how-it-works.html">See how to check that yourself</a>, or read our <a href="/privacy.html">Privacy Policy</a> for more.
   </div>
 </main>
 
@@ -437,6 +443,8 @@ if ('serviceWorker' in navigator) {
         var outBytes = await outDoc.save();
         downloadBlob(outBytes, 'extracted.pdf', 'application/pdf');
         setStatus(splitStatus, 'success', 'Done. Your extracted PDF has started downloading.');
+        lastSplitPdfBytes = outBytes;
+        document.getElementById('split-chain').style.display = 'block';
       } catch(err){
         setStatus(splitStatus, 'error', 'Could not extract those pages: ' + err.message);
       }
@@ -458,6 +466,16 @@ if ('serviceWorker' in navigator) {
     renderMergeList();
     document.querySelector('.tab-btn[data-tab="merge"]').click();
     setStatus(mergeStatus, 'success', 'Added your converted PDF to the merge list \u2014 add at least one more file, then hit Merge PDFs.');
+  });
+
+  var lastSplitPdfBytes = null;
+  document.getElementById('split-chain-btn').addEventListener('click', function(){
+    if (!lastSplitPdfBytes) return;
+    var chainedFile = new File([lastSplitPdfBytes], 'extracted.pdf', { type: 'application/pdf' });
+    mergeFiles.push(chainedFile);
+    renderMergeList();
+    document.querySelector('.tab-btn[data-tab="merge"]').click();
+    setStatus(mergeStatus, 'success', 'Added your extracted pages to the merge list \u2014 add at least one more file, then hit Merge PDFs.');
   });
 
   function renderImagesList(){
@@ -650,6 +668,8 @@ if ('serviceWorker' in navigator) {
           bgResultImg.style.display = 'block';
           bgPlaceholder.style.display = 'none';
           bgDownloadBtn.style.display = 'inline-block';
+          lastBgRemovedBlob = cleaned;
+          document.getElementById('bgremove-chain').style.display = 'block';
           setStatus(bgStatus, 'success', 'Done. Check the result on the right, then download if it looks good. If it still looks off, try the other photo type option above.');
           bgBtn.disabled = false;
         })();
@@ -668,6 +688,16 @@ if ('serviceWorker' in navigator) {
     var a = document.createElement('a');
     a.href = bgResultBlobUrl; a.download = 'no-background.png';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  });
+
+  var lastBgRemovedBlob = null;
+  document.getElementById('bgremove-chain-btn').addEventListener('click', function(){
+    if (!lastBgRemovedBlob) return;
+    var chainedFile = new File([lastBgRemovedBlob], 'no-background.png', { type: 'image/png' });
+    imgFiles.push(chainedFile);
+    renderImagesList();
+    document.querySelector('.tab-btn[data-tab="images"]').click();
+    setStatus(imagesStatus, 'success', 'Added your background-removed photo to Images to PDF \u2014 add more, or convert now.');
   });
 })();
 </script>
