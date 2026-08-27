@@ -17,6 +17,7 @@
     { title: 'Career Tools', desc: 'Resume builder · ATS score checker', href: '/career-tools.html', kw: 'resume cv job ats career keyword' },
     { title: 'Business Tools', desc: 'Invoice generator · QR code generator', href: '/business-tools.html', kw: 'invoice qr code business billing' },
     { title: 'Writing & AI Tools', desc: 'Flag AI-ish phrases, get plain-language swaps', href: '/writing-tools.html', kw: 'ai writing detector checker text cliche' },
+    { title: 'Everyday Tools', desc: 'Age calculator, percentage calculator, tip splitter', href: '/everyday-tools.html', kw: 'age percentage tip split bill calculator birthday' },
     { title: 'Guides', desc: 'Plain-English explainers behind the calculators', href: '/guides.html', kw: 'articles help learn read' },
     { title: 'Embed Our Tools', desc: 'Put a live calculator on your own site, free', href: '/embed.html', kw: 'widget developer iframe embed code' },
     { title: 'Feedback', desc: 'Report a bug or request a tool', href: '/feedback.html', kw: 'bug report contact support request' },

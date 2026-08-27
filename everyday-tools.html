@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Everyday Tools — Age, Percentage &amp; Tip Calculators — PopPopMake</title>
+<meta name="description" content="Free everyday calculators: exact age in years/months/days, percentage calculator (three modes), and a tip/bill-split calculator.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 28px;}
+
+  .tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;border-bottom:1px solid var(--line);}
+  .tab-btn{padding:11px 18px;background:none;border:none;border-bottom:3px solid transparent;font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:500;color:var(--ink-soft);cursor:pointer;margin-bottom:-1px;}
+  .tab-btn.active{color:var(--ink);border-bottom-color:var(--orange);font-weight:600;}
+  .tab-btn:hover:not(.active){color:var(--ink);}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;}
+  .field{margin-bottom:16px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;}
+  input[type=number], input[type=date], select{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:1rem;background:#fff;color:var(--ink);
+  }
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:480px){ .row2{grid-template-columns:1fr;} }
+  .prefix-wrap{position:relative;}
+  .prefix-wrap span{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--ink-soft);}
+  .prefix-wrap input{padding-left:24px;}
+
+  .result-big{
+    background:var(--card);border:1px solid var(--line);border-top:4px solid var(--orange);
+    border-radius:var(--radius);padding:26px 24px;margin-top:20px;text-align:center;
+  }
+  .result-big .amount{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.6rem,4.5vw,2.4rem);color:var(--orange);letter-spacing:-0.02em;}
+  .result-big .sub{color:var(--ink-soft);font-size:0.9rem;margin-top:6px;}
+
+  .chip-row{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap;justify-content:center;}
+  .chip{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--paper-2);border-radius:999px;padding:7px 14px;color:var(--ink-soft);}
+  .chip b{color:var(--ink);}
+
+  .mode-group{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:18px;}
+  .mode-group button{flex:1;padding:10px 8px;background:#fff;border:none;font-size:0.82rem;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;}
+  .mode-group button.active{background:var(--teal);color:#fff;font-weight:600;}
+  .mode-group button:not(:last-child){border-right:1px solid var(--line);}
+
+  .preset-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
+  .preset-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
+  .preset-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+
+  table.breakdown{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:16px;}
+  table.breakdown th, table.breakdown td{padding:12px 16px;text-align:right;font-size:0.92rem;border-bottom:1px solid var(--line);}
+  table.breakdown th:first-child, table.breakdown td:first-child{text-align:left;}
+  table.breakdown thead th{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper-2);}
+  table.breakdown tbody tr:last-child td{border-bottom:none;font-weight:700;background:rgba(15,139,141,0.06);}
+
+  .disclaimer{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
+    border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.88rem;color:var(--ink-soft);
+  }
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Everyday Tools</span>
+  <h1>Age, Percentage &amp; Tip Calculators</h1>
+  <p class="lede">The small calculations that come up constantly &mdash; how old exactly, what percentage, how to split a bill &mdash; without ads between every click.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="age" role="tab" aria-selected="true">Age Calculator</button>
+    <button class="tab-btn" data-tab="pct" role="tab" aria-selected="false">Percentage Calculator</button>
+    <button class="tab-btn" data-tab="tip" role="tab" aria-selected="false">Tip &amp; Split Calculator</button>
+  </div>
+
+  <!-- AGE CALCULATOR -->
+  <section class="panel active" id="panel-age">
+    <div class="card">
+      <div class="field">
+        <label for="birthDate">Date of birth</label>
+        <input type="date" id="birthDate" value="2000-01-01">
+      </div>
+      <div class="field">
+        <label for="asOfDate">Calculate age as of</label>
+        <input type="date" id="asOfDate">
+      </div>
+    </div>
+    <div class="result-big" id="ageResultBox">
+      <div class="amount" id="ageAmount">&mdash;</div>
+      <div class="sub" id="ageSub"></div>
+      <div class="chip-row">
+        <span class="chip">Total days lived: <b id="ageTotalDays">&mdash;</b></span>
+        <span class="chip">Days to next birthday: <b id="ageDaysToBday">&mdash;</b></span>
+        <span class="chip">Born on a: <b id="ageDayOfWeek">&mdash;</b></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- PERCENTAGE CALCULATOR -->
+  <section class="panel" id="panel-pct">
+    <div class="card">
+      <div class="mode-group" role="group" aria-label="Calculation mode">
+        <button type="button" class="pct-mode-btn active" data-mode="of">X% of Y</button>
+        <button type="button" class="pct-mode-btn" data-mode="what">X is what % of Y</button>
+        <button type="button" class="pct-mode-btn" data-mode="change">% change, X to Y</button>
+      </div>
+      <div class="row2" id="pctFieldsOf">
+        <div class="field"><label for="pctX_of">Percentage</label><div class="prefix-wrap"><input type="number" id="pctX_of" value="20"><span style="left:auto;right:12px;">%</span></div></div>
+        <div class="field"><label for="pctY_of">Of this number</label><input type="number" id="pctY_of" value="150"></div>
+      </div>
+      <div class="row2" id="pctFieldsWhat" style="display:none;">
+        <div class="field"><label for="pctX_what">This number</label><input type="number" id="pctX_what" value="30"></div>
+        <div class="field"><label for="pctY_what">Is what % of this</label><input type="number" id="pctY_what" value="150"></div>
+      </div>
+      <div class="row2" id="pctFieldsChange" style="display:none;">
+        <div class="field"><label for="pctX_change">From</label><input type="number" id="pctX_change" value="100"></div>
+        <div class="field"><label for="pctY_change">To</label><input type="number" id="pctY_change" value="150"></div>
+      </div>
+    </div>
+    <div class="result-big">
+      <div class="amount" id="pctResult">&mdash;</div>
+      <div class="sub" id="pctResultSub"></div>
+    </div>
+  </section>
+
+  <!-- TIP / SPLIT CALCULATOR -->
+  <section class="panel" id="panel-tip">
+    <div class="card">
+      <div class="field">
+        <label for="billAmount">Bill amount</label>
+        <div class="prefix-wrap"><span>$</span><input type="number" id="billAmount" value="84.50" min="0" step="0.01"></div>
+      </div>
+      <div class="field">
+        <label for="tipPct">Tip percentage</label>
+        <div class="prefix-wrap"><input type="number" id="tipPct" value="18" min="0" step="1"><span style="left:auto;right:12px;">%</span></div>
+        <div class="preset-row">
+          <button type="button" class="preset-btn" data-pct="15">15%</button>
+          <button type="button" class="preset-btn active" data-pct="18">18%</button>
+          <button type="button" class="preset-btn" data-pct="20">20%</button>
+          <button type="button" class="preset-btn" data-pct="25">25%</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="numPeople">Number of people</label>
+        <input type="number" id="numPeople" value="4" min="1" step="1">
+      </div>
+    </div>
+    <table class="breakdown">
+      <thead><tr><th>Item</th><th>Total</th><th>Per person</th></tr></thead>
+      <tbody id="tipBody"></tbody>
+    </table>
+  </section>
+
+  <div class="disclaimer">
+    All three run entirely in your browser &mdash; nothing you type here is sent anywhere. <a href="/how-it-works.html">See how to check that yourself</a>.
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+  // ---- Tab switching ----
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+</script>
+<script>
+(function(){
+  // ---- Age engine (tested against leap-year and month-overflow edge cases) ----
+function addMonths(date, n){
+  var d = new Date(date.getTime());
+  d.setMonth(d.getMonth() + n);
+  return d;
+}
+
+function calcAge(birthDateStr, asOfDateStr){
+  var birth = new Date(birthDateStr + 'T00:00:00');
+  var asOf = new Date((asOfDateStr || new Date().toISOString().slice(0,10)) + 'T00:00:00');
+
+  if (isNaN(birth.getTime())) return null;
+  if (birth > asOf) return { error: 'future' };
+
+  var msPerDay = 1000 * 60 * 60 * 24;
+
+  // Find the largest whole-month count that doesn't overshoot asOf.
+  // This correctly handles birth days that don't exist in every month (e.g. the 31st),
+  // by relying on Date's own month-overflow behavior and backing off when it overshoots.
+  var totalMonths = (asOf.getFullYear() - birth.getFullYear()) * 12 + (asOf.getMonth() - birth.getMonth());
+  if (addMonths(birth, totalMonths) > asOf) totalMonths--;
+  // Guard: keep backing off in the rare case a single decrement isn't enough
+  while (addMonths(birth, totalMonths) > asOf) totalMonths--;
+
+  var anchor = addMonths(birth, totalMonths);
+  var days = Math.round((asOf - anchor) / msPerDay);
+
+  var years = Math.floor(totalMonths / 12);
+  var months = totalMonths % 12;
+
+  var totalDays = Math.round((asOf - birth) / msPerDay);
+
+  var nextBday = new Date(asOf.getFullYear(), birth.getMonth(), birth.getDate());
+  if (nextBday < asOf) {
+    nextBday = new Date(asOf.getFullYear() + 1, birth.getMonth(), birth.getDate());
+  }
+  var daysUntilBday = Math.round((nextBday - asOf) / msPerDay);
+
+  var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var bornDayOfWeek = dayNames[birth.getDay()];
+
+  return {
+    years: years, months: months, days: days,
+    totalDays: totalDays, daysUntilBday: daysUntilBday,
+    bornDayOfWeek: bornDayOfWeek
+  };
+}
+
+
+
+  // ---- Age Calculator UI ----
+  var birthInput = document.getElementById('birthDate');
+  var asOfInput = document.getElementById('asOfDate');
+  asOfInput.value = new Date().toISOString().slice(0,10);
+
+  function renderAge(){
+    var r = calcAge(birthInput.value, asOfInput.value);
+    if (!r) { document.getElementById('ageAmount').textContent = 'Enter a valid date'; return; }
+    if (r.error === 'future') {
+      document.getElementById('ageAmount').textContent = 'That birth date is in the future';
+      document.getElementById('ageSub').textContent = '';
+      document.getElementById('ageTotalDays').textContent = '—';
+      document.getElementById('ageDaysToBday').textContent = '—';
+      document.getElementById('ageDayOfWeek').textContent = '—';
+      return;
+    }
+    document.getElementById('ageAmount').textContent = r.years + 'y ' + r.months + 'm ' + r.days + 'd';
+    document.getElementById('ageSub').textContent = r.years + ' years, ' + r.months + ' months, and ' + r.days + ' days old';
+    document.getElementById('ageTotalDays').textContent = r.totalDays.toLocaleString();
+    document.getElementById('ageDaysToBday').textContent = r.daysUntilBday === 0 ? 'Today!' : r.daysUntilBday;
+    document.getElementById('ageDayOfWeek').textContent = r.bornDayOfWeek;
+    if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  }
+  birthInput.addEventListener('input', renderAge);
+  asOfInput.addEventListener('input', renderAge);
+  renderAge();
+})();
+</script>
+<script>
+(function(){
+  // ---- Percentage + Tip engine (tested) ----
+function pctOf(percent, base){ return (percent/100) * base; }
+function whatPercent(part, whole){ return whole !== 0 ? (part/whole)*100 : 0; }
+function pctChange(from, to){ return from !== 0 ? ((to-from)/Math.abs(from))*100 : 0; }
+
+// Tip / bill split
+function calcTip(bill, tipPct, numPeople){
+  var tip = bill * (tipPct/100);
+  var total = bill + tip;
+  var people = Math.max(1, numPeople);
+  return {
+    tip: tip, total: total,
+    perPersonBill: bill/people, perPersonTip: tip/people, perPersonTotal: total/people
+  };
+}
+
+
+  function fmtNum(n){ return Number.isFinite(n) ? (Math.round(n*100)/100).toLocaleString('en-US') : '—'; }
+  function fmtMoney(n){ return '$' + (Math.round(n*100)/100).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+  // ---- Percentage Calculator UI ----
+  var pctMode = 'of';
+  document.querySelectorAll('.pct-mode-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.pct-mode-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      pctMode = btn.dataset.mode;
+      document.getElementById('pctFieldsOf').style.display = pctMode === 'of' ? 'grid' : 'none';
+      document.getElementById('pctFieldsWhat').style.display = pctMode === 'what' ? 'grid' : 'none';
+      document.getElementById('pctFieldsChange').style.display = pctMode === 'change' ? 'grid' : 'none';
+      renderPct();
+    });
+  });
+
+  function renderPct(){
+    var out = document.getElementById('pctResult');
+    var sub = document.getElementById('pctResultSub');
+    if (pctMode === 'of') {
+      var x = parseFloat(document.getElementById('pctX_of').value) || 0;
+      var y = parseFloat(document.getElementById('pctY_of').value) || 0;
+      out.textContent = fmtNum(pctOf(x,y));
+      sub.textContent = x + '% of ' + y;
+    } else if (pctMode === 'what') {
+      var x2 = parseFloat(document.getElementById('pctX_what').value) || 0;
+      var y2 = parseFloat(document.getElementById('pctY_what').value) || 0;
+      out.textContent = fmtNum(whatPercent(x2,y2)) + '%';
+      sub.textContent = x2 + ' is this % of ' + y2;
+    } else {
+      var x3 = parseFloat(document.getElementById('pctX_change').value) || 0;
+      var y3 = parseFloat(document.getElementById('pctY_change').value) || 0;
+      var change = pctChange(x3,y3);
+      out.textContent = (change > 0 ? '+' : '') + fmtNum(change) + '%';
+      sub.textContent = (change >= 0 ? 'Increase' : 'Decrease') + ' from ' + x3 + ' to ' + y3;
+    }
+    if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  }
+  ['pctX_of','pctY_of','pctX_what','pctY_what','pctX_change','pctY_change'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', renderPct);
+  });
+  renderPct();
+
+  // ---- Tip Calculator UI ----
+  var billInput = document.getElementById('billAmount');
+  var tipInput = document.getElementById('tipPct');
+  var peopleInput = document.getElementById('numPeople');
+
+  document.querySelectorAll('.preset-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.preset-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      tipInput.value = btn.dataset.pct;
+      renderTip();
+    });
+  });
+
+  function renderTip(){
+    var bill = Math.max(0, parseFloat(billInput.value) || 0);
+    var tipPct = Math.max(0, parseFloat(tipInput.value) || 0);
+    var people = Math.max(1, parseInt(peopleInput.value, 10) || 1);
+    var r = calcTip(bill, tipPct, people);
+
+    var rows = [
+      ['Bill', fmtMoney(bill), fmtMoney(r.perPersonBill)],
+      ['Tip (' + tipPct + '%)', fmtMoney(r.tip), fmtMoney(r.perPersonTip)],
+      ['Total', fmtMoney(r.total), fmtMoney(r.perPersonTotal)]
+    ];
+    var body = document.getElementById('tipBody');
+    body.innerHTML = '';
+    rows.forEach(function(row){
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>'+row[0]+'</td><td>'+row[1]+'</td><td>'+row[2]+'</td>';
+      body.appendChild(tr);
+    });
+    if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  }
+  [billInput, tipInput, peopleInput].forEach(function(el){ el.addEventListener('input', renderTip); });
+  renderTip();
+})();
+</script>
+</body>
+</html>
