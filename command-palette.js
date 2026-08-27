@@ -10,6 +10,7 @@
     { title: 'Mortgage Calculator', desc: 'Monthly payment with tax, insurance, and PMI', href: '/mortgage-calculator.html', kw: 'mortgage home loan house payment pmi property tax insurance' },
     { title: '401(k) Retirement Calculator', desc: 'Projected balance from contributions, match, and growth', href: '/retirement-calculator.html', kw: 'retirement 401k pension savings employer match compound growth' },
     { title: 'Capital Gains Tax Calculator', desc: 'Stocks and crypto, short vs long-term, NIIT', href: '/capital-gains-calculator.html', kw: 'capital gains crypto stock tax cost basis niit short term long term' },
+    { title: 'Compare Take-Home Pay', desc: 'Two scenarios side by side, any US state or country', href: '/compare-takehome.html', kw: 'compare relocate move states countries salary offer job international' },
     { title: 'UK Paycheck Calculator', desc: 'Income Tax and National Insurance, England/Wales/NI or Scotland', href: '/uk-paycheck-calculator.html', kw: 'tax salary income take-home money uk britain scotland paycheck' },
     { title: 'Australia Paycheck Calculator', desc: 'Income tax, LITO, and the Medicare levy', href: '/au-paycheck-calculator.html', kw: 'tax salary income take-home money australia medicare levy paycheck' },
     { title: 'Canada Paycheck Calculator', desc: 'Federal + provincial tax, CPP/CPP2, EI, all provinces', href: '/ca-paycheck-calculator.html', kw: 'tax salary income take-home money canada cpp ei ontario quebec alberta paycheck' },
