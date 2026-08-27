@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Developer Tools — JSON, Base64, UUID, Color — PopPopMake</title>
+<meta name="description" content="Free developer utilities: JSON formatter and validator, UTF-8-safe Base64 encoder/decoder, UUID v4 generator, and a HEX/RGB/HSL color converter.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 28px;}
+
+  .tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap;border-bottom:1px solid var(--line);}
+  .tab-btn{padding:11px 16px;background:none;border:none;border-bottom:3px solid transparent;font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:500;color:var(--ink-soft);cursor:pointer;margin-bottom:-1px;}
+  .tab-btn.active{color:var(--ink);border-bottom-color:var(--orange);font-weight:600;}
+  .tab-btn:hover:not(.active){color:var(--ink);}
+
+  .panel{display:none;}
+  .panel.active{display:block;}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:22px;}
+  .field{margin-bottom:14px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;}
+  textarea, input[type=text], input[type=number]{
+    width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.88rem;background:#fff;color:var(--ink);
+    resize:vertical;
+  }
+  textarea{min-height:140px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  @media (max-width:520px){ .row2{grid-template-columns:1fr;} }
+
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.9rem;padding:10px 18px;border-radius:999px;cursor:pointer;}
+  .action-btn:hover{opacity:0.92;}
+  .action-btn.secondary{background:var(--teal);}
+  .btn-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+
+  .status{margin-top:12px;font-size:0.85rem;padding:10px 14px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .status.error{background:rgba(193,67,36,0.08);color:var(--orange);}
+
+  .swatch{width:100%;height:90px;border-radius:10px;border:1px solid var(--line);margin-bottom:16px;}
+  .color-values{display:grid;grid-template-columns:1fr;gap:10px;}
+  .color-value-row{display:flex;align-items:center;gap:10px;}
+  .color-value-row label{width:50px;flex-shrink:0;font-weight:600;font-size:0.85rem;}
+  .copy-mini{background:var(--paper-2);border:none;border-radius:6px;padding:6px 10px;font-size:0.75rem;cursor:pointer;color:var(--ink-soft);flex-shrink:0;}
+  .copy-mini:hover{color:var(--ink);}
+
+  .uuid-display{font-family:'IBM Plex Mono',monospace;font-size:1.1rem;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;text-align:center;word-break:break-all;}
+  .uuid-list{margin-top:12px;}
+  .uuid-list .uuid-display{margin-bottom:8px;font-size:0.92rem;text-align:left;padding:10px 14px;}
+
+  .disclaimer{
+    background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
+    border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.88rem;color:var(--ink-soft);
+  }
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Developer Tools</span>
+  <h1>JSON, Base64, UUID &amp; Color</h1>
+  <p class="lede">Four small utilities every dev reaches for constantly, without the ad-choked pages most of these tools live on.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="json" role="tab" aria-selected="true">JSON Formatter</button>
+    <button class="tab-btn" data-tab="b64" role="tab" aria-selected="false">Base64</button>
+    <button class="tab-btn" data-tab="uuid" role="tab" aria-selected="false">UUID Generator</button>
+    <button class="tab-btn" data-tab="color" role="tab" aria-selected="false">Color Converter</button>
+  </div>
+
+  <!-- JSON FORMATTER -->
+  <section class="panel active" id="panel-json">
+    <div class="card">
+      <div class="field">
+        <label for="jsonInput">Paste JSON</label>
+        <textarea id="jsonInput" placeholder='{"example": [1, 2, 3], "nested": {"ok": true}}'>{"name":"PopPopMake","categories":["Documents","Money","Career","Business","Writing","Everyday"],"free":true,"count":6}</textarea>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="jsonIndent">Indent size</label>
+          <select id="jsonIndent" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;">
+            <option value="2" selected>2 spaces</option>
+            <option value="4">4 spaces</option>
+            <option value="0">Minify (no spaces)</option>
+          </select>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="action-btn" id="jsonFormatBtn" type="button">Format</button>
+        <button class="action-btn secondary" id="jsonCopyBtn" type="button">Copy result</button>
+      </div>
+      <div class="status" id="jsonStatus"></div>
+      <div class="field" style="margin-top:14px;">
+        <label for="jsonOutput">Result</label>
+        <textarea id="jsonOutput" readonly style="min-height:180px;background:var(--paper-2);"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <!-- BASE64 -->
+  <section class="panel" id="panel-b64">
+    <div class="card">
+      <div class="field">
+        <label for="b64Text">Text</label>
+        <textarea id="b64Text" placeholder="Type or paste text here">Hello, PopPopMake! 안녕하세요 🎉</textarea>
+      </div>
+      <div class="btn-row">
+        <button class="action-btn" id="b64EncodeBtn" type="button">Encode &rarr;</button>
+        <button class="action-btn secondary" id="b64DecodeBtn" type="button">&larr; Decode</button>
+      </div>
+      <div class="status" id="b64Status"></div>
+      <div class="field" style="margin-top:14px;">
+        <label for="b64Result">Base64</label>
+        <textarea id="b64Result" placeholder="Encoded/decoded result appears here"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="action-btn secondary" id="b64CopyBtn" type="button">Copy result</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- UUID GENERATOR -->
+  <section class="panel" id="panel-uuid">
+    <div class="card">
+      <div class="uuid-display" id="uuidSingle">&mdash;</div>
+      <div class="btn-row">
+        <button class="action-btn" id="uuidGenBtn" type="button">Generate new UUID</button>
+        <button class="action-btn secondary" id="uuidCopyBtn" type="button">Copy</button>
+      </div>
+      <div class="field" style="margin-top:20px;">
+        <label for="uuidCount">Generate multiple</label>
+        <div class="row2">
+          <input type="number" id="uuidCount" value="5" min="1" max="100">
+          <button class="action-btn" id="uuidBatchBtn" type="button">Generate list</button>
+        </div>
+      </div>
+      <div class="uuid-list" id="uuidList"></div>
+    </div>
+  </section>
+
+  <!-- COLOR CONVERTER -->
+  <section class="panel" id="panel-color">
+    <div class="card">
+      <div class="field">
+        <label for="colorHex">HEX</label>
+        <input type="text" id="colorHex" value="#0D7A7C">
+      </div>
+      <div class="swatch" id="colorSwatch"></div>
+      <div class="color-values">
+        <div class="color-value-row"><label>HEX</label><input type="text" id="outHex" readonly><button class="copy-mini" data-copy="outHex">Copy</button></div>
+        <div class="color-value-row"><label>RGB</label><input type="text" id="outRgb" readonly><button class="copy-mini" data-copy="outRgb">Copy</button></div>
+        <div class="color-value-row"><label>HSL</label><input type="text" id="outHsl" readonly><button class="copy-mini" data-copy="outHsl">Copy</button></div>
+      </div>
+      <div class="status" id="colorStatus"></div>
+    </div>
+  </section>
+
+  <div class="disclaimer">
+    Everything on this page runs in your browser &mdash; nothing you paste or generate is sent anywhere, which matters most for JSON that might contain real data. <a href="/how-it-works.html">See how to check that yourself</a>.
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+  document.querySelectorAll('.tab-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+      btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+      document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  function setStatusById(elId, kind, msg){
+    var el = document.getElementById(elId);
+    el.className = 'status show ' + kind;
+    el.textContent = msg;
+    if (kind === 'success' && window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  }
+
+  function copyText(text, btnEl, doneLabel){
+    var done = function(){
+      if (btnEl) { var orig = btnEl.textContent; btnEl.textContent = doneLabel || 'Copied!'; setTimeout(function(){ btnEl.textContent = orig; }, 1500); }
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text, done); });
+    } else {
+      fallbackCopy(text, done);
+    }
+  }
+  function fallbackCopy(text, done){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); done(); } catch(e){}
+    document.body.removeChild(ta);
+  }
+</script>
+<script>
+(function(){
+  // ---- JSON Formatter ----
+  var jsonInput = document.getElementById('jsonInput');
+  var jsonOutput = document.getElementById('jsonOutput');
+  var jsonIndent = document.getElementById('jsonIndent');
+
+  function formatJSON(){
+    var indentVal = jsonIndent.value;
+    var indent = indentVal === '0' ? undefined : parseInt(indentVal, 10);
+    try {
+      var parsed = JSON.parse(jsonInput.value);
+      jsonOutput.value = JSON.stringify(parsed, null, indent);
+      setStatusById('jsonStatus', 'success', 'Valid JSON, formatted below.');
+    } catch(e) {
+      jsonOutput.value = '';
+      setStatusById('jsonStatus', 'error', 'Not valid JSON: ' + e.message);
+    }
+  }
+  document.getElementById('jsonFormatBtn').addEventListener('click', formatJSON);
+  document.getElementById('jsonCopyBtn').addEventListener('click', function(){
+    if (jsonOutput.value) copyText(jsonOutput.value, this);
+  });
+  formatJSON();
+})();
+</script>
+<script>
+(function(){
+  // ---- Base64 (UTF-8 safe, tested against ASCII/Korean/emoji/mixed) ----
+function utf8ToBase64(str){
+  var bytes = new TextEncoder().encode(str);
+  var binary = '';
+  for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
+}
+function base64ToUtf8(b64){
+  var binary = atob(b64);
+  var bytes = new Uint8Array(binary.length);
+  for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+
+  var b64Text = document.getElementById('b64Text');
+  var b64Result = document.getElementById('b64Result');
+
+  document.getElementById('b64EncodeBtn').addEventListener('click', function(){
+    try {
+      b64Result.value = utf8ToBase64(b64Text.value);
+      setStatusById('b64Status', 'success', 'Encoded.');
+    } catch(e) {
+      setStatusById('b64Status', 'error', 'Could not encode: ' + e.message);
+    }
+  });
+  document.getElementById('b64DecodeBtn').addEventListener('click', function(){
+    try {
+      b64Text.value = base64ToUtf8(b64Result.value.trim());
+      setStatusById('b64Status', 'success', 'Decoded into the text box above.');
+    } catch(e) {
+      setStatusById('b64Status', 'error', 'Not valid Base64: ' + e.message);
+    }
+  });
+  document.getElementById('b64CopyBtn').addEventListener('click', function(){
+    if (b64Result.value) copyText(b64Result.value, this);
+  });
+})();
+</script>
+<script>
+(function(){
+  // ---- UUID v4 Generator ----
+  function genUUID(){
+    if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
+      var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+    });
+  }
+  var single = document.getElementById('uuidSingle');
+  document.getElementById('uuidGenBtn').addEventListener('click', function(){
+    single.textContent = genUUID();
+    if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  });
+  document.getElementById('uuidCopyBtn').addEventListener('click', function(){
+    if (single.textContent !== '—') copyText(single.textContent, this);
+  });
+  document.getElementById('uuidBatchBtn').addEventListener('click', function(){
+    var n = Math.max(1, Math.min(100, parseInt(document.getElementById('uuidCount').value, 10) || 1));
+    var list = document.getElementById('uuidList');
+    list.innerHTML = '';
+    for (var i=0;i<n;i++){
+      var div = document.createElement('div');
+      div.className = 'uuid-display';
+      div.textContent = genUUID();
+      list.appendChild(div);
+    }
+    if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  });
+  single.textContent = genUUID();
+})();
+</script>
+<script>
+(function(){
+  // ---- Color Converter (hex/rgb/hsl, verified against grayscale edge cases and round-trip accuracy) ----
+function hexToRgb(hex){
+  hex = hex.replace('#','').trim();
+  if (hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+  if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
+  return {
+    r: parseInt(hex.slice(0,2),16),
+    g: parseInt(hex.slice(2,4),16),
+    b: parseInt(hex.slice(4,6),16)
+  };
+}
+function rgbToHex(r,g,b){
+  function h(n){ return Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,'0'); }
+  return '#' + h(r) + h(g) + h(b);
+}
+function rgbToHsl(r,g,b){
+  r/=255; g/=255; b/=255;
+  var max = Math.max(r,g,b), min = Math.min(r,g,b);
+  var h, s, l = (max+min)/2;
+  if (max === min) {
+    h = 0; s = 0; // achromatic (grayscale) -- hue is undefined, we report 0
+  } else {
+    var d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch(max){
+      case r: h = (g-b)/d + (g < b ? 6 : 0); break;
+      case g: h = (b-r)/d + 2; break;
+      case b: h = (r-g)/d + 4; break;
+    }
+    h /= 6;
+  }
+  return { h: Math.round(h*360), s: Math.round(s*100), l: Math.round(l*100) };
+}
+function hslToRgb(h,s,l){
+  h/=360; s/=100; l/=100;
+  var r,g,b;
+  if (s === 0) {
+    r = g = b = l; // achromatic
+  } else {
+    var hue2rgb = function(p,q,t){
+      if (t<0) t+=1;
+      if (t>1) t-=1;
+      if (t<1/6) return p+(q-p)*6*t;
+      if (t<1/2) return q;
+      if (t<2/3) return p+(q-p)*(2/3-t)*6;
+      return p;
+    };
+    var q = l < 0.5 ? l*(1+s) : l+s-l*s;
+    var p = 2*l-q;
+    r = hue2rgb(p,q,h+1/3);
+    g = hue2rgb(p,q,h);
+    b = hue2rgb(p,q,h-1/3);
+  }
+  return { r: Math.round(r*255), g: Math.round(g*255), b: Math.round(b*255) };
+}
+
+  var hexInput = document.getElementById('colorHex');
+
+  function renderColor(){
+    var rgb = hexToRgb(hexInput.value);
+    if (!rgb) {
+      setStatusById('colorStatus', 'error', 'Enter a valid hex color, like #0D7A7C or #0d7');
+      return;
+    }
+    var hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+    var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+    document.getElementById('colorSwatch').style.background = hex;
+    document.getElementById('outHex').value = hex;
+    document.getElementById('outRgb').value = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
+    document.getElementById('outHsl').value = 'hsl(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)';
+    setStatusById('colorStatus', 'success', 'Converted.');
+  }
+  hexInput.addEventListener('input', renderColor);
+  document.querySelectorAll('.copy-mini').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var val = document.getElementById(btn.dataset.copy).value;
+      copyText(val, btn, 'Copied');
+    });
+  });
+  renderColor();
+})();
+</script>
+</body>
+</html>
