@@ -78,6 +78,13 @@
   <div class="entry">
     <div class="entry-date">Aug 27, 2026</div>
     <span class="tag shipped">Shipped</span>
+    <h2>A guide explaining why our AI checker isn't a "detector"</h2>
+    <p>New guide: <a href="/ai-detector-honesty.html">Why We Don't Claim Our AI Checker Is 99% Accurate</a>. Covers the actual evidence &mdash; Stanford HAI found seven commercial AI detectors falsely flagged 61% of human-written essays by non-native English speakers, and Vanderbilt, MIT, Yale, and dozens of other universities have since restricted or dropped automated AI detection for exactly this reason. The Writing &amp; AI tool here was already built as a plain pattern-flagger rather than a classifier claiming ML-based detection; this guide makes that choice explicit instead of leaving it implicit.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 27, 2026</div>
+    <span class="tag shipped">Shipped</span>
     <h2>Four more embeddable widgets: UK, Australia, Canada &amp; Mortgage</h2>
     <p>The embeddable Paycheck Calculator was US-only; now UK, Australia, and Canada versions are embeddable too, plus the Mortgage Calculator. Seven widgets total on the <a href="/embed.html">Embed</a> page. Each new widget reuses the exact tested engine from its full page, adapted into a compact layout &mdash; and that adaptation caught two real bugs: the Canada and Mortgage engines both referenced a couple of on-page elements (a province hint, a PMI note) that the compact layout doesn't have, which would have thrown an error on every keystroke and silently frozen those two widgets. Caught by checking every element ID the code references against what the page actually contains, not just running the calculators once and eyeballing the result.</p>
   </div>

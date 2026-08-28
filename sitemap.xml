@@ -91,6 +91,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://poppopmake.com/ai-detector-honesty.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://poppopmake.com/terms.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
