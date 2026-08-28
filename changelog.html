@@ -78,6 +78,13 @@
   <div class="entry">
     <div class="entry-date">Aug 27, 2026</div>
     <span class="tag shipped">Shipped</span>
+    <h2>Four more embeddable widgets: UK, Australia, Canada &amp; Mortgage</h2>
+    <p>The embeddable Paycheck Calculator was US-only; now UK, Australia, and Canada versions are embeddable too, plus the Mortgage Calculator. Seven widgets total on the <a href="/embed.html">Embed</a> page. Each new widget reuses the exact tested engine from its full page, adapted into a compact layout &mdash; and that adaptation caught two real bugs: the Canada and Mortgage engines both referenced a couple of on-page elements (a province hint, a PMI note) that the compact layout doesn't have, which would have thrown an error on every keystroke and silently frozen those two widgets. Caught by checking every element ID the code references against what the page actually contains, not just running the calculators once and eyeballing the result.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Aug 27, 2026</div>
+    <span class="tag shipped">Shipped</span>
     <h2>Repositioned Compare Take-Home Pay: depth over breadth</h2>
     <p>Competitive research turned up several tools comparing 100+ countries with currency and cost-of-living conversion built in &mdash; a field this tool was never going to win by adding a handful more countries. Rewrote the page to lead with what's actually true: every US state, both sides of the UK's tax split, Australia, and all 13 Canadian provinces and territories, verified in real depth, with no currency conversion pretending at false precision. Added an explicit "why just four countries" explanation instead of leaving the limitation to a footnote in the disclaimer.</p>
   </div>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mortgage Calculator — PopPopMake</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:transparent;color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:2px;}
+  .embed{padding:14px;max-width:480px;margin:0 auto;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+  .field{margin-bottom:10px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-size:0.76rem;font-weight:600;margin-bottom:4px;}
+  input[type=number]{
+    width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:0.9rem;background:#fff;color:var(--ink);
+  }
+  .prefix-wrap{position:relative;}
+  .prefix-wrap span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink-soft);font-size:0.9rem;}
+  .prefix-wrap input{padding-left:20px;}
+  .suffix-wrap{position:relative;}
+  .suffix-wrap span{position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--ink-soft);font-size:0.8rem;}
+  .suffix-wrap input{padding-right:26px;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+
+  .take-home{
+    background:var(--card);border:1px solid var(--line);border-top:3px solid var(--orange);
+    border-radius:var(--radius);padding:16px;margin-bottom:10px;text-align:center;
+  }
+  .take-home h2{font-family:'Space Grotesk',sans-serif;font-size:0.85rem;margin:0 0 4px;font-weight:600;color:var(--ink-soft);}
+  .take-home .amount{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2rem;color:var(--orange);letter-spacing:-0.02em;}
+  .take-home .sub{color:var(--ink-soft);font-size:0.8rem;}
+
+  table.breakdown{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:0.82rem;}
+  table.breakdown th, table.breakdown td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);}
+  table.breakdown th:first-child, table.breakdown td:first-child{text-align:left;}
+  table.breakdown thead th{
+    font-family:'IBM Plex Mono',monospace;font-size:0.66rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);
+    background:var(--paper-2);
+  }
+  table.breakdown tbody tr:last-child td{border-bottom:none;font-weight:700;background:rgba(15,139,141,0.06);}
+
+  .fine-print{font-size:0.68rem;color:var(--ink-soft);margin-top:10px;line-height:1.5;}
+
+  .badge{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 0 2px;font-size:0.76rem;color:var(--ink-soft);}
+  .badge a{color:var(--ink);text-decoration:none;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+  .badge a:hover{color:var(--teal);}
+</style>
+</head>
+<body>
+
+<div class="embed">
+  <div class="panel">
+    <div class="field">
+      <label for="homePrice">Home price</label>
+      <div class="prefix-wrap"><span>$</span><input type="number" id="homePrice" value="400000" min="0" step="1000"></div>
+    </div>
+    <div class="field">
+      <label for="downPayment">Down payment</label>
+      <div class="prefix-wrap"><span>$</span><input type="number" id="downPayment" value="40000" min="0" step="1000"></div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="rate">Interest rate</label>
+        <div class="suffix-wrap"><input type="number" id="rate" value="6.5" min="0" step="0.05"><span>%</span></div>
+      </div>
+      <div class="field">
+        <label for="years">Term (yrs)</label>
+        <input type="number" id="years" value="30" min="1" step="1">
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field">
+        <label for="propertyTaxRate">Property tax</label>
+        <div class="suffix-wrap"><input type="number" id="propertyTaxRate" value="1.1" min="0" step="0.05"><span>%/yr</span></div>
+      </div>
+      <div class="field">
+        <label for="pmiRate">PMI rate</label>
+        <div class="suffix-wrap"><input type="number" id="pmiRate" value="0.6" min="0" step="0.05"><span>%/yr</span></div>
+      </div>
+    </div>
+    <div class="field">
+      <label for="annualInsurance">Home insurance (per year)</label>
+      <div class="prefix-wrap"><span>$</span><input type="number" id="annualInsurance" value="1500" min="0" step="50"></div>
+    </div>
+    <div class="field">
+      <label for="hoaMonthly">HOA dues (per month)</label>
+      <div class="prefix-wrap"><span>$</span><input type="number" id="hoaMonthly" value="0" min="0" step="10"></div>
+    </div>
+  </div>
+
+  <div class="take-home">
+    <h2>Estimated monthly payment</h2>
+    <div class="amount" id="totalMonthly">$0</div>
+    <div class="sub" id="totalMonthlySub">P&amp;I, tax, insurance, PMI if applicable</div>
+  </div>
+
+  <table class="breakdown">
+    <thead><tr><th>Item</th><th>Per month</th></tr></thead>
+    <tbody id="breakdownBody"></tbody>
+  </table>
+
+  <p class="fine-print">Estimate only, not a loan offer. Property tax and insurance are averages you can adjust. Runs entirely in this frame; nothing you enter is sent anywhere.</p>
+
+  <div class="badge">
+    <svg width="16" height="16" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>
+    <span>Powered by <a href="https://poppopmake.com/mortgage-calculator.html" target="_blank" rel="noopener">PopPopMake</a></span>
+  </div>
+</div>
+
+<script>
+(function(){
+function monthlyPI(principal, annualRatePct, years){
+    var r = (annualRatePct / 100) / 12;
+    var n = years * 12;
+    if (principal <= 0) return 0;
+    if (r === 0) return principal / n;
+    return principal * (r * Math.pow(1+r, n)) / (Math.pow(1+r, n) - 1);
+  }
+
+  function fmt(n){
+    return '$' + Math.max(0,n).toLocaleString('en-US', {maximumFractionDigits:0});
+  }
+
+  function calc(){
+    var homePrice = Math.max(0, parseFloat(document.getElementById('homePrice').value) || 0);
+    var downPayment = Math.max(0, parseFloat(document.getElementById('downPayment').value) || 0);
+    var rate = Math.max(0, parseFloat(document.getElementById('rate').value) || 0);
+    var years = parseInt(document.getElementById('years').value, 10);
+    var propertyTaxRate = Math.max(0, parseFloat(document.getElementById('propertyTaxRate').value) || 0);
+    var pmiRate = Math.max(0, parseFloat(document.getElementById('pmiRate').value) || 0);
+    var annualInsurance = Math.max(0, parseFloat(document.getElementById('annualInsurance').value) || 0);
+    var hoaMonthly = Math.max(0, parseFloat(document.getElementById('hoaMonthly').value) || 0);
+
+    var principal = Math.max(0, homePrice - downPayment);
+    var pi = monthlyPI(principal, rate, years);
+    var downPct = homePrice > 0 ? (downPayment / homePrice) * 100 : 0;
+
+    var pmiMonthly = 0;
+    if (downPct < 20 && pmiRate > 0 && principal > 0) {
+      pmiMonthly = (principal * (pmiRate / 100)) / 12;
+    }
+
+    var taxMonthly = (homePrice * (propertyTaxRate / 100)) / 12;
+    var insuranceMonthly = annualInsurance / 12;
+    var totalMonthly = pi + pmiMonthly + taxMonthly + insuranceMonthly + hoaMonthly;
+    var totalInterest = (pi * years * 12) - principal;
+
+    document.getElementById('totalMonthly').textContent = fmt(totalMonthly);
+
+    var rows = [
+      ['Principal &amp; interest', pi],
+      ['Property tax', taxMonthly],
+      ['Home insurance', insuranceMonthly]
+    ];
+    if (pmiMonthly > 0) rows.push(['PMI', pmiMonthly]);
+    if (hoaMonthly > 0) rows.push(['HOA dues', hoaMonthly]);
+    rows.push(['Total monthly payment', totalMonthly]);
+
+    var body = document.getElementById('breakdownBody');
+    body.innerHTML = '';
+    rows.forEach(function(row, idx){
+      var tr = document.createElement('tr');
+      if (idx === rows.length-1) tr.className = 'net';
+      tr.innerHTML = '<td>'+row[0]+'</td><td>'+fmt(row[1])+'</td>';
+      body.appendChild(tr);
+    });
+  }
+
+  ['homePrice','downPayment','rate','years','propertyTaxRate','pmiRate','annualInsurance','hoaMonthly'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
+    document.getElementById(id).addEventListener('change', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
+  });
+  calc();
+  var _params = new URLSearchParams(window.location.search);
+  var _instanceId = _params.get('instance') || '';
+
+  function sendHeightEmbed(){
+    var h = document.documentElement.scrollHeight;
+    window.parent.postMessage({type:'poppopmake-embed-resize', instance:_instanceId, height:h}, '*');
+  }
+  window.addEventListener('load', sendHeightEmbed);
+  if (window.ResizeObserver) {
+    new ResizeObserver(sendHeightEmbed).observe(document.body);
+  } else {
+    setTimeout(sendHeightEmbed, 300);
+  }
+})();
+</script>
+</body>
+</html>
