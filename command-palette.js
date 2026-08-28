@@ -1,5 +1,5 @@
 /* PopPopMake — shared command palette (Cmd+K / Ctrl+K quick search).
-   Include on any page with: <script src="/command-palette.js"></script>
+   Include on any page with a script tag referencing this file.
    Injects a small search trigger into the header nav, and opens on
    Cmd+K (Mac) / Ctrl+K (Windows, Linux) from anywhere on the page. */
 (function () {
@@ -38,12 +38,18 @@
 
   function injectStyles() {
     var css = [
-      '.ppm-cmdk-trigger{display:inline-flex;align-items:center;gap:6px;background:var(--paper-2,#E4E9E6);',
-      'border:1px solid var(--line,rgba(28,35,33,.12));border-radius:8px;padding:6px 10px;',
-      'font-family:Inter,system-ui,sans-serif;font-size:0.82rem;color:var(--ink-soft,#4B534F);cursor:pointer;}',
-      '.ppm-cmdk-trigger:hover{border-color:var(--teal,#0F8B8D);color:var(--ink,#1C2321);}',
-      '.ppm-cmdk-trigger kbd{font-family:"IBM Plex Mono",monospace;font-size:0.72rem;background:var(--card,#fff);',
-      'border:1px solid var(--line,rgba(28,35,33,.15));border-radius:4px;padding:1px 5px;}',
+      '.ppm-cmdk-trigger{display:inline-flex;align-items:center;gap:8px;background:var(--card,#fff);',
+      'border:1px solid var(--line,rgba(28,35,33,.15));border-radius:10px;padding:7px 8px 7px 12px;',
+      'font-family:Inter,system-ui,sans-serif;font-size:0.85rem;color:var(--ink-soft,#4B534F);',
+      'cursor:pointer;min-width:148px;justify-content:space-between;',
+      'transition:border-color .15s ease,box-shadow .15s ease;}',
+      '.ppm-cmdk-trigger:hover{border-color:var(--teal,#0F8B8D);box-shadow:0 3px 10px rgba(28,35,33,.07);}',
+      '.ppm-cmdk-icon{flex-shrink:0;opacity:0.55;}',
+      '.ppm-cmdk-label{flex:1;text-align:left;white-space:nowrap;}',
+      '.ppm-cmdk-keys{display:flex;gap:3px;flex-shrink:0;}',
+      '.ppm-cmdk-trigger kbd{font-family:"IBM Plex Mono",monospace;font-size:0.7rem;line-height:1;',
+      'background:var(--paper-2,#E4E9E6);border:1px solid var(--line,rgba(28,35,33,.15));',
+      'border-bottom-width:2px;border-radius:5px;padding:3px 6px;color:var(--ink-soft,#4B534F);}',
       '#ppm-cmdk-overlay{position:fixed;inset:0;z-index:10000;background:rgba(28,35,33,.45);',
       'display:flex;align-items:flex-start;justify-content:center;padding-top:14vh;}',
       '#ppm-cmdk-modal{width:min(560px,90vw);max-height:60vh;display:flex;flex-direction:column;',
@@ -72,7 +78,9 @@
     btn.type = 'button';
     btn.className = 'ppm-cmdk-trigger';
     btn.setAttribute('aria-label', 'Search tools');
-    btn.innerHTML = '\uD83D\uDD0D Search <kbd>' + (isMac ? '\u2318' : 'Ctrl') + 'K</kbd>';
+    var icon = '<svg class="ppm-cmdk-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>';
+    var keys = isMac ? '<kbd>\u2318</kbd><kbd>K</kbd>' : '<kbd>Ctrl</kbd><kbd>K</kbd>';
+    btn.innerHTML = icon + '<span class="ppm-cmdk-label">Search</span><span class="ppm-cmdk-keys">' + keys + '</span>';
     btn.addEventListener('click', open);
     nav.appendChild(btn);
   }
