@@ -7,8 +7,8 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<title>Compare Take-Home Pay — PopPopMake</title>
-<meta name="description" content="Compare take-home pay between any two scenarios — different US states, different countries (US, UK, Australia, Canada), or both.">
+<title>Compare Take-Home Pay: 50 US States, UK, Australia &amp; Canada — PopPopMake</title>
+<meta name="description" content="Compare take-home pay across all 50 US states, England/Wales/NI vs Scotland, Australia, and all 13 Canadian provinces and territories — precise verified tax math, not estimated currency or cost-of-living conversions.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -85,6 +85,9 @@
   .currency-note{font-size:0.78rem;color:var(--orange);text-align:center;margin-top:10px;display:none;}
   .currency-note.show{display:block;}
 
+  .why-box{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:18px;font-size:0.9rem;color:var(--ink-soft);}
+  .why-box strong{color:var(--ink);}
+
   .disclaimer{
     background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
     border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.88rem;color:var(--ink-soft);
@@ -109,7 +112,7 @@
 <main class="wrap" id="main-content">
   <span class="eyebrow">Money &amp; Tax · 2026</span>
   <h1>Compare Take-Home Pay</h1>
-  <p class="lede">Set up two scenarios &mdash; two US states, two countries, or a state and a country &mdash; and see take-home pay side by side. Uses the exact same tax engines as our individual calculators.</p>
+  <p class="lede">Every US state, England/Wales/NI and Scotland separately, Australia, and all 13 Canadian provinces and territories &mdash; pick any two and compare take-home pay and effective tax rate side by side. Not a 140-country relocation tool; built to be exactly right within these four systems.</p>
 
   <div class="panels">
     <div class="panel a">
@@ -169,6 +172,10 @@
     </div>
     <div class="diff-callout" id="diffCallout"></div>
     <div class="currency-note" id="currencyNote">Different currencies &mdash; compare effective rates directly, but convert today's exchange rate before comparing the dollar amounts.</div>
+  </div>
+
+  <div class="why-box">
+    <strong>Why just four countries?</strong> Tools covering 100+ countries rely on exchange rates that shift daily and cost-of-living indexes that are, at best, informed estimates. We'd rather be exactly right about four systems we've verified in real depth &mdash; every US state, both sides of the UK's tax split, Australia, and all 13 Canadian provinces and territories &mdash; than approximately right about all of them. If you need a rough global comparison, larger international tools exist for that. If you need the precise number for one of these four, this is built for exactly that.
   </div>
 
   <div class="disclaimer">
