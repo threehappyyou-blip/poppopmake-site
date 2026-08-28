@@ -7,8 +7,8 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<title>Paycheck Calculator (2026) — PopPopMake</title>
-<meta name="description" content="Free 2026 paycheck calculator. See your take-home pay after federal tax, FICA, and state tax for Texas, California, or Colorado.">
+<title>Maine Paycheck Calculator (2026) &mdash; PopPopMake</title>
+<meta name="description" content="Free 2026 Maine paycheck calculator. See your take-home pay after federal tax, FICA, and Maine state tax. No sign-up, no advisor referrals &mdash; runs entirely in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -23,8 +23,8 @@
   a{color:var(--teal);}
   .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
   :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
-  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}.skip-link:focus{left:0;}
-
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
 
   header{padding:22px 0;border-bottom:1px solid var(--line);}
   header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
@@ -35,7 +35,7 @@
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
-  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 32px;}
+  .lede{color:var(--ink-soft);max-width:65ch;margin:0 0 16px;}
 
   .layout{display:grid;grid-template-columns:1fr;gap:24px;}
   @media (min-width:800px){ .layout{grid-template-columns:340px 1fr;align-items:start;} }
@@ -78,6 +78,9 @@
   }
   .rate-strip .chip b{color:var(--ink);}
 
+  .trust-box{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:8px;padding:14px 18px;margin-bottom:24px;font-size:0.88rem;color:var(--ink-soft);}
+  .trust-box strong{color:var(--ink);}
+
   .disclaimer{
     background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);
     border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.88rem;color:var(--ink-soft);
@@ -103,17 +106,17 @@
 
 <main class="wrap" id="main-content">
   <span class="eyebrow">Money &amp; Tax · 2026</span>
-  <h1>Paycheck Calculator</h1>
-  <p class="lede">Enter your salary to see what's actually left after federal tax, Social Security, Medicare, and state tax — for all 50 states plus Washington, D.C.</p>
-  <a href="/uk-paycheck-calculator.html" style="display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;margin-bottom:32px;text-decoration:none;">🇬🇧 In the UK instead? →</a>
-  <a href="/au-paycheck-calculator.html" style="display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;margin-bottom:32px;margin-left:10px;text-decoration:none;">🇦🇺 Or Australia? →</a>
-  <a href="/ca-paycheck-calculator.html" style="display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;margin-bottom:32px;margin-left:10px;text-decoration:none;">🇨🇦 Or Canada? →</a>
-  <a href="/mortgage-calculator.html" style="display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;margin-bottom:32px;margin-left:10px;text-decoration:none;">🏠 Buying a home? Try the mortgage calculator →</a>
-  <a href="/paycheck-states.html" style="display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;margin-bottom:32px;margin-left:10px;text-decoration:none;">📍 Browse by state →</a>
+  <h1>Maine Paycheck Calculator</h1>
+  <p class="lede">Maine uses a progressive income tax, topping out at 7.1% for the highest earners &mdash; lower incomes are taxed at lower rates within the same system.</p>
 
-  
-  <div style="margin-top:14px;">
-    <a href="/compare-takehome.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--teal);font-weight:600;text-decoration:none;background:var(--card);border:1px solid var(--teal);border-radius:999px;padding:8px 16px;">&#8644; Compare this against another country or state &rarr;</a>
+  <div class="trust-box">
+    <strong>No sign-up, no advisor referrals.</strong> Unlike some paycheck calculators that exist mainly to collect your email or phone number for financial advisors, this one doesn't ask for either &mdash; and nothing you type is even sent to a server. <a href="/how-it-works.html">See how to check that yourself &rarr;</a>
+  </div>
+
+  <div style="margin-bottom:24px;">
+    <a href="/paycheck-calculator.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;text-decoration:none;margin-right:8px;margin-bottom:8px;">&larr; All 50 states</a>
+    <a href="/paycheck-states.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:8px 16px;text-decoration:none;margin-right:8px;margin-bottom:8px;">Browse by state</a>
+    <a href="/compare-takehome.html" style="display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--teal);font-weight:600;text-decoration:none;background:var(--card);border:1px solid var(--teal);border-radius:999px;padding:8px 16px;margin-bottom:8px;">&#8644; Compare against another state or country</a>
   </div>
 
   <div class="layout">
@@ -135,9 +138,7 @@
       <div class="field">
         <label for="state">State</label>
         <select id="state">
-          <option value="TX">Texas</option>
-          <option value="CA">California</option>
-          <option value="CO">Colorado</option>
+          <option value="ME">Maine</option>
         </select>
         <div class="hint" id="stateHint"></div>
       </div>
@@ -173,7 +174,7 @@
       </div>
 
       <div class="disclaimer">
-        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal brackets (IRS Rev. Proc. 2025-32) and standard deductions only — it doesn't account for pre-tax 401(k)/HSA contributions, other credits, local city taxes, or your actual W-4 elections, which can change your real paycheck. Confirm anything important with a CPA or your payroll department. Your income and filing details never leave your device — <a href="/how-it-works.html">see how to check that yourself</a>. See our <a href="/terms.html">Terms</a> for more.
+        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal brackets (IRS Rev. Proc. 2025-32) and Maine's 2026 state tax rules (Tax Foundation), with standard deductions only &mdash; it doesn't account for pre-tax 401(k)/HSA contributions, other credits, local city taxes, or your actual W-4 elections, which can change your real paycheck. Confirm anything important with a CPA or your payroll department. Your income and filing details never leave your device &mdash; <a href="/how-it-works.html">see how to check that yourself</a>. See our <a href="/terms.html">Terms</a> for more.
       </div>
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
@@ -181,7 +182,7 @@
       </div>
 
       <div class="disclaimer">
-        <strong>Run a blog or another site?</strong> You can drop this exact calculator into your own page — <a href="/embed.html">get the embed code</a>, free, no signup.
+        <strong>Run a blog or another site?</strong> You can drop this exact calculator into your own page &mdash; <a href="/embed.html">get the embed code</a>, free, no signup.
       </div>
     </div>
   </div>
@@ -207,7 +208,7 @@ if ('serviceWorker' in navigator) {
 </script>
 <script>
 (function(){
-  // ---- Verified 2026 tax data ----
+// ---- Verified 2026 tax data ----
   // Federal: IRS Rev. Proc. 2025-32 (irs.gov, Oct 9 2025 release)
   var FEDERAL_BRACKETS = {
     single: [[0,12400,.10],[12400,50400,.12],[50400,105700,.22],[105700,201775,.24],[201775,256225,.32],[256225,640600,.35],[640600,Infinity,.37]],
@@ -342,7 +343,7 @@ if ('serviceWorker' in navigator) {
       opt.value = code; opt.textContent = STATES[code].name;
       sel.appendChild(opt);
     });
-    sel.value = 'TX';
+    sel.value = 'ME';
   }
 
   function calc(){

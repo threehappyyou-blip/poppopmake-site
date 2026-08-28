@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Paycheck Calculator by State (2026) &mdash; PopPopMake</title>
+<meta name="description" content="Free 2026 paycheck calculators for all 50 U.S. states plus D.C., grouped by tax type: no income tax, flat rate, or progressive. No sign-up, no advisor referrals.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:65ch;margin:0 0 32px;}
+  .group{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+  .group h2{font-family:'Space Grotesk',sans-serif;font-size:1.15rem;margin:0 0 4px;}
+  .group .group-sub{color:var(--ink-soft);font-size:0.88rem;margin:0 0 16px;}
+  .group ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:4px 16px;}
+  .group li{padding:6px 0;border-bottom:1px solid var(--line);font-size:0.92rem;display:flex;justify-content:space-between;align-items:center;}
+  .group li:last-child, .group li:nth-last-child(2){border-bottom:none;}
+  .rate-tag{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;color:var(--ink-soft);}
+  .group.none{border-top:4px solid var(--teal);}
+  .group.flat{border-top:4px solid var(--yellow);}
+  .group.progressive{border-top:4px solid var(--orange);}
+  .trust-box{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:8px;padding:14px 18px;margin-bottom:24px;font-size:0.9rem;color:var(--ink-soft);}
+  .trust-box strong{color:var(--ink);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Money &amp; Tax · 2026</span>
+  <h1>Paycheck Calculator by State</h1>
+  <p class="lede">All 50 states plus D.C., grouped by how they actually tax income &mdash; pick yours for a dedicated calculator, or use the <a href="/paycheck-calculator.html">general version</a> with all states in one dropdown.</p>
+
+  <div class="trust-box">
+    <strong>No sign-up, no advisor referrals, anywhere on this site.</strong> Every calculator below runs entirely in your browser. <a href="/how-it-works.html">See how to check that yourself &rarr;</a>
+  </div>
+
+  <div class="group none">
+    <h2>No state income tax (9)</h2>
+    <p class="group-sub">Your paycheck here is reduced only by federal tax and FICA.</p>
+    <ul>
+          <li><a href="/alaska-paycheck-calculator.html">Alaska</a></li>
+          <li><a href="/florida-paycheck-calculator.html">Florida</a></li>
+          <li><a href="/nevada-paycheck-calculator.html">Nevada</a></li>
+          <li><a href="/new-hampshire-paycheck-calculator.html">New Hampshire</a></li>
+          <li><a href="/south-dakota-paycheck-calculator.html">South Dakota</a></li>
+          <li><a href="/tennessee-paycheck-calculator.html">Tennessee</a></li>
+          <li><a href="/texas-paycheck-calculator.html">Texas</a></li>
+          <li><a href="/washington-paycheck-calculator.html">Washington</a></li>
+          <li><a href="/wyoming-paycheck-calculator.html">Wyoming</a></li>
+    </ul>
+  </div>
+
+  <div class="group flat">
+    <h2>Flat tax rate (15)</h2>
+    <p class="group-sub">Everyone pays the same state tax rate, regardless of income &mdash; sorted lowest to highest.</p>
+    <ul>
+          <li><a href="/arizona-paycheck-calculator.html">Arizona</a> <span class="rate-tag">2.5%</span></li>
+          <li><a href="/ohio-paycheck-calculator.html">Ohio</a> <span class="rate-tag">2.75%</span></li>
+          <li><a href="/indiana-paycheck-calculator.html">Indiana</a> <span class="rate-tag">2.95%</span></li>
+          <li><a href="/louisiana-paycheck-calculator.html">Louisiana</a> <span class="rate-tag">3%</span></li>
+          <li><a href="/pennsylvania-paycheck-calculator.html">Pennsylvania</a> <span class="rate-tag">3.07%</span></li>
+          <li><a href="/kentucky-paycheck-calculator.html">Kentucky</a> <span class="rate-tag">3.5%</span></li>
+          <li><a href="/iowa-paycheck-calculator.html">Iowa</a> <span class="rate-tag">3.8%</span></li>
+          <li><a href="/north-carolina-paycheck-calculator.html">North Carolina</a> <span class="rate-tag">3.99%</span></li>
+          <li><a href="/mississippi-paycheck-calculator.html">Mississippi</a> <span class="rate-tag">4%</span></li>
+          <li><a href="/michigan-paycheck-calculator.html">Michigan</a> <span class="rate-tag">4.25%</span></li>
+          <li><a href="/colorado-paycheck-calculator.html">Colorado</a> <span class="rate-tag">4.4%</span></li>
+          <li><a href="/utah-paycheck-calculator.html">Utah</a> <span class="rate-tag">4.5%</span></li>
+          <li><a href="/illinois-paycheck-calculator.html">Illinois</a> <span class="rate-tag">4.95%</span></li>
+          <li><a href="/georgia-paycheck-calculator.html">Georgia</a> <span class="rate-tag">5.19%</span></li>
+          <li><a href="/idaho-paycheck-calculator.html">Idaho</a> <span class="rate-tag">5.3%</span></li>
+    </ul>
+  </div>
+
+  <div class="group progressive">
+    <h2>Progressive tax (27)</h2>
+    <p class="group-sub">Higher earners pay a higher marginal rate &mdash; sorted by top rate, highest to lowest.</p>
+    <ul>
+          <li><a href="/california-paycheck-calculator.html">California</a> <span class="rate-tag">12.3%</span></li>
+          <li><a href="/hawaii-paycheck-calculator.html">Hawaii</a> <span class="rate-tag">11.0%</span></li>
+          <li><a href="/new-york-paycheck-calculator.html">New York</a> <span class="rate-tag">10.9%</span></li>
+          <li><a href="/new-jersey-paycheck-calculator.html">New Jersey</a> <span class="rate-tag">10.8%</span></li>
+          <li><a href="/washington-dc-paycheck-calculator.html">Washington DC</a> <span class="rate-tag">10.8%</span></li>
+          <li><a href="/oregon-paycheck-calculator.html">Oregon</a> <span class="rate-tag">9.9%</span></li>
+          <li><a href="/minnesota-paycheck-calculator.html">Minnesota</a> <span class="rate-tag">9.8%</span></li>
+          <li><a href="/massachusetts-paycheck-calculator.html">Massachusetts</a> <span class="rate-tag">9.0%</span></li>
+          <li><a href="/vermont-paycheck-calculator.html">Vermont</a> <span class="rate-tag">8.8%</span></li>
+          <li><a href="/wisconsin-paycheck-calculator.html">Wisconsin</a> <span class="rate-tag">7.6%</span></li>
+          <li><a href="/maine-paycheck-calculator.html">Maine</a> <span class="rate-tag">7.1%</span></li>
+          <li><a href="/connecticut-paycheck-calculator.html">Connecticut</a> <span class="rate-tag">7.0%</span></li>
+          <li><a href="/delaware-paycheck-calculator.html">Delaware</a> <span class="rate-tag">6.6%</span></li>
+          <li><a href="/maryland-paycheck-calculator.html">Maryland</a> <span class="rate-tag">6.5%</span></li>
+          <li><a href="/rhode-island-paycheck-calculator.html">Rhode Island</a> <span class="rate-tag">6.0%</span></li>
+          <li><a href="/south-carolina-paycheck-calculator.html">South Carolina</a> <span class="rate-tag">6.0%</span></li>
+          <li><a href="/new-mexico-paycheck-calculator.html">New Mexico</a> <span class="rate-tag">5.9%</span></li>
+          <li><a href="/virginia-paycheck-calculator.html">Virginia</a> <span class="rate-tag">5.8%</span></li>
+          <li><a href="/montana-paycheck-calculator.html">Montana</a> <span class="rate-tag">5.7%</span></li>
+          <li><a href="/kansas-paycheck-calculator.html">Kansas</a> <span class="rate-tag">5.6%</span></li>
+          <li><a href="/alabama-paycheck-calculator.html">Alabama</a> <span class="rate-tag">5.0%</span></li>
+          <li><a href="/west-virginia-paycheck-calculator.html">West Virginia</a> <span class="rate-tag">4.8%</span></li>
+          <li><a href="/missouri-paycheck-calculator.html">Missouri</a> <span class="rate-tag">4.7%</span></li>
+          <li><a href="/nebraska-paycheck-calculator.html">Nebraska</a> <span class="rate-tag">4.5%</span></li>
+          <li><a href="/oklahoma-paycheck-calculator.html">Oklahoma</a> <span class="rate-tag">4.5%</span></li>
+          <li><a href="/arkansas-paycheck-calculator.html">Arkansas</a> <span class="rate-tag">3.9%</span></li>
+          <li><a href="/north-dakota-paycheck-calculator.html">North Dakota</a> <span class="rate-tag">2.5%</span></li>
+    </ul>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

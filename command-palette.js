@@ -7,6 +7,7 @@
     { title: 'Home', desc: 'Back to the homepage', href: '/', kw: 'homepage main all tools' },
     { title: 'Document & Image Tools', desc: 'Merge, split PDFs · JPG/PNG to PDF · remove backgrounds', href: '/document-tools.html', kw: 'pdf merge split convert image jpg png background remove document' },
     { title: 'Paycheck Calculator (US)', desc: 'Federal tax, FICA, all 50 states', href: '/paycheck-calculator.html', kw: 'tax salary income take-home money usa america paycheck' },
+    { title: 'Paycheck Calculator by State', desc: 'Dedicated page for each U.S. state, grouped by tax type', href: '/paycheck-states.html', kw: 'state texas california new york florida paycheck tax browse' },
     { title: 'Mortgage Calculator', desc: 'Monthly payment with tax, insurance, and PMI', href: '/mortgage-calculator.html', kw: 'mortgage home loan house payment pmi property tax insurance' },
     { title: '401(k) Retirement Calculator', desc: 'Projected balance from contributions, match, and growth', href: '/retirement-calculator.html', kw: 'retirement 401k pension savings employer match compound growth' },
     { title: 'Capital Gains Tax Calculator', desc: 'Stocks and crypto, short vs long-term, NIIT', href: '/capital-gains-calculator.html', kw: 'capital gains crypto stock tax cost basis niit short term long term' },
