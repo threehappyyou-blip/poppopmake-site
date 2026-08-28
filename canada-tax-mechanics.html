@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>How We Handle Ontario's Surtax and Quebec's Rules — PopPopMake</title>
+<meta name="description" content="Ontario's surtax and Quebec's federal abatement are two of the trickiest parts of Canadian payroll tax. Here's exactly how our calculator handles both, including a bug we caught and fixed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.4rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.25rem;margin:34px 0 12px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 8px;font-size:1.05rem;}
+  p{margin:0 0 16px;}
+  code{background:var(--paper-2);padding:2px 6px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:0.88em;}
+  table.worked{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin:18px 0;font-size:0.92rem;}
+  table.worked th, table.worked td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--line);}
+  table.worked th:first-child, table.worked td:first-child{text-align:left;}
+  table.worked thead th{font-family:'IBM Plex Mono',monospace;font-size:0.7rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper-2);}
+  table.worked tbody tr:last-child td{border-bottom:none;font-weight:700;background:rgba(15,139,141,0.06);}
+  .bug-box{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--orange);border-radius:var(--radius);padding:20px 22px;margin:24px 0;}
+  .bug-box .label{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--orange);font-weight:600;}
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:28px;font-size:0.9rem;color:var(--ink-soft);}
+  .disclaimer strong{color:var(--ink);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Guide · Money &amp; Tax</span>
+  <h1>How We Handle Ontario's Surtax and Quebec's Rules</h1>
+  <p class="lede">Two of the trickier corners of Canadian payroll tax, and exactly how our calculator gets them right &mdash; including a bug in our own first version that a wrong number would have hidden.</p>
+
+  <h2>Ontario's surtax isn't part of the tax brackets</h2>
+  <p>Ontario's published tax brackets top out at 13.16%. But once your provincial tax bill itself crosses two thresholds, Ontario adds a surtax on top &mdash; a tax on the tax, calculated separately from the income brackets:</p>
+  <ul style="margin:0 0 16px;padding-left:22px;">
+    <li>20% surtax on provincial tax over $5,818</li>
+    <li>An additional 16% surtax on provincial tax over $7,446 (36% combined with the first tier)</li>
+  </ul>
+  <p>Here's a concrete example at $200,000 of taxable income:</p>
+
+  <table class="worked">
+    <thead><tr><th>Step</th><th>Amount</th></tr></thead>
+    <tbody>
+      <tr><td>Basic provincial tax (brackets only)</td><td>$18,444</td></tr>
+      <tr><td>Ontario surtax on top</td><td>$6,484</td></tr>
+      <tr><td>Total provincial tax</td><td>$24,928</td></tr>
+    </tbody>
+  </table>
+
+  <p>Both surtax tiers apply to the <em>original</em> basic tax figure independently &mdash; not to each other. That distinction sounds pedantic until you get it wrong.</p>
+
+  <div class="bug-box">
+    <div class="label">Caught in testing</div>
+    <p style="margin-top:10px;">Our first version calculated the two surtax tiers sequentially &mdash; add the 20% tier, then calculate the 36% tier off the <em>already-increased</em> number. That's compounding, and it's wrong: it produced a 21.48% marginal rate at the top of the income scale, when the correct figure (verified against published references) is 20.53%. The fix was one line &mdash; both tiers now calculate off the same original basic-tax figure &mdash; but the bug would have quietly overstated tax for every high earner in Ontario if we hadn't checked the math against a known reference point before shipping.</p>
+  </div>
+
+  <h2>Quebec isn't just "another province" in the math</h2>
+  <p>Quebec collects its own provincial income tax separately from the rest of Canada, which triggers a federal abatement: Quebec residents get their federal tax bill reduced by 16.5%, since the federal government isn't collecting a province-level tax on Quebec's behalf the way it does elsewhere.</p>
+  <p>Quebec also runs its own version of CPP (called QPP) and its own parental insurance program (QPIP) instead of the standard federal EI. Our calculator applies Quebec's own provincial tax brackets and the 16.5% federal abatement correctly, but uses standard CPP/CPP2 rates as an approximation for QPP rather than modeling Quebec's plan as a fully separate system &mdash; QPP rates have historically tracked very closely with CPP, but they aren't guaranteed to be identical every year. We say this directly in the calculator's own disclaimer rather than quietly treating Quebec like every other province.</p>
+
+  <div class="disclaimer">
+    <strong>Try the numbers yourself:</strong> Both of these are live on the <a href="/ca-paycheck-calculator.html">Canada Paycheck Calculator</a>. Your income and province never leave your device &mdash; <a href="/how-it-works.html">see how to check that yourself</a>. The Ontario surtax fix and the reasoning above are also logged on our <a href="/changelog.html">Changelog</a>.
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

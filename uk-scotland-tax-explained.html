@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>England/Wales/NI vs Scotland: What Actually Differs — PopPopMake</title>
+<meta name="description" content="Scotland has its own income tax bands, separate from the rest of the UK. Here's exactly what differs, what doesn't, and real numbers showing who it helps and who it costs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.4rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.25rem;margin:34px 0 12px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 8px;font-size:1.05rem;}
+  p{margin:0 0 16px;}
+  table.bands{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin:18px 0;font-size:0.88rem;}
+  table.bands th, table.bands td{padding:9px 12px;text-align:right;border-bottom:1px solid var(--line);}
+  table.bands th:first-child, table.bands td:first-child{text-align:left;}
+  table.bands thead th{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper-2);}
+  table.bands tbody tr:last-child td{border-bottom:none;}
+  table.worked{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin:18px 0;font-size:0.9rem;}
+  table.worked th, table.worked td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);}
+  table.worked th:first-child, table.worked td:first-child{text-align:left;}
+  table.worked thead th{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper-2);}
+  .pos{color:var(--teal);}
+  .neg{color:var(--orange);}
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:28px;font-size:0.9rem;color:var(--ink-soft);}
+  .disclaimer strong{color:var(--ink);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Guide · Money &amp; Tax</span>
+  <h1>England/Wales/NI vs Scotland: What Actually Differs</h1>
+  <p class="lede">Scotland taxes income differently from the rest of the UK &mdash; and not in a simple "higher" or "lower" way. Whether that helps you or costs you depends entirely on how much you earn.</p>
+
+  <h2>Scotland has six bands. Everyone else has three.</h2>
+  <p>Income tax was partly devolved to the Scottish Parliament in 2016, and Scotland has used that power to build a more finely-graded system than the rest of the UK:</p>
+
+  <table class="bands">
+    <thead><tr><th>England / Wales / NI</th><th>Rate</th></tr></thead>
+    <tbody>
+      <tr><td>£0 &ndash; £37,700</td><td>20%</td></tr>
+      <tr><td>£37,700 &ndash; £125,140</td><td>40%</td></tr>
+      <tr><td>Above £125,140</td><td>45%</td></tr>
+    </tbody>
+  </table>
+
+  <table class="bands">
+    <thead><tr><th>Scotland</th><th>Rate</th></tr></thead>
+    <tbody>
+      <tr><td>£0 &ndash; £3,967 (Starter)</td><td>19%</td></tr>
+      <tr><td>£3,967 &ndash; £16,956 (Basic)</td><td>20%</td></tr>
+      <tr><td>£16,956 &ndash; £31,092 (Intermediate)</td><td>21%</td></tr>
+      <tr><td>£31,092 &ndash; £62,430 (Higher)</td><td>42%</td></tr>
+      <tr><td>£62,430 &ndash; £112,570 (Advanced)</td><td>45%</td></tr>
+      <tr><td>Above £112,570 (Top)</td><td>48%</td></tr>
+    </tbody>
+  </table>
+
+  <p>(These are taxable income bands, after the Personal Allowance is deducted &mdash; not gross salary.)</p>
+
+  <h2>What doesn't change: National Insurance</h2>
+  <p>National Insurance is a UK-wide, reserved matter &mdash; it's calculated identically whether you're in Edinburgh or Exeter. Only Income Tax has the England/Wales/NI vs Scotland split. That means the full difference between the two systems shows up entirely in the Income Tax line, not anywhere else on a payslip.</p>
+
+  <h2>Who actually comes out ahead</h2>
+  <p>Because Scotland's lower bands are slightly less than 20% and its higher bands considerably more, the system genuinely reverses direction as income rises:</p>
+
+  <table class="worked">
+    <thead><tr><th>Salary</th><th>Scotland vs rest of UK</th></tr></thead>
+    <tbody>
+      <tr><td>£30,000</td><td class="pos">£35 less tax in Scotland</td></tr>
+      <tr><td>£50,000</td><td class="neg">£1,496 more tax in Scotland</td></tr>
+      <tr><td>£80,000</td><td class="neg">£2,300 more tax in Scotland</td></tr>
+      <tr><td>£150,000</td><td class="neg">£6,308 more tax in Scotland</td></tr>
+    </tbody>
+  </table>
+
+  <p>At the very bottom of the income scale, Scotland's 19% starter rate makes it marginally cheaper. Somewhere around the mid-£30,000s, that flips, and it keeps widening from there &mdash; by the time you're earning £150,000, the gap is over six thousand pounds a year. There's no single honest answer to "is Scottish tax higher" &mdash; it depends entirely on where your income falls.</p>
+
+  <div class="disclaimer">
+    <strong>Check your own number:</strong> Both systems are live on the <a href="/uk-paycheck-calculator.html">UK Paycheck Calculator</a> &mdash; switch the region toggle to compare directly. Your salary never leaves your device &mdash; <a href="/how-it-works.html">see how to check that yourself</a>. Rates shown are for 2026/27, sourced from gov.uk and gov.scot.
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

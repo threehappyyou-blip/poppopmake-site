@@ -20,6 +20,8 @@
     { title: 'Writing & AI Tools', desc: 'Flag AI-ish phrases, get plain-language swaps', href: '/writing-tools.html', kw: 'ai writing detector checker text cliche' },
     { title: 'Everyday Tools', desc: 'Age calculator, percentage calculator, tip splitter', href: '/everyday-tools.html', kw: 'age percentage tip split bill calculator birthday' },
     { title: 'Why We Don\u2019t Claim 99% Accuracy', desc: 'The evidence behind AI-detector false positives', href: '/ai-detector-honesty.html', kw: 'ai detector bias stanford false positive accuracy honest' },
+    { title: 'Ontario Surtax & Quebec Rules Explained', desc: 'How the Canada calculator handles both, and a bug we caught', href: '/canada-tax-mechanics.html', kw: 'ontario surtax quebec abatement canada tax guide' },
+    { title: 'Scotland vs Rest of UK Tax Explained', desc: 'Real numbers: who Scotland\u2019s tax system helps and costs', href: '/uk-scotland-tax-explained.html', kw: 'scotland england wales tax bands guide uk' },
     { title: 'Developer Tools', desc: 'JSON formatter, Base64, UUID generator, color converter', href: '/devtools.html', kw: 'json base64 uuid color hex rgb hsl developer formatter validator' },
     { title: 'Guides', desc: 'Plain-English explainers behind the calculators', href: '/guides.html', kw: 'articles help learn read' },
     { title: 'Embed Our Tools', desc: 'Put a live calculator on your own site, free', href: '/embed.html', kw: 'widget developer iframe embed code' },

@@ -96,6 +96,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://poppopmake.com/canada-tax-mechanics.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/uk-scotland-tax-explained.html</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://poppopmake.com/terms.html</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
