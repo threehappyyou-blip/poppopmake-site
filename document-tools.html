@@ -133,6 +133,7 @@
     <button class="tab-btn" data-tab="split" role="tab" aria-selected="false">Split PDF</button>
     <button class="tab-btn" data-tab="images" role="tab" aria-selected="false">Images to PDF</button>
     <button class="tab-btn" data-tab="bgremove" role="tab" aria-selected="false">Remove Background</button>
+    <button class="tab-btn" data-tab="metadata" role="tab" aria-selected="false">Clean Metadata</button>
   </div>
 
   <!-- MERGE PANEL -->
@@ -233,6 +234,32 @@
     </div>
     <div class="status" id="bgremove-status"></div>
     <div class="hint" style="margin-top:10px;">"Portrait" is faster and works best on a person against a fairly simple background. "Complex scene" is slower to load but handles busy backgrounds, multiple subjects, or products better.</div>
+  </section>
+
+  <!-- METADATA CLEANER PANEL -->
+  <section class="panel" id="panel-metadata">
+    <h2>Clean Metadata</h2>
+    <p class="sub">Strip the software name, author, dates, and other hidden info a PDF picks up while you're making it — useful before uploading a manuscript to KDP or anywhere else.</p>
+    <div class="drop" id="metadata-drop">
+      <div>Drag a PDF here, or</div>
+      <label class="btn-label" for="metadata-input">Choose a PDF file</label>
+      <input type="file" id="metadata-input" accept="application/pdf">
+    </div>
+    <div id="metadata-found" style="display:none;margin-top:16px;">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;margin:0 0 10px;">What's in this file right now</h3>
+      <table id="metadata-table" style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+        <tbody id="metadata-table-body"></tbody>
+      </table>
+      <div style="margin-top:16px;">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;">Optional: set a title and author instead of leaving them blank</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <input type="text" id="metadata-new-title" placeholder="Book title (optional)" style="padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.9rem;">
+          <input type="text" id="metadata-new-author" placeholder="Author name (optional)" style="padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.9rem;">
+        </div>
+      </div>
+      <button class="action-btn" id="metadata-clean-btn" style="margin-top:16px;">Clean and Download</button>
+    </div>
+    <div class="status" id="metadata-status"></div>
   </section>
 
   <div class="disclaimer">
@@ -698,6 +725,96 @@ if ('serviceWorker' in navigator) {
     renderImagesList();
     document.querySelector('.tab-btn[data-tab="images"]').click();
     setStatus(imagesStatus, 'success', 'Added your background-removed photo to Images to PDF \u2014 add more, or convert now.');
+  });
+
+  // ================= METADATA CLEANER =================
+  var metaFile = null;
+  var metaDoc = null;
+  var metaFoundBox = document.getElementById('metadata-found');
+  var metaTableBody = document.getElementById('metadata-table-body');
+  var metaStatus = document.getElementById('metadata-status');
+  var metaCleanBtn = document.getElementById('metadata-clean-btn');
+
+  var META_FIELDS = [
+    ['Title', 'getTitle'], ['Author', 'getAuthor'], ['Subject', 'getSubject'],
+    ['Keywords', 'getKeywords'], ['Producer', 'getProducer'], ['Creator', 'getCreator'],
+    ['Created', 'getCreationDate'], ['Modified', 'getModificationDate']
+  ];
+
+  function fmtMetaValue(v){
+    if (v === undefined || v === null || v === '') return null;
+    if (v instanceof Date) return v.toLocaleString();
+    if (Array.isArray(v)) return v.length ? v.join(', ') : null;
+    return String(v);
+  }
+
+  async function loadMetaFile(file){
+    metaFile = file;
+    setStatus(metaStatus, 'info', 'Reading ' + file.name + '\u2026');
+    try {
+      var bytes = await readAsUint8Array(file);
+      metaDoc = await PDFDocument.load(bytes, { updateMetadata: false, ignoreEncryption: true });
+
+      var hasXmp = metaDoc.catalog.has(PDFLib.PDFName.of('Metadata'));
+      var rows = [];
+      META_FIELDS.forEach(function(f){
+        var val = fmtMetaValue(metaDoc[f[1]]());
+        if (val) rows.push([f[0], val]);
+      });
+      if (hasXmp) rows.push(['XMP metadata stream', 'Present (often added by Adobe-family tools)']);
+
+      metaTableBody.innerHTML = '';
+      if (rows.length === 0) {
+        metaTableBody.innerHTML = '<tr><td style="padding:8px 0;color:var(--ink-soft);">No metadata found \u2014 this file already looks clean.</td></tr>';
+      } else {
+        rows.forEach(function(r){
+          var tr = document.createElement('tr');
+          tr.innerHTML = '<td style="padding:6px 12px 6px 0;color:var(--ink-soft);border-bottom:1px solid var(--line);white-space:nowrap;">' + r[0] + '</td>' +
+            '<td style="padding:6px 0;border-bottom:1px solid var(--line);word-break:break-word;">' + r[1].replace(/</g,'&lt;') + '</td>';
+          metaTableBody.appendChild(tr);
+        });
+      }
+      metaFoundBox.style.display = 'block';
+      clearStatus(metaStatus);
+    } catch(err){
+      setStatus(metaStatus, 'error', 'Could not read this file: ' + err.message + '. Make sure it\u2019s a valid, non-corrupted PDF.');
+      metaFoundBox.style.display = 'none';
+      metaDoc = null;
+    }
+  }
+
+  setupDrop(document.getElementById('metadata-drop'), document.getElementById('metadata-input'), function(files){
+    if (files.length) loadMetaFile(files[0]);
+  });
+
+  metaCleanBtn.addEventListener('click', async function(){
+    if (!metaDoc) return;
+    metaCleanBtn.disabled = true;
+    try {
+      var info = metaDoc.getInfoDict();
+      ['Title','Author','Subject','Keywords','Producer','Creator','CreationDate','ModDate'].forEach(function(key){
+        info.delete(PDFLib.PDFName.of(key));
+      });
+
+      var metaKey = PDFLib.PDFName.of('Metadata');
+      var xmpRef = metaDoc.catalog.get(metaKey);
+      if (xmpRef) {
+        metaDoc.catalog.delete(metaKey);
+        metaDoc.context.delete(xmpRef);
+      }
+
+      var newTitle = document.getElementById('metadata-new-title').value.trim();
+      var newAuthor = document.getElementById('metadata-new-author').value.trim();
+      if (newTitle) metaDoc.setTitle(newTitle);
+      if (newAuthor) metaDoc.setAuthor(newAuthor);
+
+      var outBytes = await metaDoc.save();
+      downloadBlob(outBytes, 'cleaned-' + (metaFile ? metaFile.name : 'document.pdf'), 'application/pdf');
+      setStatus(metaStatus, 'success', 'Done. Your cleaned PDF has started downloading \u2014 no title, author, software name, or dates left unless you set them above.');
+    } catch(err){
+      setStatus(metaStatus, 'error', 'Could not clean this file: ' + err.message);
+    }
+    metaCleanBtn.disabled = false;
   });
 })();
 </script>

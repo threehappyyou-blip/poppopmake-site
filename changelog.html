@@ -76,6 +76,13 @@
   </div>
 
   <div class="entry">
+    <div class="entry-date">Sep 2, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>Clean Metadata &mdash; a fifth tool in Document &amp; Image Tools</h2>
+    <p>Strips the software name, author, dates, and other hidden info a PDF picks up while you're making it &mdash; shows you exactly what's there first, then removes it, with an option to set your own title and author instead of leaving them blank. Built with two things confirmed at the byte level, not just the API level: the underlying library (pdf-lib) actually re-stamps its own name into the file by default when saving, so simply "clearing" fields the obvious way would have left a new trace behind instead of removing one; and a hidden XMP metadata block (common in Adobe-family PDFs) needs its underlying object fully deleted from the file, not just unlinked, or the original bytes &mdash; software name and all &mdash; remain recoverable in the saved file even though nothing points to them anymore. Both confirmed fixed by searching the actual output bytes for the trace strings, not just checking what the reading API reports back.</p>
+  </div>
+
+  <div class="entry">
     <div class="entry-date">Aug 27, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Two guides no competitor can honestly write</h2>
