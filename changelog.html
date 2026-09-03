@@ -78,6 +78,20 @@
   <div class="entry">
     <div class="entry-date">Sep 2, 2026</div>
     <span class="tag shipped">Shipped</span>
+    <h2>Hourly/Salary converter, URL encoding, and dummy data</h2>
+    <p>Hourly &harr; Salary joins Career Tools as a fourth tab &mdash; adjustable hours-per-week and weeks-per-year, not just the default 2,080-hour assumption. URL Encode/Decode and Dummy Data Generator join Developer Tools. The URL tool deliberately encodes text and query values rather than whole URLs &mdash; encoding a full URL the same way would escape the <code>://</code> itself, which isn't what "URL encode" usually means in practice. Dummy Data generates names, emails, phone numbers, and addresses, checked for correct formatting across 100 generated rows before shipping, with copy-as-CSV and copy-as-JSON.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 2, 2026</div>
+    <span class="tag reported">Reported</span>
+    <h2>PDF password removal: investigated, not shipped</h2>
+    <p>Looked into building this and stopped before writing the tool. The library behind every PDF feature on this site (pdf-lib) has an <code>ignoreEncryption</code> option, but it only suppresses the error that a PDF is encrypted &mdash; it doesn't actually decrypt anything. For a PDF that's genuinely password-protected (content encrypted, not just permission-restricted), that option would let the file "load" without a real password while the actual content stays scrambled, which would produce a broken file, not an unlocked one. Doing this properly means implementing real PDF decryption from the password, which is a meaningfully bigger and more security-sensitive undertaking than anything else on this page. Not building a version that looks like it works but doesn't.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 2, 2026</div>
+    <span class="tag shipped">Shipped</span>
     <h2>Three more Everyday Tools: password generator, unit converter, time zones</h2>
     <p>Password Generator uses the browser's cryptographic random number source with rejection sampling rather than a plain modulo, which matters more than it sounds &mdash; a naive approach introduces a small but real bias toward certain characters; tested across 10,000 samples to confirm the distribution actually comes out even. Unit Converter handles height (cm &harr; feet/inches, with the rounding fixed so 182.88cm correctly shows as 6'0" instead of 5'12"), weight (lb &harr; kg), and temperature (&deg;F &harr; &deg;C). Time Zone Converter shows one moment across 11 zones at once and explicitly flags when the local date rolls to the next (or previous) day &mdash; tested against a case where it's already tomorrow morning in Seoul, Tokyo, Shanghai, and Sydney while still evening in the US, since silently showing just a time with no date context is exactly how time zone tools end up wrong by a full day without anyone noticing.</p>
   </div>

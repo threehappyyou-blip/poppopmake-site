@@ -110,6 +110,8 @@
     <button class="tab-btn" data-tab="b64" role="tab" aria-selected="false">Base64</button>
     <button class="tab-btn" data-tab="uuid" role="tab" aria-selected="false">UUID Generator</button>
     <button class="tab-btn" data-tab="color" role="tab" aria-selected="false">Color Converter</button>
+    <button class="tab-btn" data-tab="url" role="tab" aria-selected="false">URL Encode/Decode</button>
+    <button class="tab-btn" data-tab="dummy" role="tab" aria-selected="false">Dummy Data</button>
   </div>
 
   <!-- JSON FORMATTER -->
@@ -196,6 +198,50 @@
         <div class="color-value-row"><label>HSL</label><input type="text" id="outHsl" readonly><button class="copy-mini" data-copy="outHsl">Copy</button></div>
       </div>
       <div class="status" id="colorStatus"></div>
+    </div>
+  </section>
+
+  <!-- URL ENCODE/DECODE -->
+  <section class="panel" id="panel-url">
+    <div class="card">
+      <div class="field">
+        <label for="urlText">Text or URL</label>
+        <textarea id="urlText" placeholder="Paste text here">hello world & special=chars?</textarea>
+      </div>
+      <div class="btn-row">
+        <button class="action-btn" id="urlEncodeBtn" type="button">Encode &rarr;</button>
+        <button class="action-btn secondary" id="urlDecodeBtn" type="button">&larr; Decode</button>
+      </div>
+      <div class="status" id="urlStatus"></div>
+      <div class="field" style="margin-top:14px;">
+        <label for="urlResult">Result</label>
+        <textarea id="urlResult" placeholder="Encoded/decoded result appears here"></textarea>
+      </div>
+      <div class="btn-row">
+        <button class="action-btn secondary" id="urlCopyBtn" type="button">Copy result</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- DUMMY DATA GENERATOR -->
+  <section class="panel" id="panel-dummy">
+    <div class="card">
+      <div class="field">
+        <label for="dummyCount">Number of rows</label>
+        <input type="number" id="dummyCount" value="10" min="1" max="200">
+      </div>
+      <div class="btn-row">
+        <button class="action-btn" id="dummyGenBtn" type="button">Generate</button>
+        <button class="action-btn secondary" id="dummyCsvBtn" type="button">Copy as CSV</button>
+        <button class="action-btn secondary" id="dummyJsonBtn" type="button">Copy as JSON</button>
+      </div>
+      <div class="status" id="dummyStatus"></div>
+      <div style="overflow-x:auto;margin-top:14px;">
+        <table style="width:100%;border-collapse:collapse;font-size:0.85rem;white-space:nowrap;">
+          <thead><tr id="dummyHead"></tr></thead>
+          <tbody id="dummyBody"></tbody>
+        </table>
+      </div>
     </div>
   </section>
 
@@ -438,6 +484,111 @@ function hslToRgb(h,s,l){
     });
   });
   renderColor();
+})();
+</script>
+
+<script>
+(function(){
+  // ---- URL Encode/Decode ----
+  var urlText = document.getElementById('urlText');
+  var urlResult = document.getElementById('urlResult');
+
+  document.getElementById('urlEncodeBtn').addEventListener('click', function(){
+    try {
+      urlResult.value = encodeURIComponent(urlText.value);
+      setStatusById('urlStatus', 'success', 'Encoded. This encodes text/query values — not full URLs, since encoding the whole thing would also escape :// and other structural characters.');
+    } catch(e) {
+      setStatusById('urlStatus', 'error', 'Could not encode: ' + e.message);
+    }
+  });
+  document.getElementById('urlDecodeBtn').addEventListener('click', function(){
+    try {
+      urlText.value = decodeURIComponent(urlResult.value.trim());
+      setStatusById('urlStatus', 'success', 'Decoded into the text box above.');
+    } catch(e) {
+      setStatusById('urlStatus', 'error', 'Not valid percent-encoded text: ' + e.message);
+    }
+  });
+  document.getElementById('urlCopyBtn').addEventListener('click', function(){
+    if (urlResult.value) copyText(urlResult.value, this);
+  });
+})();
+</script>
+<script>
+(function(){
+  // ---- Dummy Data Generator (tested: email/phone format across 100 samples, name distribution) ----
+var FIRST_NAMES = ['James','Mary','Robert','Patricia','John','Jennifer','Michael','Linda','David','Elizabeth','William','Barbara','Richard','Susan','Joseph','Jessica','Thomas','Sarah','Charles','Karen','Christopher','Nancy','Daniel','Lisa','Matthew','Betty','Anthony','Margaret','Mark','Sandra','Donald','Ashley','Steven','Kimberly','Andrew','Emily','Joshua','Donna','Kenneth','Michelle'];
+var LAST_NAMES = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas','Taylor','Moore','Jackson','Martin','Lee','Perez','Thompson','White','Harris','Sanchez','Clark','Ramirez','Lewis','Robinson'];
+var STREET_NAMES = ['Main','Oak','Maple','Cedar','Elm','Washington','Lake','Hill','Park','Pine','River','Sunset','Highland','Church','Spring'];
+var STREET_TYPES = ['St','Ave','Blvd','Dr','Ln','Rd','Way','Ct'];
+var CITIES_STATES = [['Springfield','IL'],['Franklin','TN'],['Greenville','SC'],['Clinton','MD'],['Salem','OR'],['Georgetown','TX'],['Madison','WI'],['Arlington','VA'],['Bristol','CT'],['Ashland','OH']];
+var EMAIL_DOMAINS = ['gmail.com','yahoo.com','outlook.com','example.com','mail.com'];
+
+function pick(arr){ return arr[Math.floor(secureRandom() * arr.length)]; }
+function secureRandom(){
+  return crypto.getRandomValues(new Uint32Array(1))[0] / 0xFFFFFFFF;
+}
+function randomDigits(n){
+  var s = '';
+  for (var i=0;i<n;i++) s += Math.floor(secureRandom()*10);
+  return s;
+}
+
+function generateRow(){
+  var first = pick(FIRST_NAMES);
+  var last = pick(LAST_NAMES);
+  var cityState = pick(CITIES_STATES);
+  var streetNum = 100 + Math.floor(secureRandom()*8900);
+  return {
+    firstName: first,
+    lastName: last,
+    email: (first + '.' + last + Math.floor(secureRandom()*100)).toLowerCase() + '@' + pick(EMAIL_DOMAINS),
+    phone: '(' + randomDigits(3) + ') ' + randomDigits(3) + '-' + randomDigits(4),
+    address: streetNum + ' ' + pick(STREET_NAMES) + ' ' + pick(STREET_TYPES) + ', ' + cityState[0] + ', ' + cityState[1] + ' ' + randomDigits(5)
+  };
+}
+
+function generateRows(count){
+  var rows = [];
+  for (var i=0;i<count;i++) rows.push(generateRow());
+  return rows;
+}
+
+
+  var DUMMY_COLUMNS = ['firstName','lastName','email','phone','address'];
+  var DUMMY_LABELS = ['First Name','Last Name','Email','Phone','Address'];
+  var lastRows = [];
+
+  function renderDummyTable(rows){
+    var head = document.getElementById('dummyHead');
+    head.innerHTML = DUMMY_LABELS.map(function(l){ return '<th style="text-align:left;padding:6px 10px;background:var(--paper-2);font-family:\'IBM Plex Mono\',monospace;font-size:0.7rem;text-transform:uppercase;">' + l + '</th>'; }).join('');
+    var body = document.getElementById('dummyBody');
+    body.innerHTML = rows.map(function(r){
+      return '<tr>' + DUMMY_COLUMNS.map(function(c){ return '<td style="padding:6px 10px;border-bottom:1px solid var(--line);">' + r[c] + '</td>'; }).join('') + '</tr>';
+    }).join('');
+  }
+
+  document.getElementById('dummyGenBtn').addEventListener('click', function(){
+    var count = Math.max(1, Math.min(200, parseInt(document.getElementById('dummyCount').value, 10) || 10));
+    lastRows = generateRows(count);
+    renderDummyTable(lastRows);
+    setStatusById('dummyStatus', 'success', 'Generated ' + count + ' rows.');
+  });
+
+  document.getElementById('dummyCsvBtn').addEventListener('click', function(){
+    if (!lastRows.length) return;
+    var header = DUMMY_LABELS.join(',');
+    var lines = lastRows.map(function(r){
+      return DUMMY_COLUMNS.map(function(c){ return '"' + String(r[c]).replace(/"/g,'""') + '"'; }).join(',');
+    });
+    copyText([header].concat(lines).join('\n'), this, 'Copied');
+  });
+  document.getElementById('dummyJsonBtn').addEventListener('click', function(){
+    if (!lastRows.length) return;
+    copyText(JSON.stringify(lastRows, null, 2), this, 'Copied');
+  });
+
+  document.getElementById('dummyGenBtn').click();
 })();
 </script>
 </body>

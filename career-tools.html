@@ -107,6 +107,8 @@
   <div class="tabs" role="tablist">
     <button class="tab-btn active" data-tab="builder" role="tab" aria-selected="true">Resume Builder</button>
     <button class="tab-btn" data-tab="ats" role="tab" aria-selected="false">ATS Score Checker</button>
+    <button class="tab-btn" data-tab="cover" role="tab" aria-selected="false">Cover Letter</button>
+    <button class="tab-btn" data-tab="salary" role="tab" aria-selected="false">Hourly &harr; Salary</button>
   </div>
 
   <!-- RESUME BUILDER -->
@@ -164,8 +166,54 @@
     <div class="status" id="ats-status"></div>
   </section>
 
+  <!-- COVER LETTER GENERATOR -->
+  <section class="panel" id="panel-cover">
+    <h2>Cover Letter Generator</h2>
+    <p class="sub">Fill this in, then download a one-page PDF. This assembles real sentences from your answers — it isn't AI-written, so what comes out is exactly what you put in, just formatted properly.</p>
+
+    <h3 class="section-title">You</h3>
+    <div class="row3">
+      <div class="field"><label for="cl-name">Full name</label><input type="text" id="cl-name" placeholder="Jane Doe"></div>
+      <div class="field"><label for="cl-email">Email</label><input type="text" id="cl-email" placeholder="jane@example.com"></div>
+      <div class="field"><label for="cl-phone">Phone (optional)</label><input type="text" id="cl-phone" placeholder="(555) 123-4567"></div>
+    </div>
+
+    <h3 class="section-title">The role</h3>
+    <div class="row3">
+      <div class="field"><label for="cl-title">Job title</label><input type="text" id="cl-title" placeholder="Senior Product Designer"></div>
+      <div class="field"><label for="cl-company">Company name</label><input type="text" id="cl-company" placeholder="Acme Inc."></div>
+      <div class="field"><label for="cl-manager">Hiring manager (optional)</label><input type="text" id="cl-manager" placeholder="Leave blank for 'Hiring Manager'"></div>
+    </div>
+    <div class="field"><label for="cl-source">Where you saw it posted (optional)</label><input type="text" id="cl-source" placeholder="on LinkedIn, on your careers page, through a colleague"></div>
+
+    <h3 class="section-title">Why you're a fit</h3>
+    <p style="font-size:0.85rem;color:var(--ink-soft);margin:-6px 0 12px;">Write each as a phrase starting with a past-tense verb — the letter adds "I" for you. Example: "led a redesign that increased signups 20%".</p>
+    <div id="cl-qual-list"></div>
+    <button class="add-btn" id="cl-add-qual" type="button">+ Add another qualification</button>
+
+    <div class="field"><label for="cl-why">Why this company or role (optional)</label><textarea id="cl-why" placeholder="One or two sentences on what draws you specifically here — skip if you'd rather not include it."></textarea></div>
+
+    <button class="action-btn" id="cl-download-btn" type="button">Download Cover Letter PDF</button>
+    <div class="status" id="cl-status"></div>
+  </section>
+
+  <!-- HOURLY / SALARY CONVERTER -->
+  <section class="panel" id="panel-salary">
+    <h2>Hourly &harr; Salary Converter</h2>
+    <p class="sub">Type in either field — the other updates to match, using your hours and weeks worked per year.</p>
+    <div class="row2">
+      <div class="field"><label for="hs-hourly">Hourly wage</label><div class="prefix-wrap"><span>$</span><input type="number" id="hs-hourly" value="25" min="0" step="0.25"></div></div>
+      <div class="field"><label for="hs-annual">Annual salary</label><div class="prefix-wrap"><span>$</span><input type="number" id="hs-annual" value="52000" min="0" step="500"></div></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="hs-hours">Hours per week</label><input type="number" id="hs-hours" value="40" min="1" max="168" step="1"></div>
+      <div class="field"><label for="hs-weeks">Weeks worked per year</label><input type="number" id="hs-weeks" value="52" min="1" max="52" step="1"></div>
+    </div>
+    <div class="hint">52 weeks assumes no unpaid time off. If you take 2 weeks unpaid, use 50.</div>
+  </section>
+
   <div class="disclaimer">
-    <strong>How this works:</strong> Both tools run entirely in your browser — nothing you type is uploaded anywhere (<a href="/how-it-works.html">see how to check that yourself</a>). The ATS checker uses simple keyword-frequency matching, which is the core mechanic most basic ATS keyword filters use, but it isn't a simulation of any specific company's actual software. Treat a missing keyword as a prompt to ask "should this genuinely be on my resume?" — not as something to stuff in regardless.
+    <strong>How this works:</strong> Both tools run entirely in your browser — nothing you type is uploaded anywhere (<a href="/how-it-works.html">see how to check that yourself</a>). The ATS checker uses simple keyword-frequency matching, which is the core mechanic most basic ATS keyword filters use, but it isn't a simulation of any specific company's actual software. Treat a missing keyword as a prompt to ask "should this genuinely be on my resume?" — not as something to stuff in regardless. The cover letter tool assembles your own words into a template, on purpose — it doesn't call any AI service to write for you.
   </div>
 </main>
 
@@ -412,6 +460,177 @@ if ('serviceWorker' in navigator) {
     missingEl.innerHTML = missing.length ? missing.map(function(k){ return '<span class="chip missing">'+k+'</span>'; }).join('') : '<span style="color:var(--ink-soft);font-size:0.85rem;">None — nice overlap.</span>';
     document.getElementById('ats-results').style.display = 'block';
   });
+
+  // ================= COVER LETTER GENERATOR =================
+function endSentence(text){
+  return /[.!?]$/.test(text) ? text : text + '.';
+}
+
+function joinQualifications(quals){
+  var clean = quals.map(function(q){ return q.trim(); }).filter(Boolean);
+  if (clean.length === 0) return '';
+  if (clean.length === 1) return 'In my experience, I have ' + clean[0] + '.';
+  if (clean.length === 2) return 'In my experience, I have ' + clean[0] + '. I have also ' + clean[1] + '.';
+  // 3 or more: first + middle(s) + last with "and"
+  var first = clean[0];
+  var last = clean[clean.length - 1];
+  var middle = clean.slice(1, -1);
+  var sentence = 'In my experience, I have ' + first + '.';
+  if (middle.length) {
+    sentence += ' I have also ' + middle.join(', ') + ', and ' + last + '.';
+  } else {
+    sentence += ' I have also ' + last + '.';
+  }
+  return sentence;
+}
+
+function buildLetter(data){
+  var greeting = 'Dear ' + (data.manager || 'Hiring Manager') + ',';
+
+  var openingParts = ['I am writing to express my interest in the ' + data.title + ' position at ' + data.company];
+  if (data.source) {
+    openingParts[0] += ', which I saw ' + data.source + '.';
+  } else {
+    openingParts[0] = endSentence(openingParts[0]);
+  }
+  var opening = openingParts.join(' ');
+
+  var qualSentence = joinQualifications(data.qualifications);
+  var body2 = qualSentence ? (qualSentence + ' I believe this experience has prepared me to contribute effectively at ' + endSentence(data.company)) : '';
+
+  var whyPara = data.why ? data.why.trim() : '';
+
+  var closing = 'I would welcome the opportunity to discuss how my background aligns with your needs. Thank you for considering my application, and I look forward to hearing from you.';
+
+  var paragraphs = [opening, body2].filter(Boolean);
+  if (whyPara) paragraphs.push(whyPara);
+  paragraphs.push(closing);
+
+  return {
+    greeting: greeting,
+    paragraphs: paragraphs,
+    signOff: 'Sincerely,',
+    name: data.name
+  };
+}
+
+
+  var qualCount = 0;
+  var qualList = document.getElementById('cl-qual-list');
+
+  function addQualification(prefill){
+    qualCount++;
+    var div = document.createElement('div');
+    div.className = 'entry-card';
+    div.innerHTML =
+      '<button type="button" class="remove-entry" title="Remove" aria-label="Remove">&times;</button>' +
+      '<div class="field"><input type="text" class="cl-qual-input" placeholder="led a redesign that increased signups 20%" value="' + (prefill || '').replace(/"/g,'&quot;') + '"></div>';
+    div.querySelector('.remove-entry').addEventListener('click', function(){ div.remove(); });
+    qualList.appendChild(div);
+  }
+  document.getElementById('cl-add-qual').addEventListener('click', function(){ addQualification(''); });
+
+  document.getElementById('cl-download-btn').addEventListener('click', function(){
+    var statusEl = document.getElementById('cl-status');
+    (async function(){
+      try {
+        var name = document.getElementById('cl-name').value.trim();
+        var title = document.getElementById('cl-title').value.trim();
+        var company = document.getElementById('cl-company').value.trim();
+
+        if (!name || !title || !company){
+          setStatus(statusEl, 'error', 'Fill in your name, the job title, and the company name — the rest is optional.');
+          return;
+        }
+
+        var quals = Array.from(qualList.querySelectorAll('.cl-qual-input')).map(function(i){ return i.value; });
+        var letter = buildLetter({
+          name: name, title: title, company: company,
+          manager: document.getElementById('cl-manager').value.trim(),
+          source: document.getElementById('cl-source').value.trim(),
+          qualifications: quals,
+          why: document.getElementById('cl-why').value.trim()
+        });
+
+        var doc = await PDFDocument.create();
+        var font = await doc.embedFont(StandardFonts.Helvetica);
+        var bold = await doc.embedFont(StandardFonts.HelveticaBold);
+        var marginX = 56, pageW = 612, pageH = 792;
+        var maxWidth = pageW - marginX*2;
+        var page = doc.addPage([pageW, pageH]);
+        var y = pageH - 60;
+
+        function ensureSpace(need){
+          if (y - need < 50){ page = doc.addPage([pageW, pageH]); y = pageH - 60; }
+        }
+        function drawLine(text, size, useFont, gap){
+          ensureSpace(size*1.4);
+          page.drawText(text || '', { x: marginX, y: y, size: size, font: useFont, color: rgb(0.11,0.14,0.13) });
+          y -= (gap != null ? gap : size*1.4);
+        }
+        function drawParagraph(text, size){
+          wrapText(text, font, size, maxWidth).forEach(function(l){
+            ensureSpace(size*1.45);
+            page.drawText(l, { x: marginX, y: y, size: size, font: font, color: rgb(0.11,0.14,0.13) });
+            y -= size*1.45;
+          });
+          y -= 8;
+        }
+
+        var contactParts = [document.getElementById('cl-email').value.trim(), document.getElementById('cl-phone').value.trim()].filter(Boolean);
+        drawLine(name, 14, bold, 18);
+        if (contactParts.length) drawLine(contactParts.join('  |  '), 9.5, font, 20);
+        else y -= 6;
+
+        var today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        drawLine(today, 10, font, 22);
+
+        drawLine(letter.greeting, 11, font, 20);
+        letter.paragraphs.forEach(function(p){ drawParagraph(p, 10.5); });
+
+        y -= 6;
+        drawLine(letter.signOff, 10.5, font, 34);
+        drawLine(letter.name, 11, bold, 14);
+
+        var bytes = await doc.save();
+        var blob = new Blob([bytes], { type: 'application/pdf' });
+        var url = URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url; a.download = (name.replace(/[^a-zA-Z0-9]+/g,'_') || 'cover_letter') + '_Cover_Letter.pdf';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+        setStatus(statusEl, 'success', 'Done. Your cover letter PDF has started downloading.');
+      } catch(err){
+        setStatus(statusEl, 'error', 'Could not generate the PDF: ' + err.message);
+      }
+    })();
+  });
+
+  addQualification('led a redesign that increased signups 20%');
+  addQualification('managed a team of 5 designers');
+
+  // ================= HOURLY / SALARY CONVERTER =================
+  var hsHourly = document.getElementById('hs-hourly');
+  var hsAnnual = document.getElementById('hs-annual');
+  var hsHours = document.getElementById('hs-hours');
+  var hsWeeks = document.getElementById('hs-weeks');
+
+  function annualHoursTotal(){
+    return (parseFloat(hsHours.value) || 40) * (parseFloat(hsWeeks.value) || 52);
+  }
+  hsHourly.addEventListener('input', function(){
+    hsAnnual.value = Math.round((parseFloat(this.value) || 0) * annualHoursTotal());
+  });
+  hsAnnual.addEventListener('input', function(){
+    var total = annualHoursTotal();
+    hsHourly.value = total > 0 ? (Math.round(((parseFloat(this.value) || 0) / total) * 100) / 100) : 0;
+  });
+  [hsHours, hsWeeks].forEach(function(el){
+    el.addEventListener('input', function(){
+      hsAnnual.value = Math.round((parseFloat(hsHourly.value) || 0) * annualHoursTotal());
+    });
+  });
+
 })();
 </script>
 </body>
