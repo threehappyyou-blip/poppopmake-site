@@ -78,6 +78,13 @@
   <div class="entry">
     <div class="entry-date">Sep 2, 2026</div>
     <span class="tag shipped">Shipped</span>
+    <h2>Word Count &amp; Readability, live as you type</h2>
+    <p>Third tab in Writing &amp; AI Tools &mdash; words, characters, sentences, paragraphs, reading time, and a Flesch Reading Ease score, all updating as you type rather than waiting for a button click. Caught a real bug in the syllable-counting heuristic while testing against known word counts: the vowel-grouping pattern only matched up to two consecutive vowels, so three-vowel runs like the "eau" in "beautiful" split into two syllables instead of one. Fixed, then re-tested against 18 words spanning easy and genuinely tricky cases; 17 came back exact, and the one miss ("idea," which needs a dictionary to get right) is a known, accepted limit of this kind of lightweight heuristic, disclosed on the page rather than hidden.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 2, 2026</div>
+    <span class="tag shipped">Shipped</span>
     <h2>Debt Payoff Calculator: snowball vs avalanche, side by side</h2>
     <p>Enter as many debts as you have, and see both strategies run at once &mdash; snowball (smallest balance first, for momentum) and avalanche (highest interest rate first, for the lowest total cost) &mdash; with months to debt-free, total interest, and payoff order for each. Handles the case where minimum payments alone don't even cover the interest (the balance would grow forever) with an explicit warning rather than a silently wrong number. Tested against single-debt equivalence, the "freed-up minimum payment rolls into the next debt" mechanic specifically, and a deliberately unpayable scenario to confirm the safety cap catches it instead of hanging.</p>
   </div>

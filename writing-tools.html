@@ -123,6 +123,7 @@
   <div class="tabs" role="tablist">
     <button class="tab-btn active" data-tab="check" role="tab" aria-selected="true">Flagged Phrases</button>
     <button class="tab-btn" data-tab="smooth" role="tab" aria-selected="false">Smooth It Out</button>
+    <button class="tab-btn" data-tab="count" role="tab" aria-selected="false">Word Count &amp; Readability</button>
   </div>
 
   <section class="panel active" id="panel-check">
@@ -142,6 +143,43 @@
       <div class="highlighted-text" id="wr-highlighted-smooth"></div>
       <div id="wr-suggestion-list"></div>
       <p class="smooth-note">Word swaps are a starting point, not the whole fix. Stiff writing is usually more about uniform sentence rhythm and vague claims than any single word — if every sentence runs about the same length and nothing is concrete, that reads as AI even with zero phrases flagged above.</p>
+    </div>
+  </section>
+
+  <section class="panel" id="panel-count">
+    <div id="wr-count-empty" class="empty-note">Start typing in the box above — this tab updates live, no need to click Analyze.</div>
+    <div id="wr-count-results" style="display:none;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;margin-bottom:20px;">
+        <div style="background:var(--paper-2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.6rem;" id="wc-words">0</div>
+          <div style="font-size:0.78rem;color:var(--ink-soft);">words</div>
+        </div>
+        <div style="background:var(--paper-2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.6rem;" id="wc-chars">0</div>
+          <div style="font-size:0.78rem;color:var(--ink-soft);">characters</div>
+        </div>
+        <div style="background:var(--paper-2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.6rem;" id="wc-sentences">0</div>
+          <div style="font-size:0.78rem;color:var(--ink-soft);">sentences</div>
+        </div>
+        <div style="background:var(--paper-2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.6rem;" id="wc-paragraphs">0</div>
+          <div style="font-size:0.78rem;color:var(--ink-soft);">paragraphs</div>
+        </div>
+        <div style="background:var(--paper-2);border-radius:10px;padding:14px;text-align:center;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.6rem;" id="wc-time">0 min</div>
+          <div style="font-size:0.78rem;color:var(--ink-soft);">reading time</div>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--line);border-top:4px solid var(--teal);border-radius:14px;padding:20px 22px;">
+        <div style="font-size:0.85rem;color:var(--ink-soft);margin-bottom:4px;">Readability (Flesch Reading Ease)</div>
+        <div style="display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;">
+          <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2rem;color:var(--teal);" id="wc-flesch">&mdash;</div>
+          <div style="font-size:0.95rem;color:var(--ink);" id="wc-flesch-label"></div>
+        </div>
+        <div style="font-size:0.82rem;color:var(--ink-soft);margin-top:8px;" id="wc-grade"></div>
+      </div>
+      <p class="smooth-note" style="margin-top:14px;">Syllable counting is a standard heuristic, not a dictionary lookup — it gets the vast majority of words right, but the occasional word (especially uncommon ones) can be off by one syllable. Across a real paragraph those small misses average out; treat the score as a solid estimate, not a certified grade level.</p>
     </div>
   </section>
 
@@ -357,7 +395,7 @@ if ('serviceWorker' in navigator) {
   document.querySelectorAll('.tab-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
-      document.querySelectorAll('#panel-check, #panel-smooth').forEach(function(p){ p.classList.remove('active'); });
+      document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
       btn.classList.add('active'); btn.setAttribute('aria-selected','true');
       document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
     });
@@ -369,6 +407,107 @@ if ('serviceWorker' in navigator) {
     el.textContent = msg;
     if (kind === 'success' && window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
   }
+
+
+  // ================= WORD COUNT & READABILITY (live, no Analyze click needed) =================
+function countSyllables(word){
+  word = word.toLowerCase().replace(/[^a-z]/g, '');
+  if (word.length === 0) return 0;
+  if (word.length <= 3) return 1;
+
+  // Strip common silent-e and -es/-ed endings before counting vowel groups
+  word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+  word = word.replace(/^y/, '');
+
+  var matches = word.match(/[aeiouy]+/g);
+  var count = matches ? matches.length : 1;
+  return Math.max(1, count);
+}
+
+function analyzeReadability(text){
+  var trimmed = text.trim();
+  if (!trimmed) {
+    return { words: 0, characters: 0, charactersNoSpaces: 0, sentences: 0, paragraphs: 0,
+      syllables: 0, readingTimeMin: 0, fleschScore: null, gradeLevel: null };
+  }
+
+  var words = trimmed.split(/\s+/).filter(Boolean);
+  var wordCount = words.length;
+  var characters = text.length;
+  var charactersNoSpaces = text.replace(/\s/g, '').length;
+
+  var sentenceMatches = trimmed.match(/[^.!?]+[.!?]+/g);
+  var sentenceCount = sentenceMatches ? sentenceMatches.length : (wordCount > 0 ? 1 : 0);
+
+  var paragraphs = trimmed.split(/\n\s*\n/).filter(function(p){ return p.trim().length > 0; });
+  var paragraphCount = Math.max(1, paragraphs.length);
+
+  var totalSyllables = words.reduce(function(sum, w){ return sum + countSyllables(w); }, 0);
+
+  var readingTimeMin = wordCount / 225; // average adult silent reading speed
+
+  var fleschScore = null, gradeLevel = null;
+  if (wordCount > 0 && sentenceCount > 0) {
+    var wordsPerSentence = wordCount / sentenceCount;
+    var syllablesPerWord = totalSyllables / wordCount;
+    fleschScore = 206.835 - 1.015 * wordsPerSentence - 84.6 * syllablesPerWord;
+    gradeLevel = 0.39 * wordsPerSentence + 11.8 * syllablesPerWord - 15.59;
+  }
+
+  return {
+    words: wordCount, characters: characters, charactersNoSpaces: charactersNoSpaces,
+    sentences: sentenceCount, paragraphs: paragraphCount, syllables: totalSyllables,
+    readingTimeMin: readingTimeMin, fleschScore: fleschScore, gradeLevel: gradeLevel
+  };
+}
+
+function fleschLabel(score){
+  if (score === null) return '';
+  if (score >= 90) return 'Very easy \u2014 5th grade';
+  if (score >= 80) return 'Easy \u2014 6th grade';
+  if (score >= 70) return 'Fairly easy \u2014 7th grade';
+  if (score >= 60) return 'Standard \u2014 8th-9th grade';
+  if (score >= 50) return 'Fairly difficult \u2014 10th-12th grade';
+  if (score >= 30) return 'Difficult \u2014 college';
+  return 'Very difficult \u2014 college graduate';
+}
+
+
+  function fmtGrade(g){
+    if (g <= 0) return 'Below 1st grade';
+    if (g >= 17) return 'Graduate level';
+    return 'Grade ' + g.toFixed(1);
+  }
+
+  function renderCount(){
+    var text = document.getElementById('wr-input').value;
+    var r = analyzeReadability(text);
+
+    if (r.words === 0) {
+      document.getElementById('wr-count-empty').style.display = 'block';
+      document.getElementById('wr-count-results').style.display = 'none';
+      return;
+    }
+    document.getElementById('wr-count-empty').style.display = 'none';
+    document.getElementById('wr-count-results').style.display = 'block';
+
+    document.getElementById('wc-words').textContent = r.words.toLocaleString();
+    document.getElementById('wc-chars').textContent = r.characters.toLocaleString();
+    document.getElementById('wc-sentences').textContent = r.sentences.toLocaleString();
+    document.getElementById('wc-paragraphs').textContent = r.paragraphs.toLocaleString();
+    document.getElementById('wc-time').textContent = r.readingTimeMin < 1
+      ? '<1 min' : Math.round(r.readingTimeMin) + ' min';
+
+    if (r.fleschScore !== null) {
+      var clampedFlesch = Math.max(0, Math.min(100, r.fleschScore));
+      document.getElementById('wc-flesch').textContent = clampedFlesch.toFixed(0);
+      document.getElementById('wc-flesch-label').textContent = fleschLabel(r.fleschScore);
+      document.getElementById('wc-grade').textContent = 'Approximate reading level: ' + fmtGrade(r.gradeLevel);
+    }
+  }
+
+  document.getElementById('wr-input').addEventListener('input', renderCount);
+  renderCount();
 
   document.getElementById('wr-analyze-btn').addEventListener('click', function(){
     var text = document.getElementById('wr-input').value;

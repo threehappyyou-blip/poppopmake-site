@@ -18,7 +18,7 @@
     { title: 'Canada Paycheck Calculator', desc: 'Federal + provincial tax, CPP/CPP2, EI, all provinces', href: '/ca-paycheck-calculator.html', kw: 'tax salary income take-home money canada cpp ei ontario quebec alberta paycheck' },
     { title: 'Career Tools', desc: 'Resume builder · ATS score checker', href: '/career-tools.html', kw: 'resume cv job ats career keyword' },
     { title: 'Business Tools', desc: 'Invoice generator · QR code generator', href: '/business-tools.html', kw: 'invoice qr code business billing' },
-    { title: 'Writing & AI Tools', desc: 'Flag AI-ish phrases, get plain-language swaps', href: '/writing-tools.html', kw: 'ai writing detector checker text cliche' },
+    { title: 'Writing & AI Tools', desc: 'Flag AI-ish phrases, get plain-language swaps, check word count & readability', href: '/writing-tools.html', kw: 'ai writing detector checker text cliche word count readability flesch syllables reading time' },
     { title: 'Everyday Tools', desc: 'Age calculator, percentage calculator, tip splitter', href: '/everyday-tools.html', kw: 'age percentage tip split bill calculator birthday' },
     { title: 'Why We Don\u2019t Claim 99% Accuracy', desc: 'The evidence behind AI-detector false positives', href: '/ai-detector-honesty.html', kw: 'ai detector bias stanford false positive accuracy honest' },
     { title: 'Ontario Surtax & Quebec Rules Explained', desc: 'How the Canada calculator handles both, and a bug we caught', href: '/canada-tax-mechanics.html', kw: 'ontario surtax quebec abatement canada tax guide' },
