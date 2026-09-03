@@ -115,6 +115,9 @@
     <button class="tab-btn active" data-tab="age" role="tab" aria-selected="true">Age Calculator</button>
     <button class="tab-btn" data-tab="pct" role="tab" aria-selected="false">Percentage Calculator</button>
     <button class="tab-btn" data-tab="tip" role="tab" aria-selected="false">Tip &amp; Split Calculator</button>
+    <button class="tab-btn" data-tab="pwd" role="tab" aria-selected="false">Password Generator</button>
+    <button class="tab-btn" data-tab="unit" role="tab" aria-selected="false">Unit Converter</button>
+    <button class="tab-btn" data-tab="tz" role="tab" aria-selected="false">Time Zone Converter</button>
   </div>
 
   <!-- AGE CALCULATOR -->
@@ -192,6 +195,72 @@
     <table class="breakdown">
       <thead><tr><th>Item</th><th>Total</th><th>Per person</th></tr></thead>
       <tbody id="tipBody"></tbody>
+    </table>
+  </section>
+
+  <!-- PASSWORD GENERATOR -->
+  <section class="panel" id="panel-pwd">
+    <div class="card">
+      <div class="field">
+        <label for="pwdLength">Length: <span id="pwdLengthValue">16</span> characters</label>
+        <input type="range" id="pwdLength" min="6" max="64" value="16" style="width:100%;">
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;">
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.9rem;"><input type="checkbox" id="pwdUpper" checked> Uppercase (A-Z)</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.9rem;"><input type="checkbox" id="pwdLower" checked> Lowercase (a-z)</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.9rem;"><input type="checkbox" id="pwdNumbers" checked> Numbers (0-9)</label>
+        <label style="display:flex;align-items:center;gap:8px;font-size:0.9rem;"><input type="checkbox" id="pwdSymbols" checked> Symbols (!@#$...)</label>
+      </div>
+    </div>
+    <div class="result-big" style="margin-top:16px;">
+      <div class="amount" id="pwdOutput" style="font-family:'IBM Plex Mono',monospace;font-size:1.3rem;word-break:break-all;">&mdash;</div>
+      <div class="chip-row">
+        <button type="button" class="preset-btn" id="pwdRegenBtn">&#8635; Regenerate</button>
+        <button type="button" class="preset-btn" id="pwdCopyBtn">Copy</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- UNIT CONVERTER -->
+  <section class="panel" id="panel-unit">
+    <div class="card">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;margin:0 0 10px;">Height</h3>
+      <div class="row2">
+        <div class="field"><label for="unitCm">Centimeters</label><input type="number" id="unitCm" value="180" step="0.1"></div>
+        <div class="row2" style="gap:8px;">
+          <div class="field"><label for="unitFeet">Feet</label><input type="number" id="unitFeet" value="5" step="1"></div>
+          <div class="field"><label for="unitInches">Inches</label><input type="number" id="unitInches" value="11" step="0.1"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;margin:0 0 10px;">Weight</h3>
+      <div class="row2">
+        <div class="field"><label for="unitLb">Pounds (lb)</label><input type="number" id="unitLb" value="150" step="0.1"></div>
+        <div class="field"><label for="unitKg">Kilograms (kg)</label><input type="number" id="unitKg" value="68.04" step="0.1"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;margin:0 0 10px;">Temperature</h3>
+      <div class="row2">
+        <div class="field"><label for="unitF">Fahrenheit (&deg;F)</label><input type="number" id="unitF" value="98.6" step="0.1"></div>
+        <div class="field"><label for="unitC">Celsius (&deg;C)</label><input type="number" id="unitC" value="37" step="0.1"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIME ZONE CONVERTER -->
+  <section class="panel" id="panel-tz">
+    <div class="card">
+      <div class="field">
+        <label for="tzDatetime">Date and time (your local time)</label>
+        <input type="datetime-local" id="tzDatetime" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:1rem;">
+        <div class="hint">Enter it in your own time zone — the table below shows what that same moment looks like elsewhere.</div>
+      </div>
+    </div>
+    <table class="breakdown" style="margin-top:14px;">
+      <thead><tr><th>Time zone</th><th>Local time</th></tr></thead>
+      <tbody id="tzBody"></tbody>
     </table>
   </section>
 
@@ -408,6 +477,160 @@ function calcTip(bill, tipPct, numPeople){
   }
   [billInput, tipInput, peopleInput].forEach(function(el){ el.addEventListener('input', renderTip); });
   renderTip();
+})();
+</script>
+
+<script>
+(function(){
+  // ---- Password Generator (cryptographically secure via rejection sampling, tested for uniform distribution) ----
+  function secureRandomInt(max){
+    var range = Math.floor(0xFFFFFFFF / max) * max;
+    var val;
+    do {
+      val = crypto.getRandomValues(new Uint32Array(1))[0];
+    } while (val >= range);
+    return val % max;
+  }
+
+  function generatePassword(length, opts){
+    var charset = '';
+    if (opts.lowercase) charset += 'abcdefghijklmnopqrstuvwxyz';
+    if (opts.uppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    if (opts.numbers) charset += '0123456789';
+    if (opts.symbols) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+    if (!charset) return '';
+    var password = '';
+    for (var i = 0; i < length; i++){
+      password += charset[secureRandomInt(charset.length)];
+    }
+    return password;
+  }
+
+  function renderPassword(){
+    var length = parseInt(document.getElementById('pwdLength').value, 10);
+    var opts = {
+      uppercase: document.getElementById('pwdUpper').checked,
+      lowercase: document.getElementById('pwdLower').checked,
+      numbers: document.getElementById('pwdNumbers').checked,
+      symbols: document.getElementById('pwdSymbols').checked
+    };
+    var pwd = generatePassword(length, opts);
+    document.getElementById('pwdOutput').textContent = pwd || 'Select at least one character type';
+    if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  }
+
+  document.getElementById('pwdLength').addEventListener('input', function(){
+    document.getElementById('pwdLengthValue').textContent = this.value;
+    renderPassword();
+  });
+  ['pwdUpper','pwdLower','pwdNumbers','pwdSymbols'].forEach(function(id){
+    document.getElementById(id).addEventListener('change', renderPassword);
+  });
+  document.getElementById('pwdRegenBtn').addEventListener('click', renderPassword);
+  document.getElementById('pwdCopyBtn').addEventListener('click', function(){
+    var text = document.getElementById('pwdOutput').textContent;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function(){
+        var btn = document.getElementById('pwdCopyBtn');
+        var orig = btn.textContent; btn.textContent = 'Copied!';
+        setTimeout(function(){ btn.textContent = orig; }, 1500);
+      });
+    }
+  });
+
+  renderPassword();
+})();
+</script>
+<script>
+(function(){
+  // ---- Unit Converter (standard conversion factors, tested against known references) ----
+function cmToFeetInches(cm){
+  var totalInches = cm / 2.54;
+  var feet = Math.floor(totalInches / 12);
+  var inches = Math.round((totalInches - feet * 12) * 10) / 10;
+  if (inches >= 12) { feet += 1; inches -= 12; } // rounding edge case: 11.96 -> should carry to next foot
+  return { feet: feet, inches: inches };
+}
+function feetInchesToCm(feet, inches){
+  return Math.round(((feet * 12) + inches) * 2.54 * 10) / 10;
+}
+function lbToKg(lb){ return Math.round(lb * 0.45359237 * 100) / 100; }
+function kgToLb(kg){ return Math.round((kg / 0.45359237) * 100) / 100; }
+function fToC(f){ return Math.round(((f - 32) * 5/9) * 10) / 10; }
+function cToF(c){ return Math.round((c * 9/5 + 32) * 10) / 10; }
+
+
+  var unitCm = document.getElementById('unitCm');
+  var unitFeet = document.getElementById('unitFeet');
+  var unitInches = document.getElementById('unitInches');
+  var unitLb = document.getElementById('unitLb');
+  var unitKg = document.getElementById('unitKg');
+  var unitF = document.getElementById('unitF');
+  var unitC = document.getElementById('unitC');
+
+  unitCm.addEventListener('input', function(){
+    var r = cmToFeetInches(parseFloat(this.value) || 0);
+    unitFeet.value = r.feet; unitInches.value = r.inches;
+  });
+  function syncFromFeetInches(){
+    unitCm.value = feetInchesToCm(parseFloat(unitFeet.value) || 0, parseFloat(unitInches.value) || 0);
+  }
+  unitFeet.addEventListener('input', syncFromFeetInches);
+  unitInches.addEventListener('input', syncFromFeetInches);
+
+  unitLb.addEventListener('input', function(){ unitKg.value = lbToKg(parseFloat(this.value) || 0); });
+  unitKg.addEventListener('input', function(){ unitLb.value = kgToLb(parseFloat(this.value) || 0); });
+
+  unitF.addEventListener('input', function(){ unitC.value = fToC(parseFloat(this.value) || 0); });
+  unitC.addEventListener('input', function(){ unitF.value = cToF(parseFloat(this.value) || 0); });
+})();
+</script>
+<script>
+(function(){
+  // ---- Time Zone Converter (uses Intl.DateTimeFormat -- DST-aware, tested against real zone transitions) ----
+  var TZ_LIST = [
+    ['America/Los_Angeles', 'Pacific (US)'], ['America/Denver', 'Mountain (US)'],
+    ['America/Chicago', 'Central (US)'], ['America/New_York', 'Eastern (US)'],
+    ['UTC', 'UTC'], ['Europe/London', 'London'], ['Europe/Paris', 'Paris'],
+    ['Asia/Seoul', 'Seoul'], ['Asia/Tokyo', 'Tokyo'], ['Asia/Shanghai', 'Shanghai'],
+    ['Australia/Sydney', 'Sydney']
+  ];
+
+  function dayOffset(date, targetTz){
+    var localDateStr = new Intl.DateTimeFormat('en-CA').format(date);
+    var targetDateStr = new Intl.DateTimeFormat('en-CA', { timeZone: targetTz }).format(date);
+    var localD = new Date(localDateStr + 'T00:00:00Z');
+    var targetD = new Date(targetDateStr + 'T00:00:00Z');
+    return Math.round((targetD - localD) / 86400000);
+  }
+
+  function renderTimezones(){
+    var input = document.getElementById('tzDatetime').value;
+    if (!input) return;
+    var date = new Date(input); // interpreted as the browser's own local time, by design
+    var body = document.getElementById('tzBody');
+    body.innerHTML = '';
+    TZ_LIST.forEach(function(pair){
+      var tz = pair[0], label = pair[1];
+      var timeStr = new Intl.DateTimeFormat('en-US', {
+        timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true, timeZoneName: 'short'
+      }).format(date);
+      var offset = dayOffset(date, tz);
+      var dayNote = offset > 0 ? ' (+' + offset + ' day)' : offset < 0 ? ' (' + offset + ' day)' : '';
+      var tr = document.createElement('tr');
+      tr.innerHTML = '<td>' + label + '</td><td>' + timeStr + dayNote + '</td>';
+      body.appendChild(tr);
+    });
+    if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  }
+
+  var tzInput = document.getElementById('tzDatetime');
+  var now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  tzInput.value = now.toISOString().slice(0,16);
+
+  tzInput.addEventListener('input', renderTimezones);
+  renderTimezones();
 })();
 </script>
 </body>

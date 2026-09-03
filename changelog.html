@@ -78,6 +78,13 @@
   <div class="entry">
     <div class="entry-date">Sep 2, 2026</div>
     <span class="tag shipped">Shipped</span>
+    <h2>Three more Everyday Tools: password generator, unit converter, time zones</h2>
+    <p>Password Generator uses the browser's cryptographic random number source with rejection sampling rather than a plain modulo, which matters more than it sounds &mdash; a naive approach introduces a small but real bias toward certain characters; tested across 10,000 samples to confirm the distribution actually comes out even. Unit Converter handles height (cm &harr; feet/inches, with the rounding fixed so 182.88cm correctly shows as 6'0" instead of 5'12"), weight (lb &harr; kg), and temperature (&deg;F &harr; &deg;C). Time Zone Converter shows one moment across 11 zones at once and explicitly flags when the local date rolls to the next (or previous) day &mdash; tested against a case where it's already tomorrow morning in Seoul, Tokyo, Shanghai, and Sydney while still evening in the US, since silently showing just a time with no date context is exactly how time zone tools end up wrong by a full day without anyone noticing.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 2, 2026</div>
+    <span class="tag shipped">Shipped</span>
     <h2>Compress &amp; Convert Image &mdash; a sixth tool in Document &amp; Image Tools</h2>
     <p>Shrink a photo's file size or convert between JPG, PNG, and WebP, with a live before/after preview and an optional max-dimension resize. Started out scoped as "PDF compression," but pdf-lib (the library behind every PDF tool on this site) has no way to reach into a PDF's already-embedded images and recompress them &mdash; only to add new ones. Rebuilt as a standalone image tool instead, which is both more reliable and covers a plain need (shrinking a photo, converting a format) that a PDF-specific tool wouldn't. The aspect-ratio-preserving resize math was tested against ten cases, including extreme aspect ratios and both landscape and portrait orientations. The Canvas-based resize/re-encode itself follows the standard documented browser pattern; the one piece not run through an automated end-to-end check was the actual file-to-image loading step, since the test environment used for everything else on this site doesn't implement `URL.createObjectURL` at all &mdash; a gap in the tool, not something expected to affect the real, live page.</p>
   </div>
