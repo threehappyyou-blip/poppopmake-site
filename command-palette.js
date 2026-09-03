@@ -12,6 +12,7 @@
     { title: '401(k) Retirement Calculator', desc: 'Projected balance from contributions, match, and growth', href: '/retirement-calculator.html', kw: 'retirement 401k pension savings employer match compound growth' },
     { title: 'Capital Gains Tax Calculator', desc: 'Stocks and crypto, short vs long-term, NIIT', href: '/capital-gains-calculator.html', kw: 'capital gains crypto stock tax cost basis niit short term long term' },
     { title: 'Compare Take-Home Pay', desc: 'Any US state, UK region, Australia, or Canadian province', href: '/compare-takehome.html', kw: 'compare relocate move states countries salary offer job international' },
+    { title: 'Debt Payoff Calculator', desc: 'Snowball vs avalanche, side by side', href: '/debt-payoff-calculator.html', kw: 'debt payoff snowball avalanche credit card loan interest payment' },
     { title: 'UK Paycheck Calculator', desc: 'Income Tax and National Insurance, England/Wales/NI or Scotland', href: '/uk-paycheck-calculator.html', kw: 'tax salary income take-home money uk britain scotland paycheck' },
     { title: 'Australia Paycheck Calculator', desc: 'Income tax, LITO, and the Medicare levy', href: '/au-paycheck-calculator.html', kw: 'tax salary income take-home money australia medicare levy paycheck' },
     { title: 'Canada Paycheck Calculator', desc: 'Federal + provincial tax, CPP/CPP2, EI, all provinces', href: '/ca-paycheck-calculator.html', kw: 'tax salary income take-home money canada cpp ei ontario quebec alberta paycheck' },
