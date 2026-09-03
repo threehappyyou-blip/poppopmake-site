@@ -5,6 +5,7 @@
 (function () {
   var COMMANDS = [
     { title: 'Home', desc: 'Back to the homepage', href: '/', kw: 'homepage main all tools' },
+    { title: 'All Tools', desc: 'Every tool on the site, one page', href: '/all-tools.html', kw: 'all tools directory index list everything sitemap' },
     { title: 'Document & Image Tools', desc: 'Merge, split PDFs · JPG/PNG to PDF · remove backgrounds · clean metadata · compress images', href: '/document-tools.html', kw: 'pdf merge split convert image jpg png background remove document metadata author producer clean kdp manuscript compress webp resize' },
     { title: 'Paycheck Calculator (US)', desc: 'Federal tax, FICA, all 50 states', href: '/paycheck-calculator.html', kw: 'tax salary income take-home money usa america paycheck' },
     { title: 'Paycheck Calculator by State', desc: 'Dedicated page for each U.S. state, grouped by tax type', href: '/paycheck-states.html', kw: 'state texas california new york florida paycheck tax browse' },

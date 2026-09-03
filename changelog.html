@@ -9,6 +9,14 @@
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Changelog — PopPopMake</title>
 <meta name="description" content="What's shipped, what's fixed, and what got reported and fixed because someone said something.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/changelog.html">
+<meta property="og:title" content="Changelog — PopPopMake">
+<meta property="og:description" content="What's shipped, what's fixed, and what got reported and fixed because someone said something.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Changelog — PopPopMake">
+<meta name="twitter:description" content="What's shipped, what's fixed, and what got reported and fixed because someone said something.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -73,6 +81,13 @@
 
   <div class="disclaimer">
     Three kinds of entries show up here: <span class="tag shipped">Shipped</span> for something new, <span class="tag caught">Caught in testing</span> for a bug found and fixed before launch, and <span class="tag reported">Reported</span> for a fix that started with someone else noticing first. That last tag is empty today — it won't stay that way.
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 3, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>Discoverability: an All Tools page, llms.txt, and social preview cards site-wide</h2>
+    <p>New <a href="/all-tools.html">All Tools directory</a> lists every tool on the site in one place, linked from the homepage nav and from the footer of 67 other pages. Added <a href="/llms.txt">llms.txt</a> at the domain root, following the actual llmstxt.org specification rather than several lower-quality sources found while researching it that described a "W3C standard" and version-numbered spec that don't check out &mdash; this mainly helps AI coding agents and documentation-reading tools understand the site, not a guaranteed search or citation boost. Added OpenGraph and Twitter Card tags to all 84 pages so links shared on Slack, Twitter/X, or similar show a proper title and description instead of a bare link. Caught one real bug while doing this at scale: one page's title contains literal quotation marks, which broke the HTML attribute when copied in as-is; found it by re-scanning every generated tag for embedded quotes, not just spot-checking a few. Also gave the Tip &amp; Split Calculator a pre-tax/post-tax tip option, catching a button class collision before it shipped that would have let the new tax toggle silently overwrite the tip percentage field.</p>
   </div>
 
   <div class="entry">

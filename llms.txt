@@ -1,0 +1,43 @@
+# PopPopMake
+
+> Free, browser-based utility tools — documents, money and tax calculators, career tools, business tools, writing tools, everyday math, and developer tools. Everything runs client-side in the visitor's browser; no accounts, no server uploads, no daily limits.
+
+PopPopMake is a solo-built, ad-supported utility site with no user accounts. Every calculator, converter, and generator runs entirely in the browser using JavaScript — no data is sent to a server for processing. This is independently verifiable: any page's Network tab in browser developer tools will show no outbound requests carrying the entered data. See /how-it-works.html for a step-by-step verification guide.
+
+## Money & Tax
+- [US Paycheck Calculator](https://poppopmake.com/paycheck-calculator.html): Take-home pay after federal tax, FICA, and state tax for all 50 US states plus DC.
+- [Paycheck Calculator by State](https://poppopmake.com/paycheck-states.html): Individual paycheck calculator pages for every US state, grouped by tax type (no income tax, flat rate, or progressive).
+- [UK Paycheck Calculator](https://poppopmake.com/uk-paycheck-calculator.html): Income Tax and National Insurance for 2026/27, covering both the England/Wales/NI bands and the separate Scottish bands.
+- [Australia Paycheck Calculator](https://poppopmake.com/au-paycheck-calculator.html): Federal income tax, the Low Income Tax Offset, and the Medicare levy for FY2026-27.
+- [Canada Paycheck Calculator](https://poppopmake.com/ca-paycheck-calculator.html): Federal and provincial/territorial tax, CPP/CPP2, and EI for all provinces and territories including Quebec's federal abatement.
+- [Compare Take-Home Pay](https://poppopmake.com/compare-takehome.html): Side-by-side comparison of take-home pay between any two US states, UK regions, Australia, or Canadian provinces.
+- [Mortgage Calculator](https://poppopmake.com/mortgage-calculator.html): Monthly payment broken into principal, interest, property tax, insurance, and PMI.
+- [401(k) / Retirement Calculator](https://poppopmake.com/retirement-calculator.html): Year-by-year retirement savings projection using 2026 IRS contribution limits.
+- [Capital Gains Calculator](https://poppopmake.com/capital-gains-calculator.html): Short and long-term capital gains tax on stocks and crypto, including the Net Investment Income Tax.
+- [Debt Payoff Calculator](https://poppopmake.com/debt-payoff-calculator.html): Compares the debt snowball and debt avalanche payoff strategies side by side for any set of debts.
+
+## Documents & Images
+- [Document & Image Tools](https://poppopmake.com/document-tools.html): Merge PDFs, split PDFs, convert images to PDF, remove image backgrounds with an in-browser AI model, strip hidden PDF metadata, and compress or convert images between JPG/PNG/WebP.
+
+## Career
+- [Career Tools](https://poppopmake.com/career-tools.html): Resume builder that outputs an ATS-friendly PDF, an ATS keyword score checker, a cover letter generator, and an hourly-to-salary wage converter.
+
+## Business
+- [Business Tools](https://poppopmake.com/business-tools.html): Invoice generator and a customizable QR code generator.
+
+## Writing & AI
+- [Writing & AI Tools](https://poppopmake.com/writing-tools.html): Flags common AI-writing clichés with plain-language rewrite suggestions, plus live word count and Flesch readability scoring. Explicitly a pattern-matching heuristic, not a machine-learning AI detector — see /ai-detector-honesty.html for why.
+
+## Everyday
+- [Everyday Tools](https://poppopmake.com/everyday-tools.html): Age calculator, percentage calculator, tip and bill-split calculator (with pre-tax/post-tax tip options), cryptographically secure password generator, unit converter (height, weight, temperature), and a time zone converter covering 11 zones.
+
+## Developer
+- [Developer Tools](https://poppopmake.com/devtools.html): JSON formatter/validator, UTF-8-safe Base64 encoder/decoder, UUID v4 generator, HEX/RGB/HSL color converter, URL encoder/decoder, and a dummy data generator for names/emails/phones/addresses.
+
+## Optional
+- [All Tools Directory](https://poppopmake.com/all-tools.html): Every tool on the site listed on one page.
+- [Embeddable Widgets](https://poppopmake.com/embed.html): Seven of the above tools available as a single-script-tag embed for third-party sites, free, no attribution required beyond a small "Powered by PopPopMake" credit.
+- [Guides](https://poppopmake.com/guides.html): Explainer articles on tax mechanics (Ontario's surtax, Scotland vs rest-of-UK tax bands) and on why the AI writing tool doesn't claim to be a detector.
+- [Changelog](https://poppopmake.com/changelog.html): Public log of every feature shipped and every bug caught during testing.
+- [How It Works](https://poppopmake.com/how-it-works.html): Step-by-step instructions for verifying that no data leaves the browser.
+- [Accessibility Statement](https://poppopmake.com/accessibility.html): WCAG 2.1 AA target and an honest account of what has and hasn't been tested.

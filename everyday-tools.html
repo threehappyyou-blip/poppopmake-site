@@ -9,6 +9,14 @@
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Everyday Tools — Age, Percentage &amp; Tip Calculators — PopPopMake</title>
 <meta name="description" content="Free everyday calculators: exact age in years/months/days, percentage calculator (three modes), and a tip/bill-split calculator.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/everyday-tools.html">
+<meta property="og:title" content="Everyday Tools — Age, Percentage &amp; Tip Calculators — PopPopMake">
+<meta property="og:description" content="Free everyday calculators: exact age in years/months/days, percentage calculator (three modes), and a tip/bill-split calculator.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Everyday Tools — Age, Percentage &amp; Tip Calculators — PopPopMake">
+<meta name="twitter:description" content="Free everyday calculators: exact age in years/months/days, percentage calculator (three modes), and a tip/bill-split calculator.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -78,6 +86,8 @@
   .preset-row{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;}
   .preset-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
   .preset-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .basis-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
+  .basis-btn.active{background:var(--teal);color:#fff;border-color:var(--teal);}
 
   table.breakdown{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;margin-top:16px;}
   table.breakdown th, table.breakdown td{padding:12px 16px;text-align:right;font-size:0.92rem;border-bottom:1px solid var(--line);}
@@ -174,8 +184,12 @@
   <section class="panel" id="panel-tip">
     <div class="card">
       <div class="field">
-        <label for="billAmount">Bill amount</label>
+        <label for="billAmount">Subtotal (before tax)</label>
         <div class="prefix-wrap"><span>$</span><input type="number" id="billAmount" value="84.50" min="0" step="0.01"></div>
+      </div>
+      <div class="field">
+        <label for="taxPct">Sales tax</label>
+        <div class="prefix-wrap"><input type="number" id="taxPct" value="0" min="0" step="0.1"><span style="left:auto;right:12px;">%</span></div>
       </div>
       <div class="field">
         <label for="tipPct">Tip percentage</label>
@@ -186,6 +200,14 @@
           <button type="button" class="preset-btn" data-pct="20">20%</button>
           <button type="button" class="preset-btn" data-pct="25">25%</button>
         </div>
+      </div>
+      <div class="field">
+        <label>Tip calculated on</label>
+        <div class="preset-row" id="tipBasisToggle">
+          <button type="button" class="basis-btn active" data-basis="subtotal">Subtotal (before tax)</button>
+          <button type="button" class="basis-btn" data-basis="total">Total (after tax)</button>
+        </div>
+        <div class="hint">Most etiquette guides suggest tipping on the subtotal — tipping on the total also tips on the tax itself.</div>
       </div>
       <div class="field">
         <label for="numPeople">Number of people</label>
@@ -273,7 +295,7 @@
   <div class="wrap">
     <span class="brand">PopPopMake</span>
     <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
-    <span><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+    <span><a href="/all-tools.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">All Tools</a><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
   </div>
 </footer>
 
@@ -386,13 +408,15 @@ function whatPercent(part, whole){ return whole !== 0 ? (part/whole)*100 : 0; }
 function pctChange(from, to){ return from !== 0 ? ((to-from)/Math.abs(from))*100 : 0; }
 
 // Tip / bill split
-function calcTip(bill, tipPct, numPeople){
-  var tip = bill * (tipPct/100);
-  var total = bill + tip;
+function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
+  var tax = subtotal * (taxPct/100);
+  var tipBase = tipOnTotal ? (subtotal + tax) : subtotal;
+  var tip = tipBase * (tipPct/100);
+  var grandTotal = subtotal + tax + tip;
   var people = Math.max(1, numPeople);
   return {
-    tip: tip, total: total,
-    perPersonBill: bill/people, perPersonTip: tip/people, perPersonTotal: total/people
+    tax: tax, tip: tip, total: grandTotal,
+    perPersonBill: subtotal/people, perPersonTax: tax/people, perPersonTip: tip/people, perPersonTotal: grandTotal/people
   };
 }
 
@@ -443,8 +467,10 @@ function calcTip(bill, tipPct, numPeople){
 
   // ---- Tip Calculator UI ----
   var billInput = document.getElementById('billAmount');
+  var taxInput = document.getElementById('taxPct');
   var tipInput = document.getElementById('tipPct');
   var peopleInput = document.getElementById('numPeople');
+  var tipOnTotal = false;
 
   document.querySelectorAll('.preset-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -457,15 +483,18 @@ function calcTip(bill, tipPct, numPeople){
 
   function renderTip(){
     var bill = Math.max(0, parseFloat(billInput.value) || 0);
+    var taxPct = Math.max(0, parseFloat(taxInput.value) || 0);
     var tipPct = Math.max(0, parseFloat(tipInput.value) || 0);
     var people = Math.max(1, parseInt(peopleInput.value, 10) || 1);
-    var r = calcTip(bill, tipPct, people);
+    var r = calcTip(bill, taxPct, tipPct, tipOnTotal, people);
 
     var rows = [
-      ['Bill', fmtMoney(bill), fmtMoney(r.perPersonBill)],
-      ['Tip (' + tipPct + '%)', fmtMoney(r.tip), fmtMoney(r.perPersonTip)],
-      ['Total', fmtMoney(r.total), fmtMoney(r.perPersonTotal)]
+      ['Subtotal', fmtMoney(bill), fmtMoney(r.perPersonBill)]
     ];
+    if (taxPct > 0) rows.push(['Tax (' + taxPct + '%)', fmtMoney(r.tax), fmtMoney(r.perPersonTax)]);
+    rows.push(['Tip (' + tipPct + '%)', fmtMoney(r.tip), fmtMoney(r.perPersonTip)]);
+    rows.push(['Total', fmtMoney(r.total), fmtMoney(r.perPersonTotal)]);
+
     var body = document.getElementById('tipBody');
     body.innerHTML = '';
     rows.forEach(function(row){
@@ -475,7 +504,15 @@ function calcTip(bill, tipPct, numPeople){
     });
     if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
   }
-  [billInput, tipInput, peopleInput].forEach(function(el){ el.addEventListener('input', renderTip); });
+  [billInput, taxInput, tipInput, peopleInput].forEach(function(el){ el.addEventListener('input', renderTip); });
+  document.querySelectorAll('.basis-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.basis-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      tipOnTotal = btn.dataset.basis === 'total';
+      renderTip();
+    });
+  });
   renderTip();
 })();
 </script>
