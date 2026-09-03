@@ -5,7 +5,7 @@
 (function () {
   var COMMANDS = [
     { title: 'Home', desc: 'Back to the homepage', href: '/', kw: 'homepage main all tools' },
-    { title: 'Document & Image Tools', desc: 'Merge, split PDFs · JPG/PNG to PDF · remove backgrounds · clean metadata', href: '/document-tools.html', kw: 'pdf merge split convert image jpg png background remove document metadata author producer clean kdp manuscript' },
+    { title: 'Document & Image Tools', desc: 'Merge, split PDFs · JPG/PNG to PDF · remove backgrounds · clean metadata · compress images', href: '/document-tools.html', kw: 'pdf merge split convert image jpg png background remove document metadata author producer clean kdp manuscript compress webp resize' },
     { title: 'Paycheck Calculator (US)', desc: 'Federal tax, FICA, all 50 states', href: '/paycheck-calculator.html', kw: 'tax salary income take-home money usa america paycheck' },
     { title: 'Paycheck Calculator by State', desc: 'Dedicated page for each U.S. state, grouped by tax type', href: '/paycheck-states.html', kw: 'state texas california new york florida paycheck tax browse' },
     { title: 'Mortgage Calculator', desc: 'Monthly payment with tax, insurance, and PMI', href: '/mortgage-calculator.html', kw: 'mortgage home loan house payment pmi property tax insurance' },
@@ -16,7 +16,7 @@
     { title: 'UK Paycheck Calculator', desc: 'Income Tax and National Insurance, England/Wales/NI or Scotland', href: '/uk-paycheck-calculator.html', kw: 'tax salary income take-home money uk britain scotland paycheck' },
     { title: 'Australia Paycheck Calculator', desc: 'Income tax, LITO, and the Medicare levy', href: '/au-paycheck-calculator.html', kw: 'tax salary income take-home money australia medicare levy paycheck' },
     { title: 'Canada Paycheck Calculator', desc: 'Federal + provincial tax, CPP/CPP2, EI, all provinces', href: '/ca-paycheck-calculator.html', kw: 'tax salary income take-home money canada cpp ei ontario quebec alberta paycheck' },
-    { title: 'Career Tools', desc: 'Resume builder · ATS score checker', href: '/career-tools.html', kw: 'resume cv job ats career keyword' },
+    { title: 'Career Tools', desc: 'Resume builder · ATS score checker · cover letter generator', href: '/career-tools.html', kw: 'resume cv job ats career keyword cover letter application' },
     { title: 'Business Tools', desc: 'Invoice generator · QR code generator', href: '/business-tools.html', kw: 'invoice qr code business billing' },
     { title: 'Writing & AI Tools', desc: 'Flag AI-ish phrases, get plain-language swaps, check word count & readability', href: '/writing-tools.html', kw: 'ai writing detector checker text cliche word count readability flesch syllables reading time' },
     { title: 'Everyday Tools', desc: 'Age calculator, percentage calculator, tip splitter', href: '/everyday-tools.html', kw: 'age percentage tip split bill calculator birthday' },

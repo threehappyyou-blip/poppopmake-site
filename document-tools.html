@@ -134,6 +134,7 @@
     <button class="tab-btn" data-tab="images" role="tab" aria-selected="false">Images to PDF</button>
     <button class="tab-btn" data-tab="bgremove" role="tab" aria-selected="false">Remove Background</button>
     <button class="tab-btn" data-tab="metadata" role="tab" aria-selected="false">Clean Metadata</button>
+    <button class="tab-btn" data-tab="compress" role="tab" aria-selected="false">Compress &amp; Convert Image</button>
   </div>
 
   <!-- MERGE PANEL -->
@@ -260,6 +261,58 @@
       <button class="action-btn" id="metadata-clean-btn" style="margin-top:16px;">Clean and Download</button>
     </div>
     <div class="status" id="metadata-status"></div>
+  </section>
+
+  <!-- IMAGE COMPRESS & CONVERT PANEL -->
+  <section class="panel" id="panel-compress">
+    <h2>Compress &amp; Convert Image</h2>
+    <p class="sub">Shrink a photo's file size, or convert between JPG, PNG, and WebP — for faster page loads, email attachments, or upload limits.</p>
+    <div class="drop" id="compress-drop">
+      <div>Drag an image here, or</div>
+      <label class="btn-label" for="compress-input">Choose an image</label>
+      <div class="hint">JPG, PNG, WebP, and most other browser-supported formats</div>
+      <input type="file" id="compress-input" accept="image/*">
+    </div>
+
+    <div id="compress-controls" style="display:none;margin-top:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+        <div>
+          <div style="font-size:0.8rem;color:var(--ink-soft);margin-bottom:6px;">Original</div>
+          <img id="compress-preview-before" style="width:100%;border-radius:8px;border:1px solid var(--line);background:var(--paper-2);">
+          <div style="font-size:0.82rem;color:var(--ink-soft);margin-top:6px;" id="compress-before-info"></div>
+        </div>
+        <div>
+          <div style="font-size:0.8rem;color:var(--ink-soft);margin-bottom:6px;">Result</div>
+          <img id="compress-preview-after" style="width:100%;border-radius:8px;border:1px solid var(--line);background:var(--paper-2);display:none;">
+          <div id="compress-after-placeholder" style="width:100%;aspect-ratio:1;border-radius:8px;border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:0.85rem;">Adjust settings below</div>
+          <div style="font-size:0.82rem;margin-top:6px;" id="compress-after-info"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;">Output format</label>
+          <select id="compress-format" style="width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.9rem;">
+            <option value="image/jpeg" selected>JPG</option>
+            <option value="image/webp">WebP</option>
+            <option value="image/png">PNG</option>
+          </select>
+        </div>
+        <div>
+          <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;">Max dimension (px, optional)</label>
+          <input type="number" id="compress-max-dim" placeholder="e.g. 1600" min="0" step="50" style="width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.9rem;">
+        </div>
+      </div>
+
+      <div id="compress-quality-field" style="margin-bottom:16px;">
+        <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;">Quality: <span id="compress-quality-value">80</span>%</label>
+        <input type="range" id="compress-quality" min="1" max="100" value="80" style="width:100%;">
+        <div class="hint">Lower means smaller file, more visible compression artifacts. PNG is always lossless, so this doesn't apply to PNG output.</div>
+      </div>
+
+      <button class="action-btn" id="compress-download-btn">Download</button>
+    </div>
+    <div class="status" id="compress-status"></div>
   </section>
 
   <div class="disclaimer">
@@ -816,6 +869,129 @@ if ('serviceWorker' in navigator) {
     }
     metaCleanBtn.disabled = false;
   });
+
+  // ================= COMPRESS & CONVERT IMAGE =================
+function calcDimensions(origWidth, origHeight, maxDimension){
+  if (!maxDimension || maxDimension <= 0) return { width: origWidth, height: origHeight, resized: false };
+  if (origWidth <= maxDimension && origHeight <= maxDimension) {
+    return { width: origWidth, height: origHeight, resized: false };
+  }
+  var width, height;
+  if (origWidth >= origHeight) {
+    width = maxDimension;
+    height = Math.round(origHeight * (maxDimension / origWidth));
+  } else {
+    height = maxDimension;
+    width = Math.round(origWidth * (maxDimension / origHeight));
+  }
+  return { width: Math.max(1, width), height: Math.max(1, height), resized: true };
+}
+
+
+  var cmpFile = null;
+  var cmpImg = null; // decoded HTMLImageElement, reused across setting changes
+  var cmpControls = document.getElementById('compress-controls');
+  var cmpStatus = document.getElementById('compress-status');
+  var cmpDebounceTimer = null;
+
+  function loadCompressFile(file){
+    cmpFile = file;
+    setStatus(cmpStatus, 'info', 'Loading ' + file.name + '…');
+    var url = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function(){
+      cmpImg = img;
+      document.getElementById('compress-preview-before').src = url;
+      document.getElementById('compress-before-info').textContent =
+        img.naturalWidth + '×' + img.naturalHeight + ' px · ' + fmtSize(file.size);
+      cmpControls.style.display = 'block';
+      clearStatus(cmpStatus);
+      renderCompressPreview();
+    };
+    img.onerror = function(){
+      setStatus(cmpStatus, 'error', 'Could not read this as an image. Try a JPG, PNG, or WebP file.');
+      cmpControls.style.display = 'none';
+    };
+    img.src = url;
+  }
+
+  setupDrop(document.getElementById('compress-drop'), document.getElementById('compress-input'), function(files){
+    if (files.length) loadCompressFile(files[0]);
+  });
+
+  document.getElementById('compress-format').addEventListener('change', function(){
+    var isPng = this.value === 'image/png';
+    document.getElementById('compress-quality-field').style.opacity = isPng ? '0.5' : '1';
+    document.getElementById('compress-quality').disabled = isPng;
+    renderCompressPreview();
+  });
+  document.getElementById('compress-quality').addEventListener('input', function(){
+    document.getElementById('compress-quality-value').textContent = this.value;
+    clearTimeout(cmpDebounceTimer);
+    cmpDebounceTimer = setTimeout(renderCompressPreview, 150);
+  });
+  document.getElementById('compress-max-dim').addEventListener('input', function(){
+    clearTimeout(cmpDebounceTimer);
+    cmpDebounceTimer = setTimeout(renderCompressPreview, 150);
+  });
+
+  function exportCanvas(callback){
+    if (!cmpImg) return;
+    var format = document.getElementById('compress-format').value;
+    var quality = parseInt(document.getElementById('compress-quality').value, 10) / 100;
+    var maxDim = parseInt(document.getElementById('compress-max-dim').value, 10) || 0;
+
+    var dims = calcDimensions(cmpImg.naturalWidth, cmpImg.naturalHeight, maxDim);
+    var canvas = document.createElement('canvas');
+    canvas.width = dims.width;
+    canvas.height = dims.height;
+    var ctx = canvas.getContext('2d');
+
+    if (format === 'image/jpeg') {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, dims.width, dims.height);
+    }
+    ctx.drawImage(cmpImg, 0, 0, dims.width, dims.height);
+
+    canvas.toBlob(function(blob){ callback(blob, dims); }, format, format === 'image/png' ? undefined : quality);
+  }
+
+  function renderCompressPreview(){
+    if (!cmpImg) return;
+    exportCanvas(function(blob, dims){
+      if (!blob) { setStatus(cmpStatus, 'error', 'Could not generate a preview for this format.'); return; }
+      var url = URL.createObjectURL(blob);
+      var afterImg = document.getElementById('compress-preview-after');
+      afterImg.src = url;
+      afterImg.style.display = 'block';
+      document.getElementById('compress-after-placeholder').style.display = 'none';
+
+      var origSize = cmpFile.size;
+      var newSize = blob.size;
+      var pct = origSize > 0 ? Math.round((1 - newSize / origSize) * 100) : 0;
+      var sizeLine = dims.width + '×' + dims.height + ' px · ' + fmtSize(newSize);
+      var afterInfo = document.getElementById('compress-after-info');
+      if (pct > 0) {
+        afterInfo.innerHTML = sizeLine + ' <span style="color:var(--teal);font-weight:600;">(' + pct + '% smaller)</span>';
+      } else if (pct < 0) {
+        afterInfo.innerHTML = sizeLine + ' <span style="color:var(--orange);">(' + (-pct) + '% larger — try lowering quality or format)</span>';
+      } else {
+        afterInfo.textContent = sizeLine;
+      }
+    });
+  }
+
+  document.getElementById('compress-download-btn').addEventListener('click', function(){
+    if (!cmpImg) return;
+    exportCanvas(function(blob){
+      if (!blob) { setStatus(cmpStatus, 'error', 'Could not generate the file.'); return; }
+      var ext = { 'image/jpeg':'jpg', 'image/png':'png', 'image/webp':'webp' }[document.getElementById('compress-format').value];
+      var baseName = (cmpFile.name || 'image').replace(/\.[^.]+$/, '');
+      downloadBlob(blob, baseName + '_compressed.' + ext, blob.type);
+      setStatus(cmpStatus, 'success', 'Done. Your ' + ext.toUpperCase() + ' has started downloading.');
+    });
+  });
+
 })();
 </script>
 </body>

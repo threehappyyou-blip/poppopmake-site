@@ -78,6 +78,20 @@
   <div class="entry">
     <div class="entry-date">Sep 2, 2026</div>
     <span class="tag shipped">Shipped</span>
+    <h2>Compress &amp; Convert Image &mdash; a sixth tool in Document &amp; Image Tools</h2>
+    <p>Shrink a photo's file size or convert between JPG, PNG, and WebP, with a live before/after preview and an optional max-dimension resize. Started out scoped as "PDF compression," but pdf-lib (the library behind every PDF tool on this site) has no way to reach into a PDF's already-embedded images and recompress them &mdash; only to add new ones. Rebuilt as a standalone image tool instead, which is both more reliable and covers a plain need (shrinking a photo, converting a format) that a PDF-specific tool wouldn't. The aspect-ratio-preserving resize math was tested against ten cases, including extreme aspect ratios and both landscape and portrait orientations. The Canvas-based resize/re-encode itself follows the standard documented browser pattern; the one piece not run through an automated end-to-end check was the actual file-to-image loading step, since the test environment used for everything else on this site doesn't implement `URL.createObjectURL` at all &mdash; a gap in the tool, not something expected to affect the real, live page.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 2, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>Cover Letter Generator, third tab in Career Tools</h2>
+    <p>Fill in the role, company, and a few qualifications as short phrases, get a formatted one-page PDF back &mdash; assembled from your own words into a template, not written by an AI service (this site doesn't call one). Caught a real formatting bug before shipping: a company name ending in a period, like "Acme Inc.", produced a double period at the end of a sentence. Fixed with a small helper that checks before adding sentence-ending punctuation, and re-tested the specific combination that had been missed the first time. Separately, a step that looked like a second bug during testing &mdash; removing a qualification row appeared to do nothing &mdash; turned out to be the test reaching outside the qualification list entirely, since the Resume Builder tab seeds its own similar-looking rows; scoping the test correctly confirmed the actual remove button always worked.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 2, 2026</div>
+    <span class="tag shipped">Shipped</span>
     <h2>Word Count &amp; Readability, live as you type</h2>
     <p>Third tab in Writing &amp; AI Tools &mdash; words, characters, sentences, paragraphs, reading time, and a Flesch Reading Ease score, all updating as you type rather than waiting for a button click. Caught a real bug in the syllable-counting heuristic while testing against known word counts: the vowel-grouping pattern only matched up to two consecutive vowels, so three-vowel runs like the "eau" in "beautiful" split into two syllables instead of one. Fixed, then re-tested against 18 words spanning easy and genuinely tricky cases; 17 came back exact, and the one miss ("idea," which needs a dictionary to get right) is a known, accepted limit of this kind of lightweight heuristic, disclosed on the page rather than hidden.</p>
   </div>
