@@ -35,6 +35,7 @@ PopPopMake is a solo-built, ad-supported utility site with no user accounts. Eve
 - [Developer Tools](https://poppopmake.com/devtools.html): JSON formatter/validator, UTF-8-safe Base64 encoder/decoder, UUID v4 generator, HEX/RGB/HSL color converter, URL encoder/decoder, and a dummy data generator for names/emails/phones/addresses.
 
 ## Optional
+- [About](https://poppopmake.com/about.html): Who builds the site, why it's ad- and tip-supported rather than lead-generation based, and how calculator accuracy is verified against primary tax sources.
 - [All Tools Directory](https://poppopmake.com/all-tools.html): Every tool on the site listed on one page.
 - [Embeddable Widgets](https://poppopmake.com/embed.html): Seven of the above tools available as a single-script-tag embed for third-party sites, free, no attribution required beyond a small "Powered by PopPopMake" credit.
 - [Guides](https://poppopmake.com/guides.html): Explainer articles on tax mechanics (Ontario's surtax, Scotland vs rest-of-UK tax bands) and on why the AI writing tool doesn't claim to be a detector.

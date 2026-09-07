@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>About — PopPopMake</title>
+<meta name="description" content="Who builds PopPopMake, why it exists, and how the calculators are kept accurate — including a public changelog of every bug caught before and after shipping.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.4rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.2rem;margin:32px 0 12px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 8px;font-size:1.05rem;}
+  p{margin:0 0 16px;}
+  ul{margin:0 0 16px;padding-left:22px;}
+  li{margin-bottom:6px;}
+  .principle-box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:16px 0;}
+  .principle-box strong{color:var(--ink);}
+  .link-row{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0;}
+  .link-row a{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;text-decoration:none;color:var(--ink-soft);}
+  .link-row a:hover{border-color:var(--teal);color:var(--ink);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">About</span>
+  <h1>About PopPopMake</h1>
+  <p class="lede">A small set of tools, built and maintained by one person, with a bias toward getting the numbers right over getting the site big.</p>
+
+  <h2>What this is</h2>
+  <p>PopPopMake is a free utility site: document tools, tax and paycheck calculators, career tools, and a handful of everyday and developer utilities. There's no account system and no server-side processing — every calculation runs in your own browser, which means nothing you type into a form is ever sent anywhere to be stored or analyzed. That's not a marketing claim; <a href="/how-it-works.html">it's something you can verify yourself</a> using your browser's own developer tools.</p>
+
+  <h2>Why it's built this way</h2>
+  <p>Most free calculator sites online fall into one of two patterns: they exist to collect your contact information for a lead-generation business (common with paycheck and mortgage calculators specifically, where "free calculator" is the hook and a phone call from a financial advisor is the actual product), or they bury a genuinely useful tool under enough ads and upsell prompts that using it becomes unpleasant. PopPopMake tries not to do either. It's supported by a small amount of advertising and optional tips, and that's the whole business model — no data is collected or sold, and no "free" tool exists to funnel you toward a phone call you didn't ask for.</p>
+
+  <h2>How the calculators stay accurate</h2>
+  <p>Every tax and payroll calculator here is built against a primary source — the IRS, HMRC, the ATO, the CRA, or the relevant state or provincial tax authority — with the specific revenue procedure, tax year, or publication cited on the calculator page itself. Numbers are checked against published worked examples where the source provides one, and every calculator carries a plain disclaimer about what it does and doesn't account for.</p>
+  <p>Mistakes still happen. When they do, they get fixed and logged rather than quietly patched — the <a href="/changelog.html">public changelog</a> includes bugs caught during testing before a feature ever shipped, alongside the features themselves. That's a deliberate choice: a site that only ever announces successes isn't being fully honest about how software actually gets built.</p>
+
+  <div class="principle-box">
+    <strong>A few things this site tries to hold itself to:</strong>
+    <ul style="margin-top:10px;margin-bottom:0;">
+      <li>No account required for anything, ever</li>
+      <li>No selling or sharing of anything typed into a calculator, because nothing typed into a calculator leaves your device in the first place</li>
+      <li>No dark patterns — no fake urgency, no disguised ads, no tip prompt you can't dismiss</li>
+      <li>Caught bugs get published, not hidden</li>
+    </ul>
+  </div>
+
+  <h2>Who's behind it</h2>
+  <p>PopPopMake is built and maintained by a solo developer. There's no editorial team and no company behind it — just one person building tools that seemed worth having, in the open, with the mistakes left visible.</p>
+
+  <div class="link-row">
+    <a href="/how-it-works.html">How it works</a>
+    <a href="/changelog.html">Changelog</a>
+    <a href="/accessibility.html">Accessibility</a>
+    <a href="/all-tools.html">All tools</a>
+    <a href="/feedback.html">Feedback</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/all-tools.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">All Tools</a><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
