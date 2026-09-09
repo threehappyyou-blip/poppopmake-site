@@ -85,6 +85,14 @@
 
   <div class="entry">
     <div class="entry-date">Sep 9, 2026</div>
+    <span class="tag caught">Caught in testing</span>
+    <h2>Redact PDF was rendering at half-resolution &mdash; fixed, and added a text tool</h2>
+    <p>A user's real test document (a Korean withholding tax receipt) came back visibly hazy after redaction, with dense text looking almost like a different font. The cause: pages were being rasterized at 1.5&times; scale (roughly 108 DPI), which is fine for a quick on-screen look but noticeably soft once flattened into a final file, especially for CJK text with more strokes per character than Latin letters. Raised it to 3&times; (roughly 216 DPI) &mdash; confirmed with a direct before/after render of the same document, going from a 600&times;450px page to 1200&times;900px, four times the pixel data.</p>
+    <p>Also added a second tool in the same tab: click to type text directly onto the page, for writing a corrected number over something you've just blacked out. To be clear about what this is and isn't &mdash; it writes new pixels into the flattened image, the same way the redaction box does; it can't edit the document's real underlying text, reflow a paragraph, or change a number that's still part of live text, because true text editing would mean rebuilding the PDF's internal structure, which is a fundamentally different (and much larger) undertaking than anything else on this page. The page-level "why this only fully works on scans" caveat from the original release still applies here in the same way.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 9, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Redact PDF &mdash; a seventh tool in Document &amp; Image Tools</h2>
     <p>Draw a box over an ID number, a signature, anything sensitive, and it's genuinely removed &mdash; not covered up. A black rectangle drawn on top of live text isn't real redaction, since the text underneath is still there to copy out; this tool renders every page to an image first and builds a new PDF entirely out of those flattened images, so there's no text layer left anywhere for anyone to recover. Uses PDF.js (the engine behind Firefox's built-in PDF viewer) to do the rendering, pinned to version 3.11.174 &mdash; the last release with a plain script-tag build, since 4.0 onward requires ES modules that don't fit how the rest of this site loads its scripts.</p>
