@@ -84,6 +84,14 @@
   </div>
 
   <div class="entry">
+    <div class="entry-date">Sep 9, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>Redact PDF &mdash; a seventh tool in Document &amp; Image Tools</h2>
+    <p>Draw a box over an ID number, a signature, anything sensitive, and it's genuinely removed &mdash; not covered up. A black rectangle drawn on top of live text isn't real redaction, since the text underneath is still there to copy out; this tool renders every page to an image first and builds a new PDF entirely out of those flattened images, so there's no text layer left anywhere for anyone to recover. Uses PDF.js (the engine behind Firefox's built-in PDF viewer) to do the rendering, pinned to version 3.11.174 &mdash; the last release with a plain script-tag build, since 4.0 onward requires ES modules that don't fit how the rest of this site loads its scripts.</p>
+    <p>Two real, dangerous-if-shipped bugs caught before this went live, both invisible unless you actually looked at rendered output instead of trusting that the code ran without errors: first, without a specific font-data URL configured, any page using a standard (non-embedded) font rendered as a completely blank page &mdash; confirmed by literally opening the output image and finding nothing on it. Second, and worse: without a separate character-map configuration, Korean and other CJK text didn't disappear, it rendered as overlapping, wrong-position glyphs that still looked like "something is there" &mdash; which is a more dangerous failure for a redaction tool than a blank page, since it could lead someone to draw their box over the wrong spot while believing they'd found the real one. Fixed both, then built an actual Korean-language test document (a font extracted from a system CJK font file, since none of the usual test fixtures cover this) to confirm the fix. Along the way, confirmed that scanned or photographed documents &mdash; the most common real case for something like an ID card &mdash; render correctly regardless, since a scan has no text layer to get wrong in the first place; a narrower case (unusual custom-embedded CJK fonts in a text-based PDF) still rendered imperfectly in testing, and that limitation is disclosed on the page itself rather than left for someone to discover the hard way.</p>
+  </div>
+
+  <div class="entry">
     <div class="entry-date">Sep 5, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>An About page, and pulling the 51 state pages from search for now</h2>

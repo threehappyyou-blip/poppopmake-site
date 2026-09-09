@@ -143,6 +143,7 @@
     <button class="tab-btn" data-tab="bgremove" role="tab" aria-selected="false">Remove Background</button>
     <button class="tab-btn" data-tab="metadata" role="tab" aria-selected="false">Clean Metadata</button>
     <button class="tab-btn" data-tab="compress" role="tab" aria-selected="false">Compress &amp; Convert Image</button>
+    <button class="tab-btn" data-tab="redact" role="tab" aria-selected="false">Redact PDF</button>
   </div>
 
   <!-- MERGE PANEL -->
@@ -323,8 +324,42 @@
     <div class="status" id="compress-status"></div>
   </section>
 
+  <!-- REDACT PDF PANEL -->
+  <section class="panel" id="panel-redact">
+    <h2>Redact PDF</h2>
+    <p class="sub">Black out an ID number, a signature, anything sensitive — draw a box over it, and it's permanently removed, not just covered up. Good for the back digits of a resident registration number, an account number, or anything else you'd redact before sharing a document.</p>
+
+    <div class="drop" id="redact-drop">
+      <div>Drag a PDF here, or</div>
+      <label class="btn-label" for="redact-input">Choose a PDF file</label>
+      <input type="file" id="redact-input" accept="application/pdf">
+    </div>
+
+    <div id="redact-workspace" style="display:none;margin-top:16px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <button type="button" class="preset-btn" id="redact-prev-btn">&larr; Prev</button>
+          <span id="redact-page-label" style="font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--ink-soft);">Page 1 of 1</span>
+          <button type="button" class="preset-btn" id="redact-next-btn">Next &rarr;</button>
+        </div>
+        <button type="button" class="preset-btn" id="redact-undo-btn">&#8617; Undo last box on this page</button>
+      </div>
+
+      <div class="hint" style="margin-bottom:10px;">Click and drag over the area you want to hide. Black boxes are permanent once you download &mdash; the covered content is removed, not layered over.</div>
+
+      <div id="redact-canvas-wrap" style="position:relative;border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:70vh;background:var(--paper-2);touch-action:none;">
+        <canvas id="redact-page-canvas" style="display:block;max-width:100%;height:auto;"></canvas>
+        <canvas id="redact-overlay-canvas" style="position:absolute;left:0;top:0;max-width:100%;height:auto;cursor:crosshair;"></canvas>
+      </div>
+
+      <button class="action-btn" id="redact-download-btn" style="margin-top:16px;">Redact All Pages &amp; Download</button>
+      <div class="hint" style="margin-top:10px;">Works best on scanned or photographed documents (the most common case for something like an ID card). Documents with unusual embedded fonts can occasionally render a line of text incorrectly &mdash; if a page doesn't look right, zoom in and check before drawing your box, since the box has to be over the real content to work.</div>
+    </div>
+    <div class="status" id="redact-status"></div>
+  </section>
+
   <div class="disclaimer">
-    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, extracting pages, or removing a background, you can send the result straight into another tool without downloading it first. <a href="/how-it-works.html">See how to check that yourself</a>, or read our <a href="/privacy.html">Privacy Policy</a> for more.
+    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Redact PDF renders each page to an image using PDF.js (the same engine Firefox uses to display PDFs), so the exported file has no underlying text layer left anywhere in it — there's nothing to select or copy, including in the redacted area, because after export the whole page is a flat picture rather than text plus a black box drawn on top. That's a real trade-off: the output PDF is no longer searchable or copy-pasteable, on any page, not just the redacted one. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, extracting pages, or removing a background, you can send the result straight into another tool without downloading it first. <a href="/how-it-works.html">See how to check that yourself</a>, or read our <a href="/privacy.html">Privacy Policy</a> for more.
   </div>
 </main>
 
@@ -337,6 +372,10 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+</script>
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
 <script src="/thanks-card.js"></script>
@@ -998,6 +1037,180 @@ function calcDimensions(origWidth, origHeight, maxDimension){
       downloadBlob(blob, baseName + '_compressed.' + ext, blob.type);
       setStatus(cmpStatus, 'success', 'Done. Your ' + ext.toUpperCase() + ' has started downloading.');
     });
+  });
+
+
+  // ================= REDACT PDF =================
+function pointerToCanvasCoords(canvas, clientX, clientY){
+  var rect = canvas.getBoundingClientRect();
+  var scaleX = canvas.width / rect.width;
+  var scaleY = canvas.height / rect.height;
+  return {
+    x: (clientX - rect.left) * scaleX,
+    y: (clientY - rect.top) * scaleY
+  };
+}
+
+// Normalizes two corner points into a top-left x/y + width/height rectangle,
+// regardless of which direction the user dragged (up-left, down-right, etc.)
+function normalizeRect(x1, y1, x2, y2){
+  return {
+    x: Math.min(x1, x2),
+    y: Math.min(y1, y2),
+    width: Math.abs(x2 - x1),
+    height: Math.abs(y2 - y1)
+  };
+}
+
+
+  var redDoc = null;          // pdf.js document proxy
+  var redNumPages = 0;
+  var redCurrentPage = 1;
+  var redPageData = [];       // per page (1-indexed via [pageNum-1]): { originalCanvas, boxes: [{x,y,width,height}] }
+  var redPageCanvas = document.getElementById('redact-page-canvas');
+  var redOverlayCanvas = document.getElementById('redact-overlay-canvas');
+  var redPageCtx = redPageCanvas.getContext('2d');
+  var redOverlayCtx = redOverlayCanvas.getContext('2d');
+  var redStatus = document.getElementById('redact-status');
+  var redWorkspace = document.getElementById('redact-workspace');
+  var redScale = 1.5;
+
+  var redDragging = false;
+  var redDragStart = null;
+
+  async function renderRedactPage(pageNum){
+    if (redPageData[pageNum - 1]) return redPageData[pageNum - 1]; // already rendered, use cache (preserves prior redactions)
+    var page = await redDoc.getPage(pageNum);
+    var viewport = page.getViewport({ scale: redScale });
+    var offCanvas = document.createElement('canvas');
+    offCanvas.width = viewport.width;
+    offCanvas.height = viewport.height;
+    var offCtx = offCanvas.getContext('2d');
+    await page.render({ canvasContext: offCtx, viewport: viewport }).promise;
+    var entry = { originalCanvas: offCanvas, boxes: [] };
+    redPageData[pageNum - 1] = entry;
+    return entry;
+  }
+
+  function redrawRedactPage(){
+    var entry = redPageData[redCurrentPage - 1];
+    if (!entry) return;
+    redPageCanvas.width = entry.originalCanvas.width;
+    redPageCanvas.height = entry.originalCanvas.height;
+    redOverlayCanvas.width = entry.originalCanvas.width;
+    redOverlayCanvas.height = entry.originalCanvas.height;
+    redPageCtx.drawImage(entry.originalCanvas, 0, 0);
+    redPageCtx.fillStyle = '#000000';
+    entry.boxes.forEach(function(b){
+      redPageCtx.fillRect(b.x, b.y, b.width, b.height);
+    });
+    redOverlayCtx.clearRect(0, 0, redOverlayCanvas.width, redOverlayCanvas.height);
+  }
+
+  async function goToRedactPage(pageNum){
+    if (pageNum < 1 || pageNum > redNumPages) return;
+    redCurrentPage = pageNum;
+    setStatus(redStatus, 'info', 'Rendering page ' + pageNum + '…');
+    await renderRedactPage(pageNum);
+    redrawRedactPage();
+    document.getElementById('redact-page-label').textContent = 'Page ' + redCurrentPage + ' of ' + redNumPages;
+    clearStatus(redStatus);
+  }
+
+  async function loadRedactFile(file){
+    setStatus(redStatus, 'info', 'Loading ' + file.name + '…');
+    try {
+      var bytes = await readAsUint8Array(file);
+      redDoc = await pdfjsLib.getDocument({
+        data: bytes,
+        standardFontDataUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/standard_fonts/',
+        cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+        cMapPacked: true,
+        isEvalSupported: false,
+        isOffscreenCanvasSupported: false
+      }).promise;
+      redNumPages = redDoc.numPages;
+      redPageData = [];
+      redCurrentPage = 1;
+      redWorkspace.style.display = 'block';
+      await goToRedactPage(1);
+    } catch(err){
+      setStatus(redStatus, 'error', 'Could not read this PDF: ' + err.message);
+      redWorkspace.style.display = 'none';
+    }
+  }
+
+  setupDrop(document.getElementById('redact-drop'), document.getElementById('redact-input'), function(files){
+    if (files.length) loadRedactFile(files[0]);
+  });
+
+  document.getElementById('redact-prev-btn').addEventListener('click', function(){ goToRedactPage(redCurrentPage - 1); });
+  document.getElementById('redact-next-btn').addEventListener('click', function(){ goToRedactPage(redCurrentPage + 1); });
+  document.getElementById('redact-undo-btn').addEventListener('click', function(){
+    var entry = redPageData[redCurrentPage - 1];
+    if (entry && entry.boxes.length) {
+      entry.boxes.pop();
+      redrawRedactPage();
+    }
+  });
+
+  function redPointerDown(e){
+    redDragging = true;
+    var p = pointerToCanvasCoords(redOverlayCanvas, e.clientX, e.clientY);
+    redDragStart = p;
+  }
+  function redPointerMove(e){
+    if (!redDragging) return;
+    var p = pointerToCanvasCoords(redOverlayCanvas, e.clientX, e.clientY);
+    var r = normalizeRect(redDragStart.x, redDragStart.y, p.x, p.y);
+    redOverlayCtx.clearRect(0, 0, redOverlayCanvas.width, redOverlayCanvas.height);
+    redOverlayCtx.fillStyle = 'rgba(193,67,36,0.5)';
+    redOverlayCtx.fillRect(r.x, r.y, r.width, r.height);
+  }
+  function redPointerUp(e){
+    if (!redDragging) return;
+    redDragging = false;
+    var p = pointerToCanvasCoords(redOverlayCanvas, e.clientX, e.clientY);
+    var r = normalizeRect(redDragStart.x, redDragStart.y, p.x, p.y);
+    redOverlayCtx.clearRect(0, 0, redOverlayCanvas.width, redOverlayCanvas.height);
+    if (r.width > 2 && r.height > 2) { // ignore accidental clicks with no real drag
+      var entry = redPageData[redCurrentPage - 1];
+      entry.boxes.push(r);
+      redrawRedactPage();
+    }
+  }
+  redOverlayCanvas.addEventListener('pointerdown', redPointerDown);
+  redOverlayCanvas.addEventListener('pointermove', redPointerMove);
+  window.addEventListener('pointerup', redPointerUp);
+
+  document.getElementById('redact-download-btn').addEventListener('click', async function(){
+    if (!redDoc) return;
+    setStatus(redStatus, 'info', 'Rendering and flattening every page…');
+    try {
+      for (var i = 1; i <= redNumPages; i++) { await renderRedactPage(i); } // ensure pages the user never visited still get rendered
+      var outDoc = await PDFDocument.create();
+      for (var i = 0; i < redNumPages; i++) {
+        var entry = redPageData[i];
+        var tempCanvas = document.createElement('canvas');
+        tempCanvas.width = entry.originalCanvas.width;
+        tempCanvas.height = entry.originalCanvas.height;
+        var tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(entry.originalCanvas, 0, 0);
+        tempCtx.fillStyle = '#000000';
+        entry.boxes.forEach(function(b){ tempCtx.fillRect(b.x, b.y, b.width, b.height); });
+
+        var pngBlob = await new Promise(function(resolve){ tempCanvas.toBlob(resolve, 'image/png'); });
+        var pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
+        var embeddedImg = await outDoc.embedPng(pngBytes);
+        var outPage = outDoc.addPage([tempCanvas.width, tempCanvas.height]);
+        outPage.drawImage(embeddedImg, { x: 0, y: 0, width: tempCanvas.width, height: tempCanvas.height });
+      }
+      var outBytes = await outDoc.save();
+      downloadBlob(outBytes, 'redacted.pdf', 'application/pdf');
+      setStatus(redStatus, 'success', 'Done. Your redacted PDF has started downloading — every page is now a flattened image, so nothing underneath any redaction box can be selected or copied.');
+    } catch(err){
+      setStatus(redStatus, 'error', 'Could not export: ' + err.message);
+    }
   });
 
 })();
