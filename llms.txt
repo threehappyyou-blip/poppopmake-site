@@ -38,7 +38,7 @@ PopPopMake is a solo-built, ad-supported utility site with no user accounts. Eve
 - [About](https://poppopmake.com/about.html): Who builds the site, why it's ad- and tip-supported rather than lead-generation based, and how calculator accuracy is verified against primary tax sources.
 - [All Tools Directory](https://poppopmake.com/all-tools.html): Every tool on the site listed on one page.
 - [Embeddable Widgets](https://poppopmake.com/embed.html): Seven of the above tools available as a single-script-tag embed for third-party sites, free, no attribution required beyond a small "Powered by PopPopMake" credit.
-- [Guides](https://poppopmake.com/guides.html): Explainer articles on tax mechanics (Ontario's surtax, Scotland vs rest-of-UK tax bands) and on why the AI writing tool doesn't claim to be a detector.
+- [Guides](https://poppopmake.com/guides.html): Explainer articles on tax mechanics with worked examples — Ontario's surtax, Scotland vs rest-of-UK tax bands, Australia's real marginal rate (LITO taper and Medicare shade-in), capital gains stacking, the 401(k) age-60 super catch-up window, a cross-country take-home pay comparison, and why the AI writing tool doesn't claim to be a detector.
 - [Changelog](https://poppopmake.com/changelog.html): Public log of every feature shipped and every bug caught during testing.
 - [How It Works](https://poppopmake.com/how-it-works.html): Step-by-step instructions for verifying that no data leaves the browser.
 - [Accessibility Statement](https://poppopmake.com/accessibility.html): WCAG 2.1 AA target and an honest account of what has and hasn't been tested.

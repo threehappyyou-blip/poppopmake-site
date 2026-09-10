@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Same Salary Number, Three Very Different Paychecks — PopPopMake</title>
+<meta name="description" content="80,000 of the local currency in Texas, Ontario, and England produces three genuinely different take-home percentages. A worked example showing why comparing the salary number alone is misleading.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.6rem,4vw,2.2rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.2rem;margin:32px 0 12px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 8px;font-size:1.05rem;}
+  p{margin:0 0 16px;}
+  .compare-grid{display:grid;grid-template-columns:1fr;gap:14px;margin:20px 0;}
+  @media (min-width:640px){ .compare-grid{grid-template-columns:1fr 1fr 1fr;} }
+  .scenario-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;}
+  .scenario-card h3{font-family:'Space Grotesk',sans-serif;font-size:0.95rem;margin:0 0 2px;}
+  .scenario-card .sub{font-size:0.78rem;color:var(--ink-soft);margin-bottom:12px;}
+  .scenario-card .amount{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.5rem;color:var(--ink);letter-spacing:-0.02em;}
+  .scenario-card .pct{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:var(--teal);margin-top:2px;}
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:28px;font-size:0.9rem;color:var(--ink-soft);}
+  .disclaimer strong{color:var(--ink);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Guide · Money &amp; Tax</span>
+  <h1>Same Salary Number, Three Very Different Paychecks</h1>
+  <p class="lede">An 80,000 salary offer sounds like the same offer wherever it's made. Run it through three real systems and the share you actually keep moves by ten points &mdash; without anyone changing the number on the offer letter.</p>
+
+  <h2>The setup</h2>
+  <p>Same nominal number &mdash; 80,000 &mdash; in three places, single filer, no pre-tax deductions, native currency each time (no exchange rate applied, exactly like our own comparison tool):</p>
+
+  <div class="compare-grid">
+    <div class="scenario-card">
+      <h3>Texas, USA</h3>
+      <div class="sub">$80,000 salary</div>
+      <div class="amount">$65,110</div>
+      <div class="pct">81.4% kept</div>
+    </div>
+    <div class="scenario-card">
+      <h3>Ontario, Canada</h3>
+      <div class="sub">$80,000 salary</div>
+      <div class="amount">$59,027</div>
+      <div class="pct">73.8% kept</div>
+    </div>
+    <div class="scenario-card">
+      <h3>England</h3>
+      <div class="sub">&pound;80,000 salary</div>
+      <div class="amount">&pound;56,957</div>
+      <div class="pct">71.2% kept</div>
+    </div>
+  </div>
+
+  <p>Texas keeps the largest share partly because it has no state income tax at all &mdash; the only tax at that level is federal plus FICA. Ontario adds a full second layer (federal plus provincial tax, CPP2, and EI) on top of a very similar federal structure. England's system front-loads more of the burden at this income level through Income Tax's 40% higher-rate band, which starts at £37,700 &mdash; well below where 80,000's equivalent band starts in the other two systems.</p>
+
+  <h2>Why the raw number alone is misleading</h2>
+  <p>If you're comparing job offers, cost-of-living adjustments, or just curious how far a number would actually go somewhere else, the salary figure by itself tells you less than it seems to. A 10-percentage-point swing in what you actually keep, on the identical stated salary, is the kind of gap that changes whether a move is a raise or a pay cut in practice.</p>
+  <p>This is deliberately not a currency-converted comparison &mdash; see our note on <a href="/compare-takehome.html">why we don't do currency conversion</a> on the comparison tool itself. The point here isn't "which country pays better" (that depends on exchange rates and cost of living, which this doesn't touch), just how differently the same nominal number gets treated by three real tax systems.</p>
+
+  <div class="disclaimer">
+    <strong>Try your own comparison:</strong> The <a href="/compare-takehome.html">Compare Take-Home Pay</a> tool covers any two of: all 50 US states, England/Wales/NI or Scotland, Australia, or any Canadian province or territory. Your numbers never leave your device &mdash; <a href="/how-it-works.html">see how to check that yourself</a>.
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/all-tools.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">All Tools</a><a href="/terms.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy.html" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
