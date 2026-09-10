@@ -85,6 +85,13 @@
 
   <div class="entry">
     <div class="entry-date">Sep 9, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>A verification badge on every jurisdiction-based calculator</h2>
+    <p>Source, tax year, and last-checked date, now shown right at the top of the US, UK, Australia, and Canada paycheck calculators, Capital Gains, Retirement, and Compare Take-Home Pay &mdash; not buried in the disclaimer at the bottom. Each one names the exact citation already backing that calculator (IRS Rev. Proc. 2025-32, gov.uk/gov.scot, ato.gov.au, canada.ca/revenuquebec.ca, IRS Notice 2025-67), rather than a new, unverified claim. Deliberately left off the Mortgage and Debt Payoff calculators &mdash; both are pure formulas, not lookups against a jurisdiction's published rate table, so the "a chatbot might get this wrong" framing that motivated the badge doesn't actually apply to them.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 9, 2026</div>
     <span class="tag caught">Caught in testing</span>
     <h2>The text tool was writing new text over old text with no cover</h2>
     <p>A user tried covering a name and typing a replacement, and the original text was still fully readable underneath and around the new one &mdash; the text tool only ever drew the new characters, with nothing behind them. Fixed by changing how the text tool works: instead of clicking a point and typing, you now drag a box (the same motion as black-out redaction) over the area you want replaced, which gets a solid white background first, and your typed text goes on top of that. The box size is entirely up to you and has nothing to do with how long your replacement text is, which matters &mdash; an earlier version of this fix sized the white background to match the new text instead of the dragged area, which left the tail end of a longer original entry sticking out past a shorter replacement. Verified by rendering an actual mock document (a name and ID field) through the exact shipped code, confirming the old text is completely gone under a generously-dragged box and only partially gone under a too-narrow one, which is expected: coverage is exactly what you drag, not automatic.</p>
