@@ -1093,6 +1093,7 @@ function normalizeRect(x1, y1, x2, y2){
 
   var redDragging = false;
   var redDragStart = null;
+  var redDragStartClient = null;
   var redActiveInput = null; // the inline <input> currently being used to type a text mark, if any
 
   async function renderRedactPage(pageNum){
@@ -1115,10 +1116,13 @@ function normalizeRect(x1, y1, x2, y2){
         ctx.fillStyle = '#000000';
         ctx.fillRect(m.x, m.y, m.width, m.height);
       } else if (m.type === 'text') {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(m.x, m.y, m.width, m.height);
         ctx.fillStyle = '#000000';
         ctx.font = m.fontSize + 'px Inter, Arial, sans-serif';
         ctx.textBaseline = 'top';
-        ctx.fillText(m.text, m.x, m.y);
+        var pad = m.height * 0.15;
+        ctx.fillText(m.text, m.x + pad, m.y + pad);
       }
     });
   }
@@ -1185,7 +1189,7 @@ function normalizeRect(x1, y1, x2, y2){
 
   var REDACT_HINTS = {
     redact: 'Click and drag over the area you want to hide. Black boxes are permanent once you download \u2014 the covered content is removed, not layered over.',
-    text: 'Click where you want to add text, type your replacement, then press Enter. Good for writing a corrected number over a blacked-out one.'
+    text: 'Drag a box over the area you want to replace \u2014 wide enough to fully cover the old text, whatever your new text ends up being \u2014 then type and press Enter. That area gets a white background first, so nothing from underneath shows through.'
   };
   document.querySelectorAll('#redact-mode-toggle .basis-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
@@ -1207,35 +1211,35 @@ function normalizeRect(x1, y1, x2, y2){
   function commitRedTextInput(){
     if (!redActiveInput) return;
     var text = redActiveInput.value.trim();
-    var canvasPos = redActiveInput._canvasPos;
+    var canvasRect = redActiveInput._canvasRect;
     cancelRedTextInput();
     if (!text) return;
     var entry = redPageData[redCurrentPage - 1];
     var scaleFactor = redPageCanvas.width / (redOverlayCanvas.getBoundingClientRect().width || redPageCanvas.width);
     var fontSize = Math.max(6, parseInt(document.getElementById('redact-text-size').value, 10) || 16) * scaleFactor;
-    entry.marks.push({ type: 'text', x: canvasPos.x, y: canvasPos.y, text: text, fontSize: fontSize });
+    entry.marks.push({ type: 'text', x: canvasRect.x, y: canvasRect.y, width: canvasRect.width, height: canvasRect.height, text: text, fontSize: fontSize });
     redrawRedactPage();
   }
 
-  function startRedTextInput(clientX, clientY){
+  function startRedTextInput(displayRect, canvasRect){
     cancelRedTextInput();
     var wrap = document.getElementById('redact-canvas-wrap');
-    var wrapRect = wrap.getBoundingClientRect();
-    var canvasPos = pointerToCanvasCoords(redOverlayCanvas, clientX, clientY);
     var displayFontSize = Math.max(6, parseInt(document.getElementById('redact-text-size').value, 10) || 16);
 
     var input = document.createElement('input');
     input.type = 'text';
     input.style.position = 'absolute';
-    input.style.left = (clientX - wrapRect.left + wrap.scrollLeft) + 'px';
-    input.style.top = (clientY - wrapRect.top + wrap.scrollTop - displayFontSize) + 'px';
+    input.style.left = (displayRect.x + wrap.scrollLeft) + 'px';
+    input.style.top = (displayRect.y + wrap.scrollTop) + 'px';
+    input.style.width = Math.max(60, displayRect.width) + 'px';
+    input.style.height = Math.max(displayFontSize * 1.3, displayRect.height) + 'px';
     input.style.fontSize = displayFontSize + 'px';
-    input.style.border = '1px dashed var(--orange)';
-    input.style.background = 'rgba(255,255,255,0.95)';
+    input.style.border = '2px solid var(--orange)';
+    input.style.background = '#ffffff';
     input.style.padding = '1px 3px';
     input.style.fontFamily = "'Inter', Arial, sans-serif";
     input.style.zIndex = '10';
-    input._canvasPos = canvasPos;
+    input._canvasRect = canvasRect;
     input.addEventListener('keydown', function(e){
       if (e.key === 'Enter') { e.preventDefault(); commitRedTextInput(); }
       if (e.key === 'Escape') { e.preventDefault(); cancelRedTextInput(); }
@@ -1247,30 +1251,34 @@ function normalizeRect(x1, y1, x2, y2){
   }
 
   function redPointerDown(e){
-    if (redMode === 'text') return; // text mode handles its own click, not drag
     redDragging = true;
-    var p = pointerToCanvasCoords(redOverlayCanvas, e.clientX, e.clientY);
-    redDragStart = p;
+    redDragStart = pointerToCanvasCoords(redOverlayCanvas, e.clientX, e.clientY);
+    redDragStartClient = { x: e.clientX, y: e.clientY };
   }
   function redPointerMove(e){
-    if (redMode === 'text' || !redDragging) return;
+    if (!redDragging) return;
     var p = pointerToCanvasCoords(redOverlayCanvas, e.clientX, e.clientY);
     var r = normalizeRect(redDragStart.x, redDragStart.y, p.x, p.y);
     redOverlayCtx.clearRect(0, 0, redOverlayCanvas.width, redOverlayCanvas.height);
-    redOverlayCtx.fillStyle = 'rgba(193,67,36,0.5)';
+    redOverlayCtx.fillStyle = redMode === 'text' ? 'rgba(15,139,141,0.35)' : 'rgba(193,67,36,0.5)';
     redOverlayCtx.fillRect(r.x, r.y, r.width, r.height);
   }
   function redPointerUp(e){
-    if (redMode === 'text') {
-      if (e.target === redOverlayCanvas) startRedTextInput(e.clientX, e.clientY);
-      return;
-    }
     if (!redDragging) return;
     redDragging = false;
     var p = pointerToCanvasCoords(redOverlayCanvas, e.clientX, e.clientY);
     var r = normalizeRect(redDragStart.x, redDragStart.y, p.x, p.y);
     redOverlayCtx.clearRect(0, 0, redOverlayCanvas.width, redOverlayCanvas.height);
-    if (r.width > 2 && r.height > 2) { // ignore accidental clicks with no real drag
+    if (r.width <= 2 || r.height <= 2) return; // ignore accidental clicks with no real drag
+
+    if (redMode === 'text') {
+      var wrapRect = document.getElementById('redact-canvas-wrap').getBoundingClientRect();
+      var displayRect = normalizeRect(
+        redDragStartClient.x - wrapRect.left, redDragStartClient.y - wrapRect.top,
+        e.clientX - wrapRect.left, e.clientY - wrapRect.top
+      );
+      startRedTextInput(displayRect, r);
+    } else {
       var entry = redPageData[redCurrentPage - 1];
       entry.marks.push({ type: 'box', x: r.x, y: r.y, width: r.width, height: r.height });
       redrawRedactPage();
