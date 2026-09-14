@@ -6,6 +6,7 @@
   var COMMANDS = [
     { title: 'Home', desc: 'Back to the homepage', href: '/', kw: 'homepage main all tools' },
     { title: 'About', desc: 'Who builds this site and how accuracy is maintained', href: '/about.html', kw: 'about who made this creator author trust credibility' },
+    { title: 'How We Verify Accuracy', desc: 'The actual process, with a real dated verification example', href: '/how-we-verify.html', kw: 'verify accuracy methodology source checking process trust' },
     { title: 'All Tools', desc: 'Every tool on the site, one page', href: '/all-tools.html', kw: 'all tools directory index list everything sitemap' },
     { title: 'Document & Image Tools', desc: 'Merge, split PDFs · JPG/PNG to PDF · remove backgrounds · clean metadata · compress images · redact', href: '/document-tools.html', kw: 'pdf merge split convert image jpg png background remove document metadata author producer clean kdp manuscript compress webp resize redact black out hide sensitive id number rrn 주민번호' },
     { title: 'Paycheck Calculator (US)', desc: 'Federal tax, FICA, all 50 states', href: '/paycheck-calculator.html', kw: 'tax salary income take-home money usa america paycheck' },
