@@ -17,7 +17,7 @@ PopPopMake is a solo-built, ad-supported utility site with no user accounts. Eve
 - [Debt Payoff Calculator](https://poppopmake.com/debt-payoff-calculator.html): Compares the debt snowball and debt avalanche payoff strategies side by side for any set of debts.
 
 ## Documents & Images
-- [Document & Image Tools](https://poppopmake.com/document-tools.html): Merge PDFs, split PDFs, convert images to PDF, remove image backgrounds with an in-browser AI model, strip hidden PDF metadata, and compress or convert images between JPG/PNG/WebP.
+- [Document & Image Tools](https://poppopmake.com/document-tools.html): Merge PDFs, split PDFs, convert images to PDF, remove image backgrounds with an in-browser AI model, strip hidden PDF metadata, compress or convert images between JPG/PNG/WebP, redact (permanently black out or overwrite) sensitive text in a PDF, extract text from an image via OCR, automatically detect and blur faces, sharpen or upscale a low-resolution photo, and remove an unwanted object from a photo with AI inpainting.
 
 ## Career
 - [Career Tools](https://poppopmake.com/career-tools.html): Resume builder that outputs an ATS-friendly PDF, an ATS keyword score checker, a cover letter generator, and an hourly-to-salary wage converter.

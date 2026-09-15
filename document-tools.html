@@ -102,6 +102,7 @@
   .preset-btn:hover{border-color:var(--teal);color:var(--ink);}
   .basis-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
   .basis-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);}
+  .preset-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
   .action-btn:hover:not(:disabled){opacity:0.92;}
 
   .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
@@ -148,6 +149,10 @@
     <button class="tab-btn" data-tab="metadata" role="tab" aria-selected="false">Clean Metadata</button>
     <button class="tab-btn" data-tab="compress" role="tab" aria-selected="false">Compress &amp; Convert Image</button>
     <button class="tab-btn" data-tab="redact" role="tab" aria-selected="false">Redact PDF</button>
+    <button class="tab-btn" data-tab="ocr" role="tab" aria-selected="false">Extract Text (OCR)</button>
+    <button class="tab-btn" data-tab="facemosaic" role="tab" aria-selected="false">Face Mosaic</button>
+    <button class="tab-btn" data-tab="upscale" role="tab" aria-selected="false">Enhance Quality</button>
+    <button class="tab-btn" data-tab="eraser" role="tab" aria-selected="false">AI Eraser</button>
   </div>
 
   <!-- MERGE PANEL -->
@@ -373,8 +378,137 @@
     <div class="status" id="redact-status"></div>
   </section>
 
+  <!-- OCR / EXTRACT TEXT PANEL -->
+  <section class="panel" id="panel-ocr">
+    <h2>Extract Text (OCR)</h2>
+    <p class="sub">Pull selectable text out of a photo, a scanned document, or a screenshot &mdash; works on images and PDFs, including multi-page ones.</p>
+
+    <div class="drop" id="ocr-drop">
+      <div>Drag an image or PDF here, or</div>
+      <label class="btn-label" for="ocr-input">Choose a file</label>
+      <input type="file" id="ocr-input" accept="image/*,application/pdf">
+    </div>
+
+    <div id="ocr-controls" style="display:none;margin-top:16px;">
+      <div class="field">
+        <label for="ocr-lang">Language</label>
+        <select id="ocr-lang" style="width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.9rem;">
+          <option value="eng" selected>English</option>
+          <option value="kor">Korean (한국어)</option>
+          <option value="eng+kor">English + Korean</option>
+        </select>
+        <div class="hint">Pick what's actually in the file &mdash; the wrong language gives much worse results than a slow correct one.</div>
+      </div>
+      <button class="action-btn" id="ocr-run-btn" style="margin-top:12px;">Extract Text</button>
+      <div id="ocr-progress" style="display:none;margin-top:14px;">
+        <div style="background:var(--paper-2);border-radius:999px;height:8px;overflow:hidden;">
+          <div id="ocr-progress-bar" style="background:var(--teal);height:100%;width:0%;transition:width 0.2s;"></div>
+        </div>
+        <div id="ocr-progress-label" style="font-size:0.8rem;color:var(--ink-soft);margin-top:6px;"></div>
+      </div>
+    </div>
+    <div class="status" id="ocr-status"></div>
+
+    <div id="ocr-results" style="display:none;margin-top:16px;">
+      <div class="field">
+        <label for="ocr-output">Extracted text</label>
+        <textarea id="ocr-output" style="min-height:220px;width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-family:'IBM Plex Mono',monospace;font-size:0.85rem;background:var(--paper-2);color:var(--ink);resize:vertical;" readonly></textarea>
+      </div>
+      <div class="btn-row" style="display:flex;gap:10px;">
+        <button class="action-btn secondary" id="ocr-copy-btn">Copy text</button>
+        <button class="action-btn secondary" id="ocr-download-btn">Download .txt</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FACE MOSAIC PANEL -->
+  <section class="panel" id="panel-facemosaic">
+    <h2>Face Mosaic</h2>
+    <p class="sub">Every face in the photo gets found and blurred automatically &mdash; good for group photos, screenshots, or anything you're about to post publicly.</p>
+    <div class="drop" id="facemosaic-drop">
+      <div>Drag an image here, or</div>
+      <label class="btn-label" for="facemosaic-input">Choose an image</label>
+      <input type="file" id="facemosaic-input" accept="image/*">
+    </div>
+    <div class="status" id="facemosaic-status"></div>
+    <div id="facemosaic-workspace" style="display:none;margin-top:16px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        <span style="font-size:0.85rem;color:var(--ink-soft);">Style:</span>
+        <div class="preset-row" id="facemosaic-style-toggle">
+          <button type="button" class="preset-btn active" data-style="pixelate">Pixelate</button>
+          <button type="button" class="preset-btn" data-style="blur">Blur</button>
+          <button type="button" class="preset-btn" data-style="black">Black box</button>
+        </div>
+      </div>
+      <div style="position:relative;border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:65vh;background:var(--paper-2);">
+        <canvas id="facemosaic-canvas" style="display:block;max-width:100%;height:auto;"></canvas>
+      </div>
+      <button class="action-btn" id="facemosaic-download-btn">Download</button>
+    </div>
+  </section>
+
+  <!-- UPSCALE PANEL -->
+  <section class="panel" id="panel-upscale">
+    <h2>Enhance Quality</h2>
+    <p class="sub">Sharpen and enlarge a soft or low-resolution photo.</p>
+    <div class="drop" id="upscale-drop">
+      <div>Drag an image here, or</div>
+      <label class="btn-label" for="upscale-input">Choose an image</label>
+      <input type="file" id="upscale-input" accept="image/*">
+    </div>
+    <div class="status" id="upscale-status"></div>
+    <div id="upscale-workspace" style="display:none;margin-top:16px;">
+      <div class="field">
+        <label>Method</label>
+        <div class="preset-row" id="upscale-method-toggle">
+          <button type="button" class="basis-btn active" data-method="fast">Fast (instant, no download)</button>
+          <button type="button" class="basis-btn" data-method="ai">AI Upscale (better quality, downloads a model)</button>
+        </div>
+        <div class="hint" id="upscale-method-hint">Fast uses standard image-resizing math &mdash; instant, works everywhere, and is genuinely the right choice for most photos. AI Upscale can recover more real detail, especially on very soft or low-res images, at the cost of a one-time model download and slower processing.</div>
+      </div>
+      <div class="field">
+        <label for="upscale-scale">Scale</label>
+        <div class="preset-row">
+          <button type="button" class="preset-btn active" data-scale="2">2&times;</button>
+          <button type="button" class="preset-btn" data-scale="4">4&times;</button>
+        </div>
+      </div>
+      <button class="action-btn" id="upscale-run-btn">Enhance</button>
+      <div style="height:6px;background:var(--paper-2);border-radius:999px;overflow:hidden;margin-top:10px;display:none;" id="upscale-progress"><div style="height:100%;background:var(--teal);width:0%;" id="upscale-progress-fill"></div></div>
+      <div id="upscale-preview-area" style="margin-top:16px;"></div>
+      <button class="action-btn" id="upscale-download-btn" style="display:none;">Download</button>
+    </div>
+  </section>
+
+  <!-- AI ERASER PANEL -->
+  <section class="panel" id="panel-eraser">
+    <h2>AI Eraser</h2>
+    <p class="sub">Paint over something in the photo and it gets removed, with the AI filling in what was probably behind it.</p>
+    <div class="drop" id="eraser-drop">
+      <div>Drag an image here, or</div>
+      <label class="btn-label" for="eraser-input">Choose an image</label>
+      <input type="file" id="eraser-input" accept="image/*">
+    </div>
+    <div class="status" id="eraser-status"></div>
+    <div id="eraser-workspace" style="display:none;margin-top:16px;">
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+        <span style="font-size:0.85rem;color:var(--ink-soft);">Brush size</span>
+        <input type="range" id="eraser-brush-size" min="8" max="60" value="24">
+        <button type="button" class="preset-btn" id="eraser-undo-btn">&#8617; Undo brush stroke</button>
+      </div>
+      <div class="hint" style="margin-bottom:10px;">Paint over what you want removed, then press Erase. Works on a 512&times;512 working copy of your photo &mdash; good for removing a person, a sign, or an object from an otherwise photo-realistic background; not for large or highly detailed areas.</div>
+      <div style="position:relative;border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:65vh;background:var(--paper-2);touch-action:none;" id="eraser-canvas-wrap">
+        <canvas id="eraser-base-canvas" style="display:block;max-width:100%;height:auto;"></canvas>
+        <canvas id="eraser-mask-canvas" style="position:absolute;left:0;top:0;max-width:100%;height:auto;cursor:crosshair;"></canvas>
+      </div>
+      <button class="action-btn" id="eraser-run-btn">Erase</button>
+      <div style="height:6px;background:var(--paper-2);border-radius:999px;overflow:hidden;margin-top:10px;display:none;" id="eraser-progress"><div style="height:100%;background:var(--teal);width:0%;"></div></div>
+      <button class="action-btn" id="eraser-download-btn" style="display:none;">Download</button>
+    </div>
+  </section>
+
   <div class="disclaimer">
-    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Redact PDF renders each page to an image using PDF.js (the same engine Firefox uses to display PDFs), so the exported file has no underlying text layer left anywhere in it — there's nothing to select or copy, including in the redacted area, because after export the whole page is a flat picture rather than text plus a black box drawn on top. That's a real trade-off: the output PDF is no longer searchable or copy-pasteable, on any page, not just the redacted one. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, extracting pages, or removing a background, you can send the result straight into another tool without downloading it first. <a href="/how-it-works.html">See how to check that yourself</a>, or read our <a href="/privacy.html">Privacy Policy</a> for more.
+    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Redact PDF renders each page to an image using PDF.js (the same engine Firefox uses to display PDFs), so the exported file has no underlying text layer left anywhere in it — there's nothing to select or copy, including in the redacted area, because after export the whole page is a flat picture rather than text plus a black box drawn on top. That's a real trade-off: the output PDF is no longer searchable or copy-pasteable, on any page, not just the redacted one. Extract Text uses Tesseract.js, a browser build of the open-source Tesseract OCR engine — the same model family used in a lot of commercial OCR tools — downloaded once per language and cached after that. Face Mosaic uses Google's MediaPipe Face Detector (the BlazeFace model). Enhance Quality's Fast mode is plain image-resizing math with no AI involved; AI Upscale and AI Eraser use small open-source models (via Transformers.js and ONNX Runtime Web) that download once and then run entirely on your device — AI Eraser's model is roughly 200MB, so that first download is worth doing on Wi-Fi. Face and object detection can miss things, especially at odd angles or low light — always look over a result before sharing it. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, extracting pages, or removing a background, you can send the result straight into another tool without downloading it first. <a href="/how-it-works.html">See how to check that yourself</a>, or read our <a href="/privacy.html">Privacy Policy</a> for more.
   </div>
 </main>
 
@@ -391,6 +525,7 @@
 <script>
   pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js"></script>
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
 <script src="/thanks-card.js"></script>
@@ -416,6 +551,15 @@ if ('serviceWorker' in navigator) {
   });
 
   // ---- Shared helpers ----
+  function loadImageFile(file){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function(){ resolve(img); };
+      img.onerror = function(){ reject(new Error('Could not read this image.')); };
+      img.src = url;
+    });
+  }
   function readAsUint8Array(file){
     return new Promise(function(resolve, reject){
       var reader = new FileReader();
@@ -1315,6 +1459,599 @@ function normalizeRect(x1, y1, x2, y2){
     } catch(err){
       setStatus(redStatus, 'error', 'Could not export: ' + err.message);
     }
+  });
+
+  // ================= EXTRACT TEXT (OCR) =================
+  var ocrFile = null;
+  var ocrStatus = document.getElementById('ocr-status');
+  var ocrWorker = null;
+
+  function ocrSetProgress(pct, label){
+    document.getElementById('ocr-progress').style.display = 'block';
+    document.getElementById('ocr-progress-bar').style.width = pct + '%';
+    document.getElementById('ocr-progress-label').textContent = label;
+  }
+
+  async function ocrRenderPdfToImages(bytes){
+    var doc = await pdfjsLib.getDocument({
+      data: bytes,
+      standardFontDataUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/standard_fonts/',
+      cMapUrl: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/cmaps/',
+      cMapPacked: true,
+      isEvalSupported: false,
+      isOffscreenCanvasSupported: false
+    }).promise;
+    var canvases = [];
+    for (var i = 1; i <= doc.numPages; i++){
+      var page = await doc.getPage(i);
+      var viewport = page.getViewport({ scale: 2.5 });
+      var canvas = document.createElement('canvas');
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
+      canvases.push(canvas);
+    }
+    return canvases;
+  }
+
+  function loadOcrFile(file){
+    ocrFile = file;
+    document.getElementById('ocr-controls').style.display = 'block';
+    document.getElementById('ocr-results').style.display = 'none';
+    clearStatus(ocrStatus);
+  }
+
+  setupDrop(document.getElementById('ocr-drop'), document.getElementById('ocr-input'), function(files){
+    if (files.length) loadOcrFile(files[0]);
+  });
+
+  document.getElementById('ocr-run-btn').addEventListener('click', async function(){
+    if (!ocrFile) return;
+    var lang = document.getElementById('ocr-lang').value;
+    var btn = this;
+    btn.disabled = true;
+    document.getElementById('ocr-results').style.display = 'none';
+    setStatus(ocrStatus, 'info', 'Loading the OCR engine\u2026 (first run downloads language data, then it\u2019s cached)');
+
+    try {
+      ocrWorker = await Tesseract.createWorker(lang, 1, {
+        logger: function(m){
+          if (m.status === 'recognizing text') {
+            ocrSetProgress(Math.round(m.progress * 100), 'Recognizing text\u2026 ' + Math.round(m.progress * 100) + '%');
+          } else if (m.progress != null) {
+            ocrSetProgress(Math.round(m.progress * 100), m.status);
+          }
+        }
+      });
+
+      var images;
+      if (ocrFile.type === 'application/pdf') {
+        setStatus(ocrStatus, 'info', 'Rendering PDF pages\u2026');
+        var bytes = await readAsUint8Array(ocrFile);
+        images = await ocrRenderPdfToImages(bytes);
+      } else {
+        var imgBitmap = await createImageBitmap(ocrFile);
+        var c = document.createElement('canvas');
+        c.width = imgBitmap.width; c.height = imgBitmap.height;
+        c.getContext('2d').drawImage(imgBitmap, 0, 0);
+        images = [c];
+      }
+
+      var allText = [];
+      for (var i = 0; i < images.length; i++){
+        if (images.length > 1) setStatus(ocrStatus, 'info', 'Page ' + (i+1) + ' of ' + images.length + '\u2026');
+        var result = await ocrWorker.recognize(images[i]);
+        allText.push(images.length > 1 ? ('--- Page ' + (i+1) + ' ---\n' + result.data.text) : result.data.text);
+      }
+
+      await ocrWorker.terminate();
+      ocrWorker = null;
+
+      document.getElementById('ocr-output').value = allText.join('\n\n');
+      document.getElementById('ocr-results').style.display = 'block';
+      document.getElementById('ocr-progress').style.display = 'none';
+      setStatus(ocrStatus, 'success', 'Done. Extracted text from ' + images.length + ' page' + (images.length > 1 ? 's' : '') + '.');
+    } catch(err){
+      setStatus(ocrStatus, 'error', 'Could not extract text: ' + err.message);
+      if (ocrWorker) { try { await ocrWorker.terminate(); } catch(e){} ocrWorker = null; }
+    }
+    btn.disabled = false;
+  });
+
+  document.getElementById('ocr-copy-btn').addEventListener('click', function(){
+    var text = document.getElementById('ocr-output').value;
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(text).then(function(){
+        var orig = document.getElementById('ocr-copy-btn').textContent;
+        document.getElementById('ocr-copy-btn').textContent = 'Copied!';
+        setTimeout(function(){ document.getElementById('ocr-copy-btn').textContent = orig; }, 1500);
+      });
+    }
+  });
+  document.getElementById('ocr-download-btn').addEventListener('click', function(){
+    var text = document.getElementById('ocr-output').value;
+    var baseName = (ocrFile.name || 'extracted').replace(/\.[^.]+$/, '');
+    downloadBlob(new TextEncoder().encode(text), baseName + '.txt', 'text/plain');
+  });
+
+  // ================= FACE MOSAIC =================
+  var fmStatus = document.getElementById('facemosaic-status');
+  var fmWorkspace = document.getElementById('facemosaic-workspace');
+  var fmCanvas = document.getElementById('facemosaic-canvas');
+  var fmCtx = fmCanvas.getContext('2d');
+  var fmOriginalImg = null;
+  var fmDetections = [];
+  var fmStyle = 'pixelate';
+  var fmDetector = null;
+  var fmMediapipeReady = false;
+
+  (function loadMediapipe(){
+    var script = document.createElement('script');
+    script.type = 'module';
+    script.textContent = 'import { FaceDetector, FilesetResolver } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/vision_bundle.mjs"; window.__mpFaceDetector = { FaceDetector: FaceDetector, FilesetResolver: FilesetResolver }; window.dispatchEvent(new Event("mediapipe-ready"));';
+    document.head.appendChild(script);
+  })();
+  window.addEventListener('mediapipe-ready', function(){ fmMediapipeReady = true; });
+
+  async function getFaceDetector(){
+    if (fmDetector) return fmDetector;
+    if (!fmMediapipeReady) {
+      await new Promise(function(resolve){
+        if (window.__mpFaceDetector) return resolve();
+        window.addEventListener('mediapipe-ready', resolve, { once: true });
+      });
+    }
+    setStatus(fmStatus, 'info', 'Downloading the face detection model (first time only, then cached)\u2026');
+    var mp = window.__mpFaceDetector;
+    var vision = await mp.FilesetResolver.forVisionTasks('https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22/wasm');
+    fmDetector = await mp.FaceDetector.createFromOptions(vision, {
+      baseOptions: {
+        modelAssetPath: 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite'
+      },
+      runningMode: 'IMAGE'
+    });
+    return fmDetector;
+  }
+
+  function applyMosaic(ctx, box, style){
+    var x = Math.max(0, box.x), y = Math.max(0, box.y);
+    var w = Math.min(box.width, fmCanvas.width - x), h = Math.min(box.height, fmCanvas.height - y);
+    if (w <= 0 || h <= 0) return;
+    if (style === 'black') {
+      ctx.fillStyle = '#000000';
+      ctx.fillRect(x, y, w, h);
+    } else if (style === 'pixelate') {
+      var blockSize = Math.max(4, Math.round(Math.min(w, h) / 10));
+      var imgData = ctx.getImageData(x, y, w, h);
+      var data = imgData.data;
+      for (var by = 0; by < h; by += blockSize) {
+        for (var bx = 0; bx < w; bx += blockSize) {
+          var idx = (by * w + bx) * 4;
+          ctx.fillStyle = 'rgb(' + data[idx] + ',' + data[idx+1] + ',' + data[idx+2] + ')';
+          var bw = Math.min(blockSize, w - bx), bh = Math.min(blockSize, h - by);
+          ctx.fillRect(x + bx, y + by, bw, bh);
+        }
+      }
+    } else if (style === 'blur') {
+      ctx.save();
+      ctx.filter = 'blur(' + Math.max(4, Math.round(Math.min(w, h) / 6)) + 'px)';
+      ctx.drawImage(fmOriginalImg,
+        x * (fmOriginalImg.naturalWidth / fmCanvas.width), y * (fmOriginalImg.naturalHeight / fmCanvas.height),
+        w * (fmOriginalImg.naturalWidth / fmCanvas.width), h * (fmOriginalImg.naturalHeight / fmCanvas.height),
+        x, y, w, h);
+      ctx.restore();
+    }
+  }
+
+  function redrawFaceMosaic(){
+    fmCanvas.width = fmOriginalImg.naturalWidth;
+    fmCanvas.height = fmOriginalImg.naturalHeight;
+    fmCtx.drawImage(fmOriginalImg, 0, 0);
+    fmDetections.forEach(function(box){ applyMosaic(fmCtx, box, fmStyle); });
+  }
+
+  async function runFaceMosaic(file){
+    fmWorkspace.style.display = 'none';
+    setStatus(fmStatus, 'info', 'Loading image\u2026');
+    try {
+      fmOriginalImg = await loadImageFile(file);
+      var detector = await getFaceDetector();
+      setStatus(fmStatus, 'info', 'Detecting faces\u2026');
+      var result = detector.detect(fmOriginalImg);
+      fmDetections = (result.detections || []).map(function(d){
+        return { x: d.boundingBox.originX, y: d.boundingBox.originY, width: d.boundingBox.width, height: d.boundingBox.height };
+      });
+      if (fmDetections.length === 0) {
+        setStatus(fmStatus, 'error', 'No faces were found in this image. If there is a face, try a clearer or more front-facing photo.');
+        return;
+      }
+      redrawFaceMosaic();
+      fmWorkspace.style.display = 'block';
+      setStatus(fmStatus, 'success', fmDetections.length + ' face' + (fmDetections.length === 1 ? '' : 's') + ' found and blurred. Review before sharing \u2014 detection can miss faces at odd angles.');
+    } catch(err) {
+      setStatus(fmStatus, 'error', 'Could not process this image: ' + err.message);
+    }
+  }
+
+  setupDrop(document.getElementById('facemosaic-drop'), document.getElementById('facemosaic-input'), function(files){
+    if (files.length) runFaceMosaic(files[0]);
+  });
+  document.querySelectorAll('#facemosaic-style-toggle .preset-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#facemosaic-style-toggle .preset-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      fmStyle = btn.dataset.style;
+      if (fmOriginalImg) redrawFaceMosaic();
+    });
+  });
+  document.getElementById('facemosaic-download-btn').addEventListener('click', function(){
+    fmCanvas.toBlob(function(blob){
+      downloadBlob(blob, 'face-mosaic.png', 'image/png');
+    }, 'image/png');
+  });
+
+  // ================= ENHANCE QUALITY (UPSCALE) =================
+  var upStatus = document.getElementById('upscale-status');
+  var upWorkspace = document.getElementById('upscale-workspace');
+  var upPreviewArea = document.getElementById('upscale-preview-area');
+  var upDownloadBtn = document.getElementById('upscale-download-btn');
+  var upProgress = document.getElementById('upscale-progress');
+  var upMethod = 'fast';
+  var upScale = 2;
+  var upOriginalImg = null;
+  var upResultBlob = null;
+
+  var UP_WORKER_SRC = [
+    'let upscalerPromise = null;',
+    'function getUpscaler(){',
+    '  if (!upscalerPromise){',
+    '    upscalerPromise = (async function(){',
+    '      const mod = await import("https://cdn.jsdelivr.net/npm/@huggingface/transformers@latest");',
+    '      self.postMessage({ type: "progress", stage: "loading-model" });',
+    '      return await mod.pipeline("image-to-image", "Xenova/swin2SR-realworld-sr-x4-64-bsrgan-psnr", { dtype: "fp32" });',
+    '    })();',
+    '  }',
+    '  return upscalerPromise;',
+    '}',
+    'self.onmessage = async function(e){',
+    '  var id = e.data.id, blob = e.data.blob;',
+    '  try {',
+    '    var upscaler = await getUpscaler();',
+    '    self.postMessage({ type: "progress", stage: "processing", id: id });',
+    '    var url = URL.createObjectURL(blob);',
+    '    var output = await upscaler(url);',
+    '    URL.revokeObjectURL(url);',
+    '    var resultImg = Array.isArray(output) ? output[0] : output;',
+    '    if (!resultImg || typeof resultImg.toBlob !== "function"){',
+    '      throw new Error("Unexpected model output. The library version may have changed its output format.");',
+    '    }',
+    '    var resultBlob = await resultImg.toBlob();',
+    '    var buf = await resultBlob.arrayBuffer();',
+    '    self.postMessage({ type: "done", id: id, buffer: buf }, [buf]);',
+    '  } catch(err){',
+    '    self.postMessage({ type: "error", id: id, message: (err && err.message) ? err.message : String(err) });',
+    '  }',
+    '};'
+  ].join('\n');
+
+  var upWorker = null;
+  function getUpWorker(){
+    if (!upWorker) {
+      var blob = new Blob([UP_WORKER_SRC], { type: 'application/javascript' });
+      upWorker = new Worker(URL.createObjectURL(blob));
+    }
+    return upWorker;
+  }
+
+  function runAiUpscale(file){
+    return new Promise(function(resolve, reject){
+      var worker = getUpWorker();
+      var id = Date.now() + '-' + Math.random();
+      function handler(e){
+        if (e.data.id !== id) return;
+        if (e.data.type === 'progress') {
+          if (e.data.stage === 'loading-model') setStatus(upStatus, 'info', 'Downloading the upscale model (first time only, then cached)\u2026');
+          if (e.data.stage === 'processing') setStatus(upStatus, 'info', 'Enhancing\u2026 this can take a while on the first run.');
+        } else if (e.data.type === 'done') {
+          worker.removeEventListener('message', handler);
+          resolve(new Blob([e.data.buffer], { type: 'image/png' }));
+        } else if (e.data.type === 'error') {
+          worker.removeEventListener('message', handler);
+          reject(new Error(e.data.message));
+        }
+      }
+      worker.addEventListener('message', handler);
+      worker.postMessage({ id: id, blob: file });
+    });
+  }
+
+  function runFastUpscale(img, scale){
+    var canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth * scale;
+    canvas.height = img.naturalHeight * scale;
+    var ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+    return canvas;
+  }
+
+  function showUpscaleResult(canvasOrImg, isCanvas){
+    upPreviewArea.innerHTML = '';
+    if (isCanvas) {
+      upPreviewArea.appendChild(canvasOrImg);
+    } else {
+      var im = document.createElement('img');
+      im.src = URL.createObjectURL(canvasOrImg);
+      im.style.maxWidth = '100%';
+      im.style.borderRadius = '10px';
+      im.style.border = '1px solid var(--line)';
+      upPreviewArea.appendChild(im);
+    }
+    upDownloadBtn.style.display = 'inline-block';
+  }
+
+  document.getElementById('upscale-run-btn').addEventListener('click', async function(){
+    if (!upOriginalImg) return;
+    upDownloadBtn.style.display = 'none';
+    upPreviewArea.innerHTML = '';
+    upResultBlob = null;
+    try {
+      if (upMethod === 'fast') {
+        setStatus(upStatus, 'info', 'Enhancing\u2026');
+        var canvas = runFastUpscale(upOriginalImg, upScale);
+        showUpscaleResult(canvas, true);
+        canvas.toBlob(function(blob){ upResultBlob = blob; }, 'image/png');
+        setStatus(upStatus, 'success', 'Done.');
+      } else {
+        setStatus(upStatus, 'info', 'Starting\u2026');
+        var blob = await runAiUpscale(upOriginalImg._sourceFile);
+        upResultBlob = blob;
+        showUpscaleResult(blob, false);
+        setStatus(upStatus, 'success', 'Done. AI Upscale produced a 4\u00d7 result regardless of the scale buttons above \u2014 that matches the model\u2019s native output.');
+      }
+    } catch(err) {
+      setStatus(upStatus, 'error', 'Could not enhance this image: ' + err.message);
+    }
+  });
+
+  document.getElementById('upscale-download-btn').addEventListener('click', function(){
+    if (upResultBlob) downloadBlob(upResultBlob, 'enhanced.png', 'image/png');
+  });
+
+  document.querySelectorAll('#upscale-method-toggle .basis-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#upscale-method-toggle .basis-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      upMethod = btn.dataset.method;
+      document.getElementById('upscale-method-hint').textContent = upMethod === 'fast'
+        ? 'Fast uses standard image-resizing math \u2014 instant, works everywhere, and is genuinely the right choice for most photos.'
+        : 'AI Upscale downloads a small open-source model once, then reconstructs detail rather than just stretching pixels. Slower, and always produces a fixed 4\u00d7 result regardless of the scale buttons below.';
+    });
+  });
+  document.querySelectorAll('#panel-upscale .preset-btn[data-scale]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#panel-upscale .preset-btn[data-scale]').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      upScale = parseInt(btn.dataset.scale, 10);
+    });
+  });
+
+  setupDrop(document.getElementById('upscale-drop'), document.getElementById('upscale-input'), async function(files){
+    if (!files.length) return;
+    setStatus(upStatus, 'info', 'Loading image\u2026');
+    try {
+      upOriginalImg = await loadImageFile(files[0]);
+      upOriginalImg._sourceFile = files[0];
+      upWorkspace.style.display = 'block';
+      upPreviewArea.innerHTML = '';
+      upDownloadBtn.style.display = 'none';
+      clearStatus(upStatus);
+    } catch(err) {
+      setStatus(upStatus, 'error', 'Could not read this image: ' + err.message);
+    }
+  });
+
+  // ================= AI ERASER =================
+  var erStatus = document.getElementById('eraser-status');
+  var erWorkspace = document.getElementById('eraser-workspace');
+  var erBaseCanvas = document.getElementById('eraser-base-canvas');
+  var erMaskCanvas = document.getElementById('eraser-mask-canvas');
+  var erBaseCtx = erBaseCanvas.getContext('2d');
+  var erMaskCtx = erMaskCanvas.getContext('2d');
+  var erOriginalImg = null;
+  var erBrushSize = 24;
+  var erPainting = false;
+  var erStrokes = [];
+  var erCurrentStroke = null;
+  var erDownloadBtn = document.getElementById('eraser-download-btn');
+  var erProgress = document.getElementById('eraser-progress');
+  var erResultBlob = null;
+  var ER_WORK_SIZE = 512;
+
+  var ER_WORKER_SRC = [
+    'importScripts("https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/ort.min.js");',
+    'ort.env.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.21.0/dist/";',
+    'let sessionPromise = null;',
+    'function getSession(){',
+    '  if (!sessionPromise){',
+    '    sessionPromise = ort.InferenceSession.create("https://huggingface.co/Carve/LaMa-ONNX/resolve/main/lama_fp32.onnx");',
+    '  }',
+    '  return sessionPromise;',
+    '}',
+    'self.onmessage = async function(e){',
+    '  var id = e.data.id;',
+    '  try {',
+    '    self.postMessage({ type: "progress", stage: "loading-model", id: id });',
+    '    var session = await getSession();',
+    '    self.postMessage({ type: "progress", stage: "processing", id: id });',
+    '    var imageTensor = new ort.Tensor("float32", e.data.imageData, [1,3,512,512]);',
+    '    var maskTensor = new ort.Tensor("float32", e.data.maskData, [1,1,512,512]);',
+    '    var feeds = {};',
+    '    feeds[session.inputNames[0]] = imageTensor;',
+    '    feeds[session.inputNames[1]] = maskTensor;',
+    '    var results = await session.run(feeds);',
+    '    var output = results[session.outputNames[0]];',
+    '    self.postMessage({ type: "done", id: id, data: output.data, dims: output.dims }, [output.data.buffer]);',
+    '  } catch(err){',
+    '    self.postMessage({ type: "error", id: id, message: (err && err.message) ? err.message : String(err) });',
+    '  }',
+    '};'
+  ].join('\n');
+
+  var erWorker = null;
+  function getErWorker(){
+    if (!erWorker) {
+      var blob = new Blob([ER_WORKER_SRC], { type: 'application/javascript' });
+      erWorker = new Worker(URL.createObjectURL(blob));
+    }
+    return erWorker;
+  }
+
+  function imageDataToCHWTensor(imgData, w, h){
+    var data = imgData.data;
+    var out = new Float32Array(3 * w * h);
+    var plane = w * h;
+    for (var i = 0; i < w * h; i++) {
+      out[i] = data[i*4] / 255;
+      out[plane + i] = data[i*4+1] / 255;
+      out[2*plane + i] = data[i*4+2] / 255;
+    }
+    return out;
+  }
+
+  function maskCanvasToTensor(maskCtx, w, h){
+    var imgData = maskCtx.getImageData(0, 0, w, h);
+    var data = imgData.data;
+    var out = new Float32Array(w * h);
+    for (var i = 0; i < w * h; i++) {
+      out[i] = data[i*4] > 127 ? 1.0 : 0.0;
+    }
+    return out;
+  }
+
+  function outputTensorToImageData(tensorData, w, h){
+    var plane = w * h;
+    var out = new Uint8ClampedArray(w * h * 4);
+    for (var i = 0; i < w * h; i++) {
+      out[i*4]   = tensorData[i];
+      out[i*4+1] = tensorData[plane + i];
+      out[i*4+2] = tensorData[2*plane + i];
+      out[i*4+3] = 255;
+    }
+    return new ImageData(out, w, h);
+  }
+
+  function redrawEraserMask(){
+    erMaskCtx.clearRect(0, 0, erMaskCanvas.width, erMaskCanvas.height);
+    erMaskCtx.fillStyle = 'rgba(193,67,36,0.85)';
+    erStrokes.forEach(function(stroke){
+      var r = stroke.size / 2;
+      stroke.points.forEach(function(p){
+        erMaskCtx.beginPath();
+        erMaskCtx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        erMaskCtx.fill();
+      });
+      for (var i = 1; i < stroke.points.length; i++) {
+        var a = stroke.points[i-1], b = stroke.points[i];
+        erMaskCtx.lineWidth = stroke.size;
+        erMaskCtx.lineCap = 'round';
+        erMaskCtx.strokeStyle = 'rgba(193,67,36,0.85)';
+        erMaskCtx.beginPath();
+        erMaskCtx.moveTo(a.x, a.y);
+        erMaskCtx.lineTo(b.x, b.y);
+        erMaskCtx.stroke();
+      }
+    });
+  }
+
+  function erPointerDown(e){
+    erPainting = true;
+    var p = pointerToCanvasCoords(erMaskCanvas, e.clientX, e.clientY);
+    erCurrentStroke = { points: [p], size: erBrushSize * (erMaskCanvas.width / erMaskCanvas.getBoundingClientRect().width) };
+    erStrokes.push(erCurrentStroke);
+    redrawEraserMask();
+  }
+  function erPointerMove(e){
+    if (!erPainting) return;
+    var p = pointerToCanvasCoords(erMaskCanvas, e.clientX, e.clientY);
+    erCurrentStroke.points.push(p);
+    redrawEraserMask();
+  }
+  function erPointerUp(){
+    erPainting = false;
+    erCurrentStroke = null;
+  }
+  erMaskCanvas.addEventListener('pointerdown', erPointerDown);
+  erMaskCanvas.addEventListener('pointermove', erPointerMove);
+  window.addEventListener('pointerup', erPointerUp);
+
+  document.getElementById('eraser-brush-size').addEventListener('input', function(e){
+    erBrushSize = parseInt(e.target.value, 10);
+  });
+  document.getElementById('eraser-undo-btn').addEventListener('click', function(){
+    erStrokes.pop();
+    redrawEraserMask();
+  });
+
+  setupDrop(document.getElementById('eraser-drop'), document.getElementById('eraser-input'), async function(files){
+    if (!files.length) return;
+    setStatus(erStatus, 'info', 'Loading image\u2026');
+    try {
+      erOriginalImg = await loadImageFile(files[0]);
+      erBaseCanvas.width = ER_WORK_SIZE; erBaseCanvas.height = ER_WORK_SIZE;
+      erMaskCanvas.width = ER_WORK_SIZE; erMaskCanvas.height = ER_WORK_SIZE;
+      erBaseCtx.drawImage(erOriginalImg, 0, 0, ER_WORK_SIZE, ER_WORK_SIZE);
+      erStrokes = [];
+      erMaskCtx.clearRect(0, 0, ER_WORK_SIZE, ER_WORK_SIZE);
+      erWorkspace.style.display = 'block';
+      erDownloadBtn.style.display = 'none';
+      clearStatus(erStatus);
+    } catch(err) {
+      setStatus(erStatus, 'error', 'Could not read this image: ' + err.message);
+    }
+  });
+
+  document.getElementById('eraser-run-btn').addEventListener('click', function(){
+    if (!erOriginalImg || erStrokes.length === 0) {
+      setStatus(erStatus, 'error', 'Paint over the area you want to remove first.');
+      return;
+    }
+    var worker = getErWorker();
+    var id = Date.now() + '-' + Math.random();
+    var imageData = erBaseCtx.getImageData(0, 0, ER_WORK_SIZE, ER_WORK_SIZE);
+    var imageTensorData = imageDataToCHWTensor(imageData, ER_WORK_SIZE, ER_WORK_SIZE);
+    var maskTensorData = maskCanvasToTensor(erMaskCtx, ER_WORK_SIZE, ER_WORK_SIZE);
+
+    erProgress.style.display = 'block';
+    setStatus(erStatus, 'info', 'Starting\u2026');
+
+    function handler(e){
+      if (e.data.id !== id) return;
+      if (e.data.type === 'progress') {
+        if (e.data.stage === 'loading-model') setStatus(erStatus, 'info', 'Downloading the eraser model (\u2248200MB, first time only, then cached)\u2026');
+        if (e.data.stage === 'processing') setStatus(erStatus, 'info', 'Erasing\u2026');
+      } else if (e.data.type === 'done') {
+        worker.removeEventListener('message', handler);
+        erProgress.style.display = 'none';
+        var resultImageData = outputTensorToImageData(e.data.data, ER_WORK_SIZE, ER_WORK_SIZE);
+        erBaseCtx.putImageData(resultImageData, 0, 0);
+        erMaskCtx.clearRect(0, 0, ER_WORK_SIZE, ER_WORK_SIZE);
+        erStrokes = [];
+        erBaseCanvas.toBlob(function(blob){ erResultBlob = blob; erDownloadBtn.style.display = 'inline-block'; }, 'image/png');
+        setStatus(erStatus, 'success', 'Done. Working copy is 512\u00d7512, stretched back from your original photo\u2019s proportions \u2014 good for removing an object, not for precise, publication-quality edits.');
+      } else if (e.data.type === 'error') {
+        worker.removeEventListener('message', handler);
+        erProgress.style.display = 'none';
+        setStatus(erStatus, 'error', 'Could not process this image: ' + e.data.message);
+      }
+    }
+    worker.addEventListener('message', handler);
+    worker.postMessage({ id: id, imageData: imageTensorData, maskData: maskTensorData }, [imageTensorData.buffer, maskTensorData.buffer]);
+  });
+
+  document.getElementById('eraser-download-btn').addEventListener('click', function(){
+    if (erResultBlob) downloadBlob(erResultBlob, 'erased.png', 'image/png');
   });
 
 })();
