@@ -84,6 +84,14 @@
   </div>
 
   <div class="entry">
+    <div class="entry-date">Sep 16, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>Screenshot Markup: arrows, shapes, pen, highlighter, text, crop, and a manual mosaic</h2>
+    <p>A twelfth tab in Document &amp; Image Tools, and a much lighter build than the last few &mdash; no AI model to download, just canvas drawing. Six tools in one: freehand pen, a semi-transparent highlighter, four shapes (arrow, rectangle, ellipse, line), click-to-place text, a manually-drawn mosaic area for hiding anything the automatic Face Mosaic wouldn't catch (a license plate, an address, a logo), and crop. Reused the exact pixelation math already verified for Face Mosaic rather than writing a second version of it.</p>
+    <p>Applied a lesson from an earlier bug directly this time instead of repeating it: the AI Eraser's brush originally only painted while dragging, because a single click produces a path with a move but no line, which draws invisibly. Built the pen and highlighter here with the fix already in place &mdash; stamped circles along the path, not a stroke() call &mdash; and confirmed with a direct test that a single click without any drag still paints correctly.</p>
+  </div>
+
+  <div class="entry">
     <div class="entry-date">Sep 14, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Three more AI photo tools: Face Mosaic, Enhance Quality, AI Eraser</h2>
