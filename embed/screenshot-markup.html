@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Screenshot Markup — PopPopMake</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --card:#FFFFFF; --line:rgba(28,35,33,0.12); --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:var(--card);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.5;font-size:0.95rem;padding:14px;}
+  a{color:var(--teal);}
+  .drop{border:2px dashed var(--line);border-radius:10px;padding:20px;text-align:center;cursor:pointer;background:var(--paper);}
+  .drop:hover, .drop.dragover{border-color:var(--teal);}
+  .drop input{display:none;}
+  .drop .btn-label{display:inline-block;background:var(--ink);color:#fff;font-weight:600;font-size:0.85rem;padding:8px 16px;border-radius:999px;margin-top:6px;}
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.9rem;padding:10px 20px;border-radius:999px;cursor:pointer;margin-top:14px;margin-right:8px;}
+  .action-btn:hover{opacity:0.92;}
+  .preset-btn{padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.8rem;color:var(--ink-soft);cursor:pointer;}
+  .preset-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .basis-btn{padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.8rem;color:var(--ink-soft);cursor:pointer;}
+  .basis-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);}
+  .preset-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+  .status{margin-top:12px;font-size:0.85rem;padding:10px 12px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.info{background:rgba(15,139,141,0.08);color:var(--teal);}
+  .status.error{background:rgba(242,84,45,0.08);color:var(--orange);}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .hint{font-size:0.78rem;color:var(--ink-soft);}
+  .credit{text-align:center;margin-top:16px;padding-top:12px;border-top:1px solid var(--line);font-size:0.78rem;color:var(--ink-soft);}
+  .credit a{color:var(--ink-soft);font-weight:600;}
+</style>
+</head>
+<body>
+
+    <div class="drop" id="markup-drop">
+      <div>Drag an image here, or</div>
+      <label class="btn-label" for="markup-input">Choose an image</label>
+      <input type="file" id="markup-input" accept="image/*">
+    </div>
+    <div class="status" id="markup-status"></div>
+
+    <div id="markup-workspace" style="display:none;margin-top:16px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        <div class="preset-row" id="markup-tool-toggle">
+          <button type="button" class="basis-btn active" data-tool="pen">Pen</button>
+          <button type="button" class="basis-btn" data-tool="highlighter">Highlighter</button>
+          <button type="button" class="basis-btn" data-tool="shape">Shape</button>
+          <button type="button" class="basis-btn" data-tool="text">Text</button>
+          <button type="button" class="basis-btn" data-tool="mosaic">Mosaic area</button>
+          <button type="button" class="basis-btn" data-tool="crop">Crop</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:10px;">
+        <div id="markup-shape-field" style="display:none;align-items:center;gap:6px;">
+          <span style="font-size:0.85rem;color:var(--ink-soft);">Shape</span>
+          <div class="preset-row" id="markup-shape-toggle">
+            <button type="button" class="preset-btn active" data-shape="arrow">Arrow</button>
+            <button type="button" class="preset-btn" data-shape="rect">Rectangle</button>
+            <button type="button" class="preset-btn" data-shape="ellipse">Ellipse</button>
+            <button type="button" class="preset-btn" data-shape="line">Line</button>
+          </div>
+        </div>
+        <div id="markup-color-field" style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:0.85rem;color:var(--ink-soft);">Color</span>
+          <input type="color" id="markup-color" value="#c14324" style="width:36px;height:30px;border:1px solid var(--line);border-radius:6px;padding:2px;cursor:pointer;">
+        </div>
+        <div id="markup-width-field" style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:0.85rem;color:var(--ink-soft);">Thickness</span>
+          <input type="range" id="markup-width" min="2" max="30" value="4">
+        </div>
+        <div id="markup-fontsize-field" style="display:none;align-items:center;gap:6px;">
+          <span style="font-size:0.85rem;color:var(--ink-soft);">Text size</span>
+          <input type="number" id="markup-fontsize" value="20" min="8" max="72" step="1" style="width:60px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;">
+        </div>
+        <button type="button" class="preset-btn" id="markup-undo-btn">&#8617; Undo</button>
+      </div>
+      <div class="hint" id="markup-tool-hint" style="margin-bottom:10px;">Click and drag to draw a freehand line.</div>
+
+      <div id="markup-canvas-wrap" style="position:relative;border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:65vh;background:var(--paper-2);touch-action:none;">
+        <canvas id="markup-base-canvas" style="display:block;max-width:100%;height:auto;"></canvas>
+        <canvas id="markup-overlay-canvas" style="position:absolute;left:0;top:0;max-width:100%;height:auto;cursor:crosshair;"></canvas>
+      </div>
+
+      <button class="action-btn" id="markup-crop-apply-btn" style="display:none;">Apply Crop</button>
+      <button class="action-btn" id="markup-download-btn">Download</button>
+      <div class="hint" style="margin-top:10px;">Applying a crop flattens everything drawn so far and clears Undo history &mdash; draw your crop first if you're doing both.</div>
+    </div>
+  
+
+<div class="credit">Powered by <a href="https://poppopmake.com/screenshot-markup.html" target="_blank" rel="noopener">PopPopMake</a></div>
+
+<script>
+(function(){
+
+  function downloadBlob(bytes, filename, mime){
+    var blob = (bytes instanceof Blob) ? bytes : new Blob([bytes], { type: mime });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  }
+  function setStatus(el, kind, msg){
+    el.className = 'status show ' + kind;
+    el.textContent = msg;
+  }
+  function clearStatus(el){
+    el.className = 'status';
+    el.textContent = '';
+  }
+  function setupDrop(dropEl, inputEl, onFiles){
+    dropEl.addEventListener('click', function(e){ if (e.target.tagName !== 'LABEL') inputEl.click(); });
+    dropEl.addEventListener('dragover', function(e){ e.preventDefault(); dropEl.classList.add('dragover'); });
+    dropEl.addEventListener('dragleave', function(){ dropEl.classList.remove('dragover'); });
+    dropEl.addEventListener('drop', function(e){
+      e.preventDefault(); dropEl.classList.remove('dragover');
+      if (e.dataTransfer.files.length) onFiles(Array.from(e.dataTransfer.files));
+    });
+    inputEl.addEventListener('change', function(){
+      if (inputEl.files.length) onFiles(Array.from(inputEl.files));
+      inputEl.value = '';
+    });
+  }
+  function loadImageFile(file){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function(){ resolve(img); };
+      img.onerror = function(){ reject(new Error('Could not read this image.')); };
+      img.src = url;
+    });
+  }
+  function pointerToCanvasCoords(canvas, clientX, clientY){
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var scaleY = canvas.height / rect.height;
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+  }
+  function normalizeRect(x1, y1, x2, y2){
+    return { x: Math.min(x1, x2), y: Math.min(y1, y2), width: Math.abs(x2 - x1), height: Math.abs(y2 - y1) };
+  }
+
+  // ================= SCREENSHOT MARKUP =================
+  var mkStatus = document.getElementById('markup-status');
+  var mkWorkspace = document.getElementById('markup-workspace');
+  var mkBaseCanvas = document.getElementById('markup-base-canvas');
+  var mkOverlayCanvas = document.getElementById('markup-overlay-canvas');
+  var mkBaseCtx = mkBaseCanvas.getContext('2d');
+  var mkOverlayCtx = mkOverlayCanvas.getContext('2d');
+  var mkOriginalImg = null;
+  var mkMarks = [];
+  var mkTool = 'pen';
+  var mkShape = 'arrow';
+  var mkColor = '#c14324';
+  var mkWidth = 4;
+  var mkFontSize = 20;
+  var mkDragging = false;
+  var mkDragStart = null;
+  var mkCurrentMark = null;
+  var mkActiveInput = null;
+  var mkPendingCrop = null;
+
+  function mkDrawArrow(ctx, x1, y1, x2, y2, color, width){
+    ctx.strokeStyle = color; ctx.fillStyle = color;
+    ctx.lineWidth = width; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    var angle = Math.atan2(y2 - y1, x2 - x1);
+    var headLen = Math.max(10, width * 3);
+    var headAngle = Math.PI / 7;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLen * Math.cos(angle - headAngle), y2 - headLen * Math.sin(angle - headAngle));
+    ctx.lineTo(x2 - headLen * Math.cos(angle + headAngle), y2 - headLen * Math.sin(angle + headAngle));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function mkApplyMosaic(ctx, x, y, w, h){
+    x = Math.max(0, x); y = Math.max(0, y);
+    w = Math.min(w, mkBaseCanvas.width - x); h = Math.min(h, mkBaseCanvas.height - y);
+    if (w <= 0 || h <= 0) return;
+    var blockSize = Math.max(4, Math.round(Math.min(w, h) / 10));
+    var imgData = ctx.getImageData(x, y, w, h);
+    var data = imgData.data;
+    for (var by = 0; by < h; by += blockSize) {
+      for (var bx = 0; bx < w; bx += blockSize) {
+        var idx = (by * w + bx) * 4;
+        ctx.fillStyle = 'rgb(' + data[idx] + ',' + data[idx+1] + ',' + data[idx+2] + ')';
+        var bw = Math.min(blockSize, w - bx), bh = Math.min(blockSize, h - by);
+        ctx.fillRect(x + bx, y + by, bw, bh);
+      }
+    }
+  }
+
+  function mkPaintStrokeMark(ctx, mark){
+    var alpha = mark.type === 'highlighter' ? 0.4 : 1.0;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = mark.color;
+    var r = mark.width / 2;
+    mark.points.forEach(function(p){
+      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill();
+    });
+    for (var i = 1; i < mark.points.length; i++) {
+      var a = mark.points[i-1], b = mark.points[i];
+      ctx.lineWidth = mark.width; ctx.lineCap = 'round';
+      ctx.strokeStyle = mark.color;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function mkPaintMark(ctx, mark){
+    if (mark.type === 'pen' || mark.type === 'highlighter') {
+      mkPaintStrokeMark(ctx, mark);
+    } else if (mark.type === 'shape') {
+      ctx.strokeStyle = mark.color; ctx.lineWidth = mark.width; ctx.lineCap = 'round';
+      if (mark.shape === 'rect') {
+        ctx.strokeRect(Math.min(mark.x1,mark.x2), Math.min(mark.y1,mark.y2), Math.abs(mark.x2-mark.x1), Math.abs(mark.y2-mark.y1));
+      } else if (mark.shape === 'ellipse') {
+        var cx = (mark.x1+mark.x2)/2, cy = (mark.y1+mark.y2)/2;
+        var rx = Math.abs(mark.x2-mark.x1)/2, ry = Math.abs(mark.y2-mark.y1)/2;
+        ctx.beginPath(); ctx.ellipse(cx, cy, Math.max(1,rx), Math.max(1,ry), 0, 0, Math.PI*2); ctx.stroke();
+      } else if (mark.shape === 'line') {
+        ctx.beginPath(); ctx.moveTo(mark.x1, mark.y1); ctx.lineTo(mark.x2, mark.y2); ctx.stroke();
+      } else if (mark.shape === 'arrow') {
+        mkDrawArrow(ctx, mark.x1, mark.y1, mark.x2, mark.y2, mark.color, mark.width);
+      }
+    } else if (mark.type === 'text') {
+      ctx.fillStyle = mark.color;
+      ctx.font = mark.fontSize + 'px Inter, Arial, sans-serif';
+      ctx.textBaseline = 'top';
+      ctx.fillText(mark.text, mark.x, mark.y);
+    } else if (mark.type === 'mosaic') {
+      mkApplyMosaic(ctx, mark.x, mark.y, mark.width, mark.height);
+    }
+  }
+
+  function redrawMarkup(){
+    mkBaseCanvas.width = mkOriginalImg.naturalWidth || mkOriginalImg.width;
+    mkBaseCanvas.height = mkOriginalImg.naturalHeight || mkOriginalImg.height;
+    mkOverlayCanvas.width = mkBaseCanvas.width;
+    mkOverlayCanvas.height = mkBaseCanvas.height;
+    mkBaseCtx.drawImage(mkOriginalImg, 0, 0);
+    mkMarks.forEach(function(m){ mkPaintMark(mkBaseCtx, m); });
+    mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+  }
+
+  var MK_HINTS = {
+    pen: 'Click and drag to draw a freehand line.',
+    highlighter: 'Click and drag to draw a semi-transparent highlight.',
+    shape: 'Click and drag to draw the selected shape.',
+    text: 'Click where you want to add text, type, then press Enter.',
+    mosaic: 'Click and drag over the area you want to hide. Blurs that specific area only.',
+    crop: 'Drag to select the area to keep, then press Apply Crop. This flattens everything drawn so far.'
+  };
+
+  function mkCancelTextInput(){
+    if (mkActiveInput && mkActiveInput.parentNode) mkActiveInput.parentNode.removeChild(mkActiveInput);
+    mkActiveInput = null;
+  }
+  function mkCommitTextInput(){
+    if (!mkActiveInput) return;
+    var text = mkActiveInput.value.trim();
+    var pos = mkActiveInput._canvasPos;
+    mkCancelTextInput();
+    if (!text) return;
+    mkMarks.push({ type: 'text', x: pos.x, y: pos.y, text: text, color: mkColor, fontSize: mkFontSize * (mkBaseCanvas.width / mkOverlayCanvas.getBoundingClientRect().width || 1) });
+    redrawMarkup();
+  }
+  function mkStartTextInput(clientX, clientY){
+    mkCancelTextInput();
+    var wrap = document.getElementById('markup-canvas-wrap');
+    var wrapRect = wrap.getBoundingClientRect();
+    var canvasPos = pointerToCanvasCoords(mkOverlayCanvas, clientX, clientY);
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.style.position = 'absolute';
+    input.style.left = (clientX - wrapRect.left + wrap.scrollLeft) + 'px';
+    input.style.top = (clientY - wrapRect.top + wrap.scrollTop - mkFontSize) + 'px';
+    input.style.fontSize = mkFontSize + 'px';
+    input.style.color = mkColor;
+    input.style.border = '1px dashed var(--orange)';
+    input.style.background = 'rgba(255,255,255,0.95)';
+    input.style.padding = '1px 3px';
+    input.style.fontFamily = "'Inter', Arial, sans-serif";
+    input.style.zIndex = '10';
+    input._canvasPos = canvasPos;
+    input.addEventListener('keydown', function(e){
+      if (e.key === 'Enter') { e.preventDefault(); mkCommitTextInput(); }
+      if (e.key === 'Escape') { e.preventDefault(); mkCancelTextInput(); }
+    });
+    input.addEventListener('blur', function(){ mkCommitTextInput(); });
+    wrap.appendChild(input);
+    mkActiveInput = input;
+    input.focus();
+  }
+
+  function mkPointerDown(e){
+    if (mkTool === 'text') return;
+    mkDragging = true;
+    mkDragStart = pointerToCanvasCoords(mkOverlayCanvas, e.clientX, e.clientY);
+    if (mkTool === 'pen' || mkTool === 'highlighter') {
+      mkCurrentMark = { type: mkTool, points: [mkDragStart], color: mkColor, width: mkWidth * (mkBaseCanvas.width / mkOverlayCanvas.getBoundingClientRect().width || 1) };
+    }
+  }
+  function mkPointerMove(e){
+    if (!mkDragging) return;
+    var p = pointerToCanvasCoords(mkOverlayCanvas, e.clientX, e.clientY);
+    if (mkTool === 'pen' || mkTool === 'highlighter') {
+      mkCurrentMark.points.push(p);
+      mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+      mkPaintMark(mkOverlayCtx, mkCurrentMark);
+    } else {
+      var r = normalizeRect(mkDragStart.x, mkDragStart.y, p.x, p.y);
+      mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+      if (mkTool === 'shape') {
+        mkOverlayCtx.lineWidth = mkWidth;
+        mkPaintMark(mkOverlayCtx, { type: 'shape', shape: mkShape, x1: mkDragStart.x, y1: mkDragStart.y, x2: p.x, y2: p.y, color: mkColor, width: mkWidth });
+      } else if (mkTool === 'mosaic' || mkTool === 'crop') {
+        mkOverlayCtx.strokeStyle = mkTool === 'crop' ? 'rgba(15,139,141,0.9)' : 'rgba(193,67,36,0.9)';
+        mkOverlayCtx.setLineDash([6,4]);
+        mkOverlayCtx.lineWidth = 2;
+        mkOverlayCtx.strokeRect(r.x, r.y, r.width, r.height);
+        mkOverlayCtx.setLineDash([]);
+      }
+    }
+  }
+  function mkPointerUp(e){
+    if (mkTool === 'text') {
+      if (e.target === mkOverlayCanvas) mkStartTextInput(e.clientX, e.clientY);
+      return;
+    }
+    if (!mkDragging) return;
+    mkDragging = false;
+    var p = pointerToCanvasCoords(mkOverlayCanvas, e.clientX, e.clientY);
+    mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+
+    if (mkTool === 'pen' || mkTool === 'highlighter') {
+      mkMarks.push(mkCurrentMark);
+      mkCurrentMark = null;
+      redrawMarkup();
+      return;
+    }
+    var r = normalizeRect(mkDragStart.x, mkDragStart.y, p.x, p.y);
+    if (r.width <= 2 && r.height <= 2 && mkTool !== 'shape') return;
+    if (mkTool === 'shape') {
+      if (Math.abs(p.x - mkDragStart.x) < 2 && Math.abs(p.y - mkDragStart.y) < 2) return;
+      mkMarks.push({ type: 'shape', shape: mkShape, x1: mkDragStart.x, y1: mkDragStart.y, x2: p.x, y2: p.y, color: mkColor, width: mkWidth });
+      redrawMarkup();
+    } else if (mkTool === 'mosaic') {
+      mkMarks.push({ type: 'mosaic', x: r.x, y: r.y, width: r.width, height: r.height });
+      redrawMarkup();
+    } else if (mkTool === 'crop') {
+      mkPendingCrop = r;
+      document.getElementById('markup-crop-apply-btn').style.display = 'inline-block';
+      mkOverlayCtx.strokeStyle = 'rgba(15,139,141,0.9)';
+      mkOverlayCtx.setLineDash([6,4]);
+      mkOverlayCtx.lineWidth = 2;
+      mkOverlayCtx.strokeRect(r.x, r.y, r.width, r.height);
+      mkOverlayCtx.setLineDash([]);
+    }
+  }
+  mkOverlayCanvas.addEventListener('pointerdown', mkPointerDown);
+  mkOverlayCanvas.addEventListener('pointermove', mkPointerMove);
+  window.addEventListener('pointerup', mkPointerUp);
+
+  document.getElementById('markup-crop-apply-btn').addEventListener('click', function(){
+    if (!mkPendingCrop) return;
+    var r = mkPendingCrop;
+    var cropped = document.createElement('canvas');
+    cropped.width = Math.max(1, Math.round(r.width));
+    cropped.height = Math.max(1, Math.round(r.height));
+    cropped.getContext('2d').drawImage(mkBaseCanvas, r.x, r.y, r.width, r.height, 0, 0, cropped.width, cropped.height);
+    mkOriginalImg = cropped;
+    mkMarks = [];
+    mkPendingCrop = null;
+    document.getElementById('markup-crop-apply-btn').style.display = 'none';
+    redrawMarkup();
+    setStatus(mkStatus, 'success', 'Cropped. Undo history was cleared by this crop.');
+  });
+
+  document.getElementById('markup-undo-btn').addEventListener('click', function(){
+    mkMarks.pop();
+    redrawMarkup();
+  });
+
+  document.querySelectorAll('#markup-tool-toggle .basis-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      mkCancelTextInput();
+      document.querySelectorAll('#markup-tool-toggle .basis-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      mkTool = btn.dataset.tool;
+      document.getElementById('markup-tool-hint').textContent = MK_HINTS[mkTool];
+      document.getElementById('markup-shape-field').style.display = mkTool === 'shape' ? 'flex' : 'none';
+      document.getElementById('markup-fontsize-field').style.display = mkTool === 'text' ? 'flex' : 'none';
+      document.getElementById('markup-color-field').style.display = (mkTool === 'mosaic' || mkTool === 'crop') ? 'none' : 'flex';
+      document.getElementById('markup-width-field').style.display = (mkTool === 'text' || mkTool === 'mosaic' || mkTool === 'crop') ? 'none' : 'flex';
+      mkPendingCrop = null;
+      document.getElementById('markup-crop-apply-btn').style.display = 'none';
+      mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+    });
+  });
+  document.querySelectorAll('#markup-shape-toggle .preset-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#markup-shape-toggle .preset-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      mkShape = btn.dataset.shape;
+    });
+  });
+  document.getElementById('markup-color').addEventListener('input', function(e){ mkColor = e.target.value; });
+  document.getElementById('markup-width').addEventListener('input', function(e){ mkWidth = parseInt(e.target.value, 10); });
+  document.getElementById('markup-fontsize').addEventListener('input', function(e){ mkFontSize = Math.max(8, parseInt(e.target.value, 10) || 20); });
+
+  setupDrop(document.getElementById('markup-drop'), document.getElementById('markup-input'), async function(files){
+    if (!files.length) return;
+    setStatus(mkStatus, 'info', 'Loading image\u2026');
+    try {
+      mkOriginalImg = await loadImageFile(files[0]);
+      mkMarks = [];
+      mkPendingCrop = null;
+      document.getElementById('markup-crop-apply-btn').style.display = 'none';
+      redrawMarkup();
+      mkWorkspace.style.display = 'block';
+      clearStatus(mkStatus);
+    } catch(err) {
+      setStatus(mkStatus, 'error', 'Could not read this image: ' + err.message);
+    }
+  });
+
+  document.getElementById('markup-download-btn').addEventListener('click', function(){
+    mkBaseCanvas.toBlob(function(blob){
+      downloadBlob(blob, 'markup.png', 'image/png');
+    }, 'image/png');
+  });
+
+
+
+  function postHeightToParent(){
+    if (window.parent !== window) {
+      window.parent.postMessage({ type: 'poppopmake-resize', height: document.documentElement.scrollHeight }, '*');
+    }
+  }
+  window.addEventListener('load', postHeightToParent);
+  new MutationObserver(postHeightToParent).observe(document.body, { childList: true, subtree: true, attributes: true });
+
+})();
+</script>
+</body>
+</html>

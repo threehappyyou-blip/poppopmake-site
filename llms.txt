@@ -18,6 +18,7 @@ PopPopMake is a solo-built, ad-supported utility site with no user accounts. Eve
 
 ## Documents & Images
 - [Document & Image Tools](https://poppopmake.com/document-tools.html): Merge PDFs, split PDFs, convert images to PDF, remove image backgrounds with an in-browser AI model, strip hidden PDF metadata, compress or convert images between JPG/PNG/WebP, redact (permanently black out or overwrite) sensitive text in a PDF, extract text from an image via OCR, automatically detect and blur faces, sharpen or upscale a low-resolution photo, remove an unwanted object from a photo with AI inpainting, and mark up a screenshot with arrows, shapes, freehand pen, highlighter, text, crop, and a manually-selected mosaic area.
+- [Screenshot Markup](https://poppopmake.com/screenshot-markup.html): Standalone version of the markup tool above (arrows, shapes, pen, highlighter, text, crop, manual mosaic) on its own page, and embeddable on other sites — see /embed.html.
 
 ## Career
 - [Career Tools](https://poppopmake.com/career-tools.html): Resume builder that outputs an ATS-friendly PDF, an ATS keyword score checker, a cover letter generator, and an hourly-to-salary wage converter.
@@ -38,7 +39,7 @@ PopPopMake is a solo-built, ad-supported utility site with no user accounts. Eve
 - [About](https://poppopmake.com/about.html): Who builds the site, why it's ad- and tip-supported rather than lead-generation based, and how calculator accuracy is verified against primary tax sources.
 - [How We Verify Accuracy](https://poppopmake.com/how-we-verify.html): The actual verification process — named primary sources, cross-checking, and a real dated example of a re-verification pass across the Australia, UK/Scotland, and Canada calculators.
 - [All Tools Directory](https://poppopmake.com/all-tools.html): Every tool on the site listed on one page.
-- [Embeddable Widgets](https://poppopmake.com/embed.html): Seven of the above tools available as a single-script-tag embed for third-party sites, free, no attribution required beyond a small "Powered by PopPopMake" credit.
+- [Embeddable Widgets](https://poppopmake.com/embed.html): Eight of the above tools available as a single-script-tag embed for third-party sites, free, no attribution required beyond a small "Powered by PopPopMake" credit.
 - [Guides](https://poppopmake.com/guides.html): Explainer articles on tax mechanics with worked examples — Ontario's surtax, Scotland vs rest-of-UK tax bands, Australia's real marginal rate (LITO taper and Medicare shade-in), capital gains stacking, the 401(k) age-60 super catch-up window, a cross-country take-home pay comparison, and why the AI writing tool doesn't claim to be a detector.
 - [Changelog](https://poppopmake.com/changelog.html): Public log of every feature shipped and every bug caught during testing.
 - [How It Works](https://poppopmake.com/how-it-works.html): Step-by-step instructions for verifying that no data leaves the browser.

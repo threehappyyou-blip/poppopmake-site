@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Screenshot Markup Tool (Free) — Arrows, Text, Blur, Crop — PopPopMake</title>
+<meta name="description" content="Draw arrows and shapes, write on a screenshot, highlight, crop, or blur out a specific area. Free, no sign-up, runs entirely in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/screenshot-markup.html">
+<meta property="og:title" content="Screenshot Markup Tool (Free) — Arrows, Text, Blur, Crop — PopPopMake">
+<meta property="og:description" content="Draw arrows and shapes, write on a screenshot, highlight, crop, or blur out a specific area. Free, no sign-up, runs entirely in your browser.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Screenshot Markup Tool (Free) — Arrows, Text, Blur, Crop — PopPopMake">
+<meta name="twitter:description" content="Draw arrows and shapes, write on a screenshot, highlight, crop, or blur out a specific area. Free, no sign-up, runs entirely in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;margin:0 0 6px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 12px;}
+  .privacy-strip{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 16px 9px 10px;margin-bottom:28px;}
+  .privacy-strip .pip{width:7px;height:7px;border-radius:50%;background:var(--teal);}
+  .tool-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;}
+  .tool-card .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
+  .drop{border:2px dashed var(--line);border-radius:10px;padding:28px;text-align:center;cursor:pointer;background:var(--paper);transition:border-color .15s ease;}
+  .drop:hover, .drop.dragover{border-color:var(--teal);}
+  .drop input{display:none;}
+  .drop .btn-label{display:inline-block;background:var(--ink);color:#fff;font-weight:600;font-size:0.9rem;padding:9px 18px;border-radius:999px;margin-top:8px;}
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.98rem;padding:12px 24px;border-radius:999px;cursor:pointer;margin-top:18px;margin-right:8px;}
+  .action-btn:disabled{background:var(--paper-2);color:var(--ink-soft);cursor:not-allowed;}
+  .action-btn:hover:not(:disabled){opacity:0.92;}
+  .preset-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
+  .preset-btn:hover{border-color:var(--teal);color:var(--ink);}
+  .preset-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .basis-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
+  .basis-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);}
+  .preset-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+  .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.info{background:rgba(15,139,141,0.08);color:var(--teal);}
+  .status.error{background:rgba(242,84,45,0.08);color:var(--orange);}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .hint{font-size:0.82rem;color:var(--ink-soft);}
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.86rem;color:var(--ink-soft);}
+  .disclaimer strong{color:var(--ink);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/document-tools.html">More document &amp; image tools</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Photos</span>
+  <h1>Screenshot Markup</h1>
+  <p class="lede">Arrows, shapes, freehand pen, highlighter, text, crop, and a manual mosaic area — the everyday markup you'd do on a screenshot before sending it, in one place.</p>
+  <span class="privacy-strip"><span class="pip"></span>Everything runs in your browser. Your image is never uploaded anywhere.</span>
+
+  <div class="tool-card">
+    <h2>Screenshot Markup</h2>
+    <p class="sub">Draw arrows and shapes, write on it, highlight, crop, or blur out a specific area &mdash; the everyday markup you'd do on a screenshot before sending it.</p>
+    <div class="drop" id="markup-drop">
+      <div>Drag an image here, or</div>
+      <label class="btn-label" for="markup-input">Choose an image</label>
+      <input type="file" id="markup-input" accept="image/*">
+    </div>
+    <div class="status" id="markup-status"></div>
+
+    <div id="markup-workspace" style="display:none;margin-top:16px;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
+        <div class="preset-row" id="markup-tool-toggle">
+          <button type="button" class="basis-btn active" data-tool="pen">Pen</button>
+          <button type="button" class="basis-btn" data-tool="highlighter">Highlighter</button>
+          <button type="button" class="basis-btn" data-tool="shape">Shape</button>
+          <button type="button" class="basis-btn" data-tool="text">Text</button>
+          <button type="button" class="basis-btn" data-tool="mosaic">Mosaic area</button>
+          <button type="button" class="basis-btn" data-tool="crop">Crop</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:10px;">
+        <div id="markup-shape-field" style="display:none;align-items:center;gap:6px;">
+          <span style="font-size:0.85rem;color:var(--ink-soft);">Shape</span>
+          <div class="preset-row" id="markup-shape-toggle">
+            <button type="button" class="preset-btn active" data-shape="arrow">Arrow</button>
+            <button type="button" class="preset-btn" data-shape="rect">Rectangle</button>
+            <button type="button" class="preset-btn" data-shape="ellipse">Ellipse</button>
+            <button type="button" class="preset-btn" data-shape="line">Line</button>
+          </div>
+        </div>
+        <div id="markup-color-field" style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:0.85rem;color:var(--ink-soft);">Color</span>
+          <input type="color" id="markup-color" value="#c14324" style="width:36px;height:30px;border:1px solid var(--line);border-radius:6px;padding:2px;cursor:pointer;">
+        </div>
+        <div id="markup-width-field" style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:0.85rem;color:var(--ink-soft);">Thickness</span>
+          <input type="range" id="markup-width" min="2" max="30" value="4">
+        </div>
+        <div id="markup-fontsize-field" style="display:none;align-items:center;gap:6px;">
+          <span style="font-size:0.85rem;color:var(--ink-soft);">Text size</span>
+          <input type="number" id="markup-fontsize" value="20" min="8" max="72" step="1" style="width:60px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;">
+        </div>
+        <button type="button" class="preset-btn" id="markup-undo-btn">&#8617; Undo</button>
+      </div>
+      <div class="hint" id="markup-tool-hint" style="margin-bottom:10px;">Click and drag to draw a freehand line.</div>
+
+      <div id="markup-canvas-wrap" style="position:relative;border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:65vh;background:var(--paper-2);touch-action:none;">
+        <canvas id="markup-base-canvas" style="display:block;max-width:100%;height:auto;"></canvas>
+        <canvas id="markup-overlay-canvas" style="position:absolute;left:0;top:0;max-width:100%;height:auto;cursor:crosshair;"></canvas>
+      </div>
+
+      <button class="action-btn" id="markup-crop-apply-btn" style="display:none;">Apply Crop</button>
+      <button class="action-btn" id="markup-download-btn">Download</button>
+      <div class="hint" style="margin-top:10px;">Applying a crop flattens everything drawn so far and clears Undo history &mdash; draw your crop first if you're doing both.</div>
+    </div>
+  
+  </div>
+
+  <div class="disclaimer">
+    <strong>How this works:</strong> This is plain canvas drawing &mdash; no AI model, nothing to download, nothing uploaded to a server. The image never leaves your device at any point, from opening it to downloading the result &mdash; <a href="/how-it-works.html">see how to check that yourself</a>. Looking for face detection, background removal, OCR, or AI-powered upscaling and object removal instead? Those live in <a href="/document-tools.html">Document &amp; Image Tools</a>. Read our <a href="/privacy.html">Privacy Policy</a> for more.
+  </div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/about.html">About</a><a href="/all-tools.html">All Tools</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+(function(){
+
+  function fmtSize(bytes){
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(0) + ' KB';
+    return (bytes/(1024*1024)).toFixed(1) + ' MB';
+  }
+  function downloadBlob(bytes, filename, mime){
+    var blob = (bytes instanceof Blob) ? bytes : new Blob([bytes], { type: mime });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+  }
+  function setStatus(el, kind, msg){
+    el.className = 'status show ' + kind;
+    el.textContent = msg;
+    if (kind === 'success' && window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  }
+  function clearStatus(el){
+    el.className = 'status';
+    el.textContent = '';
+  }
+  function setupDrop(dropEl, inputEl, onFiles){
+    dropEl.addEventListener('click', function(e){ if (e.target.tagName !== 'LABEL') inputEl.click(); });
+    dropEl.addEventListener('dragover', function(e){ e.preventDefault(); dropEl.classList.add('dragover'); });
+    dropEl.addEventListener('dragleave', function(){ dropEl.classList.remove('dragover'); });
+    dropEl.addEventListener('drop', function(e){
+      e.preventDefault(); dropEl.classList.remove('dragover');
+      if (e.dataTransfer.files.length) onFiles(Array.from(e.dataTransfer.files));
+    });
+    inputEl.addEventListener('change', function(){
+      if (inputEl.files.length) onFiles(Array.from(inputEl.files));
+      inputEl.value = '';
+    });
+  }
+  function loadImageFile(file){
+    return new Promise(function(resolve, reject){
+      var img = new Image();
+      var url = URL.createObjectURL(file);
+      img.onload = function(){ resolve(img); };
+      img.onerror = function(){ reject(new Error('Could not read this image.')); };
+      img.src = url;
+    });
+  }
+  function pointerToCanvasCoords(canvas, clientX, clientY){
+    var rect = canvas.getBoundingClientRect();
+    var scaleX = canvas.width / rect.width;
+    var scaleY = canvas.height / rect.height;
+    return { x: (clientX - rect.left) * scaleX, y: (clientY - rect.top) * scaleY };
+  }
+  function normalizeRect(x1, y1, x2, y2){
+    return { x: Math.min(x1, x2), y: Math.min(y1, y2), width: Math.abs(x2 - x1), height: Math.abs(y2 - y1) };
+  }
+
+  // ================= SCREENSHOT MARKUP =================
+  var mkStatus = document.getElementById('markup-status');
+  var mkWorkspace = document.getElementById('markup-workspace');
+  var mkBaseCanvas = document.getElementById('markup-base-canvas');
+  var mkOverlayCanvas = document.getElementById('markup-overlay-canvas');
+  var mkBaseCtx = mkBaseCanvas.getContext('2d');
+  var mkOverlayCtx = mkOverlayCanvas.getContext('2d');
+  var mkOriginalImg = null;
+  var mkMarks = [];
+  var mkTool = 'pen';
+  var mkShape = 'arrow';
+  var mkColor = '#c14324';
+  var mkWidth = 4;
+  var mkFontSize = 20;
+  var mkDragging = false;
+  var mkDragStart = null;
+  var mkCurrentMark = null;
+  var mkActiveInput = null;
+  var mkPendingCrop = null;
+
+  function mkDrawArrow(ctx, x1, y1, x2, y2, color, width){
+    ctx.strokeStyle = color; ctx.fillStyle = color;
+    ctx.lineWidth = width; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    var angle = Math.atan2(y2 - y1, x2 - x1);
+    var headLen = Math.max(10, width * 3);
+    var headAngle = Math.PI / 7;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - headLen * Math.cos(angle - headAngle), y2 - headLen * Math.sin(angle - headAngle));
+    ctx.lineTo(x2 - headLen * Math.cos(angle + headAngle), y2 - headLen * Math.sin(angle + headAngle));
+    ctx.closePath(); ctx.fill();
+  }
+
+  function mkApplyMosaic(ctx, x, y, w, h){
+    x = Math.max(0, x); y = Math.max(0, y);
+    w = Math.min(w, mkBaseCanvas.width - x); h = Math.min(h, mkBaseCanvas.height - y);
+    if (w <= 0 || h <= 0) return;
+    var blockSize = Math.max(4, Math.round(Math.min(w, h) / 10));
+    var imgData = ctx.getImageData(x, y, w, h);
+    var data = imgData.data;
+    for (var by = 0; by < h; by += blockSize) {
+      for (var bx = 0; bx < w; bx += blockSize) {
+        var idx = (by * w + bx) * 4;
+        ctx.fillStyle = 'rgb(' + data[idx] + ',' + data[idx+1] + ',' + data[idx+2] + ')';
+        var bw = Math.min(blockSize, w - bx), bh = Math.min(blockSize, h - by);
+        ctx.fillRect(x + bx, y + by, bw, bh);
+      }
+    }
+  }
+
+  function mkPaintStrokeMark(ctx, mark){
+    var alpha = mark.type === 'highlighter' ? 0.4 : 1.0;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = mark.color;
+    var r = mark.width / 2;
+    mark.points.forEach(function(p){
+      ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2); ctx.fill();
+    });
+    for (var i = 1; i < mark.points.length; i++) {
+      var a = mark.points[i-1], b = mark.points[i];
+      ctx.lineWidth = mark.width; ctx.lineCap = 'round';
+      ctx.strokeStyle = mark.color;
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function mkPaintMark(ctx, mark){
+    if (mark.type === 'pen' || mark.type === 'highlighter') {
+      mkPaintStrokeMark(ctx, mark);
+    } else if (mark.type === 'shape') {
+      ctx.strokeStyle = mark.color; ctx.lineWidth = mark.width; ctx.lineCap = 'round';
+      if (mark.shape === 'rect') {
+        ctx.strokeRect(Math.min(mark.x1,mark.x2), Math.min(mark.y1,mark.y2), Math.abs(mark.x2-mark.x1), Math.abs(mark.y2-mark.y1));
+      } else if (mark.shape === 'ellipse') {
+        var cx = (mark.x1+mark.x2)/2, cy = (mark.y1+mark.y2)/2;
+        var rx = Math.abs(mark.x2-mark.x1)/2, ry = Math.abs(mark.y2-mark.y1)/2;
+        ctx.beginPath(); ctx.ellipse(cx, cy, Math.max(1,rx), Math.max(1,ry), 0, 0, Math.PI*2); ctx.stroke();
+      } else if (mark.shape === 'line') {
+        ctx.beginPath(); ctx.moveTo(mark.x1, mark.y1); ctx.lineTo(mark.x2, mark.y2); ctx.stroke();
+      } else if (mark.shape === 'arrow') {
+        mkDrawArrow(ctx, mark.x1, mark.y1, mark.x2, mark.y2, mark.color, mark.width);
+      }
+    } else if (mark.type === 'text') {
+      ctx.fillStyle = mark.color;
+      ctx.font = mark.fontSize + 'px Inter, Arial, sans-serif';
+      ctx.textBaseline = 'top';
+      ctx.fillText(mark.text, mark.x, mark.y);
+    } else if (mark.type === 'mosaic') {
+      mkApplyMosaic(ctx, mark.x, mark.y, mark.width, mark.height);
+    }
+  }
+
+  function redrawMarkup(){
+    mkBaseCanvas.width = mkOriginalImg.naturalWidth || mkOriginalImg.width;
+    mkBaseCanvas.height = mkOriginalImg.naturalHeight || mkOriginalImg.height;
+    mkOverlayCanvas.width = mkBaseCanvas.width;
+    mkOverlayCanvas.height = mkBaseCanvas.height;
+    mkBaseCtx.drawImage(mkOriginalImg, 0, 0);
+    mkMarks.forEach(function(m){ mkPaintMark(mkBaseCtx, m); });
+    mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+  }
+
+  var MK_HINTS = {
+    pen: 'Click and drag to draw a freehand line.',
+    highlighter: 'Click and drag to draw a semi-transparent highlight.',
+    shape: 'Click and drag to draw the selected shape.',
+    text: 'Click where you want to add text, type, then press Enter.',
+    mosaic: 'Click and drag over the area you want to hide. Blurs that specific area only.',
+    crop: 'Drag to select the area to keep, then press Apply Crop. This flattens everything drawn so far.'
+  };
+
+  function mkCancelTextInput(){
+    if (mkActiveInput && mkActiveInput.parentNode) mkActiveInput.parentNode.removeChild(mkActiveInput);
+    mkActiveInput = null;
+  }
+  function mkCommitTextInput(){
+    if (!mkActiveInput) return;
+    var text = mkActiveInput.value.trim();
+    var pos = mkActiveInput._canvasPos;
+    mkCancelTextInput();
+    if (!text) return;
+    mkMarks.push({ type: 'text', x: pos.x, y: pos.y, text: text, color: mkColor, fontSize: mkFontSize * (mkBaseCanvas.width / mkOverlayCanvas.getBoundingClientRect().width || 1) });
+    redrawMarkup();
+  }
+  function mkStartTextInput(clientX, clientY){
+    mkCancelTextInput();
+    var wrap = document.getElementById('markup-canvas-wrap');
+    var wrapRect = wrap.getBoundingClientRect();
+    var canvasPos = pointerToCanvasCoords(mkOverlayCanvas, clientX, clientY);
+    var input = document.createElement('input');
+    input.type = 'text';
+    input.style.position = 'absolute';
+    input.style.left = (clientX - wrapRect.left + wrap.scrollLeft) + 'px';
+    input.style.top = (clientY - wrapRect.top + wrap.scrollTop - mkFontSize) + 'px';
+    input.style.fontSize = mkFontSize + 'px';
+    input.style.color = mkColor;
+    input.style.border = '1px dashed var(--orange)';
+    input.style.background = 'rgba(255,255,255,0.95)';
+    input.style.padding = '1px 3px';
+    input.style.fontFamily = "'Inter', Arial, sans-serif";
+    input.style.zIndex = '10';
+    input._canvasPos = canvasPos;
+    input.addEventListener('keydown', function(e){
+      if (e.key === 'Enter') { e.preventDefault(); mkCommitTextInput(); }
+      if (e.key === 'Escape') { e.preventDefault(); mkCancelTextInput(); }
+    });
+    input.addEventListener('blur', function(){ mkCommitTextInput(); });
+    wrap.appendChild(input);
+    mkActiveInput = input;
+    input.focus();
+  }
+
+  function mkPointerDown(e){
+    if (mkTool === 'text') return;
+    mkDragging = true;
+    mkDragStart = pointerToCanvasCoords(mkOverlayCanvas, e.clientX, e.clientY);
+    if (mkTool === 'pen' || mkTool === 'highlighter') {
+      mkCurrentMark = { type: mkTool, points: [mkDragStart], color: mkColor, width: mkWidth * (mkBaseCanvas.width / mkOverlayCanvas.getBoundingClientRect().width || 1) };
+    }
+  }
+  function mkPointerMove(e){
+    if (!mkDragging) return;
+    var p = pointerToCanvasCoords(mkOverlayCanvas, e.clientX, e.clientY);
+    if (mkTool === 'pen' || mkTool === 'highlighter') {
+      mkCurrentMark.points.push(p);
+      mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+      mkPaintMark(mkOverlayCtx, mkCurrentMark);
+    } else {
+      var r = normalizeRect(mkDragStart.x, mkDragStart.y, p.x, p.y);
+      mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+      if (mkTool === 'shape') {
+        mkOverlayCtx.lineWidth = mkWidth;
+        mkPaintMark(mkOverlayCtx, { type: 'shape', shape: mkShape, x1: mkDragStart.x, y1: mkDragStart.y, x2: p.x, y2: p.y, color: mkColor, width: mkWidth });
+      } else if (mkTool === 'mosaic' || mkTool === 'crop') {
+        mkOverlayCtx.strokeStyle = mkTool === 'crop' ? 'rgba(15,139,141,0.9)' : 'rgba(193,67,36,0.9)';
+        mkOverlayCtx.setLineDash([6,4]);
+        mkOverlayCtx.lineWidth = 2;
+        mkOverlayCtx.strokeRect(r.x, r.y, r.width, r.height);
+        mkOverlayCtx.setLineDash([]);
+      }
+    }
+  }
+  function mkPointerUp(e){
+    if (mkTool === 'text') {
+      if (e.target === mkOverlayCanvas) mkStartTextInput(e.clientX, e.clientY);
+      return;
+    }
+    if (!mkDragging) return;
+    mkDragging = false;
+    var p = pointerToCanvasCoords(mkOverlayCanvas, e.clientX, e.clientY);
+    mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+
+    if (mkTool === 'pen' || mkTool === 'highlighter') {
+      mkMarks.push(mkCurrentMark);
+      mkCurrentMark = null;
+      redrawMarkup();
+      return;
+    }
+    var r = normalizeRect(mkDragStart.x, mkDragStart.y, p.x, p.y);
+    if (r.width <= 2 && r.height <= 2 && mkTool !== 'shape') return;
+    if (mkTool === 'shape') {
+      if (Math.abs(p.x - mkDragStart.x) < 2 && Math.abs(p.y - mkDragStart.y) < 2) return;
+      mkMarks.push({ type: 'shape', shape: mkShape, x1: mkDragStart.x, y1: mkDragStart.y, x2: p.x, y2: p.y, color: mkColor, width: mkWidth });
+      redrawMarkup();
+    } else if (mkTool === 'mosaic') {
+      mkMarks.push({ type: 'mosaic', x: r.x, y: r.y, width: r.width, height: r.height });
+      redrawMarkup();
+    } else if (mkTool === 'crop') {
+      mkPendingCrop = r;
+      document.getElementById('markup-crop-apply-btn').style.display = 'inline-block';
+      mkOverlayCtx.strokeStyle = 'rgba(15,139,141,0.9)';
+      mkOverlayCtx.setLineDash([6,4]);
+      mkOverlayCtx.lineWidth = 2;
+      mkOverlayCtx.strokeRect(r.x, r.y, r.width, r.height);
+      mkOverlayCtx.setLineDash([]);
+    }
+  }
+  mkOverlayCanvas.addEventListener('pointerdown', mkPointerDown);
+  mkOverlayCanvas.addEventListener('pointermove', mkPointerMove);
+  window.addEventListener('pointerup', mkPointerUp);
+
+  document.getElementById('markup-crop-apply-btn').addEventListener('click', function(){
+    if (!mkPendingCrop) return;
+    var r = mkPendingCrop;
+    var cropped = document.createElement('canvas');
+    cropped.width = Math.max(1, Math.round(r.width));
+    cropped.height = Math.max(1, Math.round(r.height));
+    cropped.getContext('2d').drawImage(mkBaseCanvas, r.x, r.y, r.width, r.height, 0, 0, cropped.width, cropped.height);
+    mkOriginalImg = cropped;
+    mkMarks = [];
+    mkPendingCrop = null;
+    document.getElementById('markup-crop-apply-btn').style.display = 'none';
+    redrawMarkup();
+    setStatus(mkStatus, 'success', 'Cropped. Undo history was cleared by this crop.');
+  });
+
+  document.getElementById('markup-undo-btn').addEventListener('click', function(){
+    mkMarks.pop();
+    redrawMarkup();
+  });
+
+  document.querySelectorAll('#markup-tool-toggle .basis-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      mkCancelTextInput();
+      document.querySelectorAll('#markup-tool-toggle .basis-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      mkTool = btn.dataset.tool;
+      document.getElementById('markup-tool-hint').textContent = MK_HINTS[mkTool];
+      document.getElementById('markup-shape-field').style.display = mkTool === 'shape' ? 'flex' : 'none';
+      document.getElementById('markup-fontsize-field').style.display = mkTool === 'text' ? 'flex' : 'none';
+      document.getElementById('markup-color-field').style.display = (mkTool === 'mosaic' || mkTool === 'crop') ? 'none' : 'flex';
+      document.getElementById('markup-width-field').style.display = (mkTool === 'text' || mkTool === 'mosaic' || mkTool === 'crop') ? 'none' : 'flex';
+      mkPendingCrop = null;
+      document.getElementById('markup-crop-apply-btn').style.display = 'none';
+      mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
+    });
+  });
+  document.querySelectorAll('#markup-shape-toggle .preset-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#markup-shape-toggle .preset-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      mkShape = btn.dataset.shape;
+    });
+  });
+  document.getElementById('markup-color').addEventListener('input', function(e){ mkColor = e.target.value; });
+  document.getElementById('markup-width').addEventListener('input', function(e){ mkWidth = parseInt(e.target.value, 10); });
+  document.getElementById('markup-fontsize').addEventListener('input', function(e){ mkFontSize = Math.max(8, parseInt(e.target.value, 10) || 20); });
+
+  setupDrop(document.getElementById('markup-drop'), document.getElementById('markup-input'), async function(files){
+    if (!files.length) return;
+    setStatus(mkStatus, 'info', 'Loading image\u2026');
+    try {
+      mkOriginalImg = await loadImageFile(files[0]);
+      mkMarks = [];
+      mkPendingCrop = null;
+      document.getElementById('markup-crop-apply-btn').style.display = 'none';
+      redrawMarkup();
+      mkWorkspace.style.display = 'block';
+      clearStatus(mkStatus);
+    } catch(err) {
+      setStatus(mkStatus, 'error', 'Could not read this image: ' + err.message);
+    }
+  });
+
+  document.getElementById('markup-download-btn').addEventListener('click', function(){
+    mkBaseCanvas.toBlob(function(blob){
+      downloadBlob(blob, 'markup.png', 'image/png');
+    }, 'image/png');
+  });
+
+})();
+</script>
+</body>
+</html>
