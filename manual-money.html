@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>How to Use Money &amp; Tax Calculators — Step-by-Step — PopPopMake</title>
+<meta name="description" content="Step-by-step instructions for every Money & Tax calculator: paycheck calculators for the US, UK, Australia, and Canada, mortgage, retirement, capital gains, debt payoff, and comparing take-home pay.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/manual-money.html">
+<meta property="og:title" content="How to Use Money &amp; Tax Calculators — Step-by-Step — PopPopMake">
+<meta property="og:description" content="Step-by-step instructions for every Money & Tax calculator.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to Use Money &amp; Tax Calculators — Step-by-Step — PopPopMake">
+<meta name="twitter:description" content="Step-by-step instructions for every Money & Tax calculator.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.25rem;margin:0 0 4px;padding-top:8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 24px;}
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:32px;}
+  .toc-title{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);margin-bottom:10px;}
+  .toc ol{margin:0;padding-left:20px;columns:2;column-gap:20px;}
+  .toc li{margin-bottom:6px;font-size:0.9rem;break-inside:avoid;}
+  .tool-section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:20px;scroll-margin-top:20px;}
+  .tool-tag{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--teal);}
+  .what-for{color:var(--ink-soft);font-size:0.95rem;margin:4px 0 16px;}
+  .tool-section ol{margin:0 0 12px;padding-left:22px;}
+  .tool-section ol li{margin-bottom:10px;}
+  .tool-section ol li strong{color:var(--ink);}
+  .tip-box{background:var(--paper);border-left:3px solid var(--yellow);border-radius:6px;padding:12px 14px;margin-top:14px;font-size:0.87rem;color:var(--ink-soft);}
+  .tip-box strong{color:var(--ink);}
+  .back-top{font-size:0.82rem;text-align:right;display:block;margin-top:8px;}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/manual.html">All manual sections</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">User Manual</span>
+  <h1>Money &amp; Tax</h1>
+  <p class="lede">Unlike Document &amp; Image Tools, each of these calculators is its own separate page. This guide covers all 10, one section each.</p>
+
+  <div class="toc">
+    <div class="toc-title">Jump to a tool</div>
+    <ol>
+      <li><a href="#us-paycheck">US Paycheck Calculator</a></li>
+      <li><a href="#state-hub">Paycheck by State</a></li>
+      <li><a href="#uk-paycheck">UK Paycheck Calculator</a></li>
+      <li><a href="#au-paycheck">Australia Paycheck Calculator</a></li>
+      <li><a href="#ca-paycheck">Canada Paycheck Calculator</a></li>
+      <li><a href="#compare">Compare Take-Home Pay</a></li>
+      <li><a href="#mortgage">Mortgage Calculator</a></li>
+      <li><a href="#retirement">401(k) / Retirement Calculator</a></li>
+      <li><a href="#capital-gains">Capital Gains Calculator</a></li>
+      <li><a href="#debt-payoff">Debt Payoff Calculator</a></li>
+    </ol>
+  </div>
+
+  <section class="tool-section" id="us-paycheck">
+    <span class="tool-tag"><a href="/paycheck-calculator.html">paycheck-calculator.html</a></span>
+    <h2>US Paycheck Calculator</h2>
+    <p class="what-for">Shows what's actually left after federal tax, Social Security, Medicare, and state tax, for any of the 50 states plus D.C.</p>
+    <ol>
+      <li><strong>Enter your salary</strong> in the amount field — the annual figure is easiest, but you can switch the frequency (see step 3) if you only know your hourly or per-paycheck rate.</li>
+      <li><strong>Choose your state</strong> from the dropdown. This matters a lot: nine states have no state income tax at all, and the rest range from a flat rate to a full progressive bracket system.</li>
+      <li><strong>Choose your pay frequency</strong> (annual, monthly, biweekly, weekly) so the "per period" figures match your actual paycheck schedule.</li>
+      <li><strong>Choose your filing status</strong> if the option is shown (single, married filing jointly, etc.) — this changes the tax brackets applied.</li>
+      <li><strong>Read the results.</strong> The breakdown shows federal tax, Social Security, Medicare, and state tax as separate line items, plus your final take-home amount for the period you chose.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> The source, tax year, and last-checked date are shown right at the top of the page in the verification box — worth a glance if you want to confirm this reflects the current tax year.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="state-hub">
+    <span class="tool-tag"><a href="/paycheck-states.html">paycheck-states.html</a></span>
+    <h2>Paycheck by State</h2>
+    <p class="what-for">A browsing page that groups all 50 states by their tax type — no income tax, flat rate, or progressive brackets — with a link to each state's own calculator page.</p>
+    <ol>
+      <li><strong>Open the page.</strong> It's linked from the main US Paycheck Calculator, or reachable directly.</li>
+      <li><strong>Find your state's group.</strong> States are sorted into three groups so you can see at a glance which category yours falls into.</li>
+      <li><strong>Click through to your state.</strong> Each link opens a calculator pre-set to that state, pre-filled with a short explanation of how that state's system works.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> This is a browsing convenience — the main US Paycheck Calculator already covers every state through its dropdown, so use whichever page you found first.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="uk-paycheck">
+    <span class="tool-tag"><a href="/uk-paycheck-calculator.html">uk-paycheck-calculator.html</a></span>
+    <h2>UK Paycheck Calculator</h2>
+    <p class="what-for">Shows take-home pay after Income Tax and National Insurance, correctly handling Scotland's separate tax bands.</p>
+    <ol>
+      <li><strong>Enter your salary</strong> in the amount field.</li>
+      <li><strong>Choose your region.</strong> There's a toggle for England/Wales/Northern Ireland vs. Scotland — the two systems have genuinely different tax bands, so this choice changes your result meaningfully.</li>
+      <li><strong>Choose your pay frequency</strong> (annual, monthly, weekly) to match your actual pay schedule.</li>
+      <li><strong>Read the results.</strong> Income Tax and National Insurance are shown as separate line items, with your take-home pay for the period you chose.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> If you're not sure whether Scotland's rates apply to you, it's based on where you live, not where your employer is based.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="au-paycheck">
+    <span class="tool-tag"><a href="/au-paycheck-calculator.html">au-paycheck-calculator.html</a></span>
+    <h2>Australia Paycheck Calculator</h2>
+    <p class="what-for">Shows take-home pay after federal income tax, the Low Income Tax Offset, and the Medicare levy.</p>
+    <ol>
+      <li><strong>Enter your salary</strong> in the amount field.</li>
+      <li><strong>Choose your pay frequency</strong> to match your actual pay schedule.</li>
+      <li><strong>Read the results.</strong> Income tax, the Low Income Tax Offset, and the Medicare levy are broken out separately, since the offset and the levy's "shade-in" zone interact with the tax brackets in ways that aren't obvious from the bracket table alone.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> Australia has no state income tax, so unlike the US calculator, there's no state or territory selector needed here.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="ca-paycheck">
+    <span class="tool-tag"><a href="/ca-paycheck-calculator.html">ca-paycheck-calculator.html</a></span>
+    <h2>Canada Paycheck Calculator</h2>
+    <p class="what-for">Shows take-home pay after federal tax, provincial tax, CPP/CPP2, and EI, for any province or territory.</p>
+    <ol>
+      <li><strong>Enter your salary</strong> in the amount field.</li>
+      <li><strong>Choose your province or territory</strong> from the dropdown — all 10 provinces and 3 territories are covered, including Quebec's separate provincial system and federal abatement.</li>
+      <li><strong>Choose your pay frequency</strong> to match your actual pay schedule.</li>
+      <li><strong>Read the results.</strong> Federal tax, provincial tax, CPP (or CPP plus the CPP2 additional contribution above a threshold), and EI are shown as separate line items.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> Quebec is genuinely different from every other province — it collects its own provincial tax separately and residents get a federal tax abatement to offset it. The calculator handles this automatically when you select Quebec.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="compare">
+    <span class="tool-tag"><a href="/compare-takehome.html">compare-takehome.html</a></span>
+    <h2>Compare Take-Home Pay</h2>
+    <p class="what-for">Puts two salaries side by side — any two US states, UK regions, Australia, or Canadian provinces — to compare take-home pay and effective tax rate directly.</p>
+    <ol>
+      <li><strong>Pick your first location and salary</strong> on the left side — choose a country/state/province and enter the salary amount.</li>
+      <li><strong>Pick your second location and salary</strong> on the right side, the same way.</li>
+      <li><strong>Read the comparison.</strong> Take-home pay and effective tax rate are shown for both sides, so you can see exactly where the difference comes from.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> This tool doesn't do currency conversion — amounts are shown exactly as entered, in each side's own currency. It's built for comparing the tax systems themselves, not for figuring out cost-of-living differences between countries.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="mortgage">
+    <span class="tool-tag"><a href="/mortgage-calculator.html">mortgage-calculator.html</a></span>
+    <h2>Mortgage Calculator</h2>
+    <p class="what-for">Breaks down a monthly mortgage payment into principal &amp; interest, property tax, homeowners insurance, and PMI.</p>
+    <ol>
+      <li><strong>Enter the home price</strong> and your down payment (either as a dollar amount or a percentage — check which the field expects).</li>
+      <li><strong>Enter the interest rate</strong> and loan term (commonly 15 or 30 years).</li>
+      <li><strong>Enter property tax and insurance estimates</strong> if you have them — these vary a lot by location, so use your own numbers if you know them rather than relying on any default shown.</li>
+      <li><strong>Read the breakdown.</strong> Your total monthly payment is split into principal &amp; interest, property tax, insurance, and PMI (if your down payment is under 20%) as separate line items.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> PMI (Private Mortgage Insurance) typically applies only when your down payment is less than 20% of the home price — if you enter a down payment at or above that, the PMI line should drop to zero.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="retirement">
+    <span class="tool-tag"><a href="/retirement-calculator.html">retirement-calculator.html</a></span>
+    <h2>401(k) / Retirement Calculator</h2>
+    <p class="what-for">Projects your 401(k) balance at retirement based on your contributions, your employer's match, and investment growth over time.</p>
+    <ol>
+      <li><strong>Enter your current age and the age you plan to retire.</strong></li>
+      <li><strong>Enter your current balance</strong> (if any) and your planned annual contribution.</li>
+      <li><strong>Enter your employer's match</strong> if you have one (commonly a percentage of your contribution, up to a cap).</li>
+      <li><strong>Adjust the expected annual return</strong> if you want to test different assumptions — a lower, more conservative number and a higher, more optimistic one can show you a realistic range rather than one single guess.</li>
+      <li><strong>Read the projection.</strong> Your contributions, your employer's match, and investment growth are shown as separate contributions to your final projected balance, so you can see what's actually doing the work.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> If you're between 60 and 63, check that your contribution limit reflects the higher "super catch-up" amount that age range gets — it's easy to miss since it's a narrow four-year window, higher than the ordinary 50+ catch-up on either side of it.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="capital-gains">
+    <span class="tool-tag"><a href="/capital-gains-calculator.html">capital-gains-calculator.html</a></span>
+    <h2>Capital Gains Calculator</h2>
+    <p class="what-for">Calculates the tax owed on a stock or crypto sale, correctly stacking the gain on top of your other income rather than taxing it in isolation.</p>
+    <ol>
+      <li><strong>Enter your other (ordinary) income</strong> for the year — this matters a lot, since where your gain "stacks" on top of it determines the rate.</li>
+      <li><strong>Enter your proceeds</strong> (what you sold for) and your cost basis (what you originally paid).</li>
+      <li><strong>Choose short-term or long-term</strong> based on how long you held the asset (over one year is long-term, under is short-term, taxed at ordinary income rates).</li>
+      <li><strong>Choose your filing status.</strong></li>
+      <li><strong>Read the results.</strong> Federal tax on the gain and the Net Investment Income Tax (if your income crosses the threshold) are shown separately, along with the effective rate on just the gain itself.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> The exact same dollar amount of gain can be taxed very differently depending on your other income that year — this isn't a bug, it's how a stacked, bracket-based system works. Timing a sale for a lower-income year can genuinely change the rate.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="debt-payoff">
+    <span class="tool-tag"><a href="/debt-payoff-calculator.html">debt-payoff-calculator.html</a></span>
+    <h2>Debt Payoff Calculator</h2>
+    <p class="what-for">Compares the debt snowball (smallest balance first) and debt avalanche (highest interest rate first) payoff strategies side by side, for any set of debts you enter.</p>
+    <ol>
+      <li><strong>Add each debt</strong> with its balance, interest rate, and minimum payment.</li>
+      <li><strong>Enter how much extra you can put toward debt</strong> each month, beyond the minimums.</li>
+      <li><strong>Read the comparison.</strong> Both strategies are calculated and shown side by side — total interest paid and time to become debt-free for each approach.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> The avalanche method almost always saves more in total interest, since it targets the highest interest rate first — but the snowball method's quick wins (paying off a whole small debt fast) can matter more for actually sticking with a payoff plan. There's no universally "correct" choice between them.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/manual.html">All manual sections</a><a href="/all-tools.html">All Tools</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

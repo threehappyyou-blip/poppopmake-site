@@ -5,6 +5,7 @@
 (function () {
   var COMMANDS = [
     { title: 'Home', desc: 'Back to the homepage', href: '/', kw: 'homepage main all tools' },
+    { title: 'User Manual', desc: 'Step-by-step instructions for every tool, plus a downloadable Word doc', href: '/manual.html', kw: 'manual guide help how to use instructions tutorial download docx word' },
     { title: 'About', desc: 'Who builds this site and how accuracy is maintained', href: '/about.html', kw: 'about who made this creator author trust credibility' },
     { title: 'How We Verify Accuracy', desc: 'The actual process, with a real dated verification example', href: '/how-we-verify.html', kw: 'verify accuracy methodology source checking process trust' },
     { title: 'All Tools', desc: 'Every tool on the site, one page', href: '/all-tools.html', kw: 'all tools directory index list everything sitemap' },

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>How to Use Developer Tools — Step-by-Step — PopPopMake</title>
+<meta name="description" content="Step-by-step instructions for the JSON Formatter, Base64 Encode/Decode, UUID Generator, Color Converter, URL Encode/Decode, and Dummy Data Generator.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/manual-developer.html">
+<meta property="og:title" content="How to Use Developer Tools — Step-by-Step — PopPopMake">
+<meta property="og:description" content="Step-by-step instructions for all 6 Developer tools.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to Use Developer Tools — Step-by-Step — PopPopMake">
+<meta name="twitter:description" content="Step-by-step instructions for all 6 Developer tools.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.25rem;margin:0 0 4px;padding-top:8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 24px;}
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:32px;}
+  .toc-title{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);margin-bottom:10px;}
+  .toc ol{margin:0;padding-left:20px;columns:2;column-gap:20px;}
+  .toc li{margin-bottom:6px;font-size:0.9rem;break-inside:avoid;}
+  .tool-section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:20px;scroll-margin-top:20px;}
+  .tool-tag{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--teal);}
+  .what-for{color:var(--ink-soft);font-size:0.95rem;margin:4px 0 16px;}
+  .tool-section ol{margin:0 0 12px;padding-left:22px;}
+  .tool-section ol li{margin-bottom:10px;}
+  .tool-section ol li strong{color:var(--ink);}
+  .tip-box{background:var(--paper);border-left:3px solid var(--yellow);border-radius:6px;padding:12px 14px;margin-top:14px;font-size:0.87rem;color:var(--ink-soft);}
+  .tip-box strong{color:var(--ink);}
+  .back-top{font-size:0.82rem;text-align:right;display:block;margin-top:8px;}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/manual.html">All manual sections</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">User Manual</span>
+  <h1>Developer</h1>
+  <p class="lede">All 6 tools live on one page, <a href="/devtools.html">Developer Tools</a>, as tabs.</p>
+
+  <div class="toc">
+    <div class="toc-title">Jump to a tool</div>
+    <ol>
+      <li><a href="#json">JSON Formatter</a></li>
+      <li><a href="#base64">Base64 Encode/Decode</a></li>
+      <li><a href="#uuid">UUID Generator</a></li>
+      <li><a href="#color">Color Converter</a></li>
+      <li><a href="#url">URL Encode/Decode</a></li>
+      <li><a href="#dummy">Dummy Data Generator</a></li>
+    </ol>
+  </div>
+
+  <section class="tool-section" id="json">
+    <span class="tool-tag">Tab 1</span>
+    <h2>JSON Formatter</h2>
+    <p class="what-for">Formats messy JSON into a clean, readable, indented structure — or minifies it down to a single compact line — and checks it's valid along the way.</p>
+    <ol>
+      <li><strong>Paste your JSON</strong> into the input box.</li>
+      <li><strong>Click "Format"</strong> to pretty-print it with indentation, or "Minify" to compress it onto one line.</li>
+      <li><strong>Check for errors.</strong> If your JSON isn't valid, an error message points to roughly where the problem is, rather than just failing silently.</li>
+      <li><strong>Copy the result</strong> using the copy button.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> A common cause of "invalid JSON" errors is a trailing comma after the last item in an object or array — valid in JavaScript object literals, but not valid in strict JSON.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="base64">
+    <span class="tool-tag">Tab 2</span>
+    <h2>Base64 Encode/Decode</h2>
+    <p class="what-for">Converts text to and from Base64 encoding, correctly handling non-Latin text and emoji.</p>
+    <ol>
+      <li><strong>Choose "Encode" or "Decode"</strong> using the mode toggle.</li>
+      <li><strong>Paste your text</strong> into the input box (plain text to encode, or a Base64 string to decode).</li>
+      <li><strong>Read the result</strong> in the output box, which updates live.</li>
+      <li><strong>Copy the result</strong> using the copy button.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> Some simpler Base64 tools break on non-English text or emoji because of how they handle character encoding — this one is built specifically to handle UTF-8 text correctly, so Korean, Japanese, emoji, and other non-Latin characters round-trip correctly through encode and decode.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="uuid">
+    <span class="tool-tag">Tab 3</span>
+    <h2>UUID Generator</h2>
+    <p class="what-for">Generates random v4 UUIDs (universally unique identifiers), one at a time or in a batch.</p>
+    <ol>
+      <li><strong>Choose how many you need</strong> — a single one, or a batch (enter the quantity).</li>
+      <li><strong>Click "Generate."</strong></li>
+      <li><strong>Copy the result(s)</strong> using the copy button — a batch is typically copyable as one list, one UUID per line.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> Each UUID is generated independently using a cryptographically random source, so even generating thousands in a batch carries no meaningful risk of a duplicate.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="color">
+    <span class="tool-tag">Tab 4</span>
+    <h2>Color Converter</h2>
+    <p class="what-for">Converts a color between HEX, RGB, and HSL formats, with a live preview swatch.</p>
+    <ol>
+      <li><strong>Enter a color</strong> in any one of the three formats (HEX, RGB, or HSL) — or use the color picker if one is provided.</li>
+      <li><strong>Read the converted values</strong> in the other two formats, updated live.</li>
+      <li><strong>Check the swatch</strong> to confirm it's the color you meant.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> HEX codes can be typed with or without the leading "#" — the tool accepts either.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="url">
+    <span class="tool-tag">Tab 5</span>
+    <h2>URL Encode/Decode</h2>
+    <p class="what-for">Percent-encodes text for safe use in a URL, or decodes an already-encoded URL back to readable text.</p>
+    <ol>
+      <li><strong>Choose "Encode" or "Decode."</strong></li>
+      <li><strong>Paste your text or URL</strong> into the input box.</li>
+      <li><strong>Read the result,</strong> updated live.</li>
+      <li><strong>Copy the result</strong> using the copy button.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> This is most often needed for putting special characters (spaces, &amp;, ?, #) safely into a query string parameter — encode just that parameter's value, not the whole URL, or you'll end up encoding the slashes and colons that need to stay as-is.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="dummy">
+    <span class="tool-tag">Tab 6</span>
+    <h2>Dummy Data Generator</h2>
+    <p class="what-for">Generates fake but realistic-looking test data — names, emails, phone numbers, addresses — for testing an app or filling in a demo.</p>
+    <ol>
+      <li><strong>Choose which fields you need</strong> (name, email, phone, address, etc.) using the checkboxes.</li>
+      <li><strong>Choose how many rows</strong> of data to generate.</li>
+      <li><strong>Choose your output format</strong> — CSV or JSON.</li>
+      <li><strong>Click "Generate."</strong></li>
+      <li><strong>Copy or download the result.</strong></li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> Every value is randomly generated and entirely fictional — none of it corresponds to a real person, email address, or phone number, so it's safe to use freely in test environments, demos, or sample datasets.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/manual.html">All manual sections</a><a href="/all-tools.html">All Tools</a><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

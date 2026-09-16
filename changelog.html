@@ -86,6 +86,14 @@
   <div class="entry">
     <div class="entry-date">Sep 16, 2026</div>
     <span class="tag shipped">Shipped</span>
+    <h2>A full User Manual: 43 tools, 7 category pages, one downloadable Word doc</h2>
+    <p>New <a href="/manual.html">User Manual</a> hub linking to a step-by-step guide for every tool on the site, organized the same way the tools themselves are: Documents &amp; Images, Money &amp; Tax, Career, Business, Writing &amp; AI, Everyday, and Developer. Each tool gets what it's for, numbered steps, and a "Good to know" note about a real limitation or edge case, not just a features list. The same content is also available as a single 19-page Word document with a working, clickable table of contents.</p>
+    <p>The table of contents was built two different ways before shipping the second one. The first attempt used Word's standard auto-updating TOC field, which rendered as a heading with nothing underneath it when converted straight to PDF &mdash; that field only populates once opened in Word and manually updated, which most people would never know to do, and would have looked simply broken. Rebuilt it using bookmarks and internal hyperlinks instead, which display correctly immediately in any viewer. Caught a second issue while checking the rendered pages: a step like <code>Click "Merge PDFs."</code> was being bolded up to the first period found anywhere in the sentence, which lands inside the closing quotation mark and leaves a stray orphaned quote behind. Fixed by capturing the actual bold-text boundary from the source HTML directly instead of guessing it from punctuation, then re-rendered and re-checked every page before packaging it.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 16, 2026</div>
+    <span class="tag shipped">Shipped</span>
     <h2>Screenshot Markup, now also standalone and embeddable</h2>
     <p>The markup tool from Document &amp; Image Tools now also has <a href="/screenshot-markup.html">its own page</a> for a direct link or bookmark, and is the eighth tool on the <a href="/embed.html">embeddable widgets</a> list for anyone who wants it on their own site. Both reuse the exact same tested drawing code as the version in Document &amp; Image Tools rather than a second copy of it. Caught one integration bug assembling the embed version: the extracted script already closed its own function scope, and adding the iframe-resize code after it without removing that closing brace left a stray unmatched one at the end &mdash; found by a plain syntax check before it shipped, not by a user hitting a broken page.</p>
   </div>

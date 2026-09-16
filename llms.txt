@@ -37,6 +37,7 @@ PopPopMake is a solo-built, ad-supported utility site with no user accounts. Eve
 
 ## Optional
 - [About](https://poppopmake.com/about.html): Who builds the site, why it's ad- and tip-supported rather than lead-generation based, and how calculator accuracy is verified against primary tax sources.
+- [User Manual](https://poppopmake.com/manual.html): Step-by-step instructions for every tool on the site, organized into 7 category pages (documents, money, career, business, writing, everyday, developer), plus a downloadable Word document covering all of them in one file.
 - [How We Verify Accuracy](https://poppopmake.com/how-we-verify.html): The actual verification process — named primary sources, cross-checking, and a real dated example of a re-verification pass across the Australia, UK/Scotland, and Canada calculators.
 - [All Tools Directory](https://poppopmake.com/all-tools.html): Every tool on the site listed on one page.
 - [Embeddable Widgets](https://poppopmake.com/embed.html): Eight of the above tools available as a single-script-tag embed for third-party sites, free, no attribution required beyond a small "Powered by PopPopMake" credit.
