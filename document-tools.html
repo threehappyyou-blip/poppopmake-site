@@ -11,7 +11,8 @@
 <meta name="description" content="Merge PDFs, split PDFs, and convert JPG/PNG images to PDF — free, and everything happens in your browser. Files never leave your device.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PopPopMake">
-<meta property="og:url" content="https://poppopmake.com/document-tools.html">
+<meta property="og:url" content="https://poppopmake.com/document-tools">
+<link rel="canonical" href="https://poppopmake.com/document-tools">
 <meta property="og:title" content="Document &amp; Image Tools — PopPopMake">
 <meta property="og:description" content="Merge PDFs, split PDFs, and convert JPG/PNG images to PDF — free, and everything happens in your browser. Files never leave your device.">
 <meta name="twitter:card" content="summary">
@@ -511,7 +512,7 @@
   <!-- SCREENSHOT MARKUP PANEL -->
   <section class="panel" id="panel-markup">
     <h2>Screenshot Markup</h2>
-    <p class="sub">Draw arrows and shapes, write on it, highlight, crop, or blur out a specific area &mdash; the everyday markup you'd do on a screenshot before sending it. Also available as its <a href="/screenshot-markup.html">own standalone page</a>, or <a href="/embed.html">embeddable on your own site</a>.</p>
+    <p class="sub">Draw arrows and shapes, write on it, highlight, crop, or blur out a specific area &mdash; the everyday markup you'd do on a screenshot before sending it. Also available as its <a href="/screenshot-markup">own standalone page</a>, or <a href="/embed">embeddable on your own site</a>.</p>
     <div class="drop" id="markup-drop">
       <div>Drag an image here, or</div>
       <label class="btn-label" for="markup-input">Choose an image</label>
@@ -568,7 +569,7 @@
   </section>
 
   <div class="disclaimer">
-    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Redact PDF renders each page to an image using PDF.js (the same engine Firefox uses to display PDFs), so the exported file has no underlying text layer left anywhere in it — there's nothing to select or copy, including in the redacted area, because after export the whole page is a flat picture rather than text plus a black box drawn on top. That's a real trade-off: the output PDF is no longer searchable or copy-pasteable, on any page, not just the redacted one. Extract Text uses Tesseract.js, a browser build of the open-source Tesseract OCR engine — the same model family used in a lot of commercial OCR tools — downloaded once per language and cached after that. Face Mosaic uses Google's MediaPipe Face Detector (the BlazeFace model). Enhance Quality's Fast mode is plain image-resizing math with no AI involved; AI Upscale and AI Eraser use small open-source models (via Transformers.js and ONNX Runtime Web) that download once and then run entirely on your device — AI Eraser's model is roughly 200MB, so that first download is worth doing on Wi-Fi. Face and object detection can miss things, especially at odd angles or low light — always look over a result before sharing it. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, extracting pages, or removing a background, you can send the result straight into another tool without downloading it first. <a href="/how-it-works.html">See how to check that yourself</a>, or read our <a href="/privacy.html">Privacy Policy</a> for more.
+    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Redact PDF renders each page to an image using PDF.js (the same engine Firefox uses to display PDFs), so the exported file has no underlying text layer left anywhere in it — there's nothing to select or copy, including in the redacted area, because after export the whole page is a flat picture rather than text plus a black box drawn on top. That's a real trade-off: the output PDF is no longer searchable or copy-pasteable, on any page, not just the redacted one. Extract Text uses Tesseract.js, a browser build of the open-source Tesseract OCR engine — the same model family used in a lot of commercial OCR tools — downloaded once per language and cached after that. Face Mosaic uses Google's MediaPipe Face Detector (the BlazeFace model). Enhance Quality's Fast mode is plain image-resizing math with no AI involved; AI Upscale and AI Eraser use small open-source models (via Transformers.js and ONNX Runtime Web) that download once and then run entirely on your device — AI Eraser's model is roughly 200MB, so that first download is worth doing on Wi-Fi. Face and object detection can miss things, especially at odd angles or low light — always look over a result before sharing it. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, extracting pages, or removing a background, you can send the result straight into another tool without downloading it first. <a href="/how-it-works">See how to check that yourself</a>, or read our <a href="/privacy">Privacy Policy</a> for more.
   </div>
 </main>
 
@@ -576,7 +577,7 @@
   <div class="inner">
     <span class="brand">PopPopMake</span>
     <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
-    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+    <span class="links"><a href="/terms">Terms</a><a href="/privacy">Privacy</a></span>
   </div>
 </footer>
 

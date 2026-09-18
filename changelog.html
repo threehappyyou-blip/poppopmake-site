@@ -11,7 +11,8 @@
 <meta name="description" content="What's shipped, what's fixed, and what got reported and fixed because someone said something.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PopPopMake">
-<meta property="og:url" content="https://poppopmake.com/changelog.html">
+<meta property="og:url" content="https://poppopmake.com/changelog">
+<link rel="canonical" href="https://poppopmake.com/changelog">
 <meta property="og:title" content="Changelog — PopPopMake">
 <meta property="og:description" content="What's shipped, what's fixed, and what got reported and fixed because someone said something.">
 <meta name="twitter:card" content="summary">
@@ -77,17 +78,25 @@
 <main class="wrap" id="main-content">
   <span class="eyebrow">Changelog</span>
   <h1>What's Changed</h1>
-  <p class="lede">"Built in the open" is easy to put in a tagline. This page is what that actually means: what shipped, what broke and got caught before anyone saw it, and — once they start coming in — what got fixed because someone used the <a href="/feedback.html">Feedback</a> form.</p>
+  <p class="lede">"Built in the open" is easy to put in a tagline. This page is what that actually means: what shipped, what broke and got caught before anyone saw it, and — once they start coming in — what got fixed because someone used the <a href="/feedback">Feedback</a> form.</p>
 
   <div class="disclaimer">
     Three kinds of entries show up here: <span class="tag shipped">Shipped</span> for something new, <span class="tag caught">Caught in testing</span> for a bug found and fixed before launch, and <span class="tag reported">Reported</span> for a fix that started with someone else noticing first. That last tag is empty today — it won't stay that way.
   </div>
 
   <div class="entry">
+    <div class="entry-date">Sep 18, 2026</div>
+    <span class="tag caught">Caught in testing</span>
+    <h2>Every internal link was pointing at a URL that just redirects</h2>
+    <p>Cloudflare Pages automatically 301-redirects any <code>.html</code> URL to its extension-less counterpart &mdash; <code>/contact.html</code> becomes <code>/contact</code> &mdash; which is documented, default behavior, not a bug on Cloudflare's end. The problem: every internal link on this entire site, the sitemap, llms.txt, and the search index all pointed at the <code>.html</code> version, meaning every single click and every crawl of every page went through an unnecessary redirect hop instead of landing directly on the real, canonical URL. Confirmed this was actually happening (not just theoretically possible) using Search Console data showing core pages like the main paycheck calculator and document tools page classified as "pages with redirects" rather than indexed content.</p>
+    <p>Fixed by stripping <code>.html</code> from every internal link, sitemap entry, and llms.txt entry site-wide, and adding an explicit <code>&lt;link rel="canonical"&gt;</code> tag to every page (previously missing entirely) so the canonical URL is stated directly rather than relying only on the redirect. The files on disk keep their <code>.html</code> names unchanged &mdash; only the links pointing to them changed &mdash; since Cloudflare's own routing matches an extension-less request straight to the matching <code>.html</code> file without a redirect. Also found and fixed 7 pages that had no Open Graph tags or canonical URL at all, a gap unrelated to this specific issue but worth closing at the same time.</p>
+  </div>
+
+  <div class="entry">
     <div class="entry-date">Sep 16, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>A full User Manual: 43 tools, 7 category pages, one downloadable Word doc</h2>
-    <p>New <a href="/manual.html">User Manual</a> hub linking to a step-by-step guide for every tool on the site, organized the same way the tools themselves are: Documents &amp; Images, Money &amp; Tax, Career, Business, Writing &amp; AI, Everyday, and Developer. Each tool gets what it's for, numbered steps, and a "Good to know" note about a real limitation or edge case, not just a features list. The same content is also available as a single 19-page Word document with a working, clickable table of contents.</p>
+    <p>New <a href="/manual">User Manual</a> hub linking to a step-by-step guide for every tool on the site, organized the same way the tools themselves are: Documents &amp; Images, Money &amp; Tax, Career, Business, Writing &amp; AI, Everyday, and Developer. Each tool gets what it's for, numbered steps, and a "Good to know" note about a real limitation or edge case, not just a features list. The same content is also available as a single 19-page Word document with a working, clickable table of contents.</p>
     <p>The table of contents was built two different ways before shipping the second one. The first attempt used Word's standard auto-updating TOC field, which rendered as a heading with nothing underneath it when converted straight to PDF &mdash; that field only populates once opened in Word and manually updated, which most people would never know to do, and would have looked simply broken. Rebuilt it using bookmarks and internal hyperlinks instead, which display correctly immediately in any viewer. Caught a second issue while checking the rendered pages: a step like <code>Click "Merge PDFs."</code> was being bolded up to the first period found anywhere in the sentence, which lands inside the closing quotation mark and leaves a stray orphaned quote behind. Fixed by capturing the actual bold-text boundary from the source HTML directly instead of guessing it from punctuation, then re-rendered and re-checked every page before packaging it.</p>
   </div>
 
@@ -95,7 +104,7 @@
     <div class="entry-date">Sep 16, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Screenshot Markup, now also standalone and embeddable</h2>
-    <p>The markup tool from Document &amp; Image Tools now also has <a href="/screenshot-markup.html">its own page</a> for a direct link or bookmark, and is the eighth tool on the <a href="/embed.html">embeddable widgets</a> list for anyone who wants it on their own site. Both reuse the exact same tested drawing code as the version in Document &amp; Image Tools rather than a second copy of it. Caught one integration bug assembling the embed version: the extracted script already closed its own function scope, and adding the iframe-resize code after it without removing that closing brace left a stray unmatched one at the end &mdash; found by a plain syntax check before it shipped, not by a user hitting a broken page.</p>
+    <p>The markup tool from Document &amp; Image Tools now also has <a href="/screenshot-markup">its own page</a> for a direct link or bookmark, and is the eighth tool on the <a href="/embed">embeddable widgets</a> list for anyone who wants it on their own site. Both reuse the exact same tested drawing code as the version in Document &amp; Image Tools rather than a second copy of it. Caught one integration bug assembling the embed version: the extracted script already closed its own function scope, and adding the iframe-resize code after it without removing that closing brace left a stray unmatched one at the end &mdash; found by a plain syntax check before it shipped, not by a user hitting a broken page.</p>
   </div>
 
   <div class="entry">
@@ -119,14 +128,14 @@
     <div class="entry-date">Sep 14, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Clickable sources, a real verification-methodology page, and a live re-check</h2>
-    <p>Every jurisdiction-based calculator's "Source" now links directly to the actual government page (IRS.gov, gov.uk, gov.scot, ato.gov.au, canada.ca) instead of just naming it. New page: <a href="/how-we-verify.html">How We Verify Accuracy</a>, describing the real process rather than a vague promise. It includes an actual re-verification pass run the same day the page was built: Australia's second bracket rate (16%&rarr;15% from 1 July 2026) and Medicare levy shade-in thresholds, Scotland's top rate (47%&rarr;48%), and Canada's federal lowest bracket (15%&rarr;14% for the full 2026 year) were all checked against current sources &mdash; and all three came back already correct. Reporting "checked, no change needed" here rather than only ever reporting fixes, since a site that only ever announces corrections is quietly implying every unmentioned figure was never checked at all.</p>
+    <p>Every jurisdiction-based calculator's "Source" now links directly to the actual government page (IRS.gov, gov.uk, gov.scot, ato.gov.au, canada.ca) instead of just naming it. New page: <a href="/how-we-verify">How We Verify Accuracy</a>, describing the real process rather than a vague promise. It includes an actual re-verification pass run the same day the page was built: Australia's second bracket rate (16%&rarr;15% from 1 July 2026) and Medicare levy shade-in thresholds, Scotland's top rate (47%&rarr;48%), and Canada's federal lowest bracket (15%&rarr;14% for the full 2026 year) were all checked against current sources &mdash; and all three came back already correct. Reporting "checked, no change needed" here rather than only ever reporting fixes, since a site that only ever announces corrections is quietly implying every unmentioned figure was never checked at all.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Sep 9, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Four more transparency guides, extending the Ontario/Scotland format</h2>
-    <p>The pattern behind the Ontario surtax and Scotland tax guides &mdash; a real mechanic, explained with actual verified numbers, not just prose &mdash; now covers four more calculators. <a href="/au-marginal-rate-explained.html">Your Real Marginal Tax Rate Isn't What the Bracket Table Says</a> uses the AU engine itself, stepped in $1,000 increments, to find exactly where the LITO taper and Medicare shade-in zone push the real rate above the official bracket (25% at $30k&ndash;$35k, not the "15%" the bracket table implies). <a href="/capital-gains-stacking-explained.html">The Same $50,000 Gain Can Be Taxed at 7% or 17%</a> runs the identical gain through the calculator at two different ordinary-income levels to show the stacking mechanic concretely rather than just describing it. <a href="/401k-super-catchup-explained.html">The Four-Year Window Where Your 401(k) Limit Jumps Higher</a> covers the 60&ndash;63 SECURE 2.0 super catch-up, a detail plain enough to get missed by a generic answer. <a href="/compare-worked-example.html">Same Salary Number, Three Very Different Paychecks</a> runs an identical 80,000 through Texas, Ontario, and England live in each calculator to get real, not estimated, comparison numbers. All four cross-link from their respective calculators and back.</p>
+    <p>The pattern behind the Ontario surtax and Scotland tax guides &mdash; a real mechanic, explained with actual verified numbers, not just prose &mdash; now covers four more calculators. <a href="/au-marginal-rate-explained">Your Real Marginal Tax Rate Isn't What the Bracket Table Says</a> uses the AU engine itself, stepped in $1,000 increments, to find exactly where the LITO taper and Medicare shade-in zone push the real rate above the official bracket (25% at $30k&ndash;$35k, not the "15%" the bracket table implies). <a href="/capital-gains-stacking-explained">The Same $50,000 Gain Can Be Taxed at 7% or 17%</a> runs the identical gain through the calculator at two different ordinary-income levels to show the stacking mechanic concretely rather than just describing it. <a href="/401k-super-catchup-explained">The Four-Year Window Where Your 401(k) Limit Jumps Higher</a> covers the 60&ndash;63 SECURE 2.0 super catch-up, a detail plain enough to get missed by a generic answer. <a href="/compare-worked-example">Same Salary Number, Three Very Different Paychecks</a> runs an identical 80,000 through Texas, Ontario, and England live in each calculator to get real, not estimated, comparison numbers. All four cross-link from their respective calculators and back.</p>
   </div>
 
   <div class="entry">
@@ -163,14 +172,14 @@
     <div class="entry-date">Sep 5, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>An About page, and pulling the 51 state pages from search for now</h2>
-    <p>Added <a href="/about.html">an About page</a> &mdash; who builds this, why it's ad- and tip-supported instead of lead-generation based, and how the tax calculators are checked against primary sources. Also set <code>noindex, follow</code> on all 51 individual state paycheck pages and removed them from the sitemap. Fifty-one pages that are ~90% identical in structure, differing mainly in a data-driven opening sentence and which state is pre-selected, is exactly the kind of near-duplicate, programmatically-generated pattern that reads as low-value content at scale, even though each page is individually accurate. The pages themselves aren't deleted and the links between them still work &mdash; they're just out of the search index and off the sitemap until the rest of the site has a longer track record. The <a href="/paycheck-states.html">state browsing hub</a> and the main <a href="/paycheck-calculator.html">paycheck calculator</a> (which covers all 50 states plus DC in one page) stay fully indexed.</p>
+    <p>Added <a href="/about">an About page</a> &mdash; who builds this, why it's ad- and tip-supported instead of lead-generation based, and how the tax calculators are checked against primary sources. Also set <code>noindex, follow</code> on all 51 individual state paycheck pages and removed them from the sitemap. Fifty-one pages that are ~90% identical in structure, differing mainly in a data-driven opening sentence and which state is pre-selected, is exactly the kind of near-duplicate, programmatically-generated pattern that reads as low-value content at scale, even though each page is individually accurate. The pages themselves aren't deleted and the links between them still work &mdash; they're just out of the search index and off the sitemap until the rest of the site has a longer track record. The <a href="/paycheck-states">state browsing hub</a> and the main <a href="/paycheck-calculator">paycheck calculator</a> (which covers all 50 states plus DC in one page) stay fully indexed.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Sep 3, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Discoverability: an All Tools page, llms.txt, and social preview cards site-wide</h2>
-    <p>New <a href="/all-tools.html">All Tools directory</a> lists every tool on the site in one place, linked from the homepage nav and from the footer of 67 other pages. Added <a href="/llms.txt">llms.txt</a> at the domain root, following the actual llmstxt.org specification rather than several lower-quality sources found while researching it that described a "W3C standard" and version-numbered spec that don't check out &mdash; this mainly helps AI coding agents and documentation-reading tools understand the site, not a guaranteed search or citation boost. Added OpenGraph and Twitter Card tags to all 84 pages so links shared on Slack, Twitter/X, or similar show a proper title and description instead of a bare link. Caught one real bug while doing this at scale: one page's title contains literal quotation marks, which broke the HTML attribute when copied in as-is; found it by re-scanning every generated tag for embedded quotes, not just spot-checking a few. Also gave the Tip &amp; Split Calculator a pre-tax/post-tax tip option, catching a button class collision before it shipped that would have let the new tax toggle silently overwrite the tip percentage field.</p>
+    <p>New <a href="/all-tools">All Tools directory</a> lists every tool on the site in one place, linked from the homepage nav and from the footer of 67 other pages. Added <a href="/llms.txt">llms.txt</a> at the domain root, following the actual llmstxt.org specification rather than several lower-quality sources found while researching it that described a "W3C standard" and version-numbered spec that don't check out &mdash; this mainly helps AI coding agents and documentation-reading tools understand the site, not a guaranteed search or citation boost. Added OpenGraph and Twitter Card tags to all 84 pages so links shared on Slack, Twitter/X, or similar show a proper title and description instead of a bare link. Caught one real bug while doing this at scale: one page's title contains literal quotation marks, which broke the HTML attribute when copied in as-is; found it by re-scanning every generated tag for embedded quotes, not just spot-checking a few. Also gave the Tip &amp; Split Calculator a pre-tax/post-tax tip option, catching a button class collision before it shipped that would have let the new tax toggle silently overwrite the tip percentage field.</p>
   </div>
 
   <div class="entry">
@@ -233,21 +242,21 @@
     <div class="entry-date">Aug 27, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Two guides no competitor can honestly write</h2>
-    <p><a href="/canada-tax-mechanics.html">How We Handle Ontario's Surtax and Quebec's Rules</a> walks through the actual mechanics, including the surtax-compounding bug we caught and fixed. <a href="/uk-scotland-tax-explained.html">England/Wales/NI vs Scotland: What Actually Differs</a> shows real numbers across four salary levels &mdash; Scotland is actually slightly cheaper below roughly £35,000 and considerably more expensive above it, which isn't the story either "Scotland is high-tax" or "Scotland is low-tax" simplifications tell. Both link back from their respective calculators.</p>
+    <p><a href="/canada-tax-mechanics">How We Handle Ontario's Surtax and Quebec's Rules</a> walks through the actual mechanics, including the surtax-compounding bug we caught and fixed. <a href="/uk-scotland-tax-explained">England/Wales/NI vs Scotland: What Actually Differs</a> shows real numbers across four salary levels &mdash; Scotland is actually slightly cheaper below roughly £35,000 and considerably more expensive above it, which isn't the story either "Scotland is high-tax" or "Scotland is low-tax" simplifications tell. Both link back from their respective calculators.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 27, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>A guide explaining why our AI checker isn't a "detector"</h2>
-    <p>New guide: <a href="/ai-detector-honesty.html">Why We Don't Claim Our AI Checker Is 99% Accurate</a>. Covers the actual evidence &mdash; Stanford HAI found seven commercial AI detectors falsely flagged 61% of human-written essays by non-native English speakers, and Vanderbilt, MIT, Yale, and dozens of other universities have since restricted or dropped automated AI detection for exactly this reason. The Writing &amp; AI tool here was already built as a plain pattern-flagger rather than a classifier claiming ML-based detection; this guide makes that choice explicit instead of leaving it implicit.</p>
+    <p>New guide: <a href="/ai-detector-honesty">Why We Don't Claim Our AI Checker Is 99% Accurate</a>. Covers the actual evidence &mdash; Stanford HAI found seven commercial AI detectors falsely flagged 61% of human-written essays by non-native English speakers, and Vanderbilt, MIT, Yale, and dozens of other universities have since restricted or dropped automated AI detection for exactly this reason. The Writing &amp; AI tool here was already built as a plain pattern-flagger rather than a classifier claiming ML-based detection; this guide makes that choice explicit instead of leaving it implicit.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 27, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Four more embeddable widgets: UK, Australia, Canada &amp; Mortgage</h2>
-    <p>The embeddable Paycheck Calculator was US-only; now UK, Australia, and Canada versions are embeddable too, plus the Mortgage Calculator. Seven widgets total on the <a href="/embed.html">Embed</a> page. Each new widget reuses the exact tested engine from its full page, adapted into a compact layout &mdash; and that adaptation caught two real bugs: the Canada and Mortgage engines both referenced a couple of on-page elements (a province hint, a PMI note) that the compact layout doesn't have, which would have thrown an error on every keystroke and silently frozen those two widgets. Caught by checking every element ID the code references against what the page actually contains, not just running the calculators once and eyeballing the result.</p>
+    <p>The embeddable Paycheck Calculator was US-only; now UK, Australia, and Canada versions are embeddable too, plus the Mortgage Calculator. Seven widgets total on the <a href="/embed">Embed</a> page. Each new widget reuses the exact tested engine from its full page, adapted into a compact layout &mdash; and that adaptation caught two real bugs: the Canada and Mortgage engines both referenced a couple of on-page elements (a province hint, a PMI note) that the compact layout doesn't have, which would have thrown an error on every keystroke and silently frozen those two widgets. Caught by checking every element ID the code references against what the page actually contains, not just running the calculators once and eyeballing the result.</p>
   </div>
 
   <div class="entry">
@@ -261,7 +270,7 @@
     <div class="entry-date">Aug 27, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>A dedicated paycheck calculator page for every U.S. state</h2>
-    <p>50 states plus D.C., each with its own page, its own URL, and an opening line pulled directly from the same verified tax data the calculator itself uses &mdash; no state income tax, a flat rate, or a progressive top rate, whichever is actually true. Every page carries the same message: no email or phone number collected, no referral to a financial advisor. A new <a href="/paycheck-states.html">Paycheck Calculator by State</a> hub groups all 51 by tax type. Caught and fixed a templating bug during generation that would have broken all 51 pages identically (a duplicated script-closing tag) before any of them went out the door.</p>
+    <p>50 states plus D.C., each with its own page, its own URL, and an opening line pulled directly from the same verified tax data the calculator itself uses &mdash; no state income tax, a flat rate, or a progressive top rate, whichever is actually true. Every page carries the same message: no email or phone number collected, no referral to a financial advisor. A new <a href="/paycheck-states">Paycheck Calculator by State</a> hub groups all 51 by tax type. Caught and fixed a templating bug during generation that would have broken all 51 pages identically (a duplicated script-closing tag) before any of them went out the door.</p>
   </div>
 
   <div class="entry">
@@ -331,7 +340,7 @@
     <div class="entry-date">Aug 25, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>QR Code Generator and Merge PDFs, now embeddable</h2>
-    <p>Two more free widgets on the <a href="/embed.html">Embed</a> page — same one-script-tag pattern as the Paycheck Calculator. Also caught a smaller thing while touching this: the Paycheck Calculator embed still had the old, lower-contrast link and button colors from before the accessibility pass — it lived in a folder the original batch fix script didn't reach. Fixed.</p>
+    <p>Two more free widgets on the <a href="/embed">Embed</a> page — same one-script-tag pattern as the Paycheck Calculator. Also caught a smaller thing while touching this: the Paycheck Calculator embed still had the old, lower-contrast link and button colors from before the accessibility pass — it lived in a folder the original batch fix script didn't reach. Fixed.</p>
   </div>
 
   <div class="entry">
@@ -359,7 +368,7 @@
     <div class="entry-date">Aug 25, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Accessibility pass: contrast, keyboard, screen readers</h2>
-    <p>Every text/background color combination on the site had its contrast ratio calculated, not eyeballed — the link color and primary button color were both failing WCAG AA (4.12:1 and 3.45:1, needed 4.5:1) and got darkened just enough to pass. Added skip-to-content links, fixed two skipped heading levels, added labels to icon-only buttons, and wrote up an honest <a href="/accessibility.html">Accessibility Statement</a> — including what hasn't been tested yet.</p>
+    <p>Every text/background color combination on the site had its contrast ratio calculated, not eyeballed — the link color and primary button color were both failing WCAG AA (4.12:1 and 3.45:1, needed 4.5:1) and got darkened just enough to pass. Added skip-to-content links, fixed two skipped heading levels, added labels to icon-only buttons, and wrote up an honest <a href="/accessibility">Accessibility Statement</a> — including what hasn't been tested yet.</p>
   </div>
 
   <div class="entry">
@@ -401,14 +410,14 @@
     <div class="entry-date">Aug 24, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Embed the Paycheck Calculator on your own site</h2>
-    <p>One script tag, free, no signup, resizes itself automatically. Details on the <a href="/embed.html">Embed</a> page. More tools are getting the same treatment over time.</p>
+    <p>One script tag, free, no signup, resizes itself automatically. Details on the <a href="/embed">Embed</a> page. More tools are getting the same treatment over time.</p>
   </div>
 
   <div class="entry">
     <div class="entry-date">Aug 24, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>A page that proves the privacy claim instead of just stating it</h2>
-    <p><a href="/how-it-works.html">How This Works</a> walks through checking, yourself, in your browser's own dev tools, that nothing you type into a tool ever gets sent anywhere.</p>
+    <p><a href="/how-it-works">How This Works</a> walks through checking, yourself, in your browser's own dev tools, that nothing you type into a tool ever gets sent anywhere.</p>
   </div>
 
   <div class="entry">
@@ -444,7 +453,7 @@
   <div class="inner">
     <span class="brand">PopPopMake</span>
     <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
-    <span class="links"><a href="/terms.html">Terms</a><a href="/privacy.html">Privacy</a></span>
+    <span class="links"><a href="/terms">Terms</a><a href="/privacy">Privacy</a></span>
   </div>
 </footer>
 
