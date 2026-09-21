@@ -21,6 +21,8 @@
     { title: 'UK Paycheck Calculator', desc: 'Income Tax and National Insurance, England/Wales/NI or Scotland', href: '/uk-paycheck-calculator', kw: 'tax salary income take-home money uk britain scotland paycheck' },
     { title: 'Australia Paycheck Calculator', desc: 'Income tax, LITO, and the Medicare levy', href: '/au-paycheck-calculator', kw: 'tax salary income take-home money australia medicare levy paycheck' },
     { title: 'Canada Paycheck Calculator', desc: 'Federal + provincial tax, CPP/CPP2, EI, all provinces', href: '/ca-paycheck-calculator', kw: 'tax salary income take-home money canada cpp ei ontario quebec alberta paycheck' },
+    { title: 'BMI Calculator', desc: 'Body mass index and category — WHO standard and Asian-specific thresholds', href: '/bmi-calculator', kw: 'bmi body mass index weight height health category overweight underweight obese who asian' },
+    { title: 'Calorie Calculator', desc: 'BMR, TDEE, and calorie targets for losing, maintaining, or gaining weight', href: '/calorie-calculator', kw: 'calorie calculator tdee bmr calories maintenance weight loss gain diet mifflin st jeor activity level' },
     { title: 'Career Tools', desc: 'Resume builder · ATS score checker · cover letter · hourly/salary converter', href: '/career-tools', kw: 'resume cv job ats career keyword cover letter application hourly salary wage annual' },
     { title: 'Business Tools', desc: 'Invoice generator · QR code generator', href: '/business-tools', kw: 'invoice qr code business billing' },
     { title: 'Writing & AI Tools', desc: 'Flag AI-ish phrases, get plain-language swaps, check word count & readability', href: '/writing-tools', kw: 'ai writing detector checker text cliche word count readability flesch syllables reading time' },

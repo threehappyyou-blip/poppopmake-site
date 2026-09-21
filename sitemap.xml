@@ -36,6 +36,16 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://poppopmake.com/bmi-calculator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/calorie-calculator</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://poppopmake.com/debt-payoff-calculator</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -202,6 +212,11 @@
   </url>
   <url>
     <loc>https://poppopmake.com/manual-money</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/manual-health</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

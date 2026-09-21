@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Calorie Calculator — Daily Calories &amp; TDEE — PopPopMake</title>
+<meta name="description" content="Free calorie calculator using the Mifflin-St Jeor equation. Get your BMR, TDEE, and calorie targets for losing, maintaining, or gaining weight. No account.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/calorie-calculator">
+<link rel="canonical" href="https://poppopmake.com/calorie-calculator">
+<meta property="og:title" content="Calorie Calculator — Daily Calories &amp; TDEE — PopPopMake">
+<meta property="og:description" content="Free calorie calculator using the Mifflin-St Jeor equation. Get your BMR, TDEE, and calorie targets for losing, maintaining, or gaining weight. No account.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Calorie Calculator — Daily Calories &amp; TDEE — PopPopMake">
+<meta name="twitter:description" content="Free calorie calculator using the Mifflin-St Jeor equation — BMR, TDEE, and calorie targets for losing, maintaining, or gaining weight.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin:0 0 12px;}
+  .lede{color:var(--ink-soft);max-width:65ch;margin:0 0 24px;}
+
+  .verify-badge{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;}
+  .verify-grid{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:10px;}
+  .verify-item{min-width:140px;}
+  .verify-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:3px;}
+  .verify-value{font-size:0.92rem;font-weight:600;}
+  .verify-note{font-size:0.85rem;color:var(--ink-soft);margin:0;padding-top:10px;border-top:1px solid var(--line);}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
+
+  .mode-group{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:20px;}
+  .mode-group button{flex:1;padding:10px 8px;background:#fff;border:none;font-size:0.85rem;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;}
+  .mode-group button.active{background:var(--teal);color:#fff;font-weight:600;}
+  .mode-group button:not(:last-child){border-right:1px solid var(--line);}
+
+  .field-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+  .field{flex:1;min-width:120px;}
+  .field label{display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;}
+  .field input, .field select{padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:1rem;background:#fff;color:var(--ink);width:100%;}
+  .ht-pair{display:flex;gap:8px;}
+  .ht-pair input{width:100%;}
+  .ht-pair span{align-self:center;color:var(--ink-soft);font-size:0.85rem;flex-shrink:0;}
+
+  .activity-list{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;}
+  .activity-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;}
+  .activity-row:hover{border-color:var(--teal);}
+  .activity-row input{margin-top:3px;flex-shrink:0;}
+  .activity-row .a-title{font-weight:600;font-size:0.92rem;}
+  .activity-row .a-desc{font-size:0.8rem;color:var(--ink-soft);}
+  .activity-row.checked{border-color:var(--teal);background:rgba(15,139,141,0.06);}
+
+  .result-panel{padding:28px 24px;}
+  .stat-pair{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;text-align:center;margin-bottom:20px;}
+  .big-stat{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2.2rem;letter-spacing:-0.02em;line-height:1;}
+  .stat-label{font-size:0.82rem;color:var(--ink-soft);margin-top:4px;}
+
+  table.goal-table{width:100%;border-collapse:collapse;font-size:0.9rem;}
+  table.goal-table th, table.goal-table td{padding:10px 10px;text-align:left;border-bottom:1px solid var(--line);}
+  table.goal-table thead th{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);}
+  table.goal-table tbody tr:last-child td{border-bottom:none;}
+  table.goal-table tr.maintain-row{background:rgba(15,139,141,0.07);}
+  table.goal-table .kcal{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.05rem;}
+  table.goal-table .kcal.low{color:var(--orange);}
+
+  .warning-box{background:rgba(193,67,36,0.08);border:1px solid var(--orange);border-radius:8px;padding:14px 16px;margin-top:16px;font-size:0.88rem;color:var(--ink);display:none;}
+  .warning-box.show{display:block;}
+
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:8px;margin-bottom:20px;font-size:0.88rem;color:var(--ink-soft);}
+  .disclaimer strong{color:var(--ink);}
+
+  .related-link{display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:var(--ink);gap:12px;}
+  .related-link:hover .related-arrow{transform:translateX(3px);}
+  .related-arrow{transition:transform .15s ease;color:var(--teal);flex-shrink:0;}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Calorie Calculator",
+  "url": "https://poppopmake.com/calorie-calculator",
+  "applicationCategory": "HealthApplication",
+  "operatingSystem": "Any (web browser)",
+  "offers": {"@type":"Offer","price":"0","priceCurrency":"USD"},
+  "description": "Free calorie and TDEE calculator using the Mifflin-St Jeor equation, with calorie targets for losing, maintaining, or gaining weight."
+}
+</script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Health</span>
+  <h1>Calorie Calculator</h1>
+  <p class="lede">Get your BMR (calories burned at rest) and TDEE (total daily calories burned), plus targets for losing, maintaining, or gaining weight. Nothing you enter leaves your device.</p>
+
+  <div class="verify-badge">
+    <div class="verify-grid">
+      <div class="verify-item"><span class="verify-label">Source</span><span class="verify-value"><a href="https://doi.org/10.1093/ajcn/51.2.241" target="_blank" rel="noopener">Mifflin-St Jeor equation</a> (Am J Clin Nutr, 1990)</span></div>
+      <div class="verify-item"><span class="verify-label">Standard</span><span class="verify-value">Mifflin-St Jeor + activity multipliers</span></div>
+      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">September 2026</span></div>
+    </div>
+    <p class="verify-note">Mifflin-St Jeor is the equation most current clinical guidelines recommend over the older Harris-Benedict formula for estimating resting energy needs in healthy adults. See <a href="/how-we-verify">how we check figures like this</a>.</p>
+  </div>
+
+  <div class="panel">
+    <div class="mode-group" role="group" aria-label="Sex">
+      <button type="button" class="sex-btn active" data-sex="female">Female</button>
+      <button type="button" class="sex-btn" data-sex="male">Male</button>
+    </div>
+
+    <div class="field-row">
+      <div class="field"><label for="ageYears">Age (years)</label><input type="number" id="ageYears" value="30" min="15" max="100" step="1"></div>
+    </div>
+
+    <div class="mode-group" role="group" aria-label="Units">
+      <button type="button" class="unit-btn active" data-unit="metric">Metric (kg / cm)</button>
+      <button type="button" class="unit-btn" data-unit="imperial">Imperial (lb / ft·in)</button>
+    </div>
+
+    <div id="metricFields">
+      <div class="field-row">
+        <div class="field"><label for="weightKg">Weight (kg)</label><input type="number" id="weightKg" value="65" min="1" max="400" step="0.1"></div>
+        <div class="field"><label for="heightCm">Height (cm)</label><input type="number" id="heightCm" value="165" min="1" max="272" step="0.1"></div>
+      </div>
+    </div>
+    <div id="imperialFields" style="display:none;">
+      <div class="field-row">
+        <div class="field"><label for="weightLb">Weight (lb)</label><input type="number" id="weightLb" value="143" min="1" max="880" step="0.1"></div>
+        <div class="field">
+          <label for="heightFt">Height</label>
+          <div class="ht-pair">
+            <input type="number" id="heightFt" value="5" min="0" max="8" step="1" aria-label="Feet">
+            <span>ft</span>
+            <input type="number" id="heightIn" value="5" min="0" max="11" step="1" aria-label="Inches">
+            <span>in</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <label style="display:block;font-size:0.85rem;font-weight:600;margin-bottom:8px;">Activity level</label>
+    <div class="activity-list" id="activityList" role="radiogroup" aria-label="Activity level">
+      <label class="activity-row"><input type="radio" name="activity" value="sedentary"><span><span class="a-title">Sedentary</span><br><span class="a-desc">Little or no exercise, desk job</span></span></label>
+      <label class="activity-row"><input type="radio" name="activity" value="light"><span><span class="a-title">Lightly active</span><br><span class="a-desc">Light exercise 1&ndash;3 days/week</span></span></label>
+      <label class="activity-row checked"><input type="radio" name="activity" value="moderate" checked><span><span class="a-title">Moderately active</span><br><span class="a-desc">Moderate exercise 3&ndash;5 days/week</span></span></label>
+      <label class="activity-row"><input type="radio" name="activity" value="active"><span><span class="a-title">Very active</span><br><span class="a-desc">Hard exercise 6&ndash;7 days/week</span></span></label>
+      <label class="activity-row"><input type="radio" name="activity" value="extra"><span><span class="a-title">Extra active</span><br><span class="a-desc">Very hard exercise, physical job, or training twice a day</span></span></label>
+    </div>
+  </div>
+
+  <div class="panel result-panel" aria-live="polite">
+    <div class="stat-pair">
+      <div><div class="big-stat" id="bmrValue">&mdash;</div><div class="stat-label">BMR &middot; calories at rest</div></div>
+      <div><div class="big-stat" id="tdeeValue" style="color:var(--teal);">&mdash;</div><div class="stat-label">TDEE &middot; maintenance calories/day</div></div>
+    </div>
+
+    <table class="goal-table">
+      <thead><tr><th>Goal</th><th>Calories/day</th><th>Approx. rate</th></tr></thead>
+      <tbody id="goalRows"></tbody>
+    </table>
+
+    <div class="warning-box" id="warningBox"></div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>An estimate, not a prescription.</strong> Mifflin-St Jeor predicts resting energy needs for the average healthy adult within about 10% &mdash; individual metabolism, body composition, and medical conditions can shift the real number either way. The ~3,500-calorie-per-pound rule used for the goal targets above is a widely-used estimate, not an exact law: real-world weight change also involves water retention and metabolic adaptation. For a plan tailored to you, a registered dietitian or doctor is the right call.
+  </div>
+
+  <a class="panel related-link" href="/bmi-calculator">
+    <span><strong>Also:</strong> check your BMI category (WHO standard and Asian-specific thresholds) →</span>
+    <svg class="related-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/about" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">About</a><a href="/manual" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">User Manual</a><a href="/all-tools" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">All Tools</a><a href="/terms" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script>
+(function(){
+  // ---- BMR / TDEE calculation engine ----
+  // Mifflin MD, St Jeor ST, et al. "A new predictive equation for resting
+  // energy expenditure in healthy individuals." Am J Clin Nutr. 1990.
+  // (Tested standalone against textbook reference values before being
+  // embedded here — see project changelog for the verification pass.)
+
+  var ACTIVITY_MULTIPLIERS = { sedentary: 1.2, light: 1.375, moderate: 1.55, active: 1.725, extra: 1.9 };
+
+  // The ~3,500 kcal/lb (0.45kg) rule of thumb is a widely-used estimate for
+  // the goal deltas below, not an exact physiological law.
+  var GOALS = [
+    { key: 'lose_fast',  label: 'Lose weight (faster)', delta: -500, rate: '≈ 0.5 kg (1 lb) / week' },
+    { key: 'lose_mild',  label: 'Lose weight (steady)',  delta: -250, rate: '≈ 0.25 kg (0.5 lb) / week' },
+    { key: 'maintain',   label: 'Maintain weight',       delta: 0,    rate: 'no change' },
+    { key: 'gain_mild',  label: 'Gain weight (steady)',  delta: 250,  rate: '≈ 0.25 kg (0.5 lb) / week' },
+    { key: 'gain_fast',  label: 'Gain weight (faster)',  delta: 500,  rate: '≈ 0.5 kg (1 lb) / week' }
+  ];
+
+  function calcBMR(sex, weightKg, heightCm, age){
+    var base = 10 * weightKg + 6.25 * heightCm - 5 * age;
+    return sex === 'male' ? base + 5 : base - 161;
+  }
+
+  // General dietary guidance (e.g. NHS, Mayo Clinic) commonly cites roughly
+  // 1,200 kcal/day (women) / 1,500 kcal/day (men) as a threshold below which
+  // professional supervision is advised — population-level guidance, not a
+  // personalized clinical judgment.
+  function safetyFloor(sex){ return sex === 'male' ? 1500 : 1200; }
+
+  var sex = 'female', unit = 'metric';
+
+  document.querySelectorAll('.sex-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.sex-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      sex = btn.dataset.sex;
+      calc();
+    });
+  });
+
+  document.querySelectorAll('.unit-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('.unit-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      unit = btn.dataset.unit;
+      document.getElementById('metricFields').style.display = unit === 'metric' ? '' : 'none';
+      document.getElementById('imperialFields').style.display = unit === 'imperial' ? '' : 'none';
+      calc();
+    });
+  });
+
+  document.querySelectorAll('input[name="activity"]').forEach(function(radio){
+    radio.addEventListener('change', function(){
+      document.querySelectorAll('.activity-row').forEach(function(row){ row.classList.remove('checked'); });
+      radio.closest('.activity-row').classList.add('checked');
+      calc();
+    });
+  });
+
+  ['ageYears','weightKg','heightCm','weightLb','heightFt','heightIn'].forEach(function(id){
+    document.getElementById(id).addEventListener('input', calc);
+  });
+
+  // Build the goal-rows table once; values are filled in by calc().
+  var goalRowsEl = document.getElementById('goalRows');
+  GOALS.forEach(function(g){
+    var tr = document.createElement('tr');
+    tr.id = 'row-' + g.key;
+    if (g.key === 'maintain') tr.className = 'maintain-row';
+    tr.innerHTML = '<td>' + g.label + '</td><td class="kcal" id="kcal-' + g.key + '">&mdash;</td><td>' + g.rate + '</td>';
+    goalRowsEl.appendChild(tr);
+  });
+
+  function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
+
+  function calc(){
+    var age = parseFloat(document.getElementById('ageYears').value);
+    var weightKg, heightCm;
+    if (unit === 'metric') {
+      weightKg = parseFloat(document.getElementById('weightKg').value);
+      heightCm = parseFloat(document.getElementById('heightCm').value);
+    } else {
+      var lb = parseFloat(document.getElementById('weightLb').value);
+      var ft = parseFloat(document.getElementById('heightFt').value) || 0;
+      var inch = parseFloat(document.getElementById('heightIn').value) || 0;
+      weightKg = lb * 0.45359237;
+      heightCm = ((ft * 12) + inch) * 2.54;
+    }
+    var activityEl = document.querySelector('input[name="activity"]:checked');
+    var activityKey = activityEl ? activityEl.value : 'moderate';
+
+    var warningBox = document.getElementById('warningBox');
+    warningBox.classList.remove('show');
+
+    if (!age || age <= 0 || !weightKg || weightKg <= 0 || !heightCm || heightCm <= 0) {
+      document.getElementById('bmrValue').textContent = '—';
+      document.getElementById('tdeeValue').textContent = '—';
+      GOALS.forEach(function(g){ document.getElementById('kcal-' + g.key).textContent = '—'; });
+      return;
+    }
+
+    var bmr = calcBMR(sex, weightKg, heightCm, age);
+    var tdee = bmr * ACTIVITY_MULTIPLIERS[activityKey];
+    var floor = safetyFloor(sex);
+    var anyBelowFloor = false;
+
+    document.getElementById('bmrValue').textContent = fmt(bmr);
+    document.getElementById('tdeeValue').textContent = fmt(tdee);
+
+    GOALS.forEach(function(g){
+      var target = tdee + g.delta;
+      var cell = document.getElementById('kcal-' + g.key);
+      cell.textContent = fmt(target);
+      if (target < floor) {
+        cell.classList.add('low');
+        anyBelowFloor = true;
+      } else {
+        cell.classList.remove('low');
+      }
+    });
+
+    if (anyBelowFloor) {
+      warningBox.classList.add('show');
+      warningBox.textContent = 'One or more targets above fall below the general ' + floor.toLocaleString('en-US') + '-calorie/day guidance threshold for ' + (sex === 'male' ? 'men' : 'women') + ' — going lower than that is generally recommended only with medical supervision.';
+    }
+
+    if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  }
+
+  calc();
+})();
+</script>
+</body>
+</html>
