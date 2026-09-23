@@ -1,0 +1,32 @@
+{
+  "name": "401(k) Retirement Calculator – PopPopMake",
+  "short_name": "Retirement",
+  "description": "Free 401(k) growth calculator. See your projected balance at retirement from your contributions, employer match, and investment growth, using 2026 IRS limits.",
+  "id": "/retirement-calculator",
+  "start_url": "/retirement-calculator?source=pwa",
+  "scope": "/retirement-calculator",
+  "display": "standalone",
+  "background_color": "#EEF1EF",
+  "theme_color": "#1C2321",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/tool-retirement-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-retirement-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-retirement-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

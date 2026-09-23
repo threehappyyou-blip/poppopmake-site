@@ -4,9 +4,12 @@
 <meta charset="UTF-8">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="/manifest.json">
+<link rel="manifest" href="/manifest-retirement-calculator.json">
 <meta name="theme-color" content="#1C2321">
-<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/icons/tool-retirement-apple-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Retirement">
 <title>401(k) Retirement Calculator (2026) — PopPopMake</title>
 <meta name="description" content="Free 401(k) growth calculator. See your projected balance at retirement from your contributions, employer match, and investment growth, using 2026 IRS limits.">
 <meta property="og:type" content="website">
@@ -32,6 +35,16 @@
   a{color:var(--teal);}
   .wrap{max-width:1000px;margin:0 auto;padding:0 24px;}
   :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+
+  .install-bar{background:var(--card);border-bottom:1px solid var(--line);}
+  .install-bar[hidden]{display:none;}
+  .install-bar-inner{display:flex;align-items:center;gap:12px;padding:10px 24px;}
+  .install-icon{flex-shrink:0;color:var(--teal);display:flex;}
+  .install-text{flex:1;font-size:0.86rem;color:var(--ink-soft);}
+  .install-btn{background:var(--ink);color:#fff;border:none;border-radius:999px;padding:8px 18px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0;}
+  .install-btn:hover{opacity:0.88;}
+  .install-btn[hidden]{display:none;}
+  .install-dismiss{background:none;border:none;color:var(--ink-soft);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px 6px;flex-shrink:0;}
   .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
   .skip-link:focus{left:0;}
 
@@ -133,6 +146,14 @@
     <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
+<div class="install-bar" id="installBar" hidden data-tool-name="Retirement">
+  <div class="wrap install-bar-inner">
+    <span class="install-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
+    <span class="install-text" id="installText">Install this tool as an app on your phone.</span>
+    <button type="button" class="install-btn" id="installBtn">Install</button>
+    <button type="button" class="install-dismiss" id="installDismiss" aria-label="Dismiss">&times;</button>
+  </div>
+</div>
 
 <main class="wrap" id="main-content">
   <span class="eyebrow">Money &amp; Tax · 2026</span>
@@ -240,6 +261,7 @@
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
 <script src="/thanks-card.js"></script>
+<script src="/install-prompt.js" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {

@@ -85,6 +85,14 @@
   </div>
 
   <div class="entry">
+    <div class="entry-date">Sep 23, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>Ten tools can now be installed like phone apps</h2>
+    <p>The whole site has quietly worked as an installable PWA for a while, but installing "the whole site" from any page just gets you a generic bookmark. Ten of the most-used tools &mdash; the four paycheck calculators (US, UK, Canada, Australia), <a href="/mortgage-calculator">Mortgage</a>, <a href="/retirement-calculator">401(k) Retirement</a>, <a href="/debt-payoff-calculator">Debt Payoff</a>, <a href="/bmi-calculator">BMI</a>, <a href="/calorie-calculator">Calorie/TDEE</a>, and <a href="/screenshot-markup">Screenshot Markup</a> &mdash; now ship their own web app manifest and a hand-drawn icon, so installing just that one tool gives it its own home-screen icon and name, opening straight to that calculator with no browser address bar. On Android/Chrome, an "Install" bar appears on the page when the browser considers it installable. iOS Safari has no equivalent programmatic prompt, so there it's a one-line instruction (Share &rarr; Add to Home Screen) instead of a dead button pretending to be one.</p>
+    <p>Worth being precise about what this is and isn't: it's a home-screen shortcut, not an App Store or Play Store listing &mdash; there's no app-store discoverability gain here, only a better experience for someone who already uses the tool regularly. Picked these ten specifically because each already has its own URL (so "installing" it doesn't bundle in unrelated tools sharing a page) and gets repeat, not one-off, use. Every install-bar code path &mdash; the real Android prompt, the iOS instruction, the dismiss button, and staying silent entirely once a tool is already installed &mdash; was tested by simulating each browser condition and checking the actual DOM state, not just eyeballed in one browser, since a real install prompt can't be triggered on demand in a quick manual check.</p>
+  </div>
+
+  <div class="entry">
     <div class="entry-date">Sep 21, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>A new Health category: BMI and Calorie/TDEE calculators</h2>

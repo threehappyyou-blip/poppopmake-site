@@ -1,0 +1,32 @@
+{
+  "name": "UK Paycheck Calculator – PopPopMake",
+  "short_name": "UK Paycheck",
+  "description": "Free UK take-home pay calculator for 2026/27. See what's left after Income Tax and National Insurance, for the rest of the UK or Scotland.",
+  "id": "/uk-paycheck-calculator",
+  "start_url": "/uk-paycheck-calculator?source=pwa",
+  "scope": "/uk-paycheck-calculator",
+  "display": "standalone",
+  "background_color": "#EEF1EF",
+  "theme_color": "#1C2321",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/tool-paycheck-uk-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-paycheck-uk-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-paycheck-uk-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

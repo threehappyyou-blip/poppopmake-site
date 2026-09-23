@@ -1,0 +1,32 @@
+{
+  "name": "BMI Calculator – PopPopMake",
+  "short_name": "BMI Calc",
+  "description": "Free BMI calculator using the WHO's standard body mass index categories, with an optional Asian-specific threshold setting. Metric or imperial units, instant result, no account.",
+  "id": "/bmi-calculator",
+  "start_url": "/bmi-calculator?source=pwa",
+  "scope": "/bmi-calculator",
+  "display": "standalone",
+  "background_color": "#EEF1EF",
+  "theme_color": "#1C2321",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/tool-bmi-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-bmi-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-bmi-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

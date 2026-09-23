@@ -1,0 +1,32 @@
+{
+  "name": "Debt Payoff Calculator – PopPopMake",
+  "short_name": "Debt Payoff",
+  "description": "Compare the snowball and avalanche debt payoff strategies side by side — see exactly how many months and how much interest each one takes for your actual debts.",
+  "id": "/debt-payoff-calculator",
+  "start_url": "/debt-payoff-calculator?source=pwa",
+  "scope": "/debt-payoff-calculator",
+  "display": "standalone",
+  "background_color": "#EEF1EF",
+  "theme_color": "#1C2321",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/tool-debt-payoff-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-debt-payoff-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-debt-payoff-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

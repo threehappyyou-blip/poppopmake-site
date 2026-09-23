@@ -1,0 +1,32 @@
+{
+  "name": "Mortgage Calculator – PopPopMake",
+  "short_name": "Mortgage",
+  "description": "Free mortgage payment calculator. Monthly principal & interest, property tax, homeowners insurance, PMI, and HOA — full monthly cost, not just P&I.",
+  "id": "/mortgage-calculator",
+  "start_url": "/mortgage-calculator?source=pwa",
+  "scope": "/mortgage-calculator",
+  "display": "standalone",
+  "background_color": "#EEF1EF",
+  "theme_color": "#1C2321",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/tool-mortgage-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-mortgage-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-mortgage-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

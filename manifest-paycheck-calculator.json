@@ -1,0 +1,32 @@
+{
+  "name": "Paycheck Calculator – PopPopMake",
+  "short_name": "Paycheck (US)",
+  "description": "Free 2026 paycheck calculator. See your take-home pay after federal tax, FICA, and state tax for Texas, California, or Colorado.",
+  "id": "/paycheck-calculator",
+  "start_url": "/paycheck-calculator?source=pwa",
+  "scope": "/paycheck-calculator",
+  "display": "standalone",
+  "background_color": "#EEF1EF",
+  "theme_color": "#1C2321",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/tool-paycheck-us-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-paycheck-us-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-paycheck-us-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

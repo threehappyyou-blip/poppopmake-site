@@ -1,0 +1,32 @@
+{
+  "name": "Calorie Calculator – PopPopMake",
+  "short_name": "Calorie Calc",
+  "description": "Free calorie calculator using the Mifflin-St Jeor equation. Get your BMR, TDEE, and calorie targets for losing, maintaining, or gaining weight. No account.",
+  "id": "/calorie-calculator",
+  "start_url": "/calorie-calculator?source=pwa",
+  "scope": "/calorie-calculator",
+  "display": "standalone",
+  "background_color": "#EEF1EF",
+  "theme_color": "#1C2321",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icons/tool-calorie-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-calorie-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-calorie-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
