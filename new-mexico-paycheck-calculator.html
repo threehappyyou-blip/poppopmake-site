@@ -88,6 +88,12 @@
   }
   .rate-strip .chip b{color:var(--ink);}
 
+  .verify-badge{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;}
+  .verify-grid{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:10px;}
+  .verify-item{min-width:140px;}
+  .verify-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:3px;}
+  .verify-value{font-size:0.92rem;font-weight:600;}
+  .verify-note{font-size:0.85rem;color:var(--ink-soft);margin:0;padding-top:10px;border-top:1px solid var(--line);}
   .trust-box{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:8px;padding:14px 18px;margin-bottom:24px;font-size:0.88rem;color:var(--ink-soft);}
   .trust-box strong{color:var(--ink);}
 
@@ -125,6 +131,16 @@
   <span class="eyebrow">Money &amp; Tax · 2026</span>
   <h1>New Mexico Paycheck Calculator</h1>
   <p class="lede">New Mexico uses a progressive income tax, topping out at 5.9% for the highest earners &mdash; lower incomes are taxed at lower rates within the same system.</p>
+
+  <div class="verify-badge">
+    <div class="verify-grid">
+      <div class="verify-item"><span class="verify-label">State source</span><span class="verify-value"><a href="https://www.tax.newmexico.gov/individuals/personal-income-tax-information-overview/" target="_blank" rel="noopener">New Mexico Taxation and Revenue Department</a></span></div>
+      <div class="verify-item"><span class="verify-label">Federal source</span><span class="verify-value"><a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" target="_blank" rel="noopener">IRS Rev. Proc. 2025-32</a></span></div>
+      <div class="verify-item"><span class="verify-label">Rates for</span><span class="verify-value">2026</span></div>
+      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">September 2026</span></div>
+    </div>
+    <p class="verify-note">State figures are cross-checked against the Tax Foundation's 2026 state income tax survey as well as the state source above. If a chatbot gives you a different number, it's worth checking directly &mdash; general AI assistants frequently get jurisdiction-specific rates wrong. See <a href="/how-we-verify">how we check these figures</a>, or what's been corrected on the <a href="/changelog">changelog</a>.</p>
+  </div>
 
   <div class="trust-box">
     <strong>No sign-up, no advisor referrals.</strong> Unlike some paycheck calculators that exist mainly to collect your email or phone number for financial advisors, this one doesn't ask for either &mdash; and nothing you type is even sent to a server. <a href="/how-it-works">See how to check that yourself &rarr;</a>
