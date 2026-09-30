@@ -110,6 +110,12 @@
   }
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -231,6 +237,35 @@
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
         <strong>Curious how the surtax and Quebec's rules actually work?</strong> Read <a href="/canada-tax-mechanics">How We Handle Ontario's Surtax and Quebec's Rules</a> — including a bug we caught and fixed.
+      </div>
+
+      <div class="panel">
+        <h2>Worked example</h2>
+        <p style="margin:0;color:var(--ink-soft);">The default view above: a <strong style="color:var(--ink);">$70,000/year</strong> salary in Ontario, paid biweekly. Federal tax comes to about <strong style="color:var(--ink);">$8,243</strong> (the $16,452 Basic Personal Amount credit is fully available below the $181,440 phase-out start). Ontario provincial tax adds about <strong style="color:var(--ink);">$4,195</strong> — below the $5,818 threshold where Ontario's surtax would start applying. CPP contributions come to about <strong style="color:var(--ink);">$3,957</strong> (5.95% on earnings between the $3,500 exemption and the $74,600 ceiling); CPP2 doesn't apply yet since $70,000 is still under that ceiling. EI adds about <strong style="color:var(--ink);">$1,123</strong>. Total deductions land around $17,518/year, leaving roughly <strong style="color:var(--ink);">$52,482/year</strong> take-home (about <strong style="color:var(--ink);">$2,019 per biweekly paycheque</strong>) — an effective rate of about 25.0%. Of that, federal and provincial income tax alone account for about 17.8 percentage points; the rest is CPP and EI.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Frequently asked questions</h2>
+        <div class="faq-item">
+          <p class="faq-q">How does Quebec work differently in this calculator?</p>
+          <p class="faq-a">Quebec runs its own provincial pension plan (QPP) instead of CPP, but this calculator doesn't model QPP separately — it uses the standard CPP/CPP2 rates as an approximation, as the note under the province dropdown says. What it does apply correctly for Quebec is the federal abatement (a 16.5% reduction to net federal tax) and Quebec's lower EI rate (1.30% instead of 1.63%), since Quebec runs its own parental insurance plan alongside EI.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What is CPP2, and why isn't it in my breakdown?</p>
+          <p class="faq-a">CPP2 is a second CPP tier that only applies to earnings between $74,600 and $85,000, at 4%. At the $70,000 default it comes to $0, so the row doesn't show — raise the salary above $74,600 and you'll see it appear.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why might my real paycheque show a different number?</p>
+          <p class="faq-a">This uses 2026 federal and provincial/territorial tax brackets with the federal Basic Personal Amount, Ontario's surtax, and CPP/CPP2/EI. It doesn't include provincial basic personal amount credits, RRSP contributions, or other deductions, so treat it as a solid planning estimate rather than your exact paycheque.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Does this send my salary or province anywhere?</p>
+          <p class="faq-a">No — the whole calculation happens in your browser with JavaScript. Nothing you enter is transmitted, logged, or stored on a server.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What is the "surtax" mentioned for Ontario?</p>
+          <p class="faq-a">Ontario is the only province in this calculator with a surtax: once your basic Ontario tax passes $5,818, a 20% surtax applies on the amount above that, rising to 36% once basic tax passes $7,446. It's a tax on your tax, layered on top of the regular brackets — which is why Ontario's provincial tax can climb faster once you're comfortably into six figures.</p>
+        </div>
       </div>
     </div>
   </div>

@@ -106,6 +106,12 @@
   }
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -228,6 +234,31 @@
 
       <div class="disclaimer">
         <strong>Run a blog or another site?</strong> You can drop this exact calculator into your own page — <a href="/embed">get the embed code</a>, free, no signup.
+      </div>
+
+      <div class="panel">
+        <h2>Worked example</h2>
+        <p style="margin:0;color:var(--ink-soft);">The default view above: a single filer earning <strong style="color:var(--ink);">$65,000/year</strong> in Texas, paid biweekly. Federal income tax comes to about $5,620, FICA (Social Security + Medicare) about $4,973, and Texas adds nothing for state tax — leaving roughly <strong style="color:var(--ink);">$54,408/year</strong> take-home (about $2,093 per biweekly paycheck), an effective tax rate of about 16.3%. Switch the state dropdown to California and the same $65,000 salary nets about $51,575/year instead — the ~$2,800 difference is entirely California's state income tax.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Frequently asked questions</h2>
+        <div class="faq-item">
+          <p class="faq-q">Does this really cover all 50 states?</p>
+          <p class="faq-a">Yes — the state dropdown includes all 50 states plus Washington, D.C., each using that state's actual 2026 tax brackets or flat rate (or no state tax at all, for the nine states that don't have one). Switch states above to see how the same salary compares.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why does it default to Texas?</p>
+          <p class="faq-a">Texas is one of the states with no state income tax, so it makes a clean baseline: what you see by default is purely federal tax and FICA, with nothing else mixed in. Pick your own state from the dropdown to get your real number.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why might my real paycheck be different from this estimate?</p>
+          <p class="faq-a">This tool uses 2026 federal brackets and each state's 2026 tax rules with standard deductions only. It doesn't know about your actual W-4 elections, pre-tax 401(k) or HSA contributions, other tax credits, or local city taxes — all of which can shift your real number. Treat it as a solid planning estimate, not your exact paycheck.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Does this calculator send my salary or personal details anywhere?</p>
+          <p class="faq-a">No. The whole calculation runs in your browser with JavaScript — nothing you type is transmitted, logged, or stored on a server.</p>
+        </div>
       </div>
     </div>
   </div>

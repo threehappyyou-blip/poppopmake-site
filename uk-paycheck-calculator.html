@@ -109,6 +109,12 @@
   }
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -216,6 +222,35 @@
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
         <strong>Wondering why Scotland's numbers look different?</strong> Read <a href="/uk-scotland-tax-explained">England/Wales/NI vs Scotland: What Actually Differs</a> — with real numbers showing who it helps and who it costs.
+      </div>
+
+      <div class="panel">
+        <h2>Worked example</h2>
+        <p style="margin:0;color:var(--ink-soft);">The default view above: a salary of <strong style="color:var(--ink);">£35,000/year</strong>, paid monthly, in the rest of the UK (not Scotland). The Personal Allowance is fully available at £12,570 — it only starts tapering above £100,000 — leaving £22,430 taxable, all inside the 20% basic-rate band, for Income Tax of <strong style="color:var(--ink);">£4,486</strong>. National Insurance then adds 8% of the £22,430 earned above the £12,570 threshold, for <strong style="color:var(--ink);">£1,794</strong>. Together that's £6,280 in deductions, leaving <strong style="color:var(--ink);">£28,720/year</strong> take-home (about <strong style="color:var(--ink);">£2,393 per month</strong>), an effective rate of about 17.9%. Switch the region dropdown to Scotland and the same £35,000 comes out about £15/year lower — Scotland's rates track the rest of the UK closely at this income level, with the gap widening much more once you're past the higher-rate thresholds.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Frequently asked questions</h2>
+        <div class="faq-item">
+          <p class="faq-q">Does the £12,570 Personal Allowance ever change?</p>
+          <p class="faq-a">It stays at £12,570 for most earners, but this calculator applies the real taper: above £100,000 it shrinks by £1 for every £2 you earn over that, reaching £0 at £125,140. That's why effective tax rates can jump sharply for anyone earning between £100,000 and £125,140 — it isn't a calculator quirk, it's how the actual system works.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why does National Insurance seem to slow down at higher salaries?</p>
+          <p class="faq-a">Because it does. This calculator charges 8% on earnings between the £12,570 primary threshold and the £50,270 upper earnings limit, then only 2% above £50,270 — so your NI bill grows more slowly, in percentage terms, once you cross £50,270.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why might my real payslip show a different number?</p>
+          <p class="faq-a">This tool uses 2026/27 Income Tax bands and National Insurance thresholds with the standard Personal Allowance only. It doesn't know about pension contributions, student loan repayments, benefits-in-kind, or your actual tax code (a K code or an emergency code, for example) — any of which change your real take-home. Treat it as a solid estimate, not your exact payslip.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Does this calculator send my salary or region anywhere?</p>
+          <p class="faq-a">No. Everything runs in your browser with JavaScript — nothing you type is transmitted, logged, or stored on a server.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What's actually different about the Scotland option?</p>
+          <p class="faq-a">National Insurance is identical everywhere in the UK — only Income Tax bands differ. Scotland has six bands (rates from 19% up to 48%) instead of the rest of the UK's three, so the difference is small at modest salaries and grows much larger at higher incomes. See the link above for real numbers on who it helps and who it costs.</p>
+        </div>
       </div>
     </div>
   </div>

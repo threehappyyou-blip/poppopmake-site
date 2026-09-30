@@ -111,6 +111,12 @@
   }
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -213,6 +219,35 @@
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
         <strong>Why does your real marginal rate jump around so much?</strong> Read <a href="/au-marginal-rate-explained">Your Real Marginal Tax Rate Isn't What the Bracket Table Says</a>.
+      </div>
+
+      <div class="panel">
+        <h2>Worked example</h2>
+        <p style="margin:0;color:var(--ink-soft);">The default view above: a <strong style="color:var(--ink);">$70,000/year</strong> base salary, paid fortnightly (superannuation is paid on top by your employer and isn't subtracted here). Under the FY2026-27 resident brackets, the first $18,200 is tax-free, then 15% up to $45,000, then 30% up to $135,000 — for gross tax of <strong style="color:var(--ink);">$11,520</strong>. The Low Income Tax Offset doesn't reduce this further at $70,000: LITO tapers down from a maximum of $700 and reaches $0 by $66,667, below this salary. The Medicare levy is a flat 2% here, or <strong style="color:var(--ink);">$1,400</strong>, since $70,000 is above the $35,013 phase-in ceiling. Total tax comes to $12,920, leaving <strong style="color:var(--ink);">$57,080/year</strong> take-home (about <strong style="color:var(--ink);">$2,195 per fortnightly payslip</strong>) — an effective rate of about 18.5%, with a 30% marginal rate on your next dollar.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Frequently asked questions</h2>
+        <div class="faq-item">
+          <p class="faq-q">Do I get the $18,200 tax-free threshold AND the Low Income Tax Offset?</p>
+          <p class="faq-a">Yes, this calculator applies both — they're separate mechanisms. The $18,200 tax-free threshold is built into the tax brackets themselves. LITO is a separate offset worth up to $700, but it tapers down (5 cents per dollar between $37,500 and $45,000, then 1.5 cents per dollar between $45,000 and $66,667) and disappears completely above $66,667. That's why it doesn't show up in the breakdown at the $70,000 default — LITO has already phased out to $0 by then.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why is the Medicare levy sometimes less than 2%?</p>
+          <p class="faq-a">Below $28,011 of income there's no Medicare levy at all. Between $28,011 and $35,013, this calculator applies a reduced rate — 10% of the amount over $28,011 — so the levy phases in gradually instead of jumping straight to 2%. Above $35,013, it's a flat 2% of your full income, which is the band the $70,000 default falls into.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why might my real payslip show a different number?</p>
+          <p class="faq-a">This uses FY2026-27 resident tax brackets, LITO, and the standard 2% Medicare levy. It doesn't account for HECS/HELP repayments, salary-sacrificed super, private health insurance and the Medicare Levy Surcharge, or work-related deductions — any of which can change your real take-home. Treat it as a solid estimate, not your exact payslip.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Does this calculator send my salary anywhere?</p>
+          <p class="faq-a">No. The entire calculation runs in your browser with JavaScript — nothing you type is transmitted, logged, or stored on a server.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why isn't superannuation subtracted from my take-home pay?</p>
+          <p class="faq-a">Because the salary you enter is treated as your base salary, with super paid on top by your employer under Australia's compulsory super guarantee — it isn't withheld from your pay the way tax and the Medicare levy are, so this calculator doesn't subtract it.</p>
+        </div>
       </div>
     </div>
   </div>

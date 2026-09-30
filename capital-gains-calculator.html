@@ -104,6 +104,12 @@
   }
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -212,6 +218,35 @@
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
         <strong>Why can the same gain be taxed so differently?</strong> Read <a href="/capital-gains-stacking-explained">The Same $50,000 Gain Can Be Taxed at 7% or 17%</a>.
+      </div>
+
+      <div class="panel">
+        <h2>Worked example</h2>
+        <p style="margin:0;color:var(--ink-soft);">With the defaults above — a single filer with <strong style="color:var(--ink);">$80,000</strong> of other income, a $10,000 cost basis, $25,000 in proceeds, and a long-term holding period — the gain is <strong style="color:var(--ink);">$15,000</strong>. Other income minus the $16,100 standard deduction leaves $63,900 of ordinary taxable income, and the $15,000 gain stacks on top of that — from $63,900 up to $78,900 — landing entirely inside the 15% long-term bracket (which runs from $49,450 to $545,500 for a single filer). That makes the federal tax <strong style="color:var(--ink);">$2,250</strong>. Combined MAGI of $95,000 stays under the $200,000 NIIT threshold, so no Net Investment Income Tax applies, leaving <strong style="color:var(--ink);">$12,750</strong> in net proceeds — an effective rate of <strong style="color:var(--ink);">15%</strong> on the gain.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Frequently asked questions</h2>
+        <div class="faq-item">
+          <p class="faq-q">Why does the same gain get taxed differently depending on the holding period?</p>
+          <p class="faq-a">Short-term gains (held one year or less) are taxed as ordinary income, using the same brackets as your paycheck; long-term gains (held more than a year) get the lower 0/15/20% federal rates instead. With the default $80,000 of other income and $15,000 gain, switching the toggle from long-term to short-term moves the federal tax on this sale from $2,250 (the 15% long-term rate) to $3,300 (the 22% ordinary rate) — same gain, same income, very different tax, purely because of how long the asset was held.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What does it mean for the gain to "stack" on my other income?</p>
+          <p class="faq-a">Your capital gain isn't taxed in its own separate bucket — it's added on top of your other taxable income, and only the slice of your combined income that falls into each bracket is taxed at that bracket's rate. In the default example, the $15,000 gain stacks from $63,900 up to $78,900 of taxable income, all of which sits inside the 15% long-term bracket. A bigger gain, or more other income, can push part of that stack into the next bracket up.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">When does the 3.8% Net Investment Income Tax (NIIT) apply, and why is it $0 here?</p>
+          <p class="faq-a">NIIT adds 3.8% on top of your regular tax, but only once your MAGI (approximated here as other income plus the gain) passes $200,000 for a single filer, $250,000 for married filing jointly, or $125,000 for married filing separately. In the default example, $80,000 plus the $15,000 gain is only $95,000, well under that threshold, so NIIT doesn't apply. Push your other income or your gain high enough to cross the threshold and the calculator will add it.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why might the real tax I owe differ from this estimate?</p>
+          <p class="faq-a">This tool doesn't include state tax, capital-loss carryforwards, wash-sale rules, or Section 1202/QSBS treatment for qualified small-business stock, and it approximates MAGI for the NIIT calculation as gross income plus gain rather than your exact MAGI. Confirm anything that matters with a tax professional before you sell.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Does this calculator send my income or trade details anywhere?</p>
+          <p class="faq-a">No. Every figure you enter is calculated locally in your browser — nothing is transmitted to or stored on a server.</p>
+        </div>
       </div>
     </div>
   </div>

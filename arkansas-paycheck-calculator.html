@@ -97,6 +97,13 @@
   }
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
+
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -194,6 +201,31 @@
       <div class="disclaimer">
         <strong>Run a blog or another site?</strong> You can drop this exact calculator into your own page &mdash; <a href="/embed">get the embed code</a>, free, no signup.
       </div>
+
+  <div class="panel">
+    <h2>Worked example</h2>
+    <p style="margin:0;color:var(--ink-soft);">A single filer in Arkansas earning <strong style="color:var(--ink);">$65,000/year</strong>, paid biweekly: federal income tax is about $5,620, FICA (Social Security + Medicare) is about $4,973, and Arkansas's state tax comes to about $2,322/year in this example, on top of federal tax and FICA. That leaves roughly <strong style="color:var(--ink);">$52,085/year</strong> take-home (about $2,003 per biweekly paycheck) &mdash; an effective tax rate of about 19.9%. Change the salary above to see your own number.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <p class="faq-q">What's the state income tax rate in Arkansas?</p>
+      <p class="faq-a">Arkansas uses a progressive state income tax that tops out at 3.9% for the highest earners. This calculator applies it the same way the state does &mdash; see the breakdown table above for the exact dollar amount at your income.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Why might my real paycheck be different from this estimate?</p>
+      <p class="faq-a">This tool uses 2026 federal brackets and Arkansas's 2026 state tax rules with standard deductions only. It doesn't know about your actual W-4 elections, pre-tax 401(k) or HSA contributions, other tax credits, or local city taxes &mdash; all of which can shift your real number. Treat it as a solid planning estimate, not your exact paycheck.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Does this calculator send my salary or personal details anywhere?</p>
+      <p class="faq-a">No. The whole calculation runs in your browser with JavaScript &mdash; nothing you type is transmitted, logged, or stored on a server.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Can I compare Arkansas against another state or country?</p>
+      <p class="faq-a">Yes &mdash; use the "Compare against another state or country" link above the calculator to see this same salary's take-home pay side by side with a different location.</p>
+    </div>
+  </div>
     </div>
   </div>
 </main>

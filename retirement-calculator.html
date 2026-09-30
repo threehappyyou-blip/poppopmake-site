@@ -123,6 +123,12 @@
   }
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -245,6 +251,35 @@
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
         <strong>Did you know there's a bigger catch-up limit at 60?</strong> Read <a href="/401k-super-catchup-explained">The Four-Year Window Where Your 401(k) Limit Jumps Higher</a>.
+      </div>
+
+      <div class="panel">
+        <h2>Worked example</h2>
+        <p style="margin:0;color:var(--ink-soft);">With the defaults above — starting at age 30 with a $20,000 balance and a $70,000 salary, contributing 6% of pay with a 50% employer match up to 6%, a 7% annual return, and 3% annual raises — year one works like this: you contribute <strong style="color:var(--ink);">$4,200</strong> (6% of $70,000), your employer adds <strong style="color:var(--ink);">$2,100</strong> (50% of that same 6%), and the combined $6,300 added to your $20,000 starting balance grows by <strong style="color:var(--ink);">$1,841</strong> at 7%, ending year one at <strong style="color:var(--ink);">$28,141</strong>. Repeat that loop every year — salary, contribution, and match dollars all rising 3% a year — for all 35 years until age 65, and the projected balance is <strong style="color:var(--ink);">$1,538,596</strong>: about $253,941 from your own contributions, $126,970 from your employer's match, and $1,137,685 from investment growth alone.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Frequently asked questions</h2>
+        <div class="faq-item">
+          <p class="faq-q">How exactly does the employer match get calculated?</p>
+          <p class="faq-a">The tool takes the smaller of your contribution percentage or the match cap percentage, then multiplies by your match rate. With the defaults (6% contribution, matched 50% up to a 6% cap), your entire 6% is eligible, so your employer adds 50 cents per dollar you contribute — $2,100 on a $70,000 salary in year one. Contribute more than the cap and the extra goes unmatched; contribute less and only that smaller amount gets matched.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">What IRS contribution limit does this use, and does my example hit it?</p>
+          <p class="faq-a">It uses the 2026 IRS 401(k) limits: a $24,500 base limit, an $8,000 catch-up for ages 50–59 and 64+, and the SECURE 2.0 super catch-up of $11,250 for ages 60–63 specifically. In the default example your desired contribution never gets close to any of these — even in the final projected year (age 64) it's only around $11,474, well under that year's $32,500 limit — but raise the salary or contribution percentage enough and the tool will cap you at the limit for your age.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Is the final balance shown in today's dollars or future dollars?</p>
+          <p class="faq-a">Today's dollars — the projection labels itself that way. That effectively treats the 7% return assumption as an inflation-adjusted return rather than a raw nominal one, and it's why the IRS contribution limit is held flat across all 35 years instead of being projected upward for future inflation.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why might my real 401(k) balance end up different from this projection?</p>
+          <p class="faq-a">This is a projection, not a promise. Real investment returns vary year to year instead of compounding at a flat 7%, and the tool doesn't model vesting schedules on your employer match, investment fees, or the taxes you'll eventually pay on withdrawal — all of which change your real number.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Does this calculator send my salary or balance anywhere?</p>
+          <p class="faq-a">No. The entire projection runs in your browser; nothing you enter is transmitted to or stored on a server.</p>
+        </div>
       </div>
     </div>
   </div>

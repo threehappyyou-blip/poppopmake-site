@@ -114,6 +114,12 @@
   }
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -219,6 +225,35 @@
 
       <div class="disclaimer">
         <strong>This is an estimate, not a loan offer.</strong> Property tax and insurance are averages you can adjust — your actual county and insurer will differ, sometimes a lot (property tax alone ranges roughly 0.3%–2.2% of home value per year depending on state). It doesn't account for closing costs, mortgage points, or PMI cancellation timing. Confirm anything important with your lender. Your numbers never leave your device — <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
+      </div>
+
+      <div class="panel">
+        <h2>Worked example</h2>
+        <p style="margin:0;color:var(--ink-soft);">With the defaults above — a <strong style="color:var(--ink);">$400,000</strong> home price and a <strong style="color:var(--ink);">$40,000</strong> down payment (10%, which is why PMI applies) — the loan amount is <strong style="color:var(--ink);">$360,000</strong>. At 6.5% over 30 years, the standard amortization formula gives a monthly principal &amp; interest payment of <strong style="color:var(--ink);">$2,275</strong>. Add PMI of <strong style="color:var(--ink);">$180</strong>/month (0.6%/year × $360,000 ÷ 12, since the down payment is under 20%), property tax of <strong style="color:var(--ink);">$367</strong>/month (1.1%/year × $400,000 ÷ 12), and $125/month insurance ($1,500/year ÷ 12) — no HOA dues in this example — and the full estimated monthly payment comes to <strong style="color:var(--ink);">$2,947</strong>. Over the full 30-year term, this loan would accrue <strong style="color:var(--ink);">$459,160</strong> in total interest.</p>
+      </div>
+
+      <div class="panel">
+        <h2>Frequently asked questions</h2>
+        <div class="faq-item">
+          <p class="faq-q">Why is PMI showing up in my estimate?</p>
+          <p class="faq-a">PMI appears whenever your down payment is under 20% of the home price — in the default example that's a 10% down payment on a $400,000 home. It's calculated as (loan amount × PMI rate) ÷ 12. It typically cancels once you reach 20–22% equity, but this tool doesn't track that timeline for you — you'll need to watch your own payoff progress and ask your servicer to remove it once you qualify.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">How is the monthly principal &amp; interest payment actually calculated?</p>
+          <p class="faq-a">It's the standard fixed-rate amortization formula, applied to your loan amount (home price minus down payment), your monthly interest rate, and the total number of monthly payments over your loan term — the same math a lender uses to build an amortization schedule. It covers principal and interest only; tax, insurance, PMI, and HOA are added separately in the breakdown below.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Does this include closing costs, discount points, or extra principal payments?</p>
+          <p class="faq-a">No. This estimate covers only the recurring monthly cost — principal &amp; interest, tax, insurance, PMI, and HOA dues. It doesn't model one-time closing costs, paying points to buy down your rate, or how extra principal payments would shorten your payoff timeline.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Why might my real lender quote be different from this number?</p>
+          <p class="faq-a">Property tax and insurance here are whatever rate you enter, not your actual county or insurer's bill — property tax alone typically runs somewhere around 0.3%–2.2% of home value per year depending on the state, so adjust both fields to your real numbers for a closer estimate. Your lender's actual quote will also reflect underwriting details this tool doesn't see.</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Does this calculator send my loan details anywhere?</p>
+          <p class="faq-a">No. Every calculation runs locally in your browser as you type — nothing is sent to a server, logged, or stored after you close the tab.</p>
+        </div>
       </div>
     </div>
   </div>

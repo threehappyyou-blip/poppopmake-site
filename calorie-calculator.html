@@ -109,6 +109,12 @@
   .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:8px;margin-bottom:20px;font-size:0.88rem;color:var(--ink-soft);}
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   .related-link{display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:var(--ink);gap:12px;}
   .related-link:hover .related-arrow{transform:translateX(3px);}
   .related-arrow{transition:transform .15s ease;color:var(--teal);flex-shrink:0;}
@@ -226,6 +232,35 @@
 
   <div class="disclaimer">
     <strong>An estimate, not a prescription.</strong> Mifflin-St Jeor predicts resting energy needs for the average healthy adult within about 10% &mdash; individual metabolism, body composition, and medical conditions can shift the real number either way. The ~3,500-calorie-per-pound rule used for the goal targets above is a widely-used estimate, not an exact law: real-world weight change also involves water retention and metabolic adaptation. For a plan tailored to you, a registered dietitian or doctor is the right call.
+  </div>
+
+  <div class="panel">
+    <h2>Worked example</h2>
+    <p style="margin:0;color:var(--ink-soft);">A 30-year-old woman, 165&nbsp;cm tall, 65&nbsp;kg, moderately active: BMR&nbsp;=&nbsp;10×65&nbsp;+&nbsp;6.25×165&nbsp;−&nbsp;5×30&nbsp;−&nbsp;161&nbsp;=&nbsp;650&nbsp;+&nbsp;1,031.25&nbsp;−&nbsp;150&nbsp;−&nbsp;161&nbsp;≈&nbsp;<strong style="color:var(--ink);">1,370 kcal/day</strong>. TDEE&nbsp;=&nbsp;1,370&nbsp;×&nbsp;1.55 (moderate activity)&nbsp;≈&nbsp;<strong style="color:var(--ink);">2,124 kcal/day</strong>. To lose weight steadily, her target would be about 2,124&nbsp;−&nbsp;250&nbsp;≈&nbsp;1,874&nbsp;kcal/day — comfortably above the 1,200&nbsp;kcal/day floor this tool checks for.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <p class="faq-q">Why does activity level change the result so much?</p>
+      <p class="faq-a">TDEE = BMR × an activity multiplier (1.2 for sedentary up to 1.9 for extra active), so the same body can have a "maintenance" calorie number that swings by 50–60% just based on how much you move — a bigger effect than most individual food choices.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Is Mifflin-St Jeor more accurate than older formulas like Harris-Benedict?</p>
+      <p class="faq-a">For most healthy adults, yes — Mifflin-St Jeor (1990) is the equation current clinical nutrition guidelines generally recommend over the older Harris-Benedict revisions, because it was validated against more accurate measured data. No formula is exact for any one individual; both are population-average estimates.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Why did I get a warning that my calorie target is "too low"?</p>
+      <p class="faq-a">This tool flags any target below roughly 1,200 kcal/day (women) or 1,500 kcal/day (men) — thresholds commonly cited by health authorities like the NHS and Mayo Clinic as the point where an unsupervised diet risks inadequate nutrition. It's a population-level guideline, not a personal medical judgment — if you need to go lower, that's a conversation for a doctor or registered dietitian.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Why is the "faster" weight-loss target exactly 500 calories below maintenance?</p>
+      <p class="faq-a">It's built on the widely-used rule of thumb that roughly 3,500 kcal of deficit corresponds to about 1 lb (0.45 kg) of fat loss, so a 500 kcal/day deficit ≈ 1 lb/week. It's a useful planning estimate, not an exact physiological law — actual results vary with water retention and metabolic adaptation over time.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Does this work for pregnant women, children, or people with a diagnosed medical condition?</p>
+      <p class="faq-a">No. Mifflin-St Jeor and the activity multipliers here are validated for generally healthy, non-pregnant adults. Pregnancy, growth, and many medical conditions change energy needs in ways this calculator doesn't account for — a doctor or registered dietitian should guide those numbers instead.</p>
+    </div>
   </div>
 
   <a class="panel related-link" href="/bmi-calculator">

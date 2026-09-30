@@ -102,6 +102,12 @@
   .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:8px;margin-bottom:20px;font-size:0.88rem;color:var(--ink-soft);}
   .disclaimer strong{color:var(--ink);}
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   .related-link{display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:var(--ink);gap:12px;}
   .related-link:hover .related-arrow{transform:translateX(3px);}
   .related-arrow{transition:transform .15s ease;color:var(--teal);flex-shrink:0;}
@@ -201,6 +207,35 @@
 
   <div class="disclaimer">
     <strong>BMI is a screening number, not a diagnosis.</strong> It doesn't distinguish muscle from fat, and can misclassify very muscular or very lean people, older adults, and pregnant women. Treat it as one data point — for anything about your own health, a doctor who can look at the whole picture is the right call, not a formula.
+  </div>
+
+  <div class="panel">
+    <h2>Worked example</h2>
+    <p style="margin:0;color:var(--ink-soft);">Someone who is 175&nbsp;cm tall and weighs 70&nbsp;kg: BMI&nbsp;=&nbsp;70&nbsp;÷&nbsp;(1.75&nbsp;×&nbsp;1.75)&nbsp;=&nbsp;70&nbsp;÷&nbsp;3.0625&nbsp;≈&nbsp;<strong style="color:var(--ink);">22.9</strong>. Under the WHO general standard (18.5–24.9 = normal), that's comfortably "normal weight." Under the Asian-specific thresholds (18.5–22.9 = normal), the same 22.9 sits right at the top edge — one more kilogram would tip it into "overweight (at risk)." Same body, two different labels, depending on which population reference is used — which is exactly why the toggle above exists.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <p class="faq-q">Is BMI accurate for muscular or athletic people?</p>
+      <p class="faq-a">No. BMI can't distinguish muscle from fat, so it commonly misclassifies muscular or very athletic people as "overweight" or "obese" even at healthy body-fat levels. It's a population-level screening number, not an individual diagnosis.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Why does this calculator have an "Asian BMI thresholds" option?</p>
+      <p class="faq-a">Because health risk at a given BMI isn't identical across populations. A 2004 WHO Expert Consultation, published in <em>The Lancet</em>, found that people of Asian descent tend to show higher diabetes and cardiovascular risk at lower BMI values than the WHO's general cutoffs assume — so several health authorities in Asia use lower thresholds (23 instead of 25 for "overweight," 25 instead of 30 for "obese") with the exact same formula.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">What counts as a "normal" BMI?</p>
+      <p class="faq-a">Under the WHO general standard, 18.5–24.9 is classed as normal weight. Under the Asian-specific thresholds, the normal range is narrower: 18.5–22.9.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">My BMI says "overweight" but my doctor isn't concerned — why?</p>
+      <p class="faq-a">Because a doctor looks at more than one number: muscle mass, waist circumference, blood pressure, blood sugar, family history. BMI is one input among several, not a verdict on its own.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Does this tool store or send my height and weight anywhere?</p>
+      <p class="faq-a">No. The calculation runs entirely in your browser; nothing you type is sent to a server, logged, or saved after you close the tab.</p>
+    </div>
   </div>
 
   <a class="panel related-link" href="/calorie-calculator">

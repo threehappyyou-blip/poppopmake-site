@@ -106,6 +106,12 @@
     border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.88rem;color:var(--ink-soft);
   }
 
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -176,6 +182,31 @@
 
   <div class="disclaimer">
     <strong>This is a projection, not financial advice.</strong> It assumes your interest rate and minimum payments stay constant, doesn't account for new charges, promotional rates, or payment due-date timing, and rounds monthly like a simple amortization model. Your real payoff can differ. Snowball's real advantage is behavioral &mdash; clearing small debts fast keeps people motivated to continue &mdash; while avalanche is the mathematically optimal choice when the numbers are all that matter to you. Your numbers never leave your device &mdash; <a href="/how-it-works">see how to check that yourself</a>.
+  </div>
+
+  <div class="panel">
+    <h2>Worked example</h2>
+    <p style="margin:0;color:var(--ink-soft);">The page loads with three example debts &mdash; Credit Card A ($5,000 at 22% APR, $125 minimum), Credit Card B ($2,000 at 18% APR, $60 minimum), and a Car Loan ($12,000 at 6% APR, $300 minimum) &mdash; plus $200/month extra toward debt. Snowball attacks the smallest balance first: Card B, then Card A, then the Car Loan, clearing Card B by <strong style="color:var(--ink);">month 9</strong>, Card A by <strong style="color:var(--ink);">month 23</strong>, and the Car Loan by <strong style="color:var(--ink);">month 32</strong>, for <strong style="color:var(--ink);">$2,760</strong> in total interest. Avalanche instead attacks the highest rate first &mdash; Card A (22%), then Card B (18%), then the Car Loan &mdash; clearing Card A by month 19, Card B by month 23, and the Car Loan again by month 32, but for only <strong style="color:var(--ink);">$2,659</strong> in total interest: <strong style="color:var(--ink);">$102 less</strong> than snowball, even though both strategies take the same 32 months here.</p>
+  </div>
+
+  <div class="panel">
+    <h2>Frequently asked questions</h2>
+    <div class="faq-item">
+      <p class="faq-q">What's the actual difference between snowball and avalanche here?</p>
+      <p class="faq-a">Both methods put the exact same total dollars toward debt each month &mdash; your combined minimums plus your extra amount &mdash; and both roll a paid-off debt's minimum payment into the pool for the next target. The only difference is priority order: snowball targets your smallest balance first, avalanche targets your highest interest rate first. Avalanche is the mathematically cheaper choice; snowball's advantage is behavioral, since clearing an account fast keeps people motivated to continue.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">What does the "over 100 years" warning mean if I see it?</p>
+      <p class="faq-a">If your minimum payments can't outpace what's accruing in interest on at least one debt, this calculator would otherwise loop for over 1,200 months trying to find a payoff date that never arrives. Instead it shows a warning so you know why &mdash; the fix is a higher minimum payment or more extra money each month, not a bug in the numbers.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Will my real payoff take exactly this many months and cost exactly this much interest?</p>
+      <p class="faq-a">Treat these as planning estimates, not guarantees. The model assumes your interest rate and minimum payments stay constant, doesn't account for new charges or promotional 0% APR periods, and rounds monthly rather than tracking exact payment due dates &mdash; any of which will shift your real numbers.</p>
+    </div>
+    <div class="faq-item">
+      <p class="faq-q">Does this calculator send my debts or balances anywhere?</p>
+      <p class="faq-a">No. Every debt you add and every calculation runs locally in your browser &mdash; nothing is transmitted to or stored on a server.</p>
+    </div>
   </div>
 </main>
 
