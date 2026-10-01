@@ -85,6 +85,21 @@
   </div>
 
   <div class="entry">
+    <div class="entry-date">Oct 1, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>The homepage got an overhaul — and a real mobile navigation bug came with it</h2>
+    <p>Compared the homepage against Omni Calculator, Smallpdf, and (for contrast) the old-school calculator.net to see what a 2026-era free-tools homepage actually looks like, then rebuilt it: a real search box up front that filters across all 45 tools by name as you type, not just the 8 categories; a header that collapses 15 flat nav links down to a "Tools" menu plus three links; and category cards that all hold the same shape now (icon, tool count, three named examples, one link to the rest) instead of one overflowing with a run-on sentence while its neighbor sat mostly empty.</p>
+    <p>Testing it at phone width surfaced a real bug, not just a style one: once the flat nav list was hidden below 640px there had never been any replacement for it, so a phone visitor had no way to reach any other tool or category short of scrolling the entire page. Fixed with a menu button that opens a full, tappable list. This covers the homepage only for now — the rest of the site's pages still carry the old 15-link header until that gets rolled out everywhere too.</p>
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Sep 30, 2026</div>
+    <span class="tag caught">Caught in testing</span>
+    <h2>The header search button had no styling until you used it once</h2>
+    <p>While checking the site at phone width ahead of a wider launch push, found that the Cmd+K search trigger in every page's header was rendering as a bare, unstyled button &mdash; until a visitor pressed Ctrl+K (or clicked it) for the first time, at which point its real styling suddenly kicked in. The CSS was only ever being injected the moment the search panel opened, never on page load, so almost nobody would have seen it looking right. Fixed so it renders correctly from the first paint, on every page that loads it. Also enlarged a couple of touch targets (the BMI/calorie unit toggle) that were sized a bit small for comfortable tapping on a phone.</p>
+  </div>
+
+  <div class="entry">
     <div class="entry-date">Sep 30, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>All 51 state paycheck pages now cite their actual source</h2>
