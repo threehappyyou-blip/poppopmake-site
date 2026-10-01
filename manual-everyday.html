@@ -39,6 +39,126 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
+  .nav-link{
+    font-size:0.95rem;
+    font-weight:500;
+    text-decoration:none;
+    color:var(--ink-soft);
+    padding:10px 14px;
+    border-radius:8px;
+    transition:color .15s ease, background .15s ease;
+  }
+  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
+
+  .nav-dropdown{position:relative;}
+  .nav-dropdown summary{
+    list-style:none;
+    cursor:pointer;
+    font-size:0.95rem;
+    font-weight:500;
+    color:var(--ink-soft);
+    padding:10px 14px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:color .15s ease, background .15s ease;
+  }
+  .nav-dropdown summary::-webkit-details-marker{display:none;}
+  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
+  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
+  .nav-dropdown summary svg{transition:transform .15s ease;}
+  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
+
+  .mega{
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
+    padding:10px;
+    width:420px;
+    z-index:300;
+  }
+  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+  .mega-grid a{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:8px;
+    text-decoration:none;
+    color:var(--ink);
+    font-size:0.92rem;
+    font-weight:500;
+  }
+  .mega-grid a:hover{background:var(--paper-2);}
+  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
+  .mega-all{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    margin-top:8px;
+    padding:11px 12px;
+    border-top:1px solid var(--line);
+    text-decoration:none;
+    color:var(--teal);
+    font-weight:600;
+    font-size:0.9rem;
+    border-radius:8px;
+  }
+  .mega-all:hover{background:var(--paper-2);}
+
+  .menu-toggle-wrap{display:none;}
+  .mobile-panel{display:none;}
+  @media (max-width:760px){
+    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
+    nav{margin-left:0;}
+    .menu-toggle-wrap{display:block;position:relative;}
+    .menu-toggle-wrap summary{
+      list-style:none;
+      cursor:pointer;
+      width:44px;height:44px;
+      display:flex;align-items:center;justify-content:center;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:var(--card);
+    }
+    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
+    .menu-toggle-wrap .icon-close{display:none;}
+    .menu-toggle-wrap[open] .icon-open{display:none;}
+    .menu-toggle-wrap[open] .icon-close{display:block;}
+    .mobile-panel{
+      display:block;
+      position:fixed;
+      inset:0;
+      top:89px;
+      background:var(--paper);
+      padding:20px 24px 40px;
+      overflow-y:auto;
+      z-index:250;
+    }
+    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
+    .mobile-panel a{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:13px 4px;
+      font-size:1rem;
+      font-weight:500;
+      text-decoration:none;
+      color:var(--ink);
+      border-bottom:1px solid var(--line);
+      min-height:44px;
+    }
+    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
+  }
+
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -71,7 +191,51 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav><a href="/manual">All manual sections</a></nav>
+    <nav aria-label="Primary">
+      <a class="nav-link" href="/manual">All manual sections</a>
+      <details class="nav-dropdown" id="toolsDetails">
+        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
+        <div class="mega">
+          <div class="mega-grid">
+            <a href="/document-tools">Documents <span>12</span></a>
+            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
+            <a href="/bmi-calculator">Health <span>2</span></a>
+            <a href="/career-tools">Career <span>4</span></a>
+            <a href="/business-tools">Business <span>2</span></a>
+            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
+            <a href="/everyday-tools">Everyday <span>6</span></a>
+            <a href="/devtools">Developer <span>6</span></a>
+          </div>
+          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
+        </div>
+      </details>
+      <a class="nav-link" href="/guides">Guides</a>
+      <a class="nav-link" href="/about">About</a>
+      <a class="nav-link" href="/all-tools">All Tools</a>
+    </nav>
+    <details class="menu-toggle-wrap">
+      <summary aria-label="Open menu">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </summary>
+      <div class="mobile-panel">
+        <h4>Browse</h4>
+        <a href="/document-tools">Documents <span>12</span></a>
+        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
+        <a href="/bmi-calculator">Health <span>2</span></a>
+        <a href="/career-tools">Career <span>4</span></a>
+        <a href="/business-tools">Business <span>2</span></a>
+        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
+        <a href="/everyday-tools">Everyday <span>6</span></a>
+        <a href="/devtools">Developer <span>6</span></a>
+        <h4>More</h4>
+        <a href="/all-tools">All Tools</a>
+        <a href="/guides">Guides</a>
+        <a href="/about">About</a>
+        <a href="/changelog">Changelog</a>
+        <a href="/feedback">Feedback</a>
+      </div>
+    </details>
   </div>
 </header>
 
@@ -187,6 +351,30 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
+<script>
+(function(){
+  // Close the desktop Tools dropdown on outside click / Escape.
+  var toolsDetails = document.getElementById('toolsDetails');
+  if (toolsDetails) {
+    document.addEventListener('click', function(e){
+      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') toolsDetails.open = false;
+    });
+  }
+  // Close the mobile menu on Escape, and when a link inside it is clicked.
+  var mobileWrap = document.querySelector('.menu-toggle-wrap');
+  if (mobileWrap) {
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') mobileWrap.open = false;
+    });
+    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
+      a.addEventListener('click', function(){ mobileWrap.open = false; });
+    });
+  }
+})();
+</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
