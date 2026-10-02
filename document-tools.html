@@ -243,6 +243,13 @@
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
   footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+
+  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -333,7 +340,32 @@
     <ul class="file-list" id="merge-list"></ul>
     <button class="action-btn" id="merge-btn" disabled>Merge PDFs</button>
     <div class="status" id="merge-status"></div>
-  </section>
+  
+<h3 class="section-title">Worked example</h3>
+<p class="sub" style="margin:0;">Add contract.pdf (4 pages) and then signature-page.pdf (1 page), in that order. The result is a single <strong style="color:var(--ink);">5-page PDF</strong> with contract.pdf's four pages first, followed by signature-page.pdf's one page — matching the top-to-bottom order shown in the file list. Reordering with the &uarr;/&darr; arrows before you click "Merge PDFs" changes that order; the merge always follows whatever order the list is in at the moment you click, not the order you originally added the files in.</p>
+
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">Do merged pages keep their original paper size, or does everything get resized to match?</p>
+  <p class="faq-a">They keep their original size. Each page is copied exactly as it exists in its source file — including its own page dimensions — so merging a Letter-sized PDF with an A4-sized one produces a single file with different-sized pages throughout, not a file normalized to one size.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does merging keep every page from each file, or can I choose specific pages?</p>
+  <p class="faq-a">Every page from every file you add is included — there's no page picker here. If you only want certain pages from one of the files, run it through Split PDF first and use the "Send extracted pages to Merge" button that appears afterward, which adds just those pages to this list.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Is there a limit on how many PDFs I can merge, or how large they can be?</p>
+  <p class="faq-a">No hard limit on count or size — the only requirement is at least two files before the Merge button turns on. A larger number of files, or very large ones, just takes longer and uses more of your device's memory, since the whole merge runs on your device rather than a server.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What happens if one of the files I add is corrupted or won't open?</p>
+  <p class="faq-a">The whole merge stops with an error rather than silently skipping that file. You'll need to remove or fix the specific file and try again — a file that genuinely needs a password just to open likely won't work here at all.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my PDFs anywhere?</p>
+  <p class="faq-a">No. Every file you add, and the merge itself, happen locally in your browser using the pdf-lib library — nothing is uploaded to or stored on a server.</p>
+</div>
+</section>
 
   <!-- SPLIT PANEL -->
   <section class="panel" id="panel-split">
@@ -355,7 +387,32 @@
     <div id="split-chain" style="display:none;margin-top:12px;">
       <button class="action-btn" id="split-chain-btn" type="button" style="background:var(--teal);">Send extracted pages to Merge &rarr;</button>
     </div>
-  </section>
+  
+<h3 class="section-title">Worked example</h3>
+<p class="sub" style="margin:0;">Say your PDF has 12 pages. Typing "5, 1-3" into "Pages to extract" and clicking Extract Pages produces a 4-page output — but ordered <strong style="color:var(--ink);">1, 2, 3, 5</strong>, not 5 first the way you typed it. Every valid page number gets deduplicated and sorted into ascending order before extraction, regardless of the order or repetition in what you typed, and a range written backward, like "9-7", is read the same as "7-9".</p>
+
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">What happens if I type a page number that doesn't exist, like page 50 of a 12-page PDF?</p>
+  <p class="faq-a">It's silently ignored rather than causing an error. Only numbers that actually fall within the file's real page range get included in the extraction, and if nothing you've typed is valid, the Extract Pages button simply stays disabled.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does extracting pages re-encode or lower the quality of them in any way?</p>
+  <p class="faq-a">No. Pages are copied directly out of the source PDF using the same pdf-lib copy mechanism Merge PDFs uses, so text stays selectable and images stay at their original quality — nothing is flattened into a picture, unlike Redact PDF's output.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Can I send the extracted pages into another tool without downloading and re-uploading the file?</p>
+  <p class="faq-a">Yes. Once extraction finishes, a "Send extracted pages to Merge" button appears that adds the result directly to the Merge PDFs file list, so you can combine it with other files in the same visit.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Is there a limit on how large a PDF or how many pages this can handle?</p>
+  <p class="faq-a">No hard-coded limit. A very large file, or one with hundreds of pages, just takes longer and uses more of your device's memory to process, since everything runs in your browser rather than on a server.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my PDF anywhere?</p>
+  <p class="faq-a">No. Reading the page count and extracting pages both happen locally in your browser; your file is never uploaded anywhere.</p>
+</div>
+</section>
 
   <!-- IMAGES TO PDF PANEL -->
   <section class="panel" id="panel-images">
@@ -373,7 +430,32 @@
     <div id="images-chain" style="display:none;margin-top:12px;">
       <button class="action-btn" id="images-chain-btn" type="button" style="background:var(--teal);">Send this PDF to Merge &rarr;</button>
     </div>
-  </section>
+  
+<h3 class="section-title">Worked example</h3>
+<p class="sub" style="margin:0;">Add a 3000&times;2000 photo, then a 400&times;300 graphic. The photo exceeds this tool's 1600px cap, so it's scaled down to <strong style="color:var(--ink);">1600&times;1067</strong> — and because each image pixel becomes one PDF point (1/72 inch) on the page, that comes out as a roughly 22&times;15-inch page, not a standard Letter page. The 400&times;300 graphic is well under the cap, so it keeps its exact <strong style="color:var(--ink);">400&times;300</strong> size as a small page instead. Each image becomes its own page sized to its own (possibly capped) dimensions, so combining differently sized images produces differently sized pages throughout the same PDF.</p>
+
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">What file types does this accept?</p>
+  <p class="faq-a">JPG and PNG only. If you drop a WebP, HEIC, or other image format in alongside valid JPGs and PNGs, it's silently skipped — it won't appear in the file list and there's no error message, so if a photo seems to have vanished after dropping it in, that's likely why. Convert it with Compress & Convert Image first and try again.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Can I reorder or remove images before converting?</p>
+  <p class="faq-a">Yes — the same up/down/remove controls as Merge PDFs let you change the order or drop an image before you click Convert to PDF.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does converting to PDF recompress or degrade my images?</p>
+  <p class="faq-a">No. Each image's original file data is embedded into the PDF as-is — only the page it's drawn on is sized down when an image exceeds the 1600px cap. The underlying image data inside the file isn't reduced in quality by this tool.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Do I need at least two images, the way Merge PDFs needs at least two files?</p>
+  <p class="faq-a">No — one image is enough. The Convert to PDF button enables as soon as you've added a single image.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my photos anywhere?</p>
+  <p class="faq-a">No. Every image you add, and the PDF built from them, are handled locally in your browser via pdf-lib; nothing is uploaded anywhere.</p>
+</div>
+</section>
 
   <!-- BACKGROUND REMOVAL PANEL -->
   <section class="panel" id="panel-bgremove">
@@ -418,7 +500,29 @@
     </div>
     <div class="status" id="bgremove-status"></div>
     <div class="hint" style="margin-top:10px;">"Portrait" is faster and works best on a person against a fairly simple background. "Complex scene" is slower to load but handles busy backgrounds, multiple subjects, or products better.</div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">What's the actual difference between "Portrait / simple background" and "Complex scene / multiple subjects"?</p>
+  <p class="faq-a">They're two different AI models, not just a setting on one model. Portrait is smaller (about 25 MB) and tuned for one person against a fairly plain background; Complex scene is a larger model (about 220 MB) that's slower to load but handles busy backgrounds, multiple subjects, or product photos better. If a result looks wrong with one, the other is genuinely worth trying rather than just a placebo option.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Why do the edges around hair or fine detail sometimes look a little hard or slightly off?</p>
+  <p class="faq-a">After the AI model produces its cutout, this tool runs one more automatic pass that hardens edge pixels that are nearly-opaque or nearly-transparent and only smooths the band in between, rather than using the model's raw output directly. That cleanup step helps overall, but very fine hair or motion blur can still come out looking a bit rough.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does the AI model re-download every time I use this tool, or only once?</p>
+  <p class="faq-a">Only once per browser, not once per photo. The first time you use a given option (Portrait or Complex scene) it downloads that model; using it again — on another photo, or a later visit to this page — reuses the cached copy instead of re-downloading, unless you've cleared your browser's site data in between. Switching to the other option for the first time still triggers a separate download, since they're two separate model files.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What file format does the result come out as?</p>
+  <p class="faq-a">Always PNG, since that's what preserves the transparent background. If you need a different format afterward — say, a JPG for somewhere that doesn't accept PNGs — run the downloaded result through Compress & Convert Image, which will fill in the transparent area for formats that can't support it.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my photo anywhere?</p>
+  <p class="faq-a">Your photo itself, no — it's handed directly to a background process running the AI model in your own browser, never uploaded. What does come over the network is the AI model itself: using this tool downloads the model file for whichever option you picked, from Hugging Face's model hosting, cached afterward. So "your photo never leaves your browser" is accurate here; "nothing is ever downloaded" would not be — the model has to come from somewhere the first time.</p>
+</div>
+</section>
 
   <!-- METADATA CLEANER PANEL -->
   <section class="panel" id="panel-metadata">
@@ -444,7 +548,29 @@
       <button class="action-btn" id="metadata-clean-btn" style="margin-top:16px;">Clean and Download</button>
     </div>
     <div class="status" id="metadata-status"></div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">What exactly counts as "metadata" here, and what does this tool check for?</p>
+  <p class="faq-a">Eight things: Title, Author, Subject, Keywords, Producer, Creator, and the Created and Modified dates, plus whether the file carries an embedded XMP metadata block (common from Adobe-family tools). Only the ones actually present in your file show up in the table before you download — a blank field is left out of the list rather than shown as empty.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">If the table says "this file already looks clean," does that mean there's truly nothing identifying left in it?</p>
+  <p class="faq-a">It means none of the eight fields this tool checks were set — it's not a guarantee the file carries zero traces of any kind. A PDF can carry other information this tool doesn't look at or touch, like text in annotations or data inside embedded files, so treat "clean" here as scoped to what's actually listed in the table.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Can I set my own title and author instead of leaving them blank?</p>
+  <p class="faq-a">Yes — two optional fields above the download button let you set a title and author that get applied after everything else is stripped. Leave them blank and those fields simply stay unset in the output, rather than being filled in with your filename or anything else.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does cleaning the metadata change the visible content of the PDF — the text, images, or layout?</p>
+  <p class="faq-a">No. Only the document's info fields and XMP block are touched; the pages themselves pass through completely unchanged.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my file anywhere?</p>
+  <p class="faq-a">No. The file is read, inspected, and rewritten entirely in your browser using the pdf-lib library — nothing about its contents or metadata is sent to or stored on a server.</p>
+</div>
+</section>
 
   <!-- IMAGE COMPRESS & CONVERT PANEL -->
   <section class="panel" id="panel-compress">
@@ -496,7 +622,32 @@
       <button class="action-btn" id="compress-download-btn">Download</button>
     </div>
     <div class="status" id="compress-status"></div>
-  </section>
+  
+<h3 class="section-title">Worked example</h3>
+<p class="sub" style="margin:0;">Upload a 4000&times;3000 JPG and set "Max dimension" to 1600. Since 4000 is the longer side, it's capped to 1600, and the shorter side scales proportionally to 1200 — you get a <strong style="color:var(--ink);">1600&times;1200</strong> result, not a stretched square or a cropped image. Leave "Max dimension" at 0 or blank, or type a number larger than 4000, and the image keeps its original 4000&times;3000 size; this field only ever shrinks an image, never enlarges one.</p>
+
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">Does the quality slider do anything when I choose PNG as the output format?</p>
+  <p class="faq-a">No. PNG is always lossless in this tool, so the slider is dimmed and disabled when PNG is selected — it only affects JPG and WebP output.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What happens to a transparent background if I convert a PNG to JPG?</p>
+  <p class="faq-a">It gets filled in solid white first, since JPG has no transparency channel to preserve. Converting that same file to WebP instead keeps the transparency intact, since WebP — unlike JPG — supports it.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">How is the "% smaller" figure calculated — smaller compared to what?</p>
+  <p class="faq-a">It compares the new file's byte size to your original uploaded file's size, not to some intermediate step. So changing the quality, format, or max dimension and checking that percentage again always reflects your full current settings measured against the original file, not against whatever you'd previously tried.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does the live preview match exactly what I get when I actually download?</p>
+  <p class="faq-a">Yes — downloading re-runs the same conversion with whichever format, quality, and max-dimension settings are currently set, so there's no separate, hidden "export quality" happening behind the scenes.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my image anywhere?</p>
+  <p class="faq-a">No. Every resize, recompress, and reformat happens on an in-browser canvas, including the live preview — nothing is uploaded anywhere.</p>
+</div>
+</section>
 
   <!-- REDACT PDF PANEL -->
   <section class="panel" id="panel-redact">
@@ -541,7 +692,32 @@
       <div class="hint" style="margin-top:10px;">Works best on scanned or photographed documents (the most common case for something like an ID card). Documents with unusual embedded fonts can occasionally render a line of text incorrectly &mdash; if a page doesn't look right, zoom in and check before drawing your box, since the box has to be over the real content to work. "Add text" writes new text into the page's pixels &mdash; it doesn't edit the document's real, underlying text (that would need a full PDF editor), so it can't reflow existing content, only add or cover things.</div>
     </div>
     <div class="status" id="redact-status"></div>
-  </section>
+  
+<h3 class="section-title">Worked example</h3>
+<p class="sub" style="margin:0;">Open a 10-page scanned form, draw one black box over an account number on page 3 using "Black out," then click "Redact All Pages & Download." <strong style="color:var(--ink);">All 10 pages</strong> come back in the new file — not just page 3 — each now a flattened image rendered at roughly 216 DPI. The other nine pages look visually unchanged, but like page 3, none of them has selectable or copyable text left in it anymore, because every page goes through the same flattening step on export, whether you drew on it or not.</p>
+
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">Is the hidden content actually gone, or just covered up like a shape sitting on top of it?</p>
+  <p class="faq-a">Actually gone, in the downloaded file. Exporting rebuilds the document as a stack of flattened images, so the black pixels are drawn directly into the page image itself rather than layered on top of text that's still there underneath — there's no overlay to remove and no text to select to get it back.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does "Add text" edit the real, underlying text of the document?</p>
+  <p class="faq-a">No. It paints a white box and then draws new text directly into the page's pixels, which is enough to visually cover and replace a value, but that text can't be selected, searched, or edited again afterward, and it can't reflow anything around it. A genuine text edit needs a full PDF editor.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Can I move between pages without losing boxes I've already drawn?</p>
+  <p class="faq-a">Yes — each page keeps its own boxes as you move between them with Prev/Next. "Undo last change on this page" only removes the most recent box on whichever page you're currently viewing, not one global undo across the whole document.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does redacting affect pages I never drew on?</p>
+  <p class="faq-a">Not visually, but yes in one real way: every page in the file, redacted or not, gets flattened into an image on export. So the entire output PDF loses its selectable text layer and gets larger in file size than an ordinary searchable PDF of the same length — not only the page or pages you actually marked up.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my PDF anywhere?</p>
+  <p class="faq-a">No. Pages are rendered and redacted entirely in your browser using PDF.js and pdf-lib — nothing is uploaded anywhere. That also means there's no autosave: once you close or reload the tab, whatever you haven't already downloaded is gone.</p>
+</div>
+</section>
 
   <!-- OCR / EXTRACT TEXT PANEL -->
   <section class="panel" id="panel-ocr">
@@ -584,7 +760,29 @@
         <button class="action-btn secondary" id="ocr-download-btn">Download .txt</button>
       </div>
     </div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">Is this calling an AI service to read the text, or something else?</p>
+  <p class="faq-a">No service call — it's Tesseract.js, a browser build of the open-source Tesseract OCR engine, running via WebAssembly directly in your browser.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Why does picking the right language matter so much?</p>
+  <p class="faq-a">The recognition data is language-specific, so picking the wrong one doesn't just lower accuracy a little — it actively works against the engine, because it's trying to match the image to character shapes and words from a language that isn't actually in the document. Running English text through the Korean setting, or vice versa, will generally look much worse than running it through the correct one at all.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this work on handwriting, or only printed and typed text?</p>
+  <p class="faq-a">It's built and tuned for printed or typed text — scans, screenshots, printed forms. Handwriting recognition is a meaningfully different problem, and accuracy on it will generally be well below what you'd get from the same tool on printed text.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Can I fix a typo directly in the text box before copying it?</p>
+  <p class="faq-a">No — the output box is read-only. Copy the text or download it as a .txt file first, then make corrections in a text editor or word processor afterward.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my image or PDF anywhere?</p>
+  <p class="faq-a">No — recognition runs locally via WebAssembly. What does come from the network is Tesseract's recognition engine and the language data for whichever language you pick, downloaded once per language the first time you use it and cached after that; your actual document is never part of that and is never uploaded.</p>
+</div>
+</section>
 
   <!-- FACE MOSAIC PANEL -->
   <section class="panel" id="panel-facemosaic">
@@ -610,7 +808,29 @@
       </div>
       <button class="action-btn" id="facemosaic-download-btn">Download</button>
     </div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">How does it decide where the faces are — color-based guesswork, or an actual model?</p>
+  <p class="faq-a">An actual model — Google's MediaPipe Face Detector (the BlazeFace model), which looks at facial structure rather than skin tone or color. It can still miss a face at an unusual angle, in profile, partly obscured, or in low light, which is why the result message tells you to review the image before sharing it rather than treating "faces found" as a guarantee.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Can I switch between Pixelate, Blur, and Black box without re-scanning the photo for faces?</p>
+  <p class="faq-a">Yes. Face detection runs once, right after you upload the photo; switching the style afterward just redraws using those same detected positions, so it's instant rather than re-running detection.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does the mosaic ever leave a sliver of a face visible at the edge?</p>
+  <p class="faq-a">It's possible. The mosaic is drawn to exactly the box the detector reports, with no extra margin added around it, so a tightly cropped or angled face can leave a thin uncovered edge near the hairline or jaw — worth checking before you share the result.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What's actually different between "Pixelate" and "Blur"?</p>
+  <p class="faq-a">Pixelate fills each small square with a single color sampled from one pixel in that block, which is a fast shortcut that still reads as ordinary pixelation at normal viewing size. Blur instead redraws that same region from the original photo with a real blur filter applied, which looks softer and less blocky than Pixelate.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my photo anywhere?</p>
+  <p class="faq-a">Your photo, no — face detection runs locally in your browser via WebAssembly. What does come from the network is the detection software itself: the MediaPipe library and its WebAssembly runtime, and the BlazeFace model file, downloaded the first time you use this tool in a visit and cached after that. Your photo is only ever handed to that already-downloaded model running on your device, never sent anywhere.</p>
+</div>
+</section>
 
   <!-- UPSCALE PANEL -->
   <section class="panel" id="panel-upscale">
@@ -643,7 +863,29 @@
       <div id="upscale-preview-area" style="margin-top:16px;"></div>
       <button class="action-btn" id="upscale-download-btn" style="display:none;">Download</button>
     </div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">What's the actual difference between "Fast" and "AI Upscale"?</p>
+  <p class="faq-a">Fast is standard image-resizing math, done instantly on an in-browser canvas using your browser's own high-quality scaling — the same basic idea as enlarging a photo in any ordinary image viewer. AI Upscale instead runs a small neural image-to-image model that reconstructs plausible detail rather than just interpolating the pixels that are already there, which is why it's slower and needs a model download first.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">If I pick AI Upscale, do the 2&times; / 4&times; buttons control how much it enlarges the photo?</p>
+  <p class="faq-a">No — those buttons only apply to Fast mode. AI Upscale always outputs a fixed 4&times; result, because that's the scale the specific model behind it was built to produce, regardless of which scale button happens to be selected.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does AI Upscale actually invent detail that wasn't in the original photo, or just sharpen what's there?</p>
+  <p class="faq-a">Closer to reconstructing plausible detail than simple sharpening. That's genuinely useful for recovering a soft or low-resolution photo, but it also means the output is a plausible reconstruction of fine detail rather than a guaranteed-accurate record of exactly what was there originally.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Is Fast mode actually good enough, or is AI Upscale always the better choice?</p>
+  <p class="faq-a">For most ordinary photos, Fast is genuinely the right call — it's instant, needs no download, and standard resizing is already close to as good as it gets for a photo that wasn't very soft to begin with. AI Upscale earns its slower, heavier cost mainly on photos that are noticeably blurry or low-resolution to start with.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my photo anywhere?</p>
+  <p class="faq-a">Fast mode never touches the network at all — it's pure canvas math. AI Upscale is different only in what has to arrive first: the upscaling model itself, not your photo, downloads once from a public model host the first time you use that mode, cached afterward. Either way, your photo is processed locally on your device and is never uploaded.</p>
+</div>
+</section>
 
   <!-- AI ERASER PANEL -->
   <section class="panel" id="panel-eraser">
@@ -670,7 +912,29 @@
       <div style="height:6px;background:var(--paper-2);border-radius:999px;overflow:hidden;margin-top:10px;display:none;" id="eraser-progress"><div style="height:100%;background:var(--teal);width:0%;"></div></div>
       <button class="action-btn" id="eraser-download-btn" style="display:none;">Download</button>
     </div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">Why does the downloaded result come out square and lower-resolution than my original photo?</p>
+  <p class="faq-a">This tool works on a fixed 512&times;512 copy of your photo internally, stretched to that size regardless of your photo's original shape, erased at that size, and then downloaded as that same 512&times;512 result. It's well-suited to removing an object from a casual photo, not to publication-quality or print-resolution editing.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What's actually filling in the erased area — a blur, a smear, or a copy of nearby pixels?</p>
+  <p class="faq-a">None of those — it's a dedicated inpainting model (LaMa) trained specifically to reconstruct plausible image content in a masked area, so it's generating texture and structure that would plausibly belong there, not simply smoothing or cloning nearby pixels.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Can I erase more than one area, or fix a spot I erased badly?</p>
+  <p class="faq-a">Yes to both. After one erase finishes, the brush and mask clear so you can paint a new area on the already-edited result and erase again. "Undo brush stroke" only removes your most recent brush stroke before you click Erase — it doesn't undo a result after the fact.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Is there a limit to how large or detailed an area this can erase convincingly?</p>
+  <p class="faq-a">In practice, yes. Because everything happens on that 512&times;512 working copy, a large or finely detailed erased area — especially with a lot of texture around it — has much less image data to reconstruct from than a small object against a plain background, so results get noticeably less convincing as the erased area gets bigger or busier.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my photo anywhere?</p>
+  <p class="faq-a">Your photo, no — it's handed to a background process running the inpainting model locally in your browser. What does download over the network is the inpainting model itself, roughly 200 MB, from Hugging Face's model hosting, the first time you use this tool; it's cached after that so later visits reuse it instead of re-downloading. Your photo never leaves your browser; the model genuinely does have to come from the network once.</p>
+</div>
+</section>
 
   <!-- SCREENSHOT MARKUP PANEL -->
   <section class="panel" id="panel-markup">

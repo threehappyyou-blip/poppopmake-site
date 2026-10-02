@@ -222,6 +222,12 @@
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
   footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -335,7 +341,32 @@
 
     <button class="action-btn" id="inv-download-btn" type="button">Download Invoice PDF</button>
     <div class="status" id="inv-status"></div>
-  </section>
+  
+<h3 class="section-title">Worked example</h3>
+<p class="sub" style="margin:0;">The invoice loads with two example line items already filled in — "Website design" at 1 &times; $1,200.00, and "Hosting setup" at 2 &times; $75.50 — with the tax rate left at its default of 0%. Each line's total is quantity &times; unit price, so those come to <strong style="color:var(--ink);">$1,200.00</strong> and <strong style="color:var(--ink);">$151.00</strong>, and the subtotal is the two added together: <strong style="color:var(--ink);">$1,351.00</strong>. Because the tax rate defaults to 0%, the tax line reads $0.00 and the total matches the subtotal exactly. Change the tax rate — say, to 8% — and the calculator reapplies it to the subtotal immediately: 8% of $1,351.00 is $108.08, pushing the total to <strong style="color:var(--ink);">$1,459.08</strong>, with no need to touch the download button first. The same figures shown on screen are what get printed into the downloaded PDF.</p>
+
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">How are the subtotal, tax, and total calculated?</p>
+  <p class="faq-a">Each line item's total is its quantity multiplied by its unit price. The subtotal adds up every line item's total, tax is the subtotal multiplied by the tax rate percentage you enter, and the total is the subtotal plus that tax. All of it recalculates live as you type — quantities, prices, or the tax rate — so the numbers on screen always match what goes into the PDF.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What happens if I leave a field like an address, invoice number, or notes blank?</p>
+  <p class="faq-a">It's simply left out of the PDF rather than printed as a blank line or placeholder. Your address, the client's address, the invoice number, the dates, and the notes section are all optional — the invoice only includes whichever of those you've actually filled in.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Can I bill for partial quantities, like 2.5 hours?</p>
+  <p class="faq-a">Yes. The quantity field accepts decimals, so something like 2.5 hours or 1.5 units works fine, and the line total is calculated as that exact quantity times the unit price.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Will the layout still hold up if I have a long list of line items or long descriptions?</p>
+  <p class="faq-a">Long descriptions wrap onto multiple lines instead of running off the page, and once the items on a page reach the bottom margin, the invoice automatically continues onto a new page. That automatic page break is checked item by item, though, not after the list — so an unusually long set of line items could in rare cases leave the subtotal/tax/total block tight against the bottom edge of the last page.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my invoice details anywhere?</p>
+  <p class="faq-a">No. Everything you type — names, addresses, line items, amounts — stays in your browser and is used only to build the PDF locally; it's never transmitted anywhere. The page does load the pdf-lib library from a CDN to do that PDF construction, but that's a one-time download of the library's own code, not a place your invoice data goes.</p>
+</div>
+</section>
 
   <!-- QR CODE GENERATOR -->
   <section class="panel" id="panel-qr">
@@ -369,7 +400,29 @@
       </div>
     </div>
     <div class="status" id="qr-status"></div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">Does this shorten or modify the link or text I enter?</p>
+  <p class="faq-a">No. Whatever you type is encoded exactly as entered — scanning the result returns that exact text or URL, with no shortening, redirect, or lookup service involved. If you clear the field entirely, the preview falls back to encoding the PopPopMake homepage URL rather than generating an empty code.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does the Size dropdown change the preview I see on screen?</p>
+  <p class="faq-a">No — the preview always renders at the same fixed size regardless of which option is selected. The Size dropdown only sets the pixel dimensions (256&times;256, 512&times;512, or 1024&times;1024) of the PNG file you get when you click download.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What happens if I type something too long to fit in a QR code?</p>
+  <p class="faq-a">QR codes have a fixed data capacity. If the text or link you enter is too long to encode, generation fails and the tool shows an error message instead of producing a broken or unreadable code.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">How reliable will the code be if it's printed small or gets a little worn?</p>
+  <p class="faq-a">Both the preview and the downloaded file are generated with qrcodejs's highest error-correction setting. That trades a slightly denser pattern for more built-in redundancy, so the code should still scan reliably even with minor smudges, creases, or print-quality issues.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send the text or link I enter anywhere?</p>
+  <p class="faq-a">No. The QR code is generated and rendered entirely in your browser by the qrcodejs library — whatever you type never leaves your device. The library itself is loaded once from a CDN when the page opens, but that's just the code that does the generating, not a destination for what you type.</p>
+</div>
+</section>
 
   <div class="disclaimer">
     <strong>How this works:</strong> Both tools run entirely in your browser — your invoice details and QR content are never sent anywhere (<a href="/how-it-works">see how to check that yourself</a>). The invoice PDF is built with pdf-lib; the QR code is generated with the open-source qrcodejs library.

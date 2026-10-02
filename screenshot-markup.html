@@ -207,6 +207,15 @@
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
   footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+
+  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
+  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:24px;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -339,6 +348,33 @@
   <div class="disclaimer">
     <strong>How this works:</strong> This is plain canvas drawing &mdash; no AI model, nothing to download, nothing uploaded to a server. The image never leaves your device at any point, from opening it to downloading the result &mdash; <a href="/how-it-works">see how to check that yourself</a>. Looking for face detection, background removal, OCR, or AI-powered upscaling and object removal instead? Those live in <a href="/document-tools">Document &amp; Image Tools</a>. Read our <a href="/privacy">Privacy Policy</a> for more.
   </div>
+<div class="panel">
+  <h2>Frequently asked questions</h2>
+  <div class="faq-item">
+    <p class="faq-q">Is the mosaic tool a blur, or does it actually destroy the detail underneath?</p>
+    <p class="faq-a">It's a true pixelation, not a blur. Dragging over an area reads the real pixel colors in that region and repaints it as a grid of flat-colored blocks, so the original detail is overwritten rather than just softened — the block size scales with how large an area you drag, down to a minimum of 4 pixels per block.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">How far back can Undo go — all the way to the original image?</p>
+    <p class="faq-a">Yes. Every pen stroke, shape, text box, and mosaic you add is kept as a separate step, and Undo removes the most recent one at a time, redrawing from your original image plus whatever steps are left. You can keep clicking it all the way back to a completely clean image.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Why does applying a crop clear my Undo history, like the hint on the page says?</p>
+    <p class="faq-a">Cropping flattens everything you've drawn so far directly into a new base image rather than keeping it as a separate, removable step — that's what makes the crop itself permanent. Once that happens there's no longer an original-plus-steps to undo back through, so draw everything else first if you want the option to undo it, and crop last.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What file format do I get when I click Download?</p>
+    <p class="faq-a">A PNG, regardless of what format the image you uploaded was in. The canvas renders your original image plus every mark on top of it and exports that as a single flattened PNG file.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Can I keep editing after I download, or does downloading lock it in?</p>
+    <p class="faq-a">Downloading doesn't change or lock anything — it just saves a PNG snapshot of the canvas at that moment. Your workspace stays open with its full mark history intact, so you can keep drawing, undo further, or download again afterward.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does this tool send my image anywhere?</p>
+    <p class="faq-a">No. Every tool here — pen, highlighter, shapes, text, mosaic, and crop — runs as plain canvas drawing in your own browser. Your image is never uploaded anywhere, from the moment you open it to the moment you download the result.</p>
+  </div>
+</div>
 </main>
 
 <footer>

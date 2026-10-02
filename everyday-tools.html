@@ -225,6 +225,14 @@
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+
+  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
+  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 </head>
 <body>
@@ -315,7 +323,34 @@
         <span class="chip">Born on a: <b id="ageDayOfWeek">&mdash;</b></span>
       </div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Worked example</h3>
+  <p class="sub" style="margin:0;">The date of birth field is pre-filled with January 1, 2000, and the "as of" field defaults to today's date in your own browser, so the headline figure shifts by a day each time you revisit the page. Checked against the day this was written — October 1, 2026 — that pairing works out to 26 years, 9 months, and 0 days: the calculator counts the largest number of full months that fit before the "as of" date, then whatever's left over becomes the days figure, which is why a birth date on the 1st of a month lands on a clean month boundary with 0 days left over. The other figures follow the same two dates: 9,770 total days lived, and 92 days until the next birthday on January 1. One figure doesn't depend on today's date at all — a person born January 1, 2000 was born on a Saturday.</p>
+
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">How are the years, months, and days actually figured out?</p>
+    <p class="faq-a">The calculator finds the largest whole number of months that fit between your birth date and the "as of" date, splits that into years and months, and then counts whatever days are left over to reach the exact date — rather than estimating with a flat 30-day month or 365-day year. That's why the days figure is always small and can land on exactly 0.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What happens if I enter a birth date that hasn't happened yet?</p>
+    <p class="faq-a">The calculator checks for that directly. If the date of birth falls after the "as of" date, the headline switches to "That birth date is in the future," and the three detail chips — total days, days to next birthday, day of week — reset to a dash instead of a number.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does it handle birthdays that don't exist in every month, like the 29th or 31st?</p>
+    <p class="faq-a">Yes. Rather than hard-coding how many days are in each month, it leans on JavaScript's own date math and then checks whether that overshot the target date, stepping the month count back one at a time until it hasn't. That means a birth date on, say, the 31st is still counted consistently once you reach months that don't have a 31st.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Why does "Days to next birthday" sometimes say "Today!" instead of a number?</p>
+    <p class="faq-a">If the "as of" date you've entered is the exact anniversary of the birth date, the days-remaining count is 0. The calculator shows "Today!" in that specific case instead of printing a plain zero.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does this calculator send my birth date anywhere?</p>
+    <p class="faq-a">No. Both dates stay in your browser, and the whole calculation — years, months, days, and the three chips — runs locally; nothing is transmitted to or stored on a server.</p>
+  </div>
+</div>
+</section>
 
   <!-- PERCENTAGE CALCULATOR -->
   <section class="panel" id="panel-pct">
@@ -342,7 +377,34 @@
       <div class="amount" id="pctResult">&mdash;</div>
       <div class="sub" id="pctResultSub"></div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Worked example</h3>
+  <p class="sub" style="margin:0;">Each of the three modes loads with its own default numbers. "X% of Y" starts at 20 and 150, showing 30. "X is what % of Y" starts at 30 and 150, showing 20%. "% change, X to Y" starts at 100 and 150, showing +50%, labeled as an increase. Switching between the three mode buttons doesn't clear or share these numbers — each mode keeps its own pair of fields exactly as you last left them, even while it's hidden behind one of the other tabs.</p>
+
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">Do the three modes share the numbers I type?</p>
+    <p class="faq-a">No — "X% of Y," "X is what % of Y," and "% change" each have their own pair of input fields underneath. Switching the mode button just shows or hides the relevant pair; it doesn't copy a value across or clear anything, so each mode holds on to whatever you last typed into it.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What happens if one of the numbers is 0?</p>
+    <p class="faq-a">It's handled explicitly rather than left to a divide-by-zero error. In "X is what % of Y," if Y is 0 the result shows 0% instead of an error. In "% change," if the starting number is 0, the result is also shown as 0% — a percentage change from zero has no ordinary mathematical answer, so the calculator doesn't attempt one.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">How does "% change" handle a negative starting number?</p>
+    <p class="faq-a">It uses the size of the starting number — ignoring its sign — as the base for the comparison, which is the standard convention for percentage change. Going from −100 to 50, for instance, comes out as a +150% change rather than a negative or undefined result.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Why do some results show commas, like "1,250"?</p>
+    <p class="faq-a">Results are rounded to two decimal places and then formatted with standard thousands separators, so a result like 1250 displays as "1,250" instead of a long unbroken string of digits.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does this calculator send the numbers I type anywhere?</p>
+    <p class="faq-a">No. All three modes calculate entirely in your browser from the numbers in the visible fields; nothing is sent to or stored on a server.</p>
+  </div>
+</div>
+</section>
 
   <!-- TIP / SPLIT CALCULATOR -->
   <section class="panel" id="panel-tip">
@@ -382,7 +444,34 @@
       <thead><tr><th>Item</th><th>Total</th><th>Per person</th></tr></thead>
       <tbody id="tipBody"></tbody>
     </table>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Worked example</h3>
+  <p class="sub" style="margin:0;">The page loads with an $84.50 subtotal, 0% sales tax, an 18% tip calculated on the subtotal, and 4 people. With no tax entered, the breakdown table skips the tax row entirely and shows just three lines: Subtotal $84.50 ($21.13 per person), Tip (18%) $15.21 ($3.80 per person), and Total $99.71 ($24.93 per person). Raising the sales tax field above 0% adds a Tax row back into the table, between the subtotal and the tip.</p>
+
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">Why isn't there a tax row in the table?</p>
+    <p class="faq-a">The breakdown table only adds a tax row once the sales tax field is above 0%. Since the calculator defaults to 0% tax, it starts with just Subtotal, Tip, and Total — enter any tax percentage and the Tax row appears between the subtotal and the tip.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What's the real difference between tipping on the subtotal versus the total?</p>
+    <p class="faq-a">It changes which number the tip percentage is multiplied against — the subtotal alone, or the subtotal plus tax. Sales tax itself is always calculated from the subtotal either way; the toggle only changes the tip. Tipping on the total means you're also tipping on the tax amount, which most etiquette guides don't recommend.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What happens if I set the number of people to 0?</p>
+    <p class="faq-a">It's treated as 1 person — the calculator won't divide by zero or show an error. The same floor applies if you clear the field or enter a negative number; the per-person columns then just equal the full subtotal, tip, and total.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Could the per-person figures ever be off by a cent from each other?</p>
+    <p class="faq-a">It's possible, though not in the default example above. Each per-person column — bill share, tax share, tip share, and total share — is calculated from the exact split and rounded to the cent independently, rather than being built by adding the other already-rounded columns together. For most combinations of bill, tax, and tip the rounding lines up, but it isn't mathematically guaranteed to.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does this calculator send my bill or tip details anywhere?</p>
+    <p class="faq-a">No. The subtotal, tax, tip, and number of people all stay in your browser, and the whole breakdown is calculated locally; nothing is transmitted to or stored on a server.</p>
+  </div>
+</div>
+</section>
 
   <!-- PASSWORD GENERATOR -->
   <section class="panel" id="panel-pwd">
@@ -405,7 +494,31 @@
         <button type="button" class="preset-btn" id="pwdCopyBtn">Copy</button>
       </div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">Is this actually random, or just Math.random()?</p>
+    <p class="faq-a">It uses the browser's Web Crypto API — crypto.getRandomValues() — rather than Math.random(), which is the source generally recommended for anything security-sensitive. Each character is chosen using rejection sampling, which discards a small number of raw random values specifically to avoid the slight bias a plain modulo operation would otherwise introduce.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">If I select uppercase, lowercase, numbers, and symbols, is one of each guaranteed to appear?</p>
+    <p class="faq-a">No. Every character position is drawn independently from the full combined pool of whatever types you've selected, so nothing checks afterward that the result includes at least one of each. For longer passwords it's statistically likely you'll get a mix, but it isn't guaranteed — hit Regenerate if a particular result doesn't look like what you wanted.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What exactly counts as a "symbol"?</p>
+    <p class="faq-a">The fixed set used when "Symbols" is checked is ! @ # $ % ^ &amp; * ( ) _ + - = [ ] { } | ; : , . &lt; &gt; ? — the same characters every time. There's no option to customize or narrow down which symbols are used.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What length range is available, and what happens if I turn off every character type?</p>
+    <p class="faq-a">The length slider runs from 6 to 64 characters, defaulting to 16. If you uncheck all four character types, there's no character pool left to draw from, and the output area shows "Select at least one character type" instead of a password.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does this send the password anywhere, including when I hit Copy?</p>
+    <p class="faq-a">No. The password is generated locally, and the Copy button writes it straight to your clipboard using the browser's own clipboard API. It's never sent to or stored on a server.</p>
+  </div>
+</div>
+</section>
 
   <!-- UNIT CONVERTER -->
   <section class="panel" id="panel-unit">
@@ -433,7 +546,34 @@
         <div class="field"><label for="unitC">Celsius (&deg;C)</label><input type="number" id="unitC" value="37" step="0.1"></div>
       </div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Worked example</h3>
+  <p class="sub" style="margin:0;">The three sections load with their own starting values: 180 cm paired with 5 ft 11 in for height, 150 lb paired with 68.04 kg for weight, and 98.6°F paired with 37°C for temperature. These pairs aren't re-synced against each other on page load — they're just the starting numbers sitting in each field. Typing 180 into the centimeters field to trigger a fresh conversion gives 5 ft 10.9 in, using the exact 2.54-cm-per-inch factor rounded to the nearest tenth of an inch, which is slightly different from the 5 ft 11 in it started with. The weight and temperature pairs don't have that same gap — 150 lb converts to exactly 68.04 kg and back again, and 98.6°F converts to exactly 37°C and back again, so those two sections' starting numbers do match their own formulas.</p>
+
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">Why didn't my hand-calculated feet and inches match exactly?</p>
+    <p class="faq-a">Height converts using the exact 2.54-cm-per-inch factor, then rounds the inches figure to the nearest tenth — and if that rounds up to a full 12 inches, it carries over into an extra foot rather than ever displaying "12 in." Small differences from a quick mental calculation are almost always that rounding step, not a different conversion factor.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does changing the centimeters field also update the pounds or Fahrenheit fields?</p>
+    <p class="faq-a">No. Height, weight, and temperature are three separate converters stacked on the same page, not one linked system. Editing a field in one section only recalculates its own paired field and leaves the other two sections untouched.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What conversion factor does the weight converter use?</p>
+    <p class="faq-a">0.45359237 kilograms per pound — the internationally defined exact value, not a rounded approximation. 150 lb and 68.04 kg convert into each other exactly using that factor, each direction rounded to the nearest hundredth.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Can I convert other units, like meters, miles, or Kelvin?</p>
+    <p class="faq-a">Not on this tool. It covers exactly three fixed pairs — height (centimeters with feet and inches), weight (pounds with kilograms), and temperature (Fahrenheit with Celsius) — with no category picker or additional units.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does this converter send my measurements anywhere?</p>
+    <p class="faq-a">No. Every conversion is a local calculation triggered as you type; nothing you enter here is transmitted to or stored on a server.</p>
+  </div>
+</div>
+</section>
 
   <!-- TIME ZONE CONVERTER -->
   <section class="panel" id="panel-tz">
@@ -448,7 +588,31 @@
       <thead><tr><th>Time zone</th><th>Local time</th></tr></thead>
       <tbody id="tzBody"></tbody>
     </table>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">Do I need to tell it what time zone I'm in?</p>
+    <p class="faq-a">No. The date-and-time field defaults to right now in your own browser's local time, and whatever you type into it is interpreted as local time too. The eleven time zones in the table are the ones being converted to, not from, so there's nothing to configure for your own side of the conversion.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What does the "+1 day" or "−1 day" next to a time mean?</p>
+    <p class="faq-a">It means that, at the exact moment you entered, the calendar date in that time zone is already a day ahead — or still a day behind — your own. The calculator compares the calendar date in your zone against the calendar date in each listed zone for that same instant, which is how a late evening in one place can already be tomorrow somewhere else.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Are these times adjusted for daylight saving automatically?</p>
+    <p class="faq-a">Yes. Each time zone is looked up by its full zone name — America/New_York, say, rather than a fixed "UTC−5" — so the browser's own time zone data supplies whichever offset and abbreviation actually applies on the date you entered, including the switch between standard and daylight time.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Can I add my own city or time zone to the table?</p>
+    <p class="faq-a">No. The table always shows the same fixed set of eleven zones — four US zones, UTC, London, Paris, Seoul, Tokyo, Shanghai, and Sydney — in that order. There's no search box or option to add others.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does this calculator send my date and time anywhere?</p>
+    <p class="faq-a">No. The conversion is computed locally using your browser's own time zone data; nothing you enter is transmitted to or stored on a server.</p>
+  </div>
+</div>
+</section>
 
   <div class="disclaimer">
     All three run entirely in your browser &mdash; nothing you type here is sent anywhere. <a href="/how-it-works">See how to check that yourself</a>.

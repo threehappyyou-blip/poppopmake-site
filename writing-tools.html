@@ -221,6 +221,14 @@
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
   footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+
+  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
+  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -307,7 +315,29 @@
       <ul class="notes-list" id="wr-notes"></ul>
       <div id="wr-phrase-list"></div>
     </div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">Is this working from an actual list, or is it doing something smarter than that?</p>
+  <p class="faq-a">It's a fixed list of regex patterns for specific words and phrases — things like delve, tapestry, multifaceted, synergy, and full phrases like "in today's fast-paced world" or "it's important to note that." There's no scoring model or language understanding behind it: if a pattern in that list matches your text, it's flagged and highlighted above, and if it doesn't, it isn't. Hover over any highlighted phrase to see its suggested swap, and paste at least a dozen words before Analyze Text will produce anything.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What do the orange, yellow, and teal dots mean?</p>
+  <p class="faq-a">They're three fixed groups within that same list, not a calculated score. Orange (tier 1) covers words and phrases rare enough in ordinary writing to be a strong signal on their own — delve, paradigm shift, synergy, "navigate the complexities." Yellow (tier 2) covers promotional-sounding words that only look suspicious in clusters — robust, leverage, foster, empower. Teal (tier 3) is everyday transition words — additionally, furthermore, moreover, notably, crucial — that barely mean anything alone and only matter if several pile up in one passage.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does it check anything besides specific words and phrases?</p>
+  <p class="faq-a">Yes — separately from the phrase list, it also checks a few structural patterns: whether the text opens or closes on a stock phrase, whether every sentence runs about the same length with little variation, whether a passage of 80 words or more has zero contractions anywhere, and whether em dashes show up more often than usual. These surface as plain-language notes above the phrase list, not as highlights in the text itself.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">If nothing gets flagged, does that mean my text wasn't AI-written?</p>
+  <p class="faq-a">No. This only matches a fixed set of known clichés and patterns — it has no way to evaluate meaning, and plenty of human writers use these exact words too. Careful AI-assisted writing can also avoid every single one of them. Treat a clean result as "no obvious tells by this one check," not as proof either way.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my text anywhere?</p>
+  <p class="faq-a">No. The phrase matching runs as plain JavaScript in your browser against the pattern list described above — there's no fetch or API call anywhere in the code, and nothing you paste leaves the page.</p>
+</div>
+</section>
 
   <section class="panel" id="panel-smooth">
     <div id="wr-smooth-empty" class="empty-note">Paste some text above and click <strong>Analyze Text</strong> — swap suggestions will show up here.</div>
@@ -316,7 +346,29 @@
       <div id="wr-suggestion-list"></div>
       <p class="smooth-note">Word swaps are a starting point, not the whole fix. Stiff writing is usually more about uniform sentence rhythm and vague claims than any single word — if every sentence runs about the same length and nothing is concrete, that reads as AI even with zero phrases flagged above.</p>
     </div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">Does "Smooth It Out" rewrite my text for me?</p>
+  <p class="faq-a">No — your original text is never changed. This tab runs the exact same phrase check as Flagged Phrases, then lists each flagged phrase next to its suggested replacement — for example, leverage → use, or at the end of the day → cut it, or say what you mean directly. You still make every edit yourself; nothing here is an automatic rewriter or find-and-replace.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Where do the suggested replacements come from?</p>
+  <p class="faq-a">Each flagged word or phrase has one fixed suggestion built into the same list the Flagged Phrases tab uses — it's a lookup table, not something generated for your specific sentence. The same word always gets the same suggestion, regardless of the sentence around it.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Why do some suggestions read like instructions instead of an actual word?</p>
+  <p class="faq-a">Not every flagged phrase has a clean one-word substitute. Vague words like multifaceted or tapestry get a suggestion like "name the specific facets instead" or "be concrete instead of this metaphor," because the actual fix is adding a specific detail, not swapping in a different vague word.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">I swapped every suggested word and the text still reads stiff — why?</p>
+  <p class="faq-a">Word-level swaps only fix individual clichés, not sentence rhythm. Text often reads as stiff or AI-generated for structural reasons — uniform sentence length, vague claims, no concrete detail — and no single word swap touches any of that. The note under the suggestion list says this directly; the Flagged Phrases tab's structural notes (sentence-length uniformity, missing contractions, and so on) are a better place to look.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my text anywhere?</p>
+  <p class="faq-a">No. The suggestion list is generated locally from the same in-browser phrase check as Flagged Phrases — nothing you paste is transmitted anywhere.</p>
+</div>
+</section>
 
   <section class="panel" id="panel-count">
     <div id="wr-count-empty" class="empty-note">Start typing in the box above — this tab updates live, no need to click Analyze.</div>
@@ -353,7 +405,29 @@
       </div>
       <p class="smooth-note" style="margin-top:14px;">Syllable counting is a standard heuristic, not a dictionary lookup — it gets the vast majority of words right, but the occasional word (especially uncommon ones) can be off by one syllable. Across a real paragraph those small misses average out; treat the score as a solid estimate, not a certified grade level.</p>
     </div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">What formula does the readability score use?</p>
+  <p class="faq-a">Flesch Reading Ease: 206.835 minus 1.015 times the average number of words per sentence, minus 84.6 times the average number of syllables per word. Higher scores mean easier reading — 90 and up is roughly 5th-grade level, under 30 is roughly college-graduate level. The grade-level line underneath comes from the related Flesch-Kincaid Grade Level formula, built from those same two inputs.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">How does syllable counting actually work?</p>
+  <p class="faq-a">It's a heuristic, not a dictionary lookup: the tool strips common silent endings — a trailing silent e, or -ed/-es — then counts the remaining groups of vowels in what's left, treating y as a vowel too. Any word of three letters or fewer is automatically counted as one syllable. It gets the large majority of real words right, but it's guessing from spelling patterns, not checking actual pronunciation.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What does the readability score not take into account?</p>
+  <p class="faq-a">Flesch Reading Ease only measures sentence length and syllables per word — it has no sense of meaning, jargon, or whether an idea is actually clear. A sentence built from short nonsense words can score "easy"; a longer sentence built from plain, familiar words can score "difficult." The reading-time estimate has a similar limit — it's just your word count divided by 225 words per minute, and doesn't adjust for how dense the material actually is.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Why might the sentence or paragraph count look off for text I paste in?</p>
+  <p class="faq-a">Sentences are counted as chunks of text ending in a period, question mark, or exclamation point, so a final clause with no closing punctuation at the very end of your text won't be counted. Paragraphs are counted by blank lines between blocks of text, so a single line break (one Enter key press) is treated as the same paragraph, not a new one.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my text anywhere?</p>
+  <p class="faq-a">No. Word count, sentence/paragraph counting, syllable estimation, and the readability formulas all run as plain JavaScript in your browser, recalculating on every keystroke — there's no fetch or API call in the code, and nothing you type is sent anywhere.</p>
+</div>
+</section>
 
   <div class="disclaimer">
     <strong>How this works:</strong> This scans for common AI-writing clichés and patterns — it's a pattern-matcher, not a real AI detector, and it runs entirely in your browser (<a href="/how-it-works">see how to check that yourself</a>). It can't prove text is or isn't AI-written: human writers use plenty of these words too, and polished AI writing can avoid every one of them. Treat flags as a nudge to reconsider a phrase, not a verdict — that matters especially for careful, formal, or non-native English writing, which these kinds of checks can unfairly flag.

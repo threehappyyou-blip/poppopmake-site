@@ -215,6 +215,12 @@
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
   footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -313,7 +319,29 @@
 
     <button class="action-btn" id="rb-download-btn" type="button">Download Resume PDF</button>
     <div class="status" id="rb-status"></div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">Can I preview the resume before downloading it?</p>
+  <p class="faq-a">Not on screen — there's no live preview panel. Clicking "Download Resume PDF" builds the whole document in one step and starts the download immediately, laid out as a single-column page in Helvetica.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What happens if I leave a whole section like Education or Summary empty?</p>
+  <p class="faq-a">That section's heading is left out of the PDF entirely, rather than printing "EDUCATION" over a blank space. The same goes for contact details — your email, phone, and location are only printed if you've filled them in, separated by a vertical bar between whichever ones you did.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">How do I format bullet points under a job — do I need to type the bullet symbol myself?</p>
+  <p class="faq-a">No. Each line you type in a description box becomes its own bullet automatically, with a &bull; added and the text wrapped to fit the page width for you. Press Enter to start a new bullet rather than typing a dash or asterisk.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What happens if my experience and education take up more than one page?</p>
+  <p class="faq-a">A new page is added automatically once the next line would run past the bottom margin — you don't need to watch the length or manually force a page break. Long single bullets wrap across multiple lines the same way.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my work history or contact details anywhere?</p>
+  <p class="faq-a">No. The PDF is assembled entirely in your browser using the pdf-lib library — your name, contact info, and everything you write about your experience stays local and is never transmitted anywhere.</p>
+</div>
+</section>
 
   <!-- ATS CHECKER -->
   <section class="panel" id="panel-ats">
@@ -336,7 +364,29 @@
       </div>
     </div>
     <div class="status" id="ats-status"></div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">How does it decide which words from the job description actually count as "keywords"?</p>
+  <p class="faq-a">It strips out a large built-in list of common connector and filler words first — things like "the," "with," or "responsibilities" — then keeps whatever's left if it's an all-caps acronym (like SQL or AWS), appears at least twice in the posting, or is six letters or longer. From there it takes the top 20, prioritizing acronyms first and then whichever words appear most often.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Is this a smart or AI-based match, or something simpler?</p>
+  <p class="faq-a">Something simpler, on purpose — it's a plain text search. A keyword counts as "matched" if it appears anywhere in your resume text at all, even as part of a longer word, so a keyword like "manage" would be marked present if your resume only contains "management." It's a rough keyword-overlap check, not a reading of meaning or context.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does capitalization matter when it compares my resume to the posting?</p>
+  <p class="faq-a">No, not for the matching step itself — both your resume and the extracted keywords are lowercased before comparing. Capitalization only matters earlier, for spotting acronyms in the original job description before that lowercasing happens.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Why might a real company's ATS software score my resume differently than this does?</p>
+  <p class="faq-a">This checks the same basic idea most keyword-filtering ATS software uses, but it isn't a simulation of any specific vendor's product — real systems may weigh keyword placement, parse formatting (like tables or columns) differently, or use more sophisticated matching than a plain text search. Treat a low score as a prompt to ask whether a missing term genuinely belongs on your resume, not as a verdict to chase a perfect number.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my resume or the job description anywhere?</p>
+  <p class="faq-a">No. Both text boxes are compared entirely in your browser; neither your resume nor the job posting you paste in is transmitted to or stored on a server.</p>
+</div>
+</section>
 
   <!-- COVER LETTER GENERATOR -->
   <section class="panel" id="panel-cover">
@@ -367,7 +417,29 @@
 
     <button class="action-btn" id="cl-download-btn" type="button">Download Cover Letter PDF</button>
     <div class="status" id="cl-status"></div>
-  </section>
+  
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">How does it turn my short qualification phrases into real sentences?</p>
+  <p class="faq-a">Each phrase you add gets "I have" (or, for the first one, "In my experience, I have") stitched onto the front of it. One phrase becomes one sentence; two become two short sentences; three or more are joined into "In my experience, I have &lt;first&gt;. I have also &lt;middle ones&gt;, and &lt;last one&gt;." That's also why each phrase works best written as a lowercase, past-tense fragment, like the page's own examples — "led a redesign that increased signups 20%" — rather than a full sentence of its own.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What does the letter look like if I only fill in my name, the job title, and the company?</p>
+  <p class="faq-a">Those three are the only required fields, and the letter still comes out complete without the rest. The greeting falls back to "Dear Hiring Manager," the opening line skips the "which I saw posted on..." clause, and the closing "why this company" paragraph is simply left out — you get a shorter, two-paragraph letter instead of an error.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Is this letter actually written by AI?</p>
+  <p class="faq-a">No — it doesn't call any AI service. It assembles your own words into a standard cover-letter structure using a fixed template, which is why the wording you get back always traces directly to what you typed in the fields above, nothing invented.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does it add today's date automatically?</p>
+  <p class="faq-a">Yes. The date printed under your contact details is pulled from your browser's clock at the moment you click download — formatted like "October 1, 2026" — so there's no date field to fill in yourself.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my letter content anywhere?</p>
+  <p class="faq-a">No. The PDF is built locally with the same pdf-lib library the Resume Builder uses — your qualifications, the company name, and everything else you type stays in your browser.</p>
+</div>
+</section>
 
   <!-- HOURLY / SALARY CONVERTER -->
   <section class="panel" id="panel-salary">
@@ -382,7 +454,32 @@
       <div class="field"><label for="hs-weeks">Weeks worked per year</label><input type="number" id="hs-weeks" value="52" min="1" max="52" step="1"></div>
     </div>
     <div class="hint">52 weeks assumes no unpaid time off. If you take 2 weeks unpaid, use 50.</div>
-  </section>
+  
+<h3 class="section-title">Worked example</h3>
+<p class="sub" style="margin:0;">The page loads at $25/hour, 40 hours a week, 52 weeks a year, which multiplies out to exactly the $52,000 shown in the annual field. Change the hourly rate to $30 and the annual field recalculates to <strong style="color:var(--ink);">$62,400</strong>. From there, lowering the weeks-per-year field to 50 — say, for two weeks of unpaid time off — recalculates the annual field again, down to <strong style="color:var(--ink);">$60,000</strong>, using that same $30 hourly rate rather than reaching back to the original $52,000.</p>
+
+<h3 class="section-title">Frequently asked questions</h3>
+<div class="faq-item">
+  <p class="faq-q">If I change "hours per week" or "weeks per year," which field does it recalculate — hourly or annual?</p>
+  <p class="faq-a">Annual. Editing either hours-per-week or weeks-per-year always recalculates the annual salary from whatever's currently in the hourly field — it never works backward from the annual figure to change your hourly rate.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">What happens if I clear the hours-per-week or weeks-per-year field?</p>
+  <p class="faq-a">It's treated as 40 hours and 52 weeks respectively — the same values the page loads with — rather than as zero or an error.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Why might this not match what actually lands in my paycheck?</p>
+  <p class="faq-a">This is a gross, pre-tax conversion based only on the hours, weeks, and rate you enter — it doesn't account for overtime pay, unpaid leave beyond what you set in "weeks per year," bonuses, or any tax withholding.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">How precisely are the numbers rounded?</p>
+  <p class="faq-a">The annual figure rounds to the nearest whole dollar, and the hourly figure rounds to the nearest cent — so converting annual back to hourly and then back to annual again can occasionally land a dollar or two off from where you started.</p>
+</div>
+<div class="faq-item">
+  <p class="faq-q">Does this tool send my wage information anywhere?</p>
+  <p class="faq-a">No. All four fields recalculate locally in your browser as you type; nothing is transmitted to or stored on a server.</p>
+</div>
+</section>
 
   <div class="disclaimer">
     <strong>How this works:</strong> Both tools run entirely in your browser — nothing you type is uploaded anywhere (<a href="/how-it-works">see how to check that yourself</a>). The ATS checker uses simple keyword-frequency matching, which is the core mechanic most basic ATS keyword filters use, but it isn't a simulation of any specific company's actual software. Treat a missing keyword as a prompt to ask "should this genuinely be on my resume?" — not as something to stuff in regardless. The cover letter tool assembles your own words into a template, on purpose — it doesn't call any AI service to write for you.

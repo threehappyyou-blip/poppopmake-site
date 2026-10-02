@@ -217,6 +217,14 @@
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+
+  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
+  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:first-of-type{padding-top:2px;}
+  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
+  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 </head>
 <body>
@@ -313,7 +321,34 @@
         <textarea id="jsonOutput" readonly style="min-height:180px;background:var(--paper-2);"></textarea>
       </div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Worked example</h3>
+  <p class="sub" style="margin:0;">The box loads with a sample object already in it — <code>{"name":"PopPopMake","categories":["Documents","Money","Career","Business","Writing","Everyday"],"free":true,"count":6}</code> — and the formatter runs once automatically as the page loads, so the Result box already shows it pretty-printed at 2-space indent: the outer object, the six-item <code>categories</code> array with one string per line, then <code>free</code> and <code>count</code> each on their own line. Switch the dropdown to "Minify (no spaces)" and click Format again, and the same object comes back as a single compact line instead, because Minify doesn't strip whitespace from your original text — it re-parses it and re-serializes it with no indentation argument at all.</p>
+
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">What happens if I paste something that isn't valid JSON?</p>
+    <p class="faq-a">The status line shows "Not valid JSON:" followed by whatever message the browser's own <code>JSON.parse</code> throws, and the Result box is cleared rather than showing a partial guess. That message comes from the JavaScript engine itself, not a custom parser built for this tool, so its specificity varies — a stray trailing comma, for example, can report a line and column, while truncated input just reports "Unexpected end of JSON input" with no position at all. Exact wording can differ between browsers, since each has its own JSON parser.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Why do large numbers or trailing decimals sometimes look different after formatting?</p>
+    <p class="faq-a">Formatting works by parsing your text into a real JavaScript value with <code>JSON.parse</code> and then re-serializing that value with <code>JSON.stringify</code>, rather than reformatting your original characters in place. That means a number typed as <code>1.50</code> comes back as <code>1.5</code> — the trailing zero isn't preserved once it becomes a JavaScript number — and an integer larger than JavaScript can represent exactly (above 2^53) can shift to a nearby value. This is a property of round-tripping through JSON.parse/JSON.stringify, not a bug specific to this formatter.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What does "Minify" actually do?</p>
+    <p class="faq-a">It reparses your JSON and re-serializes it with no indentation argument, which renders as a single compact line. Because it goes through a real parse step first, it also validates your input along the way and rejects anything that isn't strictly valid JSON — including JSON with comments or trailing commas, neither of which the JSON format allows.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">I changed the indent dropdown but the output didn't change — why?</p>
+    <p class="faq-a">The dropdown only takes effect the next time you click Format — changing it doesn't re-run formatting by itself. If you've already formatted something, pick the new indent option and click Format again to see it applied.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does this tool send my JSON anywhere?</p>
+    <p class="faq-a">No. Parsing and formatting both happen with the browser's built-in <code>JSON.parse</code>/<code>JSON.stringify</code> — nothing you paste here is transmitted to or stored on a server.</p>
+  </div>
+</div>
+</section>
 
   <!-- BASE64 -->
   <section class="panel" id="panel-b64">
@@ -335,7 +370,34 @@
         <button class="action-btn secondary" id="b64CopyBtn" type="button">Copy result</button>
       </div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Worked example</h3>
+  <p class="sub" style="margin:0;">The box loads with the sample text <code>Hello, PopPopMake! 안녕하세요 🎉</code>, mixing plain ASCII, Korean, and an emoji on purpose. Clicking Encode writes <code>SGVsbG8sIFBvcFBvcE1ha2UhIOyViOuFle2VmOyEuOyalCDwn46J</code> into the Base64 box below; clicking Decode right after reads that same box and writes the exact original text back above, Korean characters and emoji intact. That round trip works because encoding first converts your text to UTF-8 bytes with <code>TextEncoder</code> before <code>btoa</code> ever sees it, and decoding reverses that with <code>atob</code> and <code>TextDecoder</code>.</p>
+
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">Does this correctly handle Korean text, emoji, or other non-English characters?</p>
+    <p class="faq-a">Yes — and that's by design, not accident. Rather than calling <code>btoa</code>/<code>atob</code> directly on your text, it first runs the text through <code>TextEncoder</code> to get its UTF-8 bytes and encodes those, then reverses the same path with <code>TextDecoder</code> on decode. A plain, unwrapped <code>btoa()</code> call throws an error on any character outside Latin-1, which includes Korean text and most emoji — this extra step is what makes round-tripping that text possible at all.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What happens if I click Decode on text that isn't valid Base64?</p>
+    <p class="faq-a">The status line shows "Not valid Base64:" followed by the real error the browser's <code>atob</code> throws — typically "Invalid character" — and the text box above is left untouched. Characters outside the standard Base64 alphabet, or incorrect padding, are the usual cause.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Will Base64 produced by another tool or programming language decode correctly here?</p>
+    <p class="faq-a">Standard Base64 (the alphabet using <code>+</code>, <code>/</code>, and <code>=</code> padding) will. URL-safe Base64 (using <code>-</code> and <code>_</code> instead) will not — decoding here goes through the browser's standard <code>atob</code>, which rejects those characters rather than treating them as equivalents.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does it matter if the Base64 text has extra line breaks or spaces, like from a copy-paste?</p>
+    <p class="faq-a">Not much — stray whitespace inside or around the Base64 text is skipped when decoding, and this tool also trims the box before decoding. What it won't tolerate is a non-whitespace character that isn't part of the Base64 alphabet.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does encoding or decoding here send my text anywhere?</p>
+    <p class="faq-a">No. Both directions run entirely in your browser using built-in <code>TextEncoder</code>/<code>TextDecoder</code> and <code>btoa</code>/<code>atob</code> — nothing you type or paste is sent to a server.</p>
+  </div>
+</div>
+</section>
 
   <!-- UUID GENERATOR -->
   <section class="panel" id="panel-uuid">
@@ -354,7 +416,34 @@
       </div>
       <div class="uuid-list" id="uuidList"></div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Worked example</h3>
+  <p class="sub" style="margin:0;">The page generates one UUID automatically on load, and every click of "Generate new UUID" produces a fresh one — there's no fixed seed, so the exact value differs each time, but the shape never does: four hyphen-separated groups like <code>dd162d6f-97d0-4d30-af3f-cc37d63e53f4</code>, where the third group always starts with <code>4</code> (marking it as version 4) and the fourth group always starts with <code>8</code>, <code>9</code>, <code>a</code>, or <code>b</code> (the variant bits). Set "Generate multiple" to a number between 1 and 100 and click "Generate list" to get that many at once, built the same way.</p>
+
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">Which version of UUID does this generate, and how random is it really?</p>
+    <p class="faq-a">Version 4 (random) UUIDs. When the browser supports it, generation calls the Web Crypto API's <code>crypto.randomUUID()</code> directly, which draws from a cryptographically strong random source. Only in browsers old enough to lack that method does it fall back to a <code>Math.random()</code>-based template that fills in the same version and variant bits by hand — <code>Math.random()</code> isn't cryptographically secure, so that fallback path shouldn't be relied on for anything security-sensitive, like tokens or secrets.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Could this ever generate the same UUID twice?</p>
+    <p class="faq-a">There's no active check against it — this tool doesn't remember what it generated before, in this session or any other. A collision isn't prevented, just made astronomically unlikely by the sheer number of random bits (122 of them) a v4 UUID has to work with.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What's the difference between "Generate new UUID" and "Generate list"?</p>
+    <p class="faq-a">"Generate new UUID" replaces the single value at the top. "Generate list" produces a separate batch below it — anywhere from 1 to 100 at once, clamped to that range even if you type a larger number — without touching the single UUID above.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Can I copy just one UUID out of a generated list?</p>
+    <p class="faq-a">Not with a dedicated button — only the single UUID at the top has a Copy button next to it. For one out of a batch, select and copy its text directly, or regenerate it alone using "Generate new UUID" at the top instead.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does generating UUIDs here send anything to a server?</p>
+    <p class="faq-a">No. Every UUID, single or batch, is generated locally with <code>crypto.randomUUID()</code> or the <code>Math.random()</code> fallback — there's no input to send in the first place, and nothing is transmitted anywhere.</p>
+  </div>
+</div>
+</section>
 
   <!-- COLOR CONVERTER -->
   <section class="panel" id="panel-color">
@@ -371,7 +460,34 @@
       </div>
       <div class="status" id="colorStatus"></div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Worked example</h3>
+  <p class="sub" style="margin:0;">The box loads with <code>#0D7A7C</code> already filled in, and conversion runs immediately and again on every keystroke after that — there's no button to click. That starting value converts to <code>rgb(13, 122, 124)</code> and <code>hsl(181, 81%, 27%)</code>, and the HEX output re-renders as lowercase (<code>#0d7a7c</code>) regardless of how you typed it, since it's rebuilt from the calculated values rather than echoing your input back. Three-digit shorthand works too — typing <code>#0d7</code> expands each digit (0→00, d→dd, 7→77) into <code>rgb(0, 221, 119)</code>.</p>
+
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">Can I type an RGB or HSL value and convert it the other way?</p>
+    <p class="faq-a">No — HEX is the only editable field here. RGB and HSL are read-only outputs calculated from whatever's in the HEX box, so conversion only runs in one direction.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What hue does a pure gray, like #808080, get?</p>
+    <p class="faq-a">0. Hue is mathematically undefined for a color with no saturation — where red, green, and blue are all equal — and this tool explicitly reports 0 in that case rather than leaving it blank.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What happens if I type an incomplete or invalid hex code?</p>
+    <p class="faq-a">The status line shows "Enter a valid hex color, like #0D7A7C or #0d7," and the swatch and output fields simply stop updating, keeping whatever they last showed. Only exactly 3 or 6 hex digits (with or without a leading #) are accepted — any other length is rejected outright.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does the HEX output preserve the uppercase or lowercase I typed?</p>
+    <p class="faq-a">No. The HEX output is always lowercase no matter how you typed it, because it's rebuilt from the calculated RGB values rather than reusing your original characters.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does converting a color here send it anywhere?</p>
+    <p class="faq-a">No. The hex-to-RGB-to-HSL math runs entirely in your browser — nothing you type into this tool leaves your machine.</p>
+  </div>
+</div>
+</section>
 
   <!-- URL ENCODE/DECODE -->
   <section class="panel" id="panel-url">
@@ -393,7 +509,34 @@
         <button class="action-btn secondary" id="urlCopyBtn" type="button">Copy result</button>
       </div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Worked example</h3>
+  <p class="sub" style="margin:0;">The box loads with <code>hello world &amp; special=chars?</code>. Clicking Encode writes <code>hello%20world%20%26%20special%3Dchars%3F</code> into the Result box — the space becomes <code>%20</code> rather than <code>+</code>, and <code>&amp;</code>, <code>=</code>, and <code>?</code> are each percent-escaped, since <code>encodeURIComponent</code> treats them as reserved characters that need escaping inside a single value. Clicking Decode right after reads that same Result box and writes the original text back above, unchanged.</p>
+
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">Why does a space become %20 here instead of a +?</p>
+    <p class="faq-a">Because this uses <code>encodeURIComponent</code>, which always escapes a space as <code>%20</code>. The <code>+</code>-for-space convention belongs to form submissions (<code>application/x-www-form-urlencoded</code>), not to <code>encodeURIComponent</code> — if you specifically need that form-encoding behavior, this tool's output won't match it.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Can I encode a whole URL with this, like https://example.com/search?q=a b?</p>
+    <p class="faq-a">You can, but the result won't be a usable URL — the status message after encoding says as much: this is meant for text or query values, not full URLs. <code>encodeURIComponent</code> escapes every reserved character it sees, including <code>:</code>, <code>/</code>, <code>?</code>, and <code>&amp;</code>, so encoding a whole URL would also escape the <code>://</code> and path separators you need to keep intact.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">What happens if I click Decode on text that isn't valid percent-encoding?</p>
+    <p class="faq-a">The status line shows "Not valid percent-encoded text:" followed by the native error — typically "URI malformed" — and the text box above is left untouched. A <code>%</code> not followed by two valid hex digits is the usual cause.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does this use the older escape()/unescape() functions instead?</p>
+    <p class="faq-a">No — it's <code>encodeURIComponent</code>/<code>decodeURIComponent</code>. That matters most for non-ASCII text: the deprecated <code>escape()</code> leaves characters like <code>+</code> unescaped and encodes non-ASCII text as a non-standard <code>%uXXXX</code> form, while <code>encodeURIComponent</code> percent-encodes the actual UTF-8 bytes, which is what URLs and query strings actually expect.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does encoding or decoding here send my text anywhere?</p>
+    <p class="faq-a">No. Both directions run locally using the browser's built-in <code>encodeURIComponent</code>/<code>decodeURIComponent</code> — nothing you type or paste is sent to a server.</p>
+  </div>
+</div>
+</section>
 
   <!-- DUMMY DATA GENERATOR -->
   <section class="panel" id="panel-dummy">
@@ -415,7 +558,31 @@
         </table>
       </div>
     </div>
-  </section>
+  
+<div class="card" style="margin-top:20px;">
+  <h3 class="section-title">Frequently asked questions</h3>
+  <div class="faq-item">
+    <p class="faq-q">What fields does this actually generate — is there lorem ipsum or other free text?</p>
+    <p class="faq-a">No lorem ipsum. Each row has exactly five fields — first name, last name, email, phone, and address — assembled from fixed lists of realistic-looking US names, street names, and city/state pairs rather than generated free text. There's no company name, date of birth, username, or any field type beyond those five.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Are the generated addresses and phone numbers real or deliverable?</p>
+    <p class="faq-a">No. City and state are pulled together as a matched pair from a fixed list of ten real combinations, but the street number, the street-name-and-type pairing, and the 5-digit number standing in for a ZIP code are all independently random — so the result looks like a plausible US address without being validated against any real address or area-code database.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">If I generate a lot of rows, will names repeat?</p>
+    <p class="faq-a">Past a certain point, they have to. Each field is picked independently from a fixed list — 40 first names, 30 last names, 10 city/state pairs — with no check against rows already produced in the same batch. Request more than 40 rows (the maximum is 200) and at least one first name is guaranteed to repeat somewhere in the results, simply because there aren't enough unique names to go around; past 30 rows, the same is true for last names.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Do "Copy as CSV" and "Copy as JSON" match the table exactly?</p>
+    <p class="faq-a">The data is identical, but the shape differs. The CSV export uses the same human-readable headers as the table — First Name, Last Name, Email, Phone, Address, written plain on the header line — with each data value below it quoted and any internal quotes doubled, while the JSON export uses the underlying camelCase field names (firstName, lastName, email, phone, address) instead, pretty-printed with 2-space indentation.</p>
+  </div>
+  <div class="faq-item">
+    <p class="faq-q">Does generating or copying this data send it anywhere?</p>
+    <p class="faq-a">No. Every row is generated locally using the Web Crypto API's <code>crypto.getRandomValues</code>, and copying the result to your clipboard doesn't involve a network request — nothing here is sent to or stored on a server.</p>
+  </div>
+</div>
+</section>
 
   <div class="disclaimer">
     Everything on this page runs in your browser &mdash; nothing you paste or generate is sent anywhere, which matters most for JSON that might contain real data. <a href="/how-it-works">See how to check that yourself</a>.
