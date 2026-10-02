@@ -145,6 +145,17 @@
 
   .menu-toggle-wrap{display:none;}
 
+  /* command-palette.js injects a ⌘K trigger button into header nav with its
+     own inline styles, built for the site's light header. It falls back to
+     var(--card,#fff) for its background, which resolves to this page's own
+     (deliberately white) --card token, so on this dark header it rendered as
+     a stray white pill. Re-themed here, scoped to this page only — every
+     other page's header stays light, so the trigger's default styling is
+     correct there and is left untouched. */
+  header .ppm-cmdk-trigger{background:rgba(251,244,230,0.06);border-color:rgba(251,244,230,0.18);color:var(--cream-faint);}
+  header .ppm-cmdk-trigger:hover{border-color:var(--yellow);box-shadow:0 3px 10px rgba(0,0,0,0.3);}
+  header .ppm-cmdk-trigger kbd{background:rgba(255,197,61,0.14);border-color:rgba(251,244,230,0.22);color:var(--cream);}
+
   /* ---------- Hero ---------- */
   .hero{background:var(--ink);padding:76px 0 72px;}
   .eyebrow{display:flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--cream-faint);margin:0 0 26px;}
