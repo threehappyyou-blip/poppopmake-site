@@ -915,8 +915,8 @@
   
 <h3 class="section-title">Frequently asked questions</h3>
 <div class="faq-item">
-  <p class="faq-q">Why does the downloaded result come out square and lower-resolution than my original photo?</p>
-  <p class="faq-a">This tool works on a fixed 512&times;512 copy of your photo internally, stretched to that size regardless of your photo's original shape, erased at that size, and then downloaded as that same 512&times;512 result. It's well-suited to removing an object from a casual photo, not to publication-quality or print-resolution editing.</p>
+  <p class="faq-q">Why does the downloaded result look softer or less detailed than my original photo?</p>
+  <p class="faq-a">The download comes out at your original photo's exact size and proportions &mdash; it isn't cropped to a square. What is limited is fine detail: the actual erasing happens on a fixed 512&times;512 copy of your photo internally, so for a larger original that result gets stretched back up to your photo's full size before download, which can look a bit soft, especially in and around the erased area. It's well-suited to removing an object from a casual photo, not to publication-quality or print-resolution editing.</p>
 </div>
 <div class="faq-item">
   <p class="faq-q">What's actually filling in the erased area — a blur, a smear, or a copy of nearby pixels?</p>
@@ -2550,7 +2550,15 @@ function normalizeRect(x1, y1, x2, y2){
         erBaseCtx.putImageData(resultImageData, 0, 0);
         erMaskCtx.clearRect(0, 0, ER_WORK_SIZE, ER_WORK_SIZE);
         erStrokes = [];
-        erBaseCanvas.toBlob(function(blob){ erResultBlob = blob; erDownloadBtn.style.display = 'inline-block'; }, 'image/png');
+        // Export at the original photo's dimensions, not the fixed 512x512 working size:
+        // draw the working canvas back onto a canvas sized to the source image,
+        // reversing the stretch that was applied when the photo was first loaded.
+        var erOutW = erOriginalImg.naturalWidth || erOriginalImg.width || ER_WORK_SIZE;
+        var erOutH = erOriginalImg.naturalHeight || erOriginalImg.height || ER_WORK_SIZE;
+        var erOutCanvas = document.createElement('canvas');
+        erOutCanvas.width = erOutW; erOutCanvas.height = erOutH;
+        erOutCanvas.getContext('2d').drawImage(erBaseCanvas, 0, 0, ER_WORK_SIZE, ER_WORK_SIZE, 0, 0, erOutW, erOutH);
+        erOutCanvas.toBlob(function(blob){ erResultBlob = blob; erDownloadBtn.style.display = 'inline-block'; }, 'image/png');
         setStatus(erStatus, 'success', 'Done. Working copy is 512\u00d7512, stretched back from your original photo\u2019s proportions \u2014 good for removing an object, not for precise, publication-quality edits.');
       } else if (e.data.type === 'error') {
         worker.removeEventListener('message', handler);
