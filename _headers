@@ -3,4 +3,6 @@
   Content-Security-Policy: frame-ancestors 'self'
 
 /embed/*
+  ! X-Frame-Options
+  ! Content-Security-Policy
   Content-Security-Policy: frame-ancestors *

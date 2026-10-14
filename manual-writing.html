@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -191,63 +71,19 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <a class="nav-link" href="/manual">All manual sections</a>
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/manual">All manual sections</a></nav>
   </div>
 </header>
 
 <main class="wrap" id="main-content">
   <span class="eyebrow">User Manual</span>
   <h1>Writing &amp; AI</h1>
-  <p class="lede">All 3 tools live on one page, <a href="/writing-tools">Writing &amp; AI Tools</a>, as tabs. None of these claim to be an "AI detector" — see why on the tool page itself.</p>
+  <p class="lede">All 3 tools live on one page, <a href="/writing-tools">Writing &amp; AI Tools</a>, as tabs, and they share one "Your text" box at the top. None of them claims to be an "AI detector" — <a href="/ai-detector-honesty">here is why we draw that line</a>.</p>
 
   <div class="toc">
     <div class="toc-title">Jump to a tool</div>
     <ol>
-      <li><a href="#flagged">Flagged Phrases</a></li>
+      <li><a href="#flagged">AI-Cliché Check</a></li>
       <li><a href="#smooth">Smooth It Out</a></li>
       <li><a href="#readability">Word Count &amp; Readability</a></li>
     </ol>
@@ -255,44 +91,45 @@
 
   <section class="tool-section" id="flagged">
     <span class="tool-tag">Tab 1</span>
-    <h2>Flagged Phrases</h2>
-    <p class="what-for">Scans your text for common phrases and clichés that read as AI-generated or overly formulaic, and highlights them.</p>
+    <h2>AI-Cliché Check</h2>
+    <p class="what-for">Scans your text for words and phrases that often make writing sound stock or AI-generated ("delve", "tapestry", "it's important to note that") and highlights them in context. It looks for phrases only — not grammar or spelling.</p>
     <ol>
-      <li><strong>Open the tool.</strong> Go to Writing &amp; AI Tools and make sure "Flagged Phrases" is selected.</li>
-      <li><strong>Paste your text</strong> into the box.</li>
-      <li><strong>Read the highlighted results.</strong> Flagged phrases are marked directly in your text as you look at it.</li>
-      <li><strong>Hover over or click a flagged phrase</strong> (if the tool shows this) to see a plain-language suggestion for what to say instead.</li>
-      <li><strong>Edit your original text</strong> based on what feels right — the suggestions are a starting point, not a rule to follow every time.</li>
+      <li><strong>Paste your text</strong> into the "Your text" box at the top of the page. It needs at least 12 words; with fewer, the page says "Paste a bit more text".</li>
+      <li><strong>Click "Analyze Text".</strong> The results appear under the "AI-Cliché Check" tab, and the line under the button says how many words it read and how many flagged phrases it found.</li>
+      <li><strong>Read the highlighted text.</strong> Each flagged phrase is highlighted in your own text in one of three colors — strong signal, promotional, or light signal (only matters in clusters). Hover over a highlight to see a suggested replacement (on a phone, where there is no hover, the "Smooth It Out" tab lists the same suggestions).</li>
+      <li><strong>Read the numbers and notes under it:</strong> words, sentences, flagged instances, and unique phrases; then notes such as an opening or closing stock phrase, unusually uniform sentence lengths, no contractions in a long text, or lots of em dashes; then a list of every flagged phrase, with ×2, ×3, … when one repeats.</li>
+      <li><strong>Edit your text and click "Analyze Text" again.</strong> The results do not update by themselves: once you change the text, a yellow note says "Text changed since this was analyzed" and the old results are dimmed until you analyze again.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This is a pattern-matching tool that looks for specific known phrases, not a machine-learning AI detector — it can't tell you with certainty whether text was AI-written, and doesn't claim to. It just flags language patterns that commonly read as stiff or formulaic, whoever wrote them.</div>
+    <div class="tip-box"><strong>Good to know:</strong> This is a pattern-matcher for known phrases, not an AI detector. It cannot prove that text was or was not written by AI: plenty of people write "robust" or "furthermore", and polished AI text can avoid every flagged word. Treat a flag as a nudge to reconsider a phrase — especially for careful, formal, or non-native English writing, which checks like this can unfairly flag. Your text stays in your browser.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="smooth">
     <span class="tool-tag">Tab 2</span>
     <h2>Smooth It Out</h2>
-    <p class="what-for">Suggests rewrites for sentences that read as stiff or overly formal.</p>
+    <p class="what-for">Lists plainer replacements for the phrases found in your text. Nothing is rewritten for you.</p>
     <ol>
-      <li><strong>Open the tool.</strong> Click the "Smooth It Out" tab.</li>
-      <li><strong>Paste your text</strong> into the box.</li>
-      <li><strong>Read the suggested rewrites</strong> shown alongside or below the flagged sentences.</li>
-      <li><strong>Accept or ignore each suggestion</strong> by editing your own text — nothing is changed automatically.</li>
+      <li><strong>Analyze your text first:</strong> paste it into the "Your text" box and click "Analyze Text". This tab uses the same analysis as the first tab.</li>
+      <li><strong>Open the "Smooth It Out" tab.</strong> Your text appears again with the same highlights.</li>
+      <li><strong>Read the swap list under it.</strong> Each line shows a flagged phrase, an arrow, and a suggested replacement, such as "leverage → use". A ×2, ×3, … after the phrase shows how often it appeared. A suggestion like "cut it" means the phrase can usually just be deleted.</li>
+      <li><strong>Make the changes yourself</strong> in the "Your text" box — the tool never edits your text — then click "Analyze Text" again to check the result.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> A suggested rewrite isn't always better for your specific context — some formality is appropriate depending on who you're writing for, so use judgment rather than accepting every suggestion.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Word swaps are a starting point, not the whole fix. Stiff writing is usually more about samey sentence rhythm and vague claims than about any single word, so a text can read as AI even with nothing flagged. Some formality is right for some readers, so use judgment rather than accepting every suggestion.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="readability">
     <span class="tool-tag">Tab 3</span>
     <h2>Word Count &amp; Readability</h2>
-    <p class="what-for">Shows a live word and sentence count, plus a Flesch readability score, as you type or paste text.</p>
+    <p class="what-for">Shows words, characters, sentences, paragraphs, reading time, and a Flesch Reading Ease score, updating live as you type — there is no button to click.</p>
     <ol>
-      <li><strong>Open the tool.</strong> Click the "Word Count &amp; Readability" tab.</li>
-      <li><strong>Type or paste your text</strong> into the box.</li>
-      <li><strong>Watch the counts update live</strong> — word count and sentence count update as you type, with no button to click.</li>
-      <li><strong>Read the readability score</strong> and what grade level or reading ease it corresponds to.</li>
+      <li><strong>Type or paste your text</strong> into the "Your text" box. Unlike the other two tabs, this one works on any amount of text, from a single word up.</li>
+      <li><strong>Open the "Word Count & Readability" tab.</strong> The numbers appear as soon as there is any text; until then it asks you to start typing.</li>
+      <li><strong>Read the five counts:</strong> words, characters (spaces included), sentences, paragraphs, and reading time (at about 225 words a minute; "<1 min" for short texts).</li>
+      <li><strong>Read the readability box.</strong> "Readability (Flesch Reading Ease)" shows a score from 0 to 100 (higher is easier), a label such as "Standard — 8th-9th grade", and an approximate US reading level underneath.</li>
+      <li><strong>Keep editing.</strong> Everything updates with each keystroke.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Readability scores are based on sentence length and syllable count, not meaning — a short, simple-sounding sentence about a complex topic can score "easy" while still being hard to actually understand. Use the score as one signal, not the whole picture.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The score comes from sentence length and syllable count, not meaning, and syllables are estimated, so an uncommon word can be off by one — treat the score as an estimate, not a certified grade level. The formula was built for English: for Korean, Chinese, Japanese, Cyrillic, and other non-Latin text the counts still work, but the score shows "—" and "Not available for this text" instead of a misleading number. A sentence ends at . ! ? (or 。！？); decimals like 3.14, web addresses, and abbreviations such as "Dr." do not end one, and text after the last mark still counts as a sentence.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -308,30 +145,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

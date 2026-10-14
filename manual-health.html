@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -191,51 +71,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <a class="nav-link" href="/manual">All manual sections</a>
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/manual">All manual sections</a></nav>
   </div>
 </header>
 
@@ -255,32 +91,34 @@
   <section class="tool-section" id="bmi">
     <span class="tool-tag">Tool 1</span>
     <h2>BMI Calculator</h2>
-    <p class="what-for">Works out your Body Mass Index from height and weight, and tells you which WHO category it falls into.</p>
+    <p class="what-for">Works out your Body Mass Index from height and weight and shows which WHO category it falls in, on a color-coded scale.</p>
     <ol>
       <li><strong>Open the tool.</strong> Go to the <a href="/bmi-calculator">BMI Calculator</a> page.</li>
-      <li><strong>Pick your units.</strong> Click "Metric (kg / cm)" or "Imperial (lb / ft·in)" at the top of the form &mdash; the input fields below switch to match.</li>
-      <li><strong>Enter your weight and height.</strong> The result updates as you type; there's no separate "Calculate" button.</li>
-      <li><strong>Read your BMI and category</strong> in the panel below &mdash; a number, a category label (Underweight, Normal weight, Overweight, or one of three Obese classes), and a marker on the color-coded scale showing where you land.</li>
-      <li><strong>Turn on Asian thresholds if they apply to you.</strong> Check "Use Asian BMI thresholds" to switch to the WHO's separate Asian-population cutoffs, which classify "overweight" and "obese" starting at lower BMI values than the global standard. The number itself doesn't change &mdash; only which category it falls into.</li>
+      <li><strong>Pick your units</strong> with the two buttons at the top: "Metric (kg / cm)" or "Imperial (lb / ft·in)". Switching converts the numbers you have already typed, so you do not have to enter them again.</li>
+      <li><strong>Enter your weight and height.</strong> In metric the boxes are "Weight (kg)" and "Height (cm)"; in imperial they are "Weight (lb)" and a "Height" pair for feet and inches. The result updates as you type, so there is no Calculate button.</li>
+      <li><strong>Read your BMI and category</strong> in the panel below: the number to one decimal, a category label — Underweight, Normal weight, Overweight, or Obese (Class I, II, or III) — and a marker on the color-coded scale from 15 to 40+. The category follows the number shown, so 24.96 appears as 25.0 and counts as Overweight.</li>
+      <li><strong>Tick "Use Asian BMI thresholds" if they apply to you.</strong> The number does not change; the cutoffs are lower. Normal weight ends at 22.9, "Overweight (at risk)" covers 23 to 24.9, "Obese (Class I)" runs from 25 to 29.9, and "Obese (Class II)" starts at 30. The "Standard" line at the top of the page names the classification in use.</li>
+      <li><strong>If you see "That height looks off" or "That weight looks off",</strong> the value is outside what a person can be (height 50 to 272 cm, weight 10 to 400 kg) — most often a unit slip, such as 1.75 typed into the centimeters box. Correct it and the result comes back.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> BMI is a screening number, not a diagnosis &mdash; it can't tell muscle from fat, so it can misclassify very muscular or very lean people, older adults, and pregnant women. Use it as one data point, not the whole picture.</div>
+    <div class="tip-box"><strong>Good to know:</strong> BMI is a screening number, not a diagnosis. It cannot tell muscle from fat, so it can misclassify very muscular or very lean people, older adults, and pregnant women. The categories are for adults (18 and over); for children and teens, BMI is read against growth charts for their age and sex instead.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="calorie">
     <span class="tool-tag">Tool 2</span>
     <h2>Calorie / TDEE Calculator</h2>
-    <p class="what-for">Estimates your BMR (calories burned at rest) and TDEE (total daily calories burned), then shows calorie targets for five different goals.</p>
+    <p class="what-for">Estimates your BMR (calories burned at rest) and TDEE (total calories burned per day) with the Mifflin-St Jeor equation, then shows daily calorie targets for five goals.</p>
     <ol>
       <li><strong>Open the tool.</strong> Go to the <a href="/calorie-calculator">Calorie Calculator</a> page.</li>
-      <li><strong>Select your sex</strong> using the Female / Male toggle &mdash; the underlying formula (Mifflin-St Jeor) uses different constants for each.</li>
-      <li><strong>Enter your age.</strong></li>
-      <li><strong>Pick your units and enter your weight and height</strong>, the same way as the BMI calculator.</li>
-      <li><strong>Choose your activity level</strong> from the five options, from Sedentary (little or no exercise) to Extra active (very hard exercise or a physical job). Each description gives a concrete example so you're not guessing which one fits.</li>
-      <li><strong>Read your results.</strong> BMR and TDEE appear as two big numbers, followed by a table of five calorie targets: lose weight (faster or steady), maintain, and gain weight (steady or faster), each with its approximate weekly rate of change.</li>
-      <li><strong>Watch for the warning box.</strong> If any target in the table would put you below a general low-calorie guidance threshold, that row is marked and a note explains why &mdash; it's shown, not hidden, but flagged rather than treated as a normal target to aim for.</li>
+      <li><strong>Choose "Female" or "Male".</strong> The equation uses a different constant for each.</li>
+      <li><strong>Enter your age</strong> in years, from 15 to 100.</li>
+      <li><strong>Pick your units and enter your weight and height,</strong> the same way as in the BMI calculator. Switching units converts the numbers you have already typed.</li>
+      <li><strong>Choose your activity level.</strong> Sedentary (little or no exercise, desk job), Lightly active (light exercise 1–3 days a week), Moderately active (3–5 days a week, selected at first), Very active (hard exercise 6–7 days a week), or Extra active (very hard exercise, a physical job, or training twice a day).</li>
+      <li><strong>Read your results.</strong> BMR and TDEE are the two big numbers. The table under them lists calories per day for Lose weight (faster), Lose weight (steady), Maintain weight, Gain weight (steady), and Gain weight (faster), each with its approximate weekly change.</li>
+      <li><strong>Watch for red numbers and the warning box.</strong> A target below 1,200 calories a day (women) or 1,500 (men) turns red, and the box under the table explains the general guidance: going lower is usually recommended only with medical supervision. The row is shown, not hidden.</li>
+      <li><strong>If the results show "—" with an orange message,</strong> one box holds a value outside the supported range (for example "Age should be between 15 and 100" or "That height looks off"). Correct it and the results come back.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> The calorie targets use a widely-used rule of thumb (about 3,500 calories per pound of weight change), not an exact physiological law &mdash; real results vary with water weight and metabolic adaptation. Treat the numbers as a starting point to adjust from, not a fixed prescription.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The targets add or subtract 250 or 500 calories a day from your TDEE, based on the rule of thumb of about 3,500 calories per pound of body weight. That is an estimate, not an exact law — water weight and metabolic adaptation change real results — and Mifflin-St Jeor itself is typically within about 10% for healthy adults. Treat the numbers as a starting point to adjust from, not a prescription.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -296,30 +134,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

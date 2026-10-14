@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -191,51 +71,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <a class="nav-link" href="/manual">All manual sections</a>
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/manual">All manual sections</a></nav>
   </div>
 </header>
 
@@ -263,139 +99,147 @@
   <section class="tool-section" id="us-paycheck">
     <span class="tool-tag"><a href="/paycheck-calculator">paycheck-calculator.html</a></span>
     <h2>US Paycheck Calculator</h2>
-    <p class="what-for">Shows what's actually left after federal tax, Social Security, Medicare, and state tax, for any of the 50 states plus D.C.</p>
+    <p class="what-for">Shows what is left of your pay after federal income tax, Social Security, Medicare and state tax, for any of the 50 states plus D.C. It works for a salary or an hourly wage, with options for overtime, a bonus, 401(k) contributions, a spouse's or second job's pay, and children.</p>
     <ol>
-      <li><strong>Enter your salary</strong> in the amount field — the annual figure is easiest, but you can switch the frequency (see step 3) if you only know your hourly or per-paycheck rate.</li>
-      <li><strong>Choose your state</strong> from the dropdown. This matters a lot: nine states have no state income tax at all, and the rest range from a flat rate to a full progressive bracket system.</li>
-      <li><strong>Choose your pay frequency</strong> (annual, monthly, biweekly, weekly) so the "per period" figures match your actual paycheck schedule.</li>
-      <li><strong>Choose your filing status</strong> if the option is shown (single, married filing jointly, etc.) — this changes the tax brackets applied.</li>
-      <li><strong>Read the results.</strong> The breakdown shows federal tax, Social Security, Medicare, and state tax as separate line items, plus your final take-home amount for the period you chose.</li>
+      <li><strong>Open the tool.</strong> Go to the <a href="/paycheck-calculator">Paycheck Calculator</a>. Every state also has its own page (for example <a href="/texas-paycheck-calculator">Texas</a>) with the same calculator already set to that state; the full list is on <a href="/paycheck-states">Paycheck by State</a>.</li>
+      <li><strong>Choose how you are paid.</strong> "Salary" (selected at first) shows one box, "Annual salary". "Hourly" swaps it for "Hourly rate", "Hours per week", "Overtime hours / week", "Overtime rate" (1.5× hourly, 2× hourly or 1× hourly) and "Weeks worked / year". The first time you switch to Hourly, the rate is filled in from the salary you had typed (divided by 2,080 hours).</li>
+      <li><strong>Pick your "Filing status" and "State".</strong> The filing statuses are Single, Married filing jointly, Married filing separately and Head of household. A line under the state list says what to expect there — for example that Texas has no state income tax, or that California adds SDI to its income tax.</li>
+      <li><strong>Choose your "Pay frequency":</strong> Weekly, Biweekly (selected at first), Semi-monthly, Monthly or Annual. It only changes the "per paycheck" column; the yearly figures stay the same.</li>
+      <li><strong>Open "More options" for anything else.</strong> "Traditional 401(k) / 403(b)" (as "% of pay" or "$ per year", with a hint showing the 2026 limit), "Pre-tax health, FSA &amp; HSA ($ per year)", "After-tax deductions ($ per year)" (Roth 401(k), union dues, garnishments), "One-time bonus ($)", "Second job’s annual pay ($)", and "Children under 17" and "Other dependents" for the federal child tax credit. The second-job box becomes "Spouse’s annual pay ($)" when you choose Married filing jointly and is switched off for Married filing separately. A small counter beside "More options" shows how many of these are in use.</li>
+      <li><strong>Read the results.</strong> The big number is "Take-home pay per paycheck", with the yearly total under it (and, for hourly pay, the average take-home "per hour worked"). The table lists gross pay (split into regular and overtime pay when you have overtime), then each deduction — your 401(k) and health contributions, federal income tax, Social Security, Medicare, the extra Medicare tax for high earners, state tax, state payroll programs such as California SDI, and after-tax deductions — and finally take-home pay, for the year and for one paycheck. Every line is rounded to whole dollars and take-home pay is the gross minus those lines, so each column adds up exactly. Under the table you see your effective tax rate, your marginal federal bracket, and "Of each extra $100 you earn, you keep".</li>
+      <li><strong>Check the extra boxes.</strong> With a bonus, a box shows what you keep of it and compares your real federal tax on it with the flat 22% employers usually withhold; the difference comes back, or is owed, when you file. With overtime hours, a box shows what you keep per overtime hour and the 2025–2028 federal overtime deduction (only overtime required by federal law counts, and not for Married filing separately). Notes in the results explain anything the calculator adjusted, such as a 401(k) amount above the IRS limit.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> The source, tax year, and last-checked date are shown right at the top of the page in the verification box — worth a glance if you want to confirm this reflects the current tax year.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The calculator uses the standard deduction and does not include itemized deductions, most state credits and dependent exemptions, local city or county income taxes, or your actual W-4 elections, so a real paycheck can differ. With a spouse's pay, tax is figured on both pays together and the table shows your share. For Head of household and Married filing separately, a note tells you when a state's own rules are not modelled and its state line is a rough estimate. The source, tax year and last-checked date are in the box at the top of the page.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="state-hub">
     <span class="tool-tag"><a href="/paycheck-states">paycheck-states.html</a></span>
     <h2>Paycheck by State</h2>
-    <p class="what-for">A browsing page that groups all 50 states by their tax type — no income tax, flat rate, or progressive brackets — with a link to each state's own calculator page.</p>
+    <p class="what-for">A directory of all 50 states plus D.C., in three groups by how they tax income, with a link to each state's own calculator.</p>
     <ol>
-      <li><strong>Open the page.</strong> It's linked from the main US Paycheck Calculator, or reachable directly.</li>
-      <li><strong>Find your state's group.</strong> States are sorted into three groups so you can see at a glance which category yours falls into.</li>
-      <li><strong>Click through to your state.</strong> Each link opens a calculator pre-set to that state, pre-filled with a short explanation of how that state's system works.</li>
+      <li><strong>Open the page.</strong> Go to <a href="/paycheck-states">Paycheck by State</a>, or follow the "Browse by state" link on the Paycheck Calculator.</li>
+      <li><strong>Find your state's group.</strong> "No state income tax (9)" lists the states where only federal tax and FICA come out of your pay. "Flat tax rate (15)" lists states that tax everyone at one rate, lowest to highest, with the rate beside each name. "Progressive tax (27)", which includes D.C., lists states with brackets, from the highest top rate to the lowest.</li>
+      <li><strong>Click your state.</strong> Its page opens with the calculator already set to that state, a worked example for a $65,000 salary, and notes on how that state taxes pay — its rates or brackets and any state payroll programs, such as California SDI or New York's disability and paid-leave premiums.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This is a browsing convenience — the main US Paycheck Calculator already covers every state through its dropdown, so use whichever page you found first.</div>
+    <div class="tip-box"><strong>Good to know:</strong> For states with brackets, the rate beside the name is the top rate; most people pay a lower rate on most of their pay. The main Paycheck Calculator also covers every state through its "State" list, so use whichever page you found first.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="uk-paycheck">
     <span class="tool-tag"><a href="/uk-paycheck-calculator">uk-paycheck-calculator.html</a></span>
     <h2>UK Paycheck Calculator</h2>
-    <p class="what-for">Shows take-home pay after Income Tax and National Insurance, correctly handling Scotland's separate tax bands.</p>
+    <p class="what-for">Shows take-home pay after Income Tax and National Insurance for the 2026/27 tax year, including Scotland's separate Income Tax bands.</p>
     <ol>
-      <li><strong>Enter your salary</strong> in the amount field.</li>
-      <li><strong>Choose your region.</strong> There's a toggle for England/Wales/Northern Ireland vs. Scotland — the two systems have genuinely different tax bands, so this choice changes your result meaningfully.</li>
-      <li><strong>Choose your pay frequency</strong> (annual, monthly, weekly) to match your actual pay schedule.</li>
-      <li><strong>Read the results.</strong> Income Tax and National Insurance are shown as separate line items, with your take-home pay for the period you chose.</li>
+      <li><strong>Open the tool.</strong> Go to the <a href="/uk-paycheck-calculator">UK Paycheck Calculator</a> page.</li>
+      <li><strong>Enter your "Annual salary"</strong> in pounds, before tax.</li>
+      <li><strong>Choose "Where you live".</strong> "England, Wales, or Northern Ireland" or "Scotland". Income Tax bands differ in Scotland; National Insurance is the same everywhere. The tax line in the table is labelled "Income Tax (rest of UK)" or "Income Tax (Scotland)" to match.</li>
+      <li><strong>Choose your "Pay frequency":</strong> Weekly, Monthly (selected at first), 4-weekly or Annual.</li>
+      <li><strong>Read the results.</strong> "Take-home pay per payslip" is the big number, with the yearly total under it. The table shows gross pay, Income Tax, National Insurance and take-home pay for the year and for one payslip; each line is rounded to whole pounds and take-home pay is the gross minus those lines, so the columns add up. Under the table, "Personal Allowance used" shows how much of your tax-free allowance applies: £12,570 for most people, shrinking by £1 for every £2 of income above £100,000 and gone at £125,140.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> If you're not sure whether Scotland's rates apply to you, it's based on where you live, not where your employer is based.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Scotland's bands apply because of where you live, not where your employer is based. The calculator does not include pension contributions, student loan repayments, benefits in kind or your actual tax code, which can all change a real payslip.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="au-paycheck">
     <span class="tool-tag"><a href="/au-paycheck-calculator">au-paycheck-calculator.html</a></span>
     <h2>Australia Paycheck Calculator</h2>
-    <p class="what-for">Shows take-home pay after federal income tax, the Low Income Tax Offset, and the Medicare levy.</p>
+    <p class="what-for">Shows take-home pay after income tax, the Low Income Tax Offset and the Medicare levy for 2026-27, using federal rates (Australia has no state income tax).</p>
     <ol>
-      <li><strong>Enter your salary</strong> in the amount field.</li>
-      <li><strong>Choose your pay frequency</strong> to match your actual pay schedule.</li>
-      <li><strong>Read the results.</strong> Income tax, the Low Income Tax Offset, and the Medicare levy are broken out separately, since the offset and the levy's "shade-in" zone interact with the tax brackets in ways that aren't obvious from the bracket table alone.</li>
+      <li><strong>Open the tool.</strong> Go to the <a href="/au-paycheck-calculator">Australia Paycheck Calculator</a> page.</li>
+      <li><strong>Enter your "Annual salary".</strong> This is the base salary: superannuation is normally paid on top by your employer, not out of this amount.</li>
+      <li><strong>Choose your "Pay frequency":</strong> Weekly, Fortnightly (selected at first), Monthly or Annual.</li>
+      <li><strong>Read the results.</strong> "Take-home pay per payslip" is the big number, with the yearly total under it. The table shows gross pay, "Income tax", the "Low Income Tax Offset" (listed as an amount added back, and only when it applies), the "Medicare levy (2%)" and take-home pay, for the year and for one payslip. Each line is rounded to whole dollars and take-home pay is the gross minus those lines, so the columns add up. Under the table you see your effective tax rate and your marginal bracket.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Australia has no state income tax, so unlike the US calculator, there's no state or territory selector needed here.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The offset can never be more than the tax it reduces, so on a low income the tax and the offset cancel out (at $22,000 there is no tax and no levy, and take-home pay equals gross pay). The levy's low-income reduction uses the 2025–26 thresholds, the latest announced. HECS/HELP repayments, salary-sacrificed super, private health insurance with the Medicare Levy Surcharge, and work-related deductions are not included.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="ca-paycheck">
     <span class="tool-tag"><a href="/ca-paycheck-calculator">ca-paycheck-calculator.html</a></span>
     <h2>Canada Paycheck Calculator</h2>
-    <p class="what-for">Shows take-home pay after federal tax, provincial tax, CPP/CPP2, and EI, for any province or territory.</p>
+    <p class="what-for">Shows take-home pay after federal tax, provincial or territorial tax, CPP (QPP in Quebec) and EI, using the CRA's 2026 payroll formulas, for all 10 provinces and 3 territories.</p>
     <ol>
-      <li><strong>Enter your salary</strong> in the amount field.</li>
-      <li><strong>Choose your province or territory</strong> from the dropdown — all 10 provinces and 3 territories are covered, including Quebec's separate provincial system and federal abatement.</li>
-      <li><strong>Choose your pay frequency</strong> to match your actual pay schedule.</li>
-      <li><strong>Read the results.</strong> Federal tax, provincial tax, CPP (or CPP plus the CPP2 additional contribution above a threshold), and EI are shown as separate line items.</li>
+      <li><strong>Open the tool.</strong> Go to the <a href="/ca-paycheck-calculator">Canada Paycheck Calculator</a> page.</li>
+      <li><strong>Enter your "Annual salary".</strong> The amount before tax and deductions.</li>
+      <li><strong>Choose your "Province or territory".</strong> A line under the list tells you what is special there: Ontario's surtax and Health Premium, British Columbia's tax reduction for lower incomes, Yukon's employment credit, or, for Quebec, its own QPP, QPIP and EI rates, deduction for workers and the 16.5% federal abatement.</li>
+      <li><strong>Choose your "Pay frequency":</strong> Weekly, Biweekly (selected at first), Semi-monthly, Monthly or Annual.</li>
+      <li><strong>Read the results.</strong> "Take-home pay per paycheque" is the big number, with the yearly total under it. The table shows gross pay, "Federal tax", your province's tax, CPP (or QPP in Quebec), the second CPP/QPP contribution (CPP2 or QPP2) once pay passes the first earnings ceiling of about $74,600, EI, and QPIP in Quebec, then take-home pay. The basic personal amounts and the credits for CPP/QPP and EI contributions are already taken off the tax lines. Each line is rounded to whole dollars and take-home pay is the gross minus those lines, so the columns add up. Under the table: your effective tax rate and the share that is federal plus provincial tax.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Quebec is genuinely different from every other province — it collects its own provincial tax separately and residents get a federal tax abatement to offset it. The calculator handles this automatically when you select Quebec.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Quebec collects its own income tax, and Quebec residents get a federal abatement to offset it; selecting Quebec switches all of this on automatically. The calculator does not include RRSP contributions or other deductions, spouse, dependant or other credits, union dues, benefit-plan contributions, or credits you only receive when you file, such as the GST/HST credit or the Canada Workers Benefit.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="compare">
     <span class="tool-tag"><a href="/compare-takehome">compare-takehome.html</a></span>
     <h2>Compare Take-Home Pay</h2>
-    <p class="what-for">Puts two salaries side by side — any two US states, UK regions, Australia, or Canadian provinces — to compare take-home pay and effective tax rate directly.</p>
+    <p class="what-for">Puts two jobs side by side — any US state, England/Wales/NI or Scotland, Australia, or any Canadian province or territory — and compares take-home pay and effective tax rate.</p>
     <ol>
-      <li><strong>Pick your first location and salary</strong> on the left side — choose a country/state/province and enter the salary amount.</li>
-      <li><strong>Pick your second location and salary</strong> on the right side, the same way.</li>
-      <li><strong>Read the comparison.</strong> Take-home pay and effective tax rate are shown for both sides, so you can see exactly where the difference comes from.</li>
+      <li><strong>Open the tool.</strong> Go to <a href="/compare-takehome">Compare Take-Home Pay</a>. It starts with Texas on a US$80,000 salary against England/Wales/NI on £50,000.</li>
+      <li><strong>Set up "Scenario A".</strong> Choose a "Country" — United States, United Kingdom, Australia or Canada. The boxes under it change to match: "Filing status" and "State" for the US, "Province/territory" for Canada, and two buttons, "England/Wales/NI" and "Scotland", for the UK (the one you picked stays highlighted). Then enter an "Annual salary"; the currency symbol beside the box follows the country.</li>
+      <li><strong>Set up "Scenario B"</strong> the same way.</li>
+      <li><strong>Read the comparison.</strong> Each side shows its region and take-home pay per year, then "Effective rate A" and "Effective rate B". A sentence below says which side has the lower effective rate, by how many points. When both sides use the same currency it also gives the difference in take-home pay per year; when they use different currencies it reminds you to convert before comparing the amounts.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This tool doesn't do currency conversion — amounts are shown exactly as entered, in each side's own currency. It's built for comparing the tax systems themselves, not for figuring out cost-of-living differences between countries.</div>
+    <div class="tip-box"><strong>Good to know:</strong> This tool does not convert currencies — amounts are shown exactly as entered, in each side's own currency — so compare the effective rates directly. Each side uses the same tax engine as the matching stand-alone calculator, so you get the same take-home figure on either page for the same inputs. It compares tax systems, not cost of living.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="mortgage">
     <span class="tool-tag"><a href="/mortgage-calculator">mortgage-calculator.html</a></span>
     <h2>Mortgage Calculator</h2>
-    <p class="what-for">Breaks down a monthly mortgage payment into principal &amp; interest, property tax, homeowners insurance, and PMI.</p>
+    <p class="what-for">Works out the full monthly cost of a home loan: principal and interest, property tax, home insurance, PMI and HOA dues, plus an optional extra payment.</p>
     <ol>
-      <li><strong>Enter the home price</strong> and your down payment (either as a dollar amount or a percentage — check which the field expects).</li>
-      <li><strong>Enter the interest rate</strong> and loan term (commonly 15 or 30 years).</li>
-      <li><strong>Enter property tax and insurance estimates</strong> if you have them — these vary a lot by location, so use your own numbers if you know them rather than relying on any default shown.</li>
-      <li><strong>Read the breakdown.</strong> Your total monthly payment is split into principal &amp; interest, property tax, insurance, and PMI (if your down payment is under 20%) as separate line items.</li>
+      <li><strong>Open the tool.</strong> Go to the <a href="/mortgage-calculator">Mortgage Calculator</a> page.</li>
+      <li><strong>Fill in the "LOAN" boxes.</strong> "Home price" and "Down payment" are dollar amounts; under the down payment, a line shows it as a percentage of the home price. Then enter the "Interest rate" (use the rate you have been quoted — the calculator does not guess one) and pick a "Loan term" of 30, 20, 15 or 10 years. "Extra payment (optional)" is an amount added to principal every month.</li>
+      <li><strong>Check "TAXES &amp; INSURANCE".</strong> "Property tax" (% a year of the home price), "PMI rate" (% a year of the loan), "Home insurance" ($ per year) and "HOA dues" ($ per month, if any). They start with typical values (1.1%, 0.6% and $1,500) — replace them with your own if you know them; property tax in particular varies a lot by state and county.</li>
+      <li><strong>Read the results.</strong> "Estimated monthly payment" is the big number. The table lists Principal &amp; interest, Property tax, Home insurance, PMI (only when your down payment is under 20%), HOA dues and Extra payment (to principal) when you entered them, and the Total monthly payment. Each line is rounded to whole dollars and the total is the sum of the lines shown, so the column adds up. Below it you see the loan amount, the down payment percentage, the payoff time and the total interest over the loan.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> PMI (Private Mortgage Insurance) typically applies only when your down payment is less than 20% of the home price — if you enter a down payment at or above that, the PMI line should drop to zero.</div>
+    <div class="tip-box"><strong>Good to know:</strong> With an extra payment, the payoff time and total interest are recalculated month by month, and a note says how much sooner the loan is paid off and how much interest you save. The PMI line stays in the monthly total; in real life it usually drops off once you reach 20–22% equity, so your payment will fall at that point. Closing costs and mortgage points are not included.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="retirement">
     <span class="tool-tag"><a href="/retirement-calculator">retirement-calculator.html</a></span>
     <h2>401(k) / Retirement Calculator</h2>
-    <p class="what-for">Projects your 401(k) balance at retirement based on your contributions, your employer's match, and investment growth over time.</p>
+    <p class="what-for">Projects your 401(k) balance at retirement from your contributions, your employer's match and investment growth, and shows what each part contributes.</p>
     <ol>
-      <li><strong>Enter your current age and the age you plan to retire.</strong></li>
-      <li><strong>Enter your current balance</strong> (if any) and your planned annual contribution.</li>
-      <li><strong>Enter your employer's match</strong> if you have one (commonly a percentage of your contribution, up to a cap).</li>
-      <li><strong>Adjust the expected annual return</strong> if you want to test different assumptions — a lower, more conservative number and a higher, more optimistic one can show you a realistic range rather than one single guess.</li>
-      <li><strong>Read the projection.</strong> Your contributions, your employer's match, and investment growth are shown as separate contributions to your final projected balance, so you can see what's actually doing the work.</li>
+      <li><strong>Open the tool.</strong> Go to the <a href="/retirement-calculator">401(k) Retirement Calculator</a> page.</li>
+      <li><strong>Fill in the "YOU" boxes:</strong> "Current age", "Retirement age", "Current 401(k) balance" and "Annual salary".</li>
+      <li><strong>Fill in "CONTRIBUTIONS".</strong> "Your contribution" is a percentage of pay. "Employer match" and "Match caps out at" describe one formula: "50% match up to 6%" means your employer adds 50¢ for every dollar you contribute, on the first 6% of your pay. Tiered formulas are not supported — enter the closest single rate and cap. "One-time deposit" with "At age" (optional) adds a lump sum, such as a rollover, at the start of that year; leave the age empty for now.</li>
+      <li><strong>Adjust the "ASSUMPTIONS".</strong> "Annual return", "Annual raise" and "Inflation" (% a year), and "Contributions go in" — "Each paycheck" (about half a year of growth on a year's contributions) or "Start of year" (a full year). Return and raise are before inflation.</li>
+      <li><strong>Read the projection.</strong> "Projected balance at retirement" is the big number, followed by the same amount in today's dollars and a message about your employer's match. "Where it came from" splits the balance into the starting balance, any one-time deposit, your contributions, the employer match and investment growth, and these add up to the total. The year-by-year table shows every fifth year; press "Show every year" for all of them. Each row adds up: start of year + your contribution + employer match + growth = end of year.</li>
+      <li><strong>Try "What if you saved more?"</strong> The table lists your current percentage, then one, three and five points more, and "Max out (IRS limit)". For each it shows the monthly amount in year 1, the balance at retirement and the change from your current plan, with everything else unchanged.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> If you're between 60 and 63, check that your contribution limit reflects the higher "super catch-up" amount that age range gets — it's easy to miss since it's a narrow four-year window, higher than the ordinary 50+ catch-up on either side of it.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The calculator applies the 2026 IRS limits for you in every year of the projection — the base limit, the catch-up from age 50, the higher catch-up for ages 60 to 63, the cap on the pay a plan can count and the cap on total yearly additions — and assumes they rise with your inflation setting. If your percentage would go over the limit, it is held at the limit and a note says from which age. The result is a projection, not a promise, and it is before any tax on withdrawals.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="capital-gains">
     <span class="tool-tag"><a href="/capital-gains-calculator">capital-gains-calculator.html</a></span>
     <h2>Capital Gains Calculator</h2>
-    <p class="what-for">Calculates the tax owed on a stock or crypto sale, correctly stacking the gain on top of your other income rather than taxing it in isolation.</p>
+    <p class="what-for">Estimates the federal tax on stock or crypto sales for the year, netting your gains and losses the way Schedule D does and stacking the result on top of your other income.</p>
     <ol>
-      <li><strong>Enter your other (ordinary) income</strong> for the year — this matters a lot, since where your gain "stacks" on top of it determines the rate.</li>
-      <li><strong>Enter your proceeds</strong> (what you sold for) and your cost basis (what you originally paid).</li>
-      <li><strong>Choose short-term or long-term</strong> based on how long you held the asset (over one year is long-term, under is short-term, taxed at ordinary income rates).</li>
-      <li><strong>Choose your filing status.</strong></li>
-      <li><strong>Read the results.</strong> Federal tax on the gain and the Net Investment Income Tax (if your income crosses the threshold) are shown separately, along with the effective rate on just the gain itself.</li>
+      <li><strong>Open the tool.</strong> Go to the <a href="/capital-gains-calculator">Capital Gains Calculator</a> page.</li>
+      <li><strong>Fill in "YOUR INCOME".</strong> Pick your "Filing status", then enter "Other income this year" — wages and other income before these sales, gross rather than taxable, including interest and dividends. Leave "Deductions (optional)" empty to use the standard deduction for your filing status, or enter your itemized total if it is larger.</li>
+      <li><strong>Add each sale under "YOUR SALES THIS YEAR".</strong> Choose how long you "Held" it — "More than 1 year (long-term)" or "1 year or less (short-term)" — and enter the "Cost basis" and "Sale proceeds". The gain or loss appears under the boxes. Use "+ Add another sale" for more sales and "Remove" to delete one; a name for each sale is optional.</li>
+      <li><strong>Add "Losses carried over from earlier years (optional)"</strong> in the "Short-term" and "Long-term" boxes if you have any.</li>
+      <li><strong>Read the results.</strong> "Estimated tax on your sales" is the big number, with a line saying how the gain stacks on your other taxable income. The table shows proceeds, cost basis, any carried-over losses and the net capital gain; when you have both kinds, how much is taxed as short-term and long-term gain; then "Tax at ordinary rates", "Tax at long-term rates (0/15/20%)", the Net Investment Income Tax if it applies, and "Gain after tax". Each tax line is rounded to whole dollars and the big number is their sum, so the table adds up. Below it are the effective rate on the gain and the cash left after tax.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> The exact same dollar amount of gain can be taxed very differently depending on your other income that year — this isn't a bug, it's how a stacked, bracket-based system works. Timing a sale for a lower-income year can genuinely change the rate.</div>
+    <div class="tip-box"><strong>Good to know:</strong> If you have short-term gains, a box compares the tax with what it would be had you held past a year — a comparison, not a plan, since prices can move while you wait. If your sales net out to a loss, the results show how much lowers your income this year (up to $3,000, or $1,500 if you are married filing separately), what carries over, and the tax it saves. State tax, wash-sale rules and special rates for collectibles are not included.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="debt-payoff">
     <span class="tool-tag"><a href="/debt-payoff-calculator">debt-payoff-calculator.html</a></span>
     <h2>Debt Payoff Calculator</h2>
-    <p class="what-for">Compares the debt snowball (smallest balance first) and debt avalanche (highest interest rate first) payoff strategies side by side, for any set of debts you enter.</p>
+    <p class="what-for">Compares the snowball method (smallest balance first) with the avalanche method (highest interest rate first) for the debts you enter, side by side.</p>
     <ol>
-      <li><strong>Add each debt</strong> with its balance, interest rate, and minimum payment.</li>
-      <li><strong>Enter how much extra you can put toward debt</strong> each month, beyond the minimums.</li>
-      <li><strong>Read the comparison.</strong> Both strategies are calculated and shown side by side — total interest paid and time to become debt-free for each approach.</li>
+      <li><strong>Open the tool.</strong> Go to the <a href="/debt-payoff-calculator">Debt Payoff Calculator</a> page. It starts with three example debts you can overwrite.</li>
+      <li><strong>Enter each debt</strong> as a row: "Name", "Balance ($)", "APR %" and "Min payment ($)". Use "+ Add another debt" for more rows, and the × button at the end of a row to remove one.</li>
+      <li><strong>Enter "Extra you can put toward debt each month".</strong> This is on top of all the minimum payments. When a debt is paid off, its payment rolls onto the next one, so your total monthly payment stays the same.</li>
+      <li><strong>Read the two plans.</strong> "Snowball" and "Avalanche" each show the months to debt-free (and the month and year you finish), the total interest paid, which debt is cleared first and the month each debt is gone. A sentence below says how much interest the avalanche saves compared with the snowball. A second line compares your plan with paying only the minimums: how long that would take, what it would cost in interest, and how much sooner and cheaper your plan is.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> The avalanche method almost always saves more in total interest, since it targets the highest interest rate first — but the snowball method's quick wins (paying off a whole small debt fast) can matter more for actually sticking with a payoff plan. There's no universally "correct" choice between them.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The avalanche usually saves more interest, but the snowball clears whole debts sooner, which keeps many people motivated; neither is the right choice for everyone. If a debt has no minimum payment, only your extra money goes toward it, and if the minimums cannot cover the interest, the calculator says that debt would take over 100 years to clear.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -411,30 +255,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

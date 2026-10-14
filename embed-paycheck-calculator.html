@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paycheck Calculator — PopPopMake</title>
+<meta name="robots" content="noindex">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#F2542D; --teal:#0F8B8D; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:12px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:transparent;color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:2px;}
+  .embed{padding:14px;max-width:480px;margin:0 auto;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;}
+  .field{margin-bottom:12px;}
+  .field:last-child{margin-bottom:0;}
+  .field label{display:block;font-size:0.78rem;font-weight:600;margin-bottom:5px;}
+  input[type=number], select{
+    width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:0.95rem;background:#fff;color:var(--ink);
+  }
+  .salary-wrap{position:relative;}
+  .salary-wrap span{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--ink-soft);font-size:0.95rem;}
+  .salary-wrap input{padding-left:20px;}
+  .hint{font-size:0.72rem;color:var(--ink-soft);margin-top:4px;}
+
+  .take-home{
+    background:var(--card);border:1px solid var(--line);border-top:3px solid var(--orange);
+    border-radius:var(--radius);padding:16px;margin-bottom:10px;text-align:center;
+  }
+  .take-home h2{font-family:'Space Grotesk',sans-serif;font-size:0.85rem;margin:0 0 4px;font-weight:600;color:var(--ink-soft);}
+  .take-home .amount{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2rem;color:var(--orange);letter-spacing:-0.02em;}
+  .take-home .sub{color:var(--ink-soft);font-size:0.82rem;}
+
+  table.breakdown{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;font-size:0.82rem;}
+  table.breakdown th, table.breakdown td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);}
+  table.breakdown th:first-child, table.breakdown td:first-child{text-align:left;}
+  table.breakdown thead th{
+    font-family:'IBM Plex Mono',monospace;font-size:0.66rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);
+    background:var(--paper-2);
+  }
+  table.breakdown tbody tr:last-child td{border-bottom:none;}
+  table.breakdown tr.net td{font-weight:700;background:rgba(15,139,141,0.06);}
+  table.breakdown .neg{color:var(--orange);}
+
+  .rate-strip{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;}
+  .rate-strip .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:0.7rem;background:var(--card);
+    border:1px solid var(--line);border-radius:999px;padding:5px 10px;color:var(--ink-soft);
+  }
+  .rate-strip .chip b{color:var(--ink);}
+
+  .fine-print{font-size:0.68rem;color:var(--ink-soft);margin-top:10px;line-height:1.5;}
+
+  .badge{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 0 2px;font-size:0.76rem;color:var(--ink-soft);}
+  .badge a{color:var(--ink);text-decoration:none;font-weight:700;font-family:'Space Grotesk',sans-serif;}
+  .badge a:hover{color:var(--teal);}
+</style>
+</head>
+<body>
+
+<div class="embed">
+  <div class="panel" id="ppmInputs"></div>
+  <div id="ppmResults"></div>
+
+  <p class="fine-print">Estimate only, not tax advice — 2026 federal and state tax rules with the standard deduction; credits and local taxes are not included. Runs entirely in this frame; nothing you enter is sent anywhere.</p>
+
+  <div class="badge">
+    <svg width="16" height="16" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>
+    <span>Powered by <a href="https://poppopmake.com/paycheck-calculator.html" target="_blank" rel="noopener">PopPopMake</a></span>
+  </div>
+</div>
+
+<script src="/paycheck-engine.js"></script>
+<script>
+(function(){
+  if (!window.PPMPaycheck) { var p = document.getElementById('ppmInputs'); if (p) p.innerHTML = '<p class="hint">The calculator could not load. Reload the page.</p>'; return; }
+  PPMPaycheck.mount({ variant: 'embed', state: 'TX' });
+
+  var _params = new URLSearchParams(window.location.search);
+  var _instanceId = _params.get('instance') || '';
+
+  function sendHeight(){
+    var h = document.documentElement.scrollHeight;
+    window.parent.postMessage({type:'poppopmake-embed-resize', instance:_instanceId, height:h}, '*');
+  }
+
+  window.addEventListener('load', sendHeight);
+  if (window.ResizeObserver) {
+    new ResizeObserver(sendHeight).observe(document.body);
+  } else {
+    setTimeout(sendHeight, 300);
+  }
+})();
+</script>
+</body>
+</html>

@@ -53,126 +53,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
 
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
@@ -190,7 +70,7 @@
   .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
 
   .mode-group{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:20px;}
-  .mode-group button{flex:1;padding:10px 8px;min-height:44px;background:#fff;border:none;font-size:0.85rem;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;}
+  .mode-group button{flex:1;padding:10px 8px;background:#fff;border:none;font-size:0.85rem;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;}
   .mode-group button.active{background:var(--teal);color:#fff;font-weight:600;}
   .mode-group button:not(:last-child){border-right:1px solid var(--line);}
 
@@ -201,6 +81,8 @@
   .ht-pair{display:flex;gap:8px;}
   .ht-pair input{width:100%;}
   .ht-pair span{align-self:center;color:var(--ink-soft);font-size:0.85rem;flex-shrink:0;}
+  .range-hint{display:none;font-size:0.88rem;color:var(--orange);margin:14px 0 0;}
+  .range-hint.show{display:block;}
 
   .activity-list{display:flex;flex-direction:column;gap:8px;margin-bottom:4px;}
   .activity-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;cursor:pointer;}
@@ -228,12 +110,6 @@
 
   .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:8px;margin-bottom:20px;font-size:0.88rem;color:var(--ink-soft);}
   .disclaimer strong{color:var(--ink);}
-
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 
   .related-link{display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:var(--ink);gap:12px;}
   .related-link:hover .related-arrow{transform:translateX(3px);}
@@ -264,50 +140,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 <div class="install-bar" id="installBar" hidden data-tool-name="Calorie Calc">
@@ -350,13 +183,13 @@
 
     <div id="metricFields">
       <div class="field-row">
-        <div class="field"><label for="weightKg">Weight (kg)</label><input type="number" id="weightKg" value="65" min="1" max="400" step="0.1"></div>
-        <div class="field"><label for="heightCm">Height (cm)</label><input type="number" id="heightCm" value="165" min="1" max="272" step="0.1"></div>
+        <div class="field"><label for="weightKg">Weight (kg)</label><input type="number" id="weightKg" value="65" min="10" max="400" step="0.1"></div>
+        <div class="field"><label for="heightCm">Height (cm)</label><input type="number" id="heightCm" value="165" min="50" max="272" step="0.1"></div>
       </div>
     </div>
     <div id="imperialFields" style="display:none;">
       <div class="field-row">
-        <div class="field"><label for="weightLb">Weight (lb)</label><input type="number" id="weightLb" value="143" min="1" max="880" step="0.1"></div>
+        <div class="field"><label for="weightLb">Weight (lb)</label><input type="number" id="weightLb" value="143" min="22" max="880" step="0.1"></div>
         <div class="field">
           <label for="heightFt">Height</label>
           <div class="ht-pair">
@@ -377,6 +210,7 @@
       <label class="activity-row"><input type="radio" name="activity" value="active"><span><span class="a-title">Very active</span><br><span class="a-desc">Hard exercise 6&ndash;7 days/week</span></span></label>
       <label class="activity-row"><input type="radio" name="activity" value="extra"><span><span class="a-title">Extra active</span><br><span class="a-desc">Very hard exercise, physical job, or training twice a day</span></span></label>
     </div>
+    <p class="range-hint" id="rangeHint" role="status"></p>
   </div>
 
   <div class="panel result-panel" aria-live="polite">
@@ -397,35 +231,6 @@
     <strong>An estimate, not a prescription.</strong> Mifflin-St Jeor predicts resting energy needs for the average healthy adult within about 10% &mdash; individual metabolism, body composition, and medical conditions can shift the real number either way. The ~3,500-calorie-per-pound rule used for the goal targets above is a widely-used estimate, not an exact law: real-world weight change also involves water retention and metabolic adaptation. For a plan tailored to you, a registered dietitian or doctor is the right call.
   </div>
 
-  <div class="panel">
-    <h2>Worked example</h2>
-    <p style="margin:0;color:var(--ink-soft);">A 30-year-old woman, 165&nbsp;cm tall, 65&nbsp;kg, moderately active: BMR&nbsp;=&nbsp;10×65&nbsp;+&nbsp;6.25×165&nbsp;−&nbsp;5×30&nbsp;−&nbsp;161&nbsp;=&nbsp;650&nbsp;+&nbsp;1,031.25&nbsp;−&nbsp;150&nbsp;−&nbsp;161&nbsp;≈&nbsp;<strong style="color:var(--ink);">1,370 kcal/day</strong>. TDEE&nbsp;=&nbsp;1,370&nbsp;×&nbsp;1.55 (moderate activity)&nbsp;≈&nbsp;<strong style="color:var(--ink);">2,124 kcal/day</strong>. To lose weight steadily, her target would be about 2,124&nbsp;−&nbsp;250&nbsp;≈&nbsp;1,874&nbsp;kcal/day — comfortably above the 1,200&nbsp;kcal/day floor this tool checks for.</p>
-  </div>
-
-  <div class="panel">
-    <h2>Frequently asked questions</h2>
-    <div class="faq-item">
-      <p class="faq-q">Why does activity level change the result so much?</p>
-      <p class="faq-a">TDEE = BMR × an activity multiplier (1.2 for sedentary up to 1.9 for extra active), so the same body can have a "maintenance" calorie number that swings by 50–60% just based on how much you move — a bigger effect than most individual food choices.</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">Is Mifflin-St Jeor more accurate than older formulas like Harris-Benedict?</p>
-      <p class="faq-a">For most healthy adults, yes — Mifflin-St Jeor (1990) is the equation current clinical nutrition guidelines generally recommend over the older Harris-Benedict revisions, because it was validated against more accurate measured data. No formula is exact for any one individual; both are population-average estimates.</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">Why did I get a warning that my calorie target is "too low"?</p>
-      <p class="faq-a">This tool flags any target below roughly 1,200 kcal/day (women) or 1,500 kcal/day (men) — thresholds commonly cited by health authorities like the NHS and Mayo Clinic as the point where an unsupervised diet risks inadequate nutrition. It's a population-level guideline, not a personal medical judgment — if you need to go lower, that's a conversation for a doctor or registered dietitian.</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">Why is the "faster" weight-loss target exactly 500 calories below maintenance?</p>
-      <p class="faq-a">It's built on the widely-used rule of thumb that roughly 3,500 kcal of deficit corresponds to about 1 lb (0.45 kg) of fat loss, so a 500 kcal/day deficit ≈ 1 lb/week. It's a useful planning estimate, not an exact physiological law — actual results vary with water retention and metabolic adaptation over time.</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">Does this work for pregnant women, children, or people with a diagnosed medical condition?</p>
-      <p class="faq-a">No. Mifflin-St Jeor and the activity multipliers here are validated for generally healthy, non-pregnant adults. Pregnancy, growth, and many medical conditions change energy needs in ways this calculator doesn't account for — a doctor or registered dietitian should guide those numbers instead.</p>
-    </div>
-  </div>
-
   <a class="panel related-link" href="/bmi-calculator">
     <span><strong>Also:</strong> check your BMI category (WHO standard and Asian-specific thresholds) →</span>
     <svg class="related-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
@@ -442,30 +247,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script src="/install-prompt.js" defer></script>
 <script>
@@ -517,11 +298,34 @@ if ('serviceWorker' in navigator) {
     });
   });
 
+  function fieldNum(id){ return parseFloat(document.getElementById(id).value); }
+  function round1(n){ return Math.round(n * 10) / 10; }
+  // Switching units converts what is already typed, instead of leaving the other unit's boxes at their old values.
+  function convertUnits(from, to){
+    if (from === 'metric' && to === 'imperial') {
+      var kg = fieldNum('weightKg'), cm = fieldNum('heightCm');
+      if (kg > 0) document.getElementById('weightLb').value = round1(kg / 0.45359237);
+      if (cm > 0) {
+        var totalIn = round1(cm / 2.54);
+        var ft = Math.floor(totalIn / 12);
+        document.getElementById('heightFt').value = ft;
+        document.getElementById('heightIn').value = round1(totalIn - ft * 12);
+      }
+    } else if (from === 'imperial' && to === 'metric') {
+      var lb = fieldNum('weightLb');
+      var f = fieldNum('heightFt') || 0, i = fieldNum('heightIn') || 0;
+      if (lb > 0) document.getElementById('weightKg').value = round1(lb * 0.45359237);
+      if (f * 12 + i > 0) document.getElementById('heightCm').value = round1((f * 12 + i) * 2.54);
+    }
+  }
+
   document.querySelectorAll('.unit-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
+      var previous = unit;
       document.querySelectorAll('.unit-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       unit = btn.dataset.unit;
+      if (unit !== previous) convertUnits(previous, unit);
       document.getElementById('metricFields').style.display = unit === 'metric' ? '' : 'none';
       document.getElementById('imperialFields').style.display = unit === 'imperial' ? '' : 'none';
       calc();
@@ -552,6 +356,25 @@ if ('serviceWorker' in navigator) {
 
   function fmt(n){ return Math.round(n).toLocaleString('en-US'); }
 
+  // The number inputs declare min/max attributes, but a browser does not stop someone typing a value outside them.
+  // Rather than quietly computing with a different number than the one typed (the old behavior), say what is wrong
+  // and show no result until it is fixed. The ranges are generous for real adults and catch the usual slips:
+  // 1.65 typed into the centimeter box, pounds typed into the kilogram box, an age of 3 on the way to 35.
+  function rangeProblem(age, weightKg, heightCm){
+    if (!(age >= 15 && age <= 100)) return 'Age should be between 15 and 100 \u2014 this estimate is for adults and older teens.';
+    if (!(heightCm >= 50 && heightCm <= 272)) {
+      return unit === 'metric'
+        ? 'That height looks off. Enter it in centimeters, between 50 and 272 (for example 165).'
+        : 'That height looks off. Enter it between 1 ft 8 in and 8 ft 11 in.';
+    }
+    if (!(weightKg >= 10 && weightKg <= 400)) {
+      return unit === 'metric'
+        ? 'That weight looks off. Enter it in kilograms, between 10 and 400 (for example 65).'
+        : 'That weight looks off. Enter it between about 22 and 880 lb.';
+    }
+    return '';
+  }
+
   function calc(){
     var age = parseFloat(document.getElementById('ageYears').value);
     var weightKg, heightCm;
@@ -570,11 +393,20 @@ if ('serviceWorker' in navigator) {
 
     var warningBox = document.getElementById('warningBox');
     warningBox.classList.remove('show');
+    var hintEl = document.getElementById('rangeHint');
+    hintEl.classList.remove('show'); hintEl.textContent = '';
 
-    if (!age || age <= 0 || !weightKg || weightKg <= 0 || !heightCm || heightCm <= 0) {
+    // A box that is empty (or not a number) just waits; a number that cannot be right gets an explanation.
+    var missing = !(age > 0) || !(weightKg > 0) || !(heightCm > 0);
+    var problem = missing ? '' : rangeProblem(age, weightKg, heightCm);
+    if (missing || problem) {
       document.getElementById('bmrValue').textContent = '—';
       document.getElementById('tdeeValue').textContent = '—';
-      GOALS.forEach(function(g){ document.getElementById('kcal-' + g.key).textContent = '—'; });
+      GOALS.forEach(function(g){
+        var c = document.getElementById('kcal-' + g.key);
+        c.textContent = '—'; c.classList.remove('low');
+      });
+      if (problem) { hintEl.textContent = problem; hintEl.classList.add('show'); }
       return;
     }
 

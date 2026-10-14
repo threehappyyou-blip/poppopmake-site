@@ -8,16 +8,16 @@
 <meta name="theme-color" content="#1C2321">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Everyday Tools — Age, Percentage &amp; Tip Calculators — PopPopMake</title>
-<meta name="description" content="Free everyday calculators: exact age in years/months/days, percentage calculator (three modes), and a tip/bill-split calculator.">
+<meta name="description" content="Free everyday tools: exact age in years/months/days, percentage calculator (four modes), tip and bill split, password generator, unit converter, and time zone converter.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PopPopMake">
 <meta property="og:url" content="https://poppopmake.com/everyday-tools">
 <link rel="canonical" href="https://poppopmake.com/everyday-tools">
 <meta property="og:title" content="Everyday Tools — Age, Percentage &amp; Tip Calculators — PopPopMake">
-<meta property="og:description" content="Free everyday calculators: exact age in years/months/days, percentage calculator (three modes), and a tip/bill-split calculator.">
+<meta property="og:description" content="Free everyday tools: exact age in years/months/days, percentage calculator (four modes), tip and bill split, password generator, unit converter, and time zone converter.">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Everyday Tools — Age, Percentage &amp; Tip Calculators — PopPopMake">
-<meta name="twitter:description" content="Free everyday calculators: exact age in years/months/days, percentage calculator (three modes), and a tip/bill-split calculator.">
+<meta name="twitter:description" content="Free everyday tools: exact age in years/months/days, percentage calculator (four modes), tip and bill split, password generator, unit converter, and time zone converter.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -40,126 +40,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
 
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
@@ -200,7 +80,7 @@
   .chip b{color:var(--ink);}
 
   .mode-group{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:18px;}
-  .mode-group button{flex:1;padding:10px 8px;min-height:44px;background:#fff;border:none;font-size:0.82rem;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;}
+  .mode-group button{flex:1;padding:10px 8px;background:#fff;border:none;font-size:0.82rem;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;}
   .mode-group button.active{background:var(--teal);color:#fff;font-weight:600;}
   .mode-group button:not(:last-child){border-right:1px solid var(--line);}
 
@@ -225,14 +105,6 @@
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
-
-  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
-  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 </head>
 <body>
@@ -241,50 +113,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 
@@ -323,34 +152,7 @@
         <span class="chip">Born on a: <b id="ageDayOfWeek">&mdash;</b></span>
       </div>
     </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Worked example</h3>
-  <p class="sub" style="margin:0;">The date of birth field is pre-filled with January 1, 2000, and the "as of" field defaults to today's date in your own browser, so the headline figure shifts by a day each time you revisit the page. Checked against the day this was written — October 1, 2026 — that pairing works out to 26 years, 9 months, and 0 days: the calculator counts the largest number of full months that fit before the "as of" date, then whatever's left over becomes the days figure, which is why a birth date on the 1st of a month lands on a clean month boundary with 0 days left over. The other figures follow the same two dates: 9,770 total days lived, and 92 days until the next birthday on January 1. One figure doesn't depend on today's date at all — a person born January 1, 2000 was born on a Saturday.</p>
-
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">How are the years, months, and days actually figured out?</p>
-    <p class="faq-a">The calculator finds the largest whole number of months that fit between your birth date and the "as of" date, splits that into years and months, and then counts whatever days are left over to reach the exact date — rather than estimating with a flat 30-day month or 365-day year. That's why the days figure is always small and can land on exactly 0.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What happens if I enter a birth date that hasn't happened yet?</p>
-    <p class="faq-a">The calculator checks for that directly. If the date of birth falls after the "as of" date, the headline switches to "That birth date is in the future," and the three detail chips — total days, days to next birthday, day of week — reset to a dash instead of a number.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does it handle birthdays that don't exist in every month, like the 29th or 31st?</p>
-    <p class="faq-a">Yes. Rather than hard-coding how many days are in each month, it leans on JavaScript's own date math and then checks whether that overshot the target date, stepping the month count back one at a time until it hasn't. That means a birth date on, say, the 31st is still counted consistently once you reach months that don't have a 31st.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Why does "Days to next birthday" sometimes say "Today!" instead of a number?</p>
-    <p class="faq-a">If the "as of" date you've entered is the exact anniversary of the birth date, the days-remaining count is 0. The calculator shows "Today!" in that specific case instead of printing a plain zero.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does this calculator send my birth date anywhere?</p>
-    <p class="faq-a">No. Both dates stay in your browser, and the whole calculation — years, months, days, and the three chips — runs locally; nothing is transmitted to or stored on a server.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <!-- PERCENTAGE CALCULATOR -->
   <section class="panel" id="panel-pct">
@@ -359,6 +161,7 @@
         <button type="button" class="pct-mode-btn active" data-mode="of">X% of Y</button>
         <button type="button" class="pct-mode-btn" data-mode="what">X is what % of Y</button>
         <button type="button" class="pct-mode-btn" data-mode="change">% change, X to Y</button>
+        <button type="button" class="pct-mode-btn" data-mode="adjust">Increase/decrease by %</button>
       </div>
       <div class="row2" id="pctFieldsOf">
         <div class="field"><label for="pctX_of">Percentage</label><div class="prefix-wrap"><input type="number" id="pctX_of" value="20"><span style="left:auto;right:12px;">%</span></div></div>
@@ -372,39 +175,20 @@
         <div class="field"><label for="pctX_change">From</label><input type="number" id="pctX_change" value="100"></div>
         <div class="field"><label for="pctY_change">To</label><input type="number" id="pctY_change" value="150"></div>
       </div>
+      <div class="row2" id="pctFieldsAdjust" style="display:none;">
+        <div class="field"><label for="pctX_adjust">Starting number</label><input type="number" id="pctX_adjust" value="100"></div>
+        <div class="field"><label for="pctY_adjust">Percentage</label><div class="prefix-wrap"><input type="number" id="pctY_adjust" value="20" min="0"><span style="left:auto;right:12px;">%</span></div></div>
+      </div>
+      <div class="preset-row" id="pctAdjustDirRow" style="display:none;margin-top:-4px;">
+        <button type="button" class="basis-btn active" data-dir="increase">Increase</button>
+        <button type="button" class="basis-btn" data-dir="decrease">Decrease</button>
+      </div>
     </div>
     <div class="result-big">
       <div class="amount" id="pctResult">&mdash;</div>
       <div class="sub" id="pctResultSub"></div>
     </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Worked example</h3>
-  <p class="sub" style="margin:0;">Each of the three modes loads with its own default numbers. "X% of Y" starts at 20 and 150, showing 30. "X is what % of Y" starts at 30 and 150, showing 20%. "% change, X to Y" starts at 100 and 150, showing +50%, labeled as an increase. Switching between the three mode buttons doesn't clear or share these numbers — each mode keeps its own pair of fields exactly as you last left them, even while it's hidden behind one of the other tabs.</p>
-
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">Do the three modes share the numbers I type?</p>
-    <p class="faq-a">No — "X% of Y," "X is what % of Y," and "% change" each have their own pair of input fields underneath. Switching the mode button just shows or hides the relevant pair; it doesn't copy a value across or clear anything, so each mode holds on to whatever you last typed into it.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What happens if one of the numbers is 0?</p>
-    <p class="faq-a">It's handled explicitly rather than left to a divide-by-zero error. In "X is what % of Y," if Y is 0 the result shows 0% instead of an error. In "% change," if the starting number is 0, the result is also shown as 0% — a percentage change from zero has no ordinary mathematical answer, so the calculator doesn't attempt one.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">How does "% change" handle a negative starting number?</p>
-    <p class="faq-a">It uses the size of the starting number — ignoring its sign — as the base for the comparison, which is the standard convention for percentage change. Going from −100 to 50, for instance, comes out as a +150% change rather than a negative or undefined result.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Why do some results show commas, like "1,250"?</p>
-    <p class="faq-a">Results are rounded to two decimal places and then formatted with standard thousands separators, so a result like 1250 displays as "1,250" instead of a long unbroken string of digits.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does this calculator send the numbers I type anywhere?</p>
-    <p class="faq-a">No. All three modes calculate entirely in your browser from the numbers in the visible fields; nothing is sent to or stored on a server.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <!-- TIP / SPLIT CALCULATOR -->
   <section class="panel" id="panel-tip">
@@ -444,34 +228,7 @@
       <thead><tr><th>Item</th><th>Total</th><th>Per person</th></tr></thead>
       <tbody id="tipBody"></tbody>
     </table>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Worked example</h3>
-  <p class="sub" style="margin:0;">The page loads with an $84.50 subtotal, 0% sales tax, an 18% tip calculated on the subtotal, and 4 people. With no tax entered, the breakdown table skips the tax row entirely and shows just three lines: Subtotal $84.50 ($21.13 per person), Tip (18%) $15.21 ($3.80 per person), and Total $99.71 ($24.93 per person). Raising the sales tax field above 0% adds a Tax row back into the table, between the subtotal and the tip.</p>
-
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">Why isn't there a tax row in the table?</p>
-    <p class="faq-a">The breakdown table only adds a tax row once the sales tax field is above 0%. Since the calculator defaults to 0% tax, it starts with just Subtotal, Tip, and Total — enter any tax percentage and the Tax row appears between the subtotal and the tip.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What's the real difference between tipping on the subtotal versus the total?</p>
-    <p class="faq-a">It changes which number the tip percentage is multiplied against — the subtotal alone, or the subtotal plus tax. Sales tax itself is always calculated from the subtotal either way; the toggle only changes the tip. Tipping on the total means you're also tipping on the tax amount, which most etiquette guides don't recommend.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What happens if I set the number of people to 0?</p>
-    <p class="faq-a">It's treated as 1 person — the calculator won't divide by zero or show an error. The same floor applies if you clear the field or enter a negative number; the per-person columns then just equal the full subtotal, tip, and total.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Could the per-person figures ever be off by a cent from each other?</p>
-    <p class="faq-a">It's possible, though not in the default example above. Each per-person column — bill share, tax share, tip share, and total share — is calculated from the exact split and rounded to the cent independently, rather than being built by adding the other already-rounded columns together. For most combinations of bill, tax, and tip the rounding lines up, but it isn't mathematically guaranteed to.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does this calculator send my bill or tip details anywhere?</p>
-    <p class="faq-a">No. The subtotal, tax, tip, and number of people all stay in your browser, and the whole breakdown is calculated locally; nothing is transmitted to or stored on a server.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <!-- PASSWORD GENERATOR -->
   <section class="panel" id="panel-pwd">
@@ -493,32 +250,9 @@
         <button type="button" class="preset-btn" id="pwdRegenBtn">&#8635; Regenerate</button>
         <button type="button" class="preset-btn" id="pwdCopyBtn">Copy</button>
       </div>
+      <div id="pwdCopyNote" role="status" style="display:none;margin-top:12px;font-size:0.84rem;color:var(--orange);"></div>
     </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">Is this actually random, or just Math.random()?</p>
-    <p class="faq-a">It uses the browser's Web Crypto API — crypto.getRandomValues() — rather than Math.random(), which is the source generally recommended for anything security-sensitive. Each character is chosen using rejection sampling, which discards a small number of raw random values specifically to avoid the slight bias a plain modulo operation would otherwise introduce.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">If I select uppercase, lowercase, numbers, and symbols, is one of each guaranteed to appear?</p>
-    <p class="faq-a">No. Every character position is drawn independently from the full combined pool of whatever types you've selected, so nothing checks afterward that the result includes at least one of each. For longer passwords it's statistically likely you'll get a mix, but it isn't guaranteed — hit Regenerate if a particular result doesn't look like what you wanted.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What exactly counts as a "symbol"?</p>
-    <p class="faq-a">The fixed set used when "Symbols" is checked is ! @ # $ % ^ &amp; * ( ) _ + - = [ ] { } | ; : , . &lt; &gt; ? — the same characters every time. There's no option to customize or narrow down which symbols are used.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What length range is available, and what happens if I turn off every character type?</p>
-    <p class="faq-a">The length slider runs from 6 to 64 characters, defaulting to 16. If you uncheck all four character types, there's no character pool left to draw from, and the output area shows "Select at least one character type" instead of a password.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does this send the password anywhere, including when I hit Copy?</p>
-    <p class="faq-a">No. The password is generated locally, and the Copy button writes it straight to your clipboard using the browser's own clipboard API. It's never sent to or stored on a server.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <!-- UNIT CONVERTER -->
   <section class="panel" id="panel-unit">
@@ -546,34 +280,21 @@
         <div class="field"><label for="unitC">Celsius (&deg;C)</label><input type="number" id="unitC" value="37" step="0.1"></div>
       </div>
     </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Worked example</h3>
-  <p class="sub" style="margin:0;">The three sections load with their own starting values: 180 cm paired with 5 ft 11 in for height, 150 lb paired with 68.04 kg for weight, and 98.6°F paired with 37°C for temperature. These pairs aren't re-synced against each other on page load — they're just the starting numbers sitting in each field. Typing 180 into the centimeters field to trigger a fresh conversion gives 5 ft 10.9 in, using the exact 2.54-cm-per-inch factor rounded to the nearest tenth of an inch, which is slightly different from the 5 ft 11 in it started with. The weight and temperature pairs don't have that same gap — 150 lb converts to exactly 68.04 kg and back again, and 98.6°F converts to exactly 37°C and back again, so those two sections' starting numbers do match their own formulas.</p>
-
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">Why didn't my hand-calculated feet and inches match exactly?</p>
-    <p class="faq-a">Height converts using the exact 2.54-cm-per-inch factor, then rounds the inches figure to the nearest tenth — and if that rounds up to a full 12 inches, it carries over into an extra foot rather than ever displaying "12 in." Small differences from a quick mental calculation are almost always that rounding step, not a different conversion factor.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does changing the centimeters field also update the pounds or Fahrenheit fields?</p>
-    <p class="faq-a">No. Height, weight, and temperature are three separate converters stacked on the same page, not one linked system. Editing a field in one section only recalculates its own paired field and leaves the other two sections untouched.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What conversion factor does the weight converter use?</p>
-    <p class="faq-a">0.45359237 kilograms per pound — the internationally defined exact value, not a rounded approximation. 150 lb and 68.04 kg convert into each other exactly using that factor, each direction rounded to the nearest hundredth.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Can I convert other units, like meters, miles, or Kelvin?</p>
-    <p class="faq-a">Not on this tool. It covers exactly three fixed pairs — height (centimeters with feet and inches), weight (pounds with kilograms), and temperature (Fahrenheit with Celsius) — with no category picker or additional units.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does this converter send my measurements anywhere?</p>
-    <p class="faq-a">No. Every conversion is a local calculation triggered as you type; nothing you enter here is transmitted to or stored on a server.</p>
-  </div>
-</div>
-</section>
+    <div class="card" style="margin-top:14px;">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;margin:0 0 10px;">Length / Distance</h3>
+      <div class="row2">
+        <div class="field"><label for="unitKm">Kilometers</label><input type="number" id="unitKm" value="10" step="0.1"></div>
+        <div class="field"><label for="unitMi">Miles</label><input type="number" id="unitMi" value="6.21" step="0.1"></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px;">
+      <h3 style="font-family:'Space Grotesk',sans-serif;font-size:0.95rem;margin:0 0 10px;">Volume</h3>
+      <div class="row2">
+        <div class="field"><label for="unitL">Liters</label><input type="number" id="unitL" value="4" step="0.1"></div>
+        <div class="field"><label for="unitGal">US Gallons</label><input type="number" id="unitGal" value="1.06" step="0.1"></div>
+      </div>
+    </div>
+  </section>
 
   <!-- TIME ZONE CONVERTER -->
   <section class="panel" id="panel-tz">
@@ -588,34 +309,10 @@
       <thead><tr><th>Time zone</th><th>Local time</th></tr></thead>
       <tbody id="tzBody"></tbody>
     </table>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">Do I need to tell it what time zone I'm in?</p>
-    <p class="faq-a">No. The date-and-time field defaults to right now in your own browser's local time, and whatever you type into it is interpreted as local time too. The eleven time zones in the table are the ones being converted to, not from, so there's nothing to configure for your own side of the conversion.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What does the "+1 day" or "−1 day" next to a time mean?</p>
-    <p class="faq-a">It means that, at the exact moment you entered, the calendar date in that time zone is already a day ahead — or still a day behind — your own. The calculator compares the calendar date in your zone against the calendar date in each listed zone for that same instant, which is how a late evening in one place can already be tomorrow somewhere else.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Are these times adjusted for daylight saving automatically?</p>
-    <p class="faq-a">Yes. Each time zone is looked up by its full zone name — America/New_York, say, rather than a fixed "UTC−5" — so the browser's own time zone data supplies whichever offset and abbreviation actually applies on the date you entered, including the switch between standard and daylight time.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Can I add my own city or time zone to the table?</p>
-    <p class="faq-a">No. The table always shows the same fixed set of eleven zones — four US zones, UTC, London, Paris, Seoul, Tokyo, Shanghai, and Sydney — in that order. There's no search box or option to add others.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does this calculator send my date and time anywhere?</p>
-    <p class="faq-a">No. The conversion is computed locally using your browser's own time zone data; nothing you enter is transmitted to or stored on a server.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <div class="disclaimer">
-    All three run entirely in your browser &mdash; nothing you type here is sent anywhere. <a href="/how-it-works">See how to check that yourself</a>.
+    All six tools run entirely in your browser &mdash; nothing you type here is sent anywhere. <a href="/how-it-works">See how to check that yourself</a>.
   </div>
 </main>
 
@@ -629,30 +326,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
@@ -681,9 +354,20 @@ function addMonths(date, n){
   return d;
 }
 
+function todayLocalStr(){
+  // Local calendar date as YYYY-MM-DD. Deliberately NOT new Date().toISOString().slice(0,10) --
+  // toISOString() always reports UTC, so in negative-UTC-offset zones (e.g. US evenings)
+  // that would already read as "tomorrow" while it's still "today" on the user's wall clock.
+  var d = new Date();
+  var y = d.getFullYear();
+  var m = ('0' + (d.getMonth() + 1)).slice(-2);
+  var day = ('0' + d.getDate()).slice(-2);
+  return y + '-' + m + '-' + day;
+}
+
 function calcAge(birthDateStr, asOfDateStr){
   var birth = new Date(birthDateStr + 'T00:00:00');
-  var asOf = new Date((asOfDateStr || new Date().toISOString().slice(0,10)) + 'T00:00:00');
+  var asOf = new Date((asOfDateStr || todayLocalStr()) + 'T00:00:00');
 
   if (isNaN(birth.getTime())) return null;
   if (birth > asOf) return { error: 'future' };
@@ -727,11 +411,18 @@ function calcAge(birthDateStr, asOfDateStr){
   // ---- Age Calculator UI ----
   var birthInput = document.getElementById('birthDate');
   var asOfInput = document.getElementById('asOfDate');
-  asOfInput.value = new Date().toISOString().slice(0,10);
+  asOfInput.value = todayLocalStr();
 
   function renderAge(){
     var r = calcAge(birthInput.value, asOfInput.value);
-    if (!r) { document.getElementById('ageAmount').textContent = 'Enter a valid date'; return; }
+    if (!r) {
+      document.getElementById('ageAmount').textContent = 'Enter a valid date';
+      document.getElementById('ageSub').textContent = '';
+      document.getElementById('ageTotalDays').textContent = '—';
+      document.getElementById('ageDaysToBday').textContent = '—';
+      document.getElementById('ageDayOfWeek').textContent = '—';
+      return;
+    }
     if (r.error === 'future') {
       document.getElementById('ageAmount').textContent = 'That birth date is in the future';
       document.getElementById('ageSub').textContent = '';
@@ -757,7 +448,8 @@ function calcAge(birthDateStr, asOfDateStr){
   // ---- Percentage + Tip engine (tested) ----
 function pctOf(percent, base){ return (percent/100) * base; }
 function whatPercent(part, whole){ return whole !== 0 ? (part/whole)*100 : 0; }
-function pctChange(from, to){ return from !== 0 ? ((to-from)/Math.abs(from))*100 : 0; }
+function pctChange(from, to){ return from !== 0 ? ((to-from)/Math.abs(from))*100 : null; }
+function pctAdjust(base, percent, direction){ return direction === 'decrease' ? base * (1 - percent/100) : base * (1 + percent/100); }
 
 // Tip / bill split
 function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
@@ -765,19 +457,45 @@ function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
   var tipBase = tipOnTotal ? (subtotal + tax) : subtotal;
   var tip = tipBase * (tipPct/100);
   var grandTotal = subtotal + tax + tip;
-  var people = Math.max(1, numPeople);
-  return {
-    tax: tax, tip: tip, total: grandTotal,
-    perPersonBill: subtotal/people, perPersonTax: tax/people, perPersonTip: tip/people, perPersonTotal: grandTotal/people
-  };
+  // Per-person splits are computed at render time via fmtPerPersonCell(), which distributes
+  // cent-exact shares instead of naively dividing these row totals (see finding #4 fix).
+  return { tax: tax, tip: tip, total: grandTotal };
 }
 
 
   function fmtNum(n){ return Number.isFinite(n) ? (Math.round(n*100)/100).toLocaleString('en-US') : '—'; }
   function fmtMoney(n){ return '$' + (Math.round(n*100)/100).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
 
+  // Splits `amount` into `people` cent-exact shares that always sum to round(amount*100)/100 --
+  // avoids the classic bug where N independently-rounded shares are off by a cent from the total.
+  // Standard approach: round down for everyone, then hand the leftover pennies to as many
+  // people as needed (1 extra cent each) to make up the exact difference.
+  function splitExact(amount, people){
+    var totalCents = Math.round(amount * 100);
+    var base = Math.floor(totalCents / people);
+    var remainder = totalCents - (base * people); // 0 <= remainder < people
+    var shares = [];
+    for (var i = 0; i < people; i++){
+      shares.push((base + (i < remainder ? 1 : 0)) / 100);
+    }
+    return shares;
+  }
+  // Renders a "per person" table cell that's guaranteed to sum exactly to `amount`.
+  function fmtPerPersonCell(amount, people){
+    var shares = splitExact(amount, people);
+    var counts = [];
+    shares.forEach(function(s){
+      var existing = counts.filter(function(c){ return c.amount === s; })[0];
+      if (existing) existing.count++; else counts.push({amount:s, count:1});
+    });
+    if (counts.length === 1) return fmtMoney(counts[0].amount);
+    counts.sort(function(a,b){ return a.amount - b.amount; });
+    return counts.map(function(c){ return fmtMoney(c.amount) + '×' + c.count; }).join(' + ');
+  }
+
   // ---- Percentage Calculator UI ----
   var pctMode = 'of';
+  var adjustDirection = 'increase';
   document.querySelectorAll('.pct-mode-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
       document.querySelectorAll('.pct-mode-btn').forEach(function(b){ b.classList.remove('active'); });
@@ -786,6 +504,16 @@ function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
       document.getElementById('pctFieldsOf').style.display = pctMode === 'of' ? 'grid' : 'none';
       document.getElementById('pctFieldsWhat').style.display = pctMode === 'what' ? 'grid' : 'none';
       document.getElementById('pctFieldsChange').style.display = pctMode === 'change' ? 'grid' : 'none';
+      document.getElementById('pctFieldsAdjust').style.display = pctMode === 'adjust' ? 'grid' : 'none';
+      document.getElementById('pctAdjustDirRow').style.display = pctMode === 'adjust' ? 'flex' : 'none';
+      renderPct();
+    });
+  });
+  document.querySelectorAll('#pctAdjustDirRow .basis-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.querySelectorAll('#pctAdjustDirRow .basis-btn').forEach(function(b){ b.classList.remove('active'); });
+      btn.classList.add('active');
+      adjustDirection = btn.dataset.dir;
       renderPct();
     });
   });
@@ -801,18 +529,35 @@ function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
     } else if (pctMode === 'what') {
       var x2 = parseFloat(document.getElementById('pctX_what').value) || 0;
       var y2 = parseFloat(document.getElementById('pctY_what').value) || 0;
-      out.textContent = fmtNum(whatPercent(x2,y2)) + '%';
-      sub.textContent = x2 + ' is this % of ' + y2;
-    } else {
+      if (y2 === 0) {
+        // Same rule as "% change": dividing by 0 has no answer, so say so instead of showing a made-up 0%.
+        out.textContent = 'Undefined';
+        sub.textContent = 'A percentage of 0 is undefined — enter a number other than 0 in the second box';
+      } else {
+        out.textContent = fmtNum(whatPercent(x2,y2)) + '%';
+        sub.textContent = x2 + ' is this % of ' + y2;
+      }
+    } else if (pctMode === 'change') {
       var x3 = parseFloat(document.getElementById('pctX_change').value) || 0;
       var y3 = parseFloat(document.getElementById('pctY_change').value) || 0;
       var change = pctChange(x3,y3);
-      out.textContent = (change > 0 ? '+' : '') + fmtNum(change) + '%';
-      sub.textContent = (change >= 0 ? 'Increase' : 'Decrease') + ' from ' + x3 + ' to ' + y3;
+      if (change === null) {
+        out.textContent = 'Undefined';
+        sub.textContent = '% change from a starting value of 0 is undefined, not 0% — try "X% of Y" instead';
+      } else {
+        out.textContent = (change > 0 ? '+' : '') + fmtNum(change) + '%';
+        sub.textContent = (change >= 0 ? 'Increase' : 'Decrease') + ' from ' + x3 + ' to ' + y3;
+      }
+    } else {
+      var x4 = parseFloat(document.getElementById('pctX_adjust').value) || 0;
+      var y4 = parseFloat(document.getElementById('pctY_adjust').value) || 0;
+      var adjusted = pctAdjust(x4, y4, adjustDirection);
+      out.textContent = fmtNum(adjusted);
+      sub.textContent = x4 + (adjustDirection === 'decrease' ? ' decreased by ' : ' increased by ') + y4 + '% = ' + fmtNum(adjusted);
     }
     if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
   }
-  ['pctX_of','pctY_of','pctX_what','pctY_what','pctX_change','pctY_change'].forEach(function(id){
+  ['pctX_of','pctY_of','pctX_what','pctY_what','pctX_change','pctY_change','pctX_adjust','pctY_adjust'].forEach(function(id){
     document.getElementById(id).addEventListener('input', renderPct);
   });
   renderPct();
@@ -824,9 +569,11 @@ function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
   var peopleInput = document.getElementById('numPeople');
   var tipOnTotal = false;
 
-  document.querySelectorAll('.preset-btn').forEach(function(btn){
+  // Only the Tip calculator's own buttons (the Password Generator has "preset" buttons too, and the Percentage
+  // calculator has "basis" buttons: they must not be touched, nor touch the tip).
+  document.querySelectorAll('#panel-tip .preset-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
-      document.querySelectorAll('.preset-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('#panel-tip .preset-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       tipInput.value = btn.dataset.pct;
       renderTip();
@@ -841,11 +588,11 @@ function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
     var r = calcTip(bill, taxPct, tipPct, tipOnTotal, people);
 
     var rows = [
-      ['Subtotal', fmtMoney(bill), fmtMoney(r.perPersonBill)]
+      ['Subtotal', fmtMoney(bill), fmtPerPersonCell(bill, people)]
     ];
-    if (taxPct > 0) rows.push(['Tax (' + taxPct + '%)', fmtMoney(r.tax), fmtMoney(r.perPersonTax)]);
-    rows.push(['Tip (' + tipPct + '%)', fmtMoney(r.tip), fmtMoney(r.perPersonTip)]);
-    rows.push(['Total', fmtMoney(r.total), fmtMoney(r.perPersonTotal)]);
+    if (taxPct > 0) rows.push(['Tax (' + taxPct + '%)', fmtMoney(r.tax), fmtPerPersonCell(r.tax, people)]);
+    rows.push(['Tip (' + tipPct + '%)', fmtMoney(r.tip), fmtPerPersonCell(r.tip, people)]);
+    rows.push(['Total', fmtMoney(r.total), fmtPerPersonCell(r.total, people)]);
 
     var body = document.getElementById('tipBody');
     body.innerHTML = '';
@@ -857,9 +604,17 @@ function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
     if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
   }
   [billInput, taxInput, tipInput, peopleInput].forEach(function(el){ el.addEventListener('input', renderTip); });
-  document.querySelectorAll('.basis-btn').forEach(function(btn){
+  tipInput.addEventListener('input', function(){
+    // Typing a custom % directly should drop the highlight from whichever preset button was
+    // last clicked, unless the typed value happens to match a preset exactly.
+    var val = tipInput.value.trim();
+    document.querySelectorAll('#panel-tip .preset-btn').forEach(function(b){
+      b.classList.toggle('active', b.dataset.pct === val);
+    });
+  });
+  document.querySelectorAll('#tipBasisToggle .basis-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
-      document.querySelectorAll('.basis-btn').forEach(function(b){ b.classList.remove('active'); });
+      document.querySelectorAll('#tipBasisToggle .basis-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       tipOnTotal = btn.dataset.basis === 'total';
       renderTip();
@@ -882,18 +637,36 @@ function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
   }
 
   function generatePassword(length, opts){
-    var charset = '';
-    if (opts.lowercase) charset += 'abcdefghijklmnopqrstuvwxyz';
-    if (opts.uppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    if (opts.numbers) charset += '0123456789';
-    if (opts.symbols) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
-    if (!charset) return '';
-    var password = '';
-    for (var i = 0; i < length; i++){
-      password += charset[secureRandomInt(charset.length)];
+    var sets = [];
+    if (opts.lowercase) sets.push('abcdefghijklmnopqrstuvwxyz');
+    if (opts.uppercase) sets.push('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+    if (opts.numbers) sets.push('0123456789');
+    if (opts.symbols) sets.push('!@#$%^&*()_+-=[]{}|;:,.<>?');
+    if (!sets.length) return '';
+    var charset = sets.join('');
+    var chars = [];
+    // One character from every ticked type first, so the password really contains each type that was ticked
+    // (many sites insist on it) - the rest is drawn from all ticked types together.
+    for (var i = 0; i < sets.length && i < length; i++){
+      chars.push(sets[i][secureRandomInt(sets[i].length)]);
     }
-    return password;
+    while (chars.length < length){
+      chars.push(charset[secureRandomInt(charset.length)]);
+    }
+    // Shuffle (Fisher-Yates, same secure source) so those first picks do not always sit at the start.
+    for (var j = chars.length - 1; j > 0; j--){
+      var k = secureRandomInt(j + 1);
+      var tmp = chars[j]; chars[j] = chars[k]; chars[k] = tmp;
+    }
+    return chars.join('');
   }
+
+  var pwdCurrent = '';
+  var pwdCopyTimer = null;
+  var pwdCopyBtn = document.getElementById('pwdCopyBtn');
+  var pwdCopyLabel = pwdCopyBtn.textContent;
+  var pwdCopyNote = document.getElementById('pwdCopyNote');
+  function pwdHideCopyNote(){ pwdCopyNote.style.display = 'none'; pwdCopyNote.textContent = ''; }
 
   function renderPassword(){
     var length = parseInt(document.getElementById('pwdLength').value, 10);
@@ -904,7 +677,9 @@ function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
       symbols: document.getElementById('pwdSymbols').checked
     };
     var pwd = generatePassword(length, opts);
+    pwdCurrent = pwd;                                    // what Copy copies: the password itself, never the "select a type" message
     document.getElementById('pwdOutput').textContent = pwd || 'Select at least one character type';
+    pwdHideCopyNote();
     if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
   }
 
@@ -916,14 +691,44 @@ function calcTip(subtotal, taxPct, tipPct, tipOnTotal, numPeople){
     document.getElementById(id).addEventListener('change', renderPassword);
   });
   document.getElementById('pwdRegenBtn').addEventListener('click', renderPassword);
-  document.getElementById('pwdCopyBtn').addEventListener('click', function(){
-    var text = document.getElementById('pwdOutput').textContent;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(function(){
-        var btn = document.getElementById('pwdCopyBtn');
-        var orig = btn.textContent; btn.textContent = 'Copied!';
-        setTimeout(function(){ btn.textContent = orig; }, 1500);
-      });
+  function pwdFlashCopy(label){
+    pwdCopyBtn.textContent = label;
+    clearTimeout(pwdCopyTimer);
+    pwdCopyTimer = setTimeout(function(){ pwdCopyBtn.textContent = pwdCopyLabel; }, 1500);
+  }
+  // The classic way, for browsers without the clipboard API (or that refuse it): copy from a temporary text box.
+  function pwdLegacyCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed'; ta.style.top = '0'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { ta.setSelectionRange(0, text.length); } catch(e){}
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch(e){ ok = false; }
+    document.body.removeChild(ta);
+    return ok;
+  }
+  pwdCopyBtn.addEventListener('click', async function(){
+    if (!pwdCurrent) { pwdFlashCopy('Nothing to copy'); return; }
+    var ok = false;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try { await navigator.clipboard.writeText(pwdCurrent); ok = true; } catch(e){ ok = false; }
+    }
+    if (!ok) ok = pwdLegacyCopy(pwdCurrent);
+    if (ok) {
+      pwdHideCopyNote();
+      pwdFlashCopy('Copied!');
+    } else {
+      // Nothing worked: select the password on the page so Ctrl+C / long-press still can.
+      var range = document.createRange();
+      range.selectNodeContents(document.getElementById('pwdOutput'));
+      var sel = window.getSelection();
+      sel.removeAllRanges(); sel.addRange(range);
+      pwdCopyNote.textContent = 'Copying did not work in this browser. The password is selected \u2014 press Ctrl+C (\u2318C on a Mac) to copy it.';
+      pwdCopyNote.style.display = 'block';
+      pwdFlashCopy('Copy failed');
     }
   });
 
@@ -947,6 +752,10 @@ function lbToKg(lb){ return Math.round(lb * 0.45359237 * 100) / 100; }
 function kgToLb(kg){ return Math.round((kg / 0.45359237) * 100) / 100; }
 function fToC(f){ return Math.round(((f - 32) * 5/9) * 10) / 10; }
 function cToF(c){ return Math.round((c * 9/5 + 32) * 10) / 10; }
+function kmToMi(km){ return Math.round((km / 1.609344) * 100) / 100; }
+function miToKm(mi){ return Math.round((mi * 1.609344) * 100) / 100; }
+function lToGal(l){ return Math.round((l / 3.785411784) * 100) / 100; }
+function galToL(gal){ return Math.round((gal * 3.785411784) * 100) / 100; }
 
 
   var unitCm = document.getElementById('unitCm');
@@ -972,6 +781,16 @@ function cToF(c){ return Math.round((c * 9/5 + 32) * 10) / 10; }
 
   unitF.addEventListener('input', function(){ unitC.value = fToC(parseFloat(this.value) || 0); });
   unitC.addEventListener('input', function(){ unitF.value = cToF(parseFloat(this.value) || 0); });
+
+  var unitKm = document.getElementById('unitKm');
+  var unitMi = document.getElementById('unitMi');
+  unitKm.addEventListener('input', function(){ unitMi.value = kmToMi(parseFloat(this.value) || 0); });
+  unitMi.addEventListener('input', function(){ unitKm.value = miToKm(parseFloat(this.value) || 0); });
+
+  var unitL = document.getElementById('unitL');
+  var unitGal = document.getElementById('unitGal');
+  unitL.addEventListener('input', function(){ unitGal.value = lToGal(parseFloat(this.value) || 0); });
+  unitGal.addEventListener('input', function(){ unitL.value = galToL(parseFloat(this.value) || 0); });
 })();
 </script>
 <script>
@@ -995,9 +814,12 @@ function cToF(c){ return Math.round((c * 9/5 + 32) * 10) / 10; }
 
   function renderTimezones(){
     var input = document.getElementById('tzDatetime').value;
-    if (!input) return;
-    var date = new Date(input); // interpreted as the browser's own local time, by design
     var body = document.getElementById('tzBody');
+    if (!input) {
+      body.innerHTML = '<tr><td colspan="2" style="text-align:center;color:var(--ink-soft);">Enter a date and time above to see conversions.</td></tr>';
+      return;
+    }
+    var date = new Date(input); // interpreted as the browser's own local time, by design
     body.innerHTML = '';
     TZ_LIST.forEach(function(pair){
       var tz = pair[0], label = pair[1];

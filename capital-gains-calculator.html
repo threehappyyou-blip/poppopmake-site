@@ -40,126 +40,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
 
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
@@ -176,7 +56,7 @@
   .field:last-child{margin-bottom:0;}
   .field label{display:block;font-size:0.85rem;font-weight:600;margin-bottom:6px;}
   .field .hint{font-size:0.78rem;color:var(--ink-soft);margin-top:4px;}
-  input[type=number], select{
+  input[type=number], input[type=text], select{
     width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;
     font-family:'Inter',sans-serif;font-size:1rem;background:#fff;color:var(--ink);
   }
@@ -224,12 +104,6 @@
   }
   .disclaimer strong{color:var(--ink);}
 
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
-
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -241,6 +115,30 @@
   .verify-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--teal);margin-bottom:2px;}
   .verify-value{font-size:0.88rem;color:var(--ink);}
   .verify-note{font-size:0.85rem;color:var(--ink-soft);margin:0;padding-top:10px;border-top:1px solid var(--line);}
+  .layout > *{min-width:0;}
+  .field .opt{font-weight:400;color:var(--ink-soft);}
+  .sale-row{border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;margin-bottom:12px;background:#FAFBFA;}
+  .sale-row .field{margin-bottom:12px;}
+  .sale-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+  .sale-title{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:0.9rem;flex-shrink:0;}
+  .sale-head .sale-name{flex:1;min-width:0;width:auto;padding:8px 10px;font-size:0.9rem;}
+  .sale-row .row2{grid-template-columns:1fr 1fr;gap:10px;}
+  .hint{font-size:0.78rem;color:var(--ink-soft);margin-top:4px;}
+  .sale-remove{background:none;border:none;color:var(--orange);font:inherit;font-size:0.82rem;font-weight:600;cursor:pointer;padding:4px 2px;text-decoration:underline;flex-shrink:0;}
+  .sale-remove[hidden]{display:none;}
+  .sale-result{font-size:0.84rem;color:var(--ink-soft);min-height:1.3em;}
+  .sale-result.loss{color:var(--orange);}
+  .add-btn{width:100%;padding:11px 12px;border:1px dashed var(--teal);background:#fff;color:var(--teal);border-radius:8px;font-family:inherit;font-size:0.92rem;font-weight:600;cursor:pointer;}
+  .add-btn:hover:not(:disabled){background:rgba(13,122,124,0.06);}
+  .add-btn:disabled{opacity:0.5;cursor:not-allowed;}
+  details.carry{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
+  details.carry summary{cursor:pointer;font-weight:600;font-size:0.88rem;color:var(--teal);margin-bottom:12px;}
+  details.carry:not([open]) summary{margin-bottom:0;}
+  .input-note{font-size:0.8rem;color:var(--orange);margin-top:12px;}
+  .input-note[hidden]{display:none;}
+  .callout{background:#FFF8E8;border:1px solid #EBD9A8;border-left:4px solid var(--yellow);border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:0.92rem;}
+  .callout[hidden]{display:none;}
+  table.breakdown td:first-child{overflow-wrap:anywhere;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -250,63 +148,20 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 
 <main class="wrap" id="main-content">
   <span class="eyebrow">Money &amp; Tax · 2026</span>
   <h1>Capital Gains Tax Calculator</h1>
-  <p class="lede">For stocks or crypto — the IRS taxes both the same way. See what you'd owe on a sale, and how the gain stacks on top of your other income rather than getting its own separate bucket.</p>
+  <p class="lede">For stocks or crypto — the IRS taxes both the same way. Add the sales you made this year to see what you'd owe, how gains and losses offset each other, and how the gain stacks on top of your other income rather than getting its own separate bucket.</p>
 
   <div class="verify-badge">
     <div class="verify-grid">
       <div class="verify-item"><span class="verify-label">Source</span><span class="verify-value"><a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" target="_blank" rel="noopener">IRS Rev. Proc. 2025-32</a></span></div>
       <div class="verify-item"><span class="verify-label">Rates for</span><span class="verify-value">2026</span></div>
-      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">September 2026</span></div>
+      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">October 2026</span></div>
     </div>
     <p class="verify-note">If a chatbot gives you a different number, it’s worth checking against the source above &mdash; general AI assistants frequently get jurisdiction-specific rates like these wrong, especially outside a handful of major states or countries. See <a href="/how-we-verify">how we check these figures</a>, or what’s been corrected on the <a href="/changelog">changelog</a>.</p>
   </div>
@@ -326,43 +181,44 @@
       <div class="field">
         <label for="grossOrdinaryIncome">Other income this year</label>
         <div class="prefix-wrap"><span>$</span><input type="number" id="grossOrdinaryIncome" value="80000" min="0" step="1000"></div>
-        <div class="hint">Wages and other income, before this sale &mdash; gross, not taxable. We apply your standard deduction for you.</div>
+        <div class="hint">Wages and other income, before these sales &mdash; gross, not taxable. Include interest and dividends here too.</div>
+      </div>
+      <div class="field">
+        <label for="itemized">Deductions <span class="opt">(optional)</span></label>
+        <div class="prefix-wrap"><span>$</span><input type="number" id="itemized" placeholder="standard deduction" min="0" step="500"></div>
+        <div class="hint" id="stdHint"></div>
       </div>
 
-      <h3>This sale</h3>
-      <div class="field">
-        <label for="assetType">Asset</label>
-        <select id="assetType">
-          <option value="Stock" selected>Stock / ETF</option>
-          <option value="crypto">Crypto</option>
-        </select>
-      </div>
-      <div class="row2">
-        <div class="field">
-          <label for="costBasis">Cost basis</label>
-          <div class="prefix-wrap"><span>$</span><input type="number" id="costBasis" value="10000" min="0" step="100"></div>
+      <h3>Your sales this year</h3>
+      <div id="salesList" role="list" aria-label="Your sales"></div>
+      <button type="button" class="add-btn" id="addSale">+ Add another sale</button>
+      <div class="hint" id="salesHint" style="margin-top:8px;">Long-term (held more than 1 year) gets the lower 0/15/20% rates. Short-term is taxed as ordinary income.</div>
+
+      <details class="carry" id="carryDetails">
+        <summary>Losses carried over from earlier years (optional)</summary>
+        <div class="row2">
+          <div class="field">
+            <label for="carryST">Short-term</label>
+            <div class="prefix-wrap"><span>$</span><input type="number" id="carryST" placeholder="0" min="0" step="100"></div>
+          </div>
+          <div class="field">
+            <label for="carryLT">Long-term</label>
+            <div class="prefix-wrap"><span>$</span><input type="number" id="carryLT" placeholder="0" min="0" step="100"></div>
+          </div>
         </div>
-        <div class="field">
-          <label for="proceeds">Sale proceeds</label>
-          <div class="prefix-wrap"><span>$</span><input type="number" id="proceeds" value="25000" min="0" step="100"></div>
-        </div>
-      </div>
-      <div class="field">
-        <label>Holding period</label>
-        <div class="toggle-group" role="group" aria-label="Holding period">
-          <button type="button" id="btnShort" data-term="short">1 year or less</button>
-          <button type="button" id="btnLong" data-term="long" class="active">More than 1 year</button>
-        </div>
-        <div class="hint">Long-term gets the lower 0/15/20% rates. Short-term is taxed as ordinary income.</div>
-      </div>
+        <div class="hint">From last year's Capital Loss Carryover Worksheet. Enter them as positive amounts.</div>
+      </details>
+      <div class="input-note" id="inputNote" role="status" hidden></div>
     </div>
 
     <div class="results">
-      <div class="take-home">
-        <h2 id="resultTitle">Estimated tax on this gain</h2>
+      <div class="take-home" aria-live="polite" aria-atomic="true">
+        <h2 id="resultTitle">Estimated tax on your sales</h2>
         <div class="amount" id="totalTax">$0</div>
         <div class="sub" id="totalTaxSub"></div>
       </div>
+
+      <div class="callout" id="waitCallout" hidden></div>
 
       <table class="breakdown">
         <thead><tr><th>Item</th><th>Amount</th></tr></thead>
@@ -371,45 +227,16 @@
 
       <div class="rate-strip">
         <span class="chip">Effective rate on the gain: <b id="effRate">0%</b></span>
-        <span class="chip">Net proceeds after tax: <b id="netProceeds">$0</b></span>
+        <span class="chip">Cash left after tax: <b id="netProceeds">$0</b></span>
       </div>
       <div class="loss-note" id="lossNote" style="display:none;"></div>
 
       <div class="disclaimer">
-        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal brackets (IRS Rev. Proc. 2025-32) and the 3.8% Net Investment Income Tax, correctly stacking your gain on top of your other taxable income &mdash; but MAGI for NIIT is approximated as gross income plus gain, which can differ from your real MAGI. It doesn't include state tax, loss carryforwards, wash-sale rules, or Section 1202/QSBS treatment. Confirm anything important with a tax professional before you sell. Your numbers never leave your device &mdash; <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
+        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal brackets (IRS Rev. Proc. 2025-32) and the 3.8% Net Investment Income Tax. Your sales are netted the way Schedule D does it (short-term against short-term, long-term against long-term, then the two against each other), up to $3,000 of a net loss ($1,500 if married filing separately) lowers your other income, and the net gain is stacked on top of your other taxable income. MAGI for NIIT is approximated as your other income plus the net gain, which can differ from your real MAGI. It doesn't include state tax, wash-sale rules, the higher rates on collectibles or real-estate depreciation, or Section 1202/QSBS treatment. Confirm anything important with a tax professional before you sell. Your numbers never leave your device &mdash; <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
       </div>
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
         <strong>Why can the same gain be taxed so differently?</strong> Read <a href="/capital-gains-stacking-explained">The Same $50,000 Gain Can Be Taxed at 7% or 17%</a>.
-      </div>
-
-      <div class="panel">
-        <h2>Worked example</h2>
-        <p style="margin:0;color:var(--ink-soft);">With the defaults above — a single filer with <strong style="color:var(--ink);">$80,000</strong> of other income, a $10,000 cost basis, $25,000 in proceeds, and a long-term holding period — the gain is <strong style="color:var(--ink);">$15,000</strong>. Other income minus the $16,100 standard deduction leaves $63,900 of ordinary taxable income, and the $15,000 gain stacks on top of that — from $63,900 up to $78,900 — landing entirely inside the 15% long-term bracket (which runs from $49,450 to $545,500 for a single filer). That makes the federal tax <strong style="color:var(--ink);">$2,250</strong>. Combined MAGI of $95,000 stays under the $200,000 NIIT threshold, so no Net Investment Income Tax applies, leaving <strong style="color:var(--ink);">$12,750</strong> in net proceeds — an effective rate of <strong style="color:var(--ink);">15%</strong> on the gain.</p>
-      </div>
-
-      <div class="panel">
-        <h2>Frequently asked questions</h2>
-        <div class="faq-item">
-          <p class="faq-q">Why does the same gain get taxed differently depending on the holding period?</p>
-          <p class="faq-a">Short-term gains (held one year or less) are taxed as ordinary income, using the same brackets as your paycheck; long-term gains (held more than a year) get the lower 0/15/20% federal rates instead. With the default $80,000 of other income and $15,000 gain, switching the toggle from long-term to short-term moves the federal tax on this sale from $2,250 (the 15% long-term rate) to $3,300 (the 22% ordinary rate) — same gain, same income, very different tax, purely because of how long the asset was held.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">What does it mean for the gain to "stack" on my other income?</p>
-          <p class="faq-a">Your capital gain isn't taxed in its own separate bucket — it's added on top of your other taxable income, and only the slice of your combined income that falls into each bracket is taxed at that bracket's rate. In the default example, the $15,000 gain stacks from $63,900 up to $78,900 of taxable income, all of which sits inside the 15% long-term bracket. A bigger gain, or more other income, can push part of that stack into the next bracket up.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">When does the 3.8% Net Investment Income Tax (NIIT) apply, and why is it $0 here?</p>
-          <p class="faq-a">NIIT adds 3.8% on top of your regular tax, but only once your MAGI (approximated here as other income plus the gain) passes $200,000 for a single filer, $250,000 for married filing jointly, or $125,000 for married filing separately. In the default example, $80,000 plus the $15,000 gain is only $95,000, well under that threshold, so NIIT doesn't apply. Push your other income or your gain high enough to cross the threshold and the calculator will add it.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Why might the real tax I owe differ from this estimate?</p>
-          <p class="faq-a">This tool doesn't include state tax, capital-loss carryforwards, wash-sale rules, or Section 1202/QSBS treatment for qualified small-business stock, and it approximates MAGI for the NIIT calculation as gross income plus gain rather than your exact MAGI. Confirm anything that matters with a tax professional before you sell.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Does this calculator send my income or trade details anywhere?</p>
-          <p class="faq-a">No. Every figure you enter is calculated locally in your browser — nothing is transmitted to or stored on a server.</p>
-        </div>
       </div>
     </div>
   </div>
@@ -425,30 +252,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
@@ -459,155 +262,328 @@ if ('serviceWorker' in navigator) {
 </script>
 <script>
 (function(){
-  // ---- 2026 federal figures (IRS Rev. Proc. 2025-32, IRC 1411), verified 2026-08-25 ----
-var STD_DEDUCTION = { single: 16100, mfj: 32200, hoh: 24150, mfs: 16100 };
+  'use strict';
 
-var ORDINARY_BRACKETS = {
-  single: [[0,12400,0.10],[12400,50400,0.12],[50400,105475,0.22],[105475,201775,0.24],[201775,256225,0.32],[256225,640600,0.35],[640600,Infinity,0.37]],
-  mfj:    [[0,24800,0.10],[24800,100800,0.12],[100800,210950,0.22],[210950,403550,0.24],[403550,512450,0.32],[512450,768700,0.35],[768700,Infinity,0.37]],
-  hoh:    [[0,17700,0.10],[17700,67450,0.12],[67450,105700,0.22],[105700,201750,0.24],[201750,256200,0.32],[256200,640600,0.35],[640600,Infinity,0.37]],
-  mfs:    [[0,12400,0.10],[12400,50400,0.12],[50400,105475,0.22],[105475,201775,0.24],[201775,256225,0.32],[256225,384350,0.35],[384350,Infinity,0.37]]
-};
+  // ---- 2026 federal figures (IRS Rev. Proc. 2025-32; NIIT: IRC 1411), re-checked October 2026 ----
+  var STD_DEDUCTION = { single: 16100, mfj: 32200, hoh: 24150, mfs: 16100 };
 
-var LTCG_BRACKETS = {
-  single: [[0,49450,0],[49450,545500,0.15],[545500,Infinity,0.20]],
-  mfj:    [[0,98900,0],[98900,613700,0.15],[613700,Infinity,0.20]],
-  hoh:    [[0,66200,0],[66200,579600,0.15],[579600,Infinity,0.20]],
-  mfs:    [[0,49450,0],[49450,306850,0.15],[306850,Infinity,0.20]]
-};
-
-var NIIT_THRESHOLD = { single: 200000, mfj: 250000, hoh: 200000, mfs: 125000 };
-var NIIT_RATE = 0.038;
-
-function pt(income, brackets){
-  if (income <= 0) return 0;
-  var tax = 0;
-  for (var i=0;i<brackets.length;i++){
-    var lo=brackets[i][0], hi=brackets[i][1], rate=brackets[i][2];
-    if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
-  }
-  return tax;
-}
-
-// Tax owed on a "stacked" slice [floor, floor+amount] using a bracket table.
-// This is the core mechanic: capital gains stack ON TOP of ordinary taxable income.
-function stackedTax(floor, amount, brackets){
-  if (amount <= 0) return 0;
-  return pt(floor + amount, brackets) - pt(floor, brackets);
-}
-
-function calcCapitalGains(opts){
-  var status = opts.filingStatus;
-  var stdDed = STD_DEDUCTION[status];
-  var ordinaryTaxableIncome = Math.max(0, opts.grossOrdinaryIncome - stdDed);
-  var gain = opts.proceeds - opts.costBasis;
-
-  var result = {
-    gain: gain, ordinaryTaxableIncome: ordinaryTaxableIncome,
-    federalTax: 0, niit: 0, isLongTerm: opts.isLongTerm
+  var ORDINARY_BRACKETS = {
+    single: [[0,12400,0.10],[12400,50400,0.12],[50400,105700,0.22],[105700,201775,0.24],[201775,256225,0.32],[256225,640600,0.35],[640600,Infinity,0.37]],
+    mfj:    [[0,24800,0.10],[24800,100800,0.12],[100800,211400,0.22],[211400,403550,0.24],[403550,512450,0.32],[512450,768700,0.35],[768700,Infinity,0.37]],
+    hoh:    [[0,17700,0.10],[17700,67450,0.12],[67450,105700,0.22],[105700,201750,0.24],[201750,256200,0.32],[256200,640600,0.35],[640600,Infinity,0.37]],
+    mfs:    [[0,12400,0.10],[12400,50400,0.12],[50400,105700,0.22],[105700,201775,0.24],[201775,256225,0.32],[256225,384350,0.35],[384350,Infinity,0.37]]
   };
 
-  if (gain <= 0) {
-    result.federalTax = 0;
-    result.niit = 0;
-    result.effectiveRate = 0;
-    return result;
+  var LTCG_BRACKETS = {
+    single: [[0,49450,0],[49450,545500,0.15],[545500,Infinity,0.20]],
+    mfj:    [[0,98900,0],[98900,613700,0.15],[613700,Infinity,0.20]],
+    hoh:    [[0,66200,0],[66200,579600,0.15],[579600,Infinity,0.20]],
+    mfs:    [[0,49450,0],[49450,306850,0.15],[306850,Infinity,0.20]]
+  };
+
+  var NIIT_THRESHOLD = { single: 200000, mfj: 250000, hoh: 200000, mfs: 125000 };
+  var NIIT_RATE = 0.038;
+  var LOSS_LIMIT = { single: 3000, mfj: 3000, hoh: 3000, mfs: 1500 };   // yearly cap on deducting a net capital loss
+
+  var MAX_SALES = 50;
+  var MAX_AMOUNT = 1e12;
+
+  function pt(income, brackets){
+    if (income <= 0) return 0;
+    var tax = 0;
+    for (var i = 0; i < brackets.length; i++){
+      var lo = brackets[i][0], hi = brackets[i][1], rate = brackets[i][2];
+      if (income > lo) tax += (Math.min(income, hi) - lo) * rate; else break;
+    }
+    return tax;
   }
 
-  if (opts.isLongTerm) {
-    result.federalTax = stackedTax(ordinaryTaxableIncome, gain, LTCG_BRACKETS[status]);
-  } else {
-    result.federalTax = stackedTax(ordinaryTaxableIncome, gain, ORDINARY_BRACKETS[status]);
+  // Tax owed on a "stacked" slice [floor, floor + amount]: capital gains sit ON TOP of ordinary taxable income.
+  function stackedTax(floor, amount, brackets){
+    if (amount <= 0) return 0;
+    return pt(floor + amount, brackets) - pt(floor, brackets);
   }
 
-  // NIIT: 3.8% on the lesser of (net investment income) or (MAGI - threshold)
-  // MAGI approximated as gross ordinary income + gain (a simplification, disclosed)
-  var magi = opts.grossOrdinaryIncome + gain;
-  var threshold = NIIT_THRESHOLD[status];
-  if (magi > threshold) {
-    var excessMagi = magi - threshold;
-    var niitBase = Math.min(gain, excessMagi);
-    result.niit = Math.max(0, niitBase) * NIIT_RATE;
+  // Schedule D netting: short-term and long-term results are netted within themselves, then against each other.
+  function netCapital(stNet, ltNet, status){
+    var net = stNet + ltNet;
+    var out = { stGain: 0, ltGain: 0, netLoss: 0, lossDeduction: 0 };
+    if (stNet >= 0 && ltNet >= 0) { out.stGain = stNet; out.ltGain = ltNet; }
+    else if (net >= 0) { if (stNet >= 0) out.stGain = net; else out.ltGain = net; }
+    else { out.netLoss = -net; out.lossDeduction = Math.min(LOSS_LIMIT[status], -net); }
+    return out;
   }
 
-  result.totalTax = result.federalTax + result.niit;
-  result.effectiveRate = gain > 0 ? (result.totalTax / gain) * 100 : 0;
-  result.netProceeds = gain - result.totalTax;
-  return result;
-}
+  // Federal tax for one set of capital results on top of `gross` other income.
+  function federalTax(status, gross, deduction, stNet, ltNet){
+    var n = netCapital(stNet, ltNet, status);
+    var agi = gross + n.stGain + n.ltGain - n.lossDeduction;
+    var taxable = Math.max(0, agi - deduction);
+    // The deduction soaks up ordinary income first; long-term gains are the top slice.
+    var preferential = Math.min(n.ltGain, taxable);
+    var ordinaryIncome = taxable - preferential;
+    var ordinary = pt(ordinaryIncome, ORDINARY_BRACKETS[status]);
+    var ltcg = stackedTax(ordinaryIncome, preferential, LTCG_BRACKETS[status]);
+    // NIIT: 3.8% of the lesser of net investment income (here: the net gain) or MAGI above the threshold.
+    var niit = 0, excess = agi - NIIT_THRESHOLD[status];
+    if (excess > 0) niit = NIIT_RATE * Math.max(0, Math.min(n.stGain + n.ltGain, excess));
+    return { n: n, agi: agi, taxable: taxable, ordinary: ordinary, ltcg: ltcg, niit: niit, total: ordinary + ltcg + niit };
+  }
 
+  // What your sales (plus any carried-over losses) do to your tax bill, compared with a year that has none of them.
+  function analyze(o){
+    var std = STD_DEDUCTION[o.status];
+    var deduction = Math.max(std, o.itemized);
+    var stSales = 0, ltSales = 0, proceeds = 0, basis = 0;
+    o.sales.forEach(function(s){
+      var gain = s.proceeds - s.basis;
+      proceeds += s.proceeds; basis += s.basis;
+      if (s.term === 'short') stSales += gain; else ltSales += gain;
+    });
+    var stNet = stSales - o.carryST, ltNet = ltSales - o.carryLT;
+    var base = federalTax(o.status, o.gross, deduction, 0, 0);
+    var w = federalTax(o.status, o.gross, deduction, stNet, ltNet);
 
+    var a = {
+      std: std, deduction: deduction, proceeds: proceeds, basis: basis, stSales: stSales, ltSales: ltSales,
+      stNet: stNet, ltNet: ltNet, stGain: w.n.stGain, ltGain: w.n.ltGain, netGain: w.n.stGain + w.n.ltGain,
+      netLoss: w.n.netLoss, lossLimit: LOSS_LIMIT[o.status],
+      ordinaryTax: w.ordinary - base.ordinary, ltcgTax: w.ltcg, niit: w.niit, total: w.total - base.total,
+      otherTaxable: Math.max(0, o.gross - deduction), used: 0, stCarry: 0, ltCarry: 0, altTotal: 0
+    };
+    if (w.n.netLoss > 0) {
+      // Only the part of the deduction that actually lowers taxable income counts as used; the rest carries over.
+      a.used = Math.min(w.n.lossDeduction, Math.max(0, o.gross - deduction));
+      var stLoss = Math.max(0, -stNet), ltLoss = Math.max(0, -ltNet), stGain = Math.max(0, stNet), ltGain = Math.max(0, ltNet);
+      a.stCarry = Math.max(0, stLoss - (a.used + ltGain));
+      a.ltCarry = Math.max(0, ltLoss - (stGain + Math.max(0, a.used - stLoss)));
+    }
+    // The same sales if every short-term one had been held past a year.
+    var alt = federalTax(o.status, o.gross, deduction, -o.carryST, stSales + ltSales - o.carryLT);
+    a.altTotal = alt.total - base.total;
+    return a;
+  }
+
+  // ---------- page ----------
+  function el(id){ return document.getElementById(id); }
   function fmt(n){
-    var sign = n < 0 ? '-' : '';
-    return sign + '$' + Math.abs(n).toLocaleString('en-US', {maximumFractionDigits:0});
+    var r = Math.round(n);
+    if (r === 0) r = 0;
+    return (r < 0 ? '-' : '') + '$' + Math.abs(r).toLocaleString('en-US');
   }
 
-  var isLongTerm = true;
-  document.getElementById('btnShort').addEventListener('click', function(){
-    isLongTerm = false;
-    this.classList.add('active');
-    document.getElementById('btnLong').classList.remove('active');
-    calc();
-  });
-  document.getElementById('btnLong').addEventListener('click', function(){
-    isLongTerm = true;
-    this.classList.add('active');
-    document.getElementById('btnShort').classList.remove('active');
-    calc();
-  });
+  var rowSeq = 0;
+  var list = el('salesList');
+
+  function rows(){ return list.querySelectorAll('.sale-row'); }
+
+  function addRow(init){
+    init = init || {};
+    var k = ++rowSeq;
+    var row = document.createElement('div');
+    row.className = 'sale-row';
+    row.setAttribute('role', 'listitem');
+    row.innerHTML =
+      '<div class="sale-head"><span class="sale-title"></span><input type="text" class="sale-name" id="saleName' + k + '" maxlength="40" placeholder="Name (optional)" autocomplete="off"><button type="button" class="sale-remove">Remove</button></div>' +
+      '<div class="field"><label for="saleTerm' + k + '">Held</label><select class="sale-term" id="saleTerm' + k + '"><option value="long">More than 1 year (long-term)</option><option value="short">1 year or less (short-term)</option></select></div>' +
+      '<div class="row2">' +
+        '<div class="field"><label for="saleBasis' + k + '">Cost basis</label><div class="prefix-wrap"><span>$</span><input type="number" class="sale-basis" id="saleBasis' + k + '" placeholder="0" min="0" step="100"></div></div>' +
+        '<div class="field"><label for="saleProceeds' + k + '">Sale proceeds</label><div class="prefix-wrap"><span>$</span><input type="number" class="sale-proceeds" id="saleProceeds' + k + '" placeholder="0" min="0" step="100"></div></div>' +
+      '</div>' +
+      '<div class="sale-result" aria-live="polite"></div>';
+    if (init.basis !== undefined) row.querySelector('.sale-basis').value = init.basis;
+    if (init.proceeds !== undefined) row.querySelector('.sale-proceeds').value = init.proceeds;
+    list.appendChild(row);
+    refreshRows();
+    return row;
+  }
+
+  function refreshRows(){
+    var all = rows();
+    for (var i = 0; i < all.length; i++){
+      all[i].querySelector('.sale-title').textContent = 'Sale ' + (i + 1);
+      all[i].querySelector('.sale-name').setAttribute('aria-label', 'Name of sale ' + (i + 1) + ' (optional)');
+      var rm = all[i].querySelector('.sale-remove');
+      rm.hidden = all.length < 2;
+      rm.setAttribute('aria-label', 'Remove sale ' + (i + 1));
+    }
+    el('addSale').disabled = all.length >= MAX_SALES;
+    el('salesHint').textContent = all.length >= MAX_SALES
+      ? 'That is the most sales this calculator takes (' + MAX_SALES + ') — combine smaller ones into a single row.'
+      : 'Long-term (held more than 1 year) gets the lower 0/15/20% rates. Short-term is taxed as ordinary income.';
+  }
+
+  function readInputs(){
+    var notes = {};
+    function amount(input){
+      var raw = input.value;
+      if (raw === '') return 0;
+      var n = parseFloat(raw);
+      if (isNaN(n)) return 0;
+      if (n < 0) { notes.neg = "Negative amounts aren't accepted, so they were treated as $0."; return 0; }
+      if (n > MAX_AMOUNT) { notes.big = 'Amounts above ' + fmt(MAX_AMOUNT) + ' are the largest this calculator accepts, so they were capped there.'; return MAX_AMOUNT; }
+      return n;
+    }
+    var status = el('filingStatus').value;
+    if (!STD_DEDUCTION.hasOwnProperty(status)) status = 'single';
+    var sales = [];
+    Array.prototype.forEach.call(rows(), function(row){
+      sales.push({
+        term: row.querySelector('.sale-term').value === 'short' ? 'short' : 'long',
+        basis: amount(row.querySelector('.sale-basis')),
+        proceeds: amount(row.querySelector('.sale-proceeds'))
+      });
+    });
+    var o = {
+      status: status,
+      gross: amount(el('grossOrdinaryIncome')),
+      itemized: amount(el('itemized')),
+      carryST: amount(el('carryST')),
+      carryLT: amount(el('carryLT')),
+      sales: sales
+    };
+    return { o: o, notes: notes };
+  }
+
+  function setRowResults(sales){
+    Array.prototype.forEach.call(rows(), function(row, i){
+      var s = sales[i], box = row.querySelector('.sale-result');
+      var gain = s.proceeds - s.basis;
+      box.classList.remove('loss');
+      if (s.proceeds === 0 && s.basis === 0) box.textContent = '';
+      else if (gain >= 0) box.textContent = 'Gain: ' + fmt(gain);
+      else { box.textContent = 'Loss: ' + fmt(-gain); box.classList.add('loss'); }
+    });
+  }
 
   function calc(){
-    var opts = {
-      filingStatus: document.getElementById('filingStatus').value,
-      grossOrdinaryIncome: Math.max(0, parseFloat(document.getElementById('grossOrdinaryIncome').value) || 0),
-      costBasis: Math.max(0, parseFloat(document.getElementById('costBasis').value) || 0),
-      proceeds: Math.max(0, parseFloat(document.getElementById('proceeds').value) || 0),
-      isLongTerm: isLongTerm
-    };
+    var inp = readInputs(), o = inp.o;
+    var noteKeys = Object.keys(inp.notes);
+    var noteBox = el('inputNote');
+    noteBox.textContent = noteKeys.map(function(k){ return inp.notes[k]; }).join(' ');
+    noteBox.hidden = noteKeys.length === 0;
 
-    var r = calcCapitalGains(opts);
+    el('stdHint').textContent = 'Leave empty to use the standard deduction for your filing status (' + fmt(STD_DEDUCTION[o.status]) + '). If your itemized deductions or other deductions are higher, enter the total and we\'ll use the larger amount.';
+    setRowResults(o.sales);
 
-    if (r.gain <= 0) {
-      document.getElementById('resultTitle').textContent = 'No tax on this sale';
-      document.getElementById('totalTax').textContent = '$0';
-      document.getElementById('totalTaxSub').textContent = 'You sold at or below your cost basis — that\'s a loss, not a gain.';
-      document.getElementById('breakdownBody').innerHTML = '<tr><td>Loss</td><td class="neg">' + fmt(r.gain) + '</td></tr>';
-      document.getElementById('effRate').textContent = '—';
-      document.getElementById('netProceeds').textContent = fmt(opts.proceeds);
-      document.getElementById('lossNote').style.display = 'block';
-      document.getElementById('lossNote').textContent = 'Capital losses can typically offset other gains, and up to $3,000 of ordinary income per year, with the rest carried forward — that matching isn\'t modeled here.';
+    var a = analyze(o);
+    var carryIn = o.carryST + o.carryLT;
+    var anything = a.proceeds > 0 || a.basis > 0 || carryIn > 0;
+
+    var title = el('resultTitle'), amountEl = el('totalTax'), sub = el('totalTaxSub');
+    var body = el('breakdownBody'), lossNote = el('lossNote'), wait = el('waitCallout');
+    body.innerHTML = '';
+    lossNote.style.display = 'none';
+    wait.hidden = true;
+
+    if (!anything) {
+      title.textContent = 'Estimated tax on your sales';
+      amountEl.textContent = '$0';
+      sub.textContent = 'Enter the cost basis and sale proceeds of a sale to see the tax.';
+      el('effRate').textContent = '—';
+      el('netProceeds').textContent = '—';
       return;
     }
 
-    document.getElementById('lossNote').style.display = 'none';
-    document.getElementById('resultTitle').textContent = 'Estimated tax on this gain';
-    document.getElementById('totalTax').textContent = fmt(r.totalTax);
-    document.getElementById('totalTaxSub').textContent = (opts.isLongTerm ? 'Long-term' : 'Short-term') + ' gain of ' + fmt(r.gain) + ', stacked on ' + fmt(r.ordinaryTaxableIncome) + ' of other taxable income';
-    document.getElementById('effRate').textContent = r.effectiveRate.toFixed(1) + '%';
-    document.getElementById('netProceeds').textContent = fmt(r.netProceeds);
+    // Every tax line is shown in whole dollars and the total is the sum of the lines as shown, so the table always adds up
+    // (rounding the exact total once could land a dollar away from the visible sum).
+    var rOrd = Math.round(a.ordinaryTax), rLt = Math.round(a.ltcgTax), rNiit = Math.round(a.niit);
+    var tax = Math.max(0, rOrd + rLt + rNiit);
+    var out = [];   // [label, amount, class]
+    out.push(['Total proceeds', a.proceeds]);
+    out.push(['Total cost basis', -a.basis]);
+    if (carryIn > 0) out.push(['Carried-over losses', -carryIn]);
 
-    var rows = [
-      ['Capital gain', r.gain],
-      [opts.isLongTerm ? 'Federal long-term capital gains tax' : 'Federal tax (ordinary rates)', -r.federalTax]
-    ];
-    if (r.niit > 0) rows.push(['Net Investment Income Tax (3.8%)', -r.niit]);
-    rows.push(['Net proceeds after tax', r.netProceeds]);
+    if (a.netLoss > 0) {
+      var carry = a.stCarry + a.ltCarry;
+      title.textContent = 'No tax on these sales';
+      amountEl.textContent = '$0';
+      sub.textContent = 'You have a net capital loss of ' + fmt(a.netLoss) + ' — see below for how it can lower your tax.';
+      out.push(['Net capital loss', -a.netLoss]);
+      out.push(['Loss deducted this year', a.used]);
+      out.push(['Carried to next year', carry]);
+      out.push(['Tax saved this year', Math.max(0, -a.total)]);
+      var text = 'Net capital loss of ' + fmt(a.netLoss) + '. ' + fmt(a.used) + ' of it lowers your taxable income this year (the yearly limit is ' + fmt(a.lossLimit) + '), and ' + fmt(carry) + ' carries over to next year (short-term ' + fmt(a.stCarry) + ', long-term ' + fmt(a.ltCarry) + ').';
+      if (a.used < Math.min(a.lossLimit, a.netLoss) - 0.5) text += ' Part of the limit goes unused because your other income is already below your deduction.';
+      lossNote.textContent = text;
+      lossNote.style.display = 'block';
+      el('effRate').textContent = '—';
+      el('netProceeds').textContent = fmt(a.proceeds);
+    } else {
+      var parts = [];
+      if (a.stGain > 0) parts.push(fmt(a.stGain) + ' short-term');
+      if (a.ltGain > 0) parts.push(fmt(a.ltGain) + ' long-term');
+      out.push(['Net capital gain', a.netGain]);
+      if (a.stGain > 0 && a.ltGain > 0) {
+        out.push(['Taxed as short-term gain', a.stGain]);
+        out.push(['Taxed as long-term gain', a.ltGain]);
+      }
+      if (a.stGain > 0 || rOrd !== 0) out.push(['Tax at ordinary rates', -rOrd]);
+      if (a.ltGain > 0 || rLt !== 0) out.push(['Tax at long-term rates (0/15/20%)', -rLt]);
+      if (rNiit !== 0) out.push(['Net Investment Income Tax (3.8%)', -rNiit]);
+      out.push(['Gain after tax', Math.round(a.netGain) - tax, 'net']);
 
-    var body = document.getElementById('breakdownBody');
-    body.innerHTML = '';
-    rows.forEach(function(row, idx){
+      if (tax > 0) {
+        title.textContent = 'Estimated tax on your sales';
+        amountEl.textContent = fmt(tax);
+        var what = a.stGain > 0 && a.ltGain > 0 ? 'Net gain of ' + fmt(a.netGain) + ' (' + parts.join(', ') + ')'
+          : (a.stGain > 0 ? 'Short-term' : 'Long-term') + ' gain of ' + fmt(a.netGain);
+        sub.textContent = what + ', stacked on ' + fmt(a.otherTaxable) + ' of other taxable income';
+      } else {
+        title.textContent = 'No tax on these sales';
+        amountEl.textContent = '$0';
+        sub.textContent = a.netGain > 0
+          ? 'Your net gain of ' + fmt(a.netGain) + ' is covered by the 0% long-term bracket and your deduction, so there is nothing to pay.'
+          : 'These sales net out to $0, so there is nothing to tax.';
+      }
+      el('effRate').textContent = a.netGain > 0 ? (tax / a.netGain * 100).toFixed(1) + '%' : '—';
+      el('netProceeds').textContent = fmt(Math.max(0, Math.round(a.proceeds) - tax));
+
+      var altTax = Math.max(0, Math.round(a.altTotal)), saving = tax - altTax;
+      if (a.stSales > 0 && tax > 0 && saving >= 1) {
+        wait.textContent = 'If these short-term gains were long-term (held more than a year), the estimated tax would be about ' + fmt(altTax) + ' instead of ' + fmt(tax) + ' — about ' + fmt(saving) + ' less. Prices can move while you wait, so treat this as a comparison, not a plan.';
+        wait.hidden = false;
+      }
+    }
+
+    out.forEach(function(r){
       var tr = document.createElement('tr');
-      if (idx === rows.length-1) tr.className = 'net';
-      var cls = row[1] < 0 ? 'neg' : '';
-      tr.innerHTML = '<td>'+row[0]+'</td><td class="'+cls+'">'+fmt(row[1])+'</td>';
+      if (r[2] === 'net') tr.className = 'net';
+      var td0 = document.createElement('td'); td0.textContent = r[0];
+      var td1 = document.createElement('td'); td1.textContent = fmt(r[1]);
+      if (r[1] < 0) td1.className = 'neg';
+      tr.appendChild(td0); tr.appendChild(td1);
       body.appendChild(tr);
     });
   }
 
-  ['filingStatus','grossOrdinaryIncome','assetType','costBasis','proceeds'].forEach(function(id){
-    document.getElementById(id).addEventListener('input', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
-    document.getElementById(id).addEventListener('change', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
+  function onChange(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); }
+
+  ['filingStatus', 'grossOrdinaryIncome', 'itemized', 'carryST', 'carryLT'].forEach(function(id){
+    el(id).addEventListener('input', onChange);
+    el(id).addEventListener('change', onChange);
   });
+  list.addEventListener('input', onChange);
+  list.addEventListener('change', onChange);
+  list.addEventListener('click', function(e){
+    var btn = e.target.closest ? e.target.closest('.sale-remove') : null;
+    if (!btn) return;
+    var row = btn.closest('.sale-row');
+    if (rows().length < 2) return;
+    list.removeChild(row);
+    refreshRows();
+    onChange();
+    el('addSale').focus();
+  });
+  el('addSale').addEventListener('click', function(){
+    if (rows().length >= MAX_SALES) return;
+    var row = addRow();
+    onChange();
+    var first = row.querySelector('.sale-basis');
+    if (first && document.activeElement === this) first.focus();
+  });
+
+  addRow({ basis: 10000, proceeds: 25000 });
   calc();
 })();
 </script>

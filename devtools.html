@@ -8,16 +8,16 @@
 <meta name="theme-color" content="#1C2321">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Developer Tools — JSON, Base64, UUID, Color — PopPopMake</title>
-<meta name="description" content="Free developer utilities: JSON formatter and validator, UTF-8-safe Base64 encoder/decoder, UUID v4 generator, and a HEX/RGB/HSL color converter.">
+<meta name="description" content="Free developer utilities: JSON formatter and validator, UTF-8-safe Base64 encoder/decoder, UUID v1/v4/v7 generator, and a HEX/RGB/HSL color converter with a WCAG contrast checker.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PopPopMake">
 <meta property="og:url" content="https://poppopmake.com/devtools">
 <link rel="canonical" href="https://poppopmake.com/devtools">
 <meta property="og:title" content="Developer Tools — JSON, Base64, UUID, Color — PopPopMake">
-<meta property="og:description" content="Free developer utilities: JSON formatter and validator, UTF-8-safe Base64 encoder/decoder, UUID v4 generator, and a HEX/RGB/HSL color converter.">
+<meta property="og:description" content="Free developer utilities: JSON formatter and validator, UTF-8-safe Base64 encoder/decoder, UUID v1/v4/v7 generator, and a HEX/RGB/HSL color converter with a WCAG contrast checker.">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Developer Tools — JSON, Base64, UUID, Color — PopPopMake">
-<meta name="twitter:description" content="Free developer utilities: JSON formatter and validator, UTF-8-safe Base64 encoder/decoder, UUID v4 generator, and a HEX/RGB/HSL color converter.">
+<meta name="twitter:description" content="Free developer utilities: JSON formatter and validator, UTF-8-safe Base64 encoder/decoder, UUID v1/v4/v7 generator, and a HEX/RGB/HSL color converter with a WCAG contrast checker.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -40,126 +40,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
 
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
@@ -217,14 +97,6 @@
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
-
-  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
-  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 </head>
 <body>
@@ -233,50 +105,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 
@@ -321,34 +150,7 @@
         <textarea id="jsonOutput" readonly style="min-height:180px;background:var(--paper-2);"></textarea>
       </div>
     </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Worked example</h3>
-  <p class="sub" style="margin:0;">The box loads with a sample object already in it — <code>{"name":"PopPopMake","categories":["Documents","Money","Career","Business","Writing","Everyday"],"free":true,"count":6}</code> — and the formatter runs once automatically as the page loads, so the Result box already shows it pretty-printed at 2-space indent: the outer object, the six-item <code>categories</code> array with one string per line, then <code>free</code> and <code>count</code> each on their own line. Switch the dropdown to "Minify (no spaces)" and click Format again, and the same object comes back as a single compact line instead, because Minify doesn't strip whitespace from your original text — it re-parses it and re-serializes it with no indentation argument at all.</p>
-
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">What happens if I paste something that isn't valid JSON?</p>
-    <p class="faq-a">The status line shows "Not valid JSON:" followed by whatever message the browser's own <code>JSON.parse</code> throws, and the Result box is cleared rather than showing a partial guess. That message comes from the JavaScript engine itself, not a custom parser built for this tool, so its specificity varies — a stray trailing comma, for example, can report a line and column, while truncated input just reports "Unexpected end of JSON input" with no position at all. Exact wording can differ between browsers, since each has its own JSON parser.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Why do large numbers or trailing decimals sometimes look different after formatting?</p>
-    <p class="faq-a">Formatting works by parsing your text into a real JavaScript value with <code>JSON.parse</code> and then re-serializing that value with <code>JSON.stringify</code>, rather than reformatting your original characters in place. That means a number typed as <code>1.50</code> comes back as <code>1.5</code> — the trailing zero isn't preserved once it becomes a JavaScript number — and an integer larger than JavaScript can represent exactly (above 2^53) can shift to a nearby value. This is a property of round-tripping through JSON.parse/JSON.stringify, not a bug specific to this formatter.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What does "Minify" actually do?</p>
-    <p class="faq-a">It reparses your JSON and re-serializes it with no indentation argument, which renders as a single compact line. Because it goes through a real parse step first, it also validates your input along the way and rejects anything that isn't strictly valid JSON — including JSON with comments or trailing commas, neither of which the JSON format allows.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">I changed the indent dropdown but the output didn't change — why?</p>
-    <p class="faq-a">The dropdown only takes effect the next time you click Format — changing it doesn't re-run formatting by itself. If you've already formatted something, pick the new indent option and click Format again to see it applied.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does this tool send my JSON anywhere?</p>
-    <p class="faq-a">No. Parsing and formatting both happen with the browser's built-in <code>JSON.parse</code>/<code>JSON.stringify</code> — nothing you paste here is transmitted to or stored on a server.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <!-- BASE64 -->
   <section class="panel" id="panel-b64">
@@ -361,6 +163,10 @@
         <button class="action-btn" id="b64EncodeBtn" type="button">Encode &rarr;</button>
         <button class="action-btn secondary" id="b64DecodeBtn" type="button">&larr; Decode</button>
       </div>
+      <div class="field" style="margin-top:4px;display:flex;align-items:center;gap:8px;">
+        <input type="checkbox" id="b64UrlSafe" style="width:auto;margin:0;">
+        <label for="b64UrlSafe" style="margin:0;font-weight:500;">URL-safe output (&minus;/_ instead of +//, no padding). Pasted URL-safe Base64 is auto-detected on decode either way.</label>
+      </div>
       <div class="status" id="b64Status"></div>
       <div class="field" style="margin-top:14px;">
         <label for="b64Result">Base64</label>
@@ -370,38 +176,19 @@
         <button class="action-btn secondary" id="b64CopyBtn" type="button">Copy result</button>
       </div>
     </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Worked example</h3>
-  <p class="sub" style="margin:0;">The box loads with the sample text <code>Hello, PopPopMake! 안녕하세요 🎉</code>, mixing plain ASCII, Korean, and an emoji on purpose. Clicking Encode writes <code>SGVsbG8sIFBvcFBvcE1ha2UhIOyViOuFle2VmOyEuOyalCDwn46J</code> into the Base64 box below; clicking Decode right after reads that same box and writes the exact original text back above, Korean characters and emoji intact. That round trip works because encoding first converts your text to UTF-8 bytes with <code>TextEncoder</code> before <code>btoa</code> ever sees it, and decoding reverses that with <code>atob</code> and <code>TextDecoder</code>.</p>
-
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">Does this correctly handle Korean text, emoji, or other non-English characters?</p>
-    <p class="faq-a">Yes — and that's by design, not accident. Rather than calling <code>btoa</code>/<code>atob</code> directly on your text, it first runs the text through <code>TextEncoder</code> to get its UTF-8 bytes and encodes those, then reverses the same path with <code>TextDecoder</code> on decode. A plain, unwrapped <code>btoa()</code> call throws an error on any character outside Latin-1, which includes Korean text and most emoji — this extra step is what makes round-tripping that text possible at all.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What happens if I click Decode on text that isn't valid Base64?</p>
-    <p class="faq-a">The status line shows "Not valid Base64:" followed by the real error the browser's <code>atob</code> throws — typically "Invalid character" — and the text box above is left untouched. Characters outside the standard Base64 alphabet, or incorrect padding, are the usual cause.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Will Base64 produced by another tool or programming language decode correctly here?</p>
-    <p class="faq-a">Standard Base64 (the alphabet using <code>+</code>, <code>/</code>, and <code>=</code> padding) will. URL-safe Base64 (using <code>-</code> and <code>_</code> instead) will not — decoding here goes through the browser's standard <code>atob</code>, which rejects those characters rather than treating them as equivalents.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does it matter if the Base64 text has extra line breaks or spaces, like from a copy-paste?</p>
-    <p class="faq-a">Not much — stray whitespace inside or around the Base64 text is skipped when decoding, and this tool also trims the box before decoding. What it won't tolerate is a non-whitespace character that isn't part of the Base64 alphabet.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does encoding or decoding here send my text anywhere?</p>
-    <p class="faq-a">No. Both directions run entirely in your browser using built-in <code>TextEncoder</code>/<code>TextDecoder</code> and <code>btoa</code>/<code>atob</code> — nothing you type or paste is sent to a server.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <!-- UUID GENERATOR -->
   <section class="panel" id="panel-uuid">
     <div class="card">
+      <div class="field">
+        <label for="uuidVersion">Version</label>
+        <select id="uuidVersion" style="width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;">
+          <option value="4" selected>v4 &mdash; random</option>
+          <option value="1">v1 &mdash; time-based</option>
+          <option value="7">v7 &mdash; sortable (time-ordered)</option>
+        </select>
+      </div>
       <div class="uuid-display" id="uuidSingle">&mdash;</div>
       <div class="btn-row">
         <button class="action-btn" id="uuidGenBtn" type="button">Generate new UUID</button>
@@ -414,43 +201,23 @@
           <button class="action-btn" id="uuidBatchBtn" type="button">Generate list</button>
         </div>
       </div>
+      <div class="status" id="uuidStatus"></div>
       <div class="uuid-list" id="uuidList"></div>
+      <div class="btn-row" id="uuidCopyAllRow" style="display:none;">
+        <button class="action-btn secondary" id="uuidCopyAllBtn" type="button">Copy all</button>
+      </div>
     </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Worked example</h3>
-  <p class="sub" style="margin:0;">The page generates one UUID automatically on load, and every click of "Generate new UUID" produces a fresh one — there's no fixed seed, so the exact value differs each time, but the shape never does: four hyphen-separated groups like <code>dd162d6f-97d0-4d30-af3f-cc37d63e53f4</code>, where the third group always starts with <code>4</code> (marking it as version 4) and the fourth group always starts with <code>8</code>, <code>9</code>, <code>a</code>, or <code>b</code> (the variant bits). Set "Generate multiple" to a number between 1 and 100 and click "Generate list" to get that many at once, built the same way.</p>
-
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">Which version of UUID does this generate, and how random is it really?</p>
-    <p class="faq-a">Version 4 (random) UUIDs. When the browser supports it, generation calls the Web Crypto API's <code>crypto.randomUUID()</code> directly, which draws from a cryptographically strong random source. Only in browsers old enough to lack that method does it fall back to a <code>Math.random()</code>-based template that fills in the same version and variant bits by hand — <code>Math.random()</code> isn't cryptographically secure, so that fallback path shouldn't be relied on for anything security-sensitive, like tokens or secrets.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Could this ever generate the same UUID twice?</p>
-    <p class="faq-a">There's no active check against it — this tool doesn't remember what it generated before, in this session or any other. A collision isn't prevented, just made astronomically unlikely by the sheer number of random bits (122 of them) a v4 UUID has to work with.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What's the difference between "Generate new UUID" and "Generate list"?</p>
-    <p class="faq-a">"Generate new UUID" replaces the single value at the top. "Generate list" produces a separate batch below it — anywhere from 1 to 100 at once, clamped to that range even if you type a larger number — without touching the single UUID above.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Can I copy just one UUID out of a generated list?</p>
-    <p class="faq-a">Not with a dedicated button — only the single UUID at the top has a Copy button next to it. For one out of a batch, select and copy its text directly, or regenerate it alone using "Generate new UUID" at the top instead.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does generating UUIDs here send anything to a server?</p>
-    <p class="faq-a">No. Every UUID, single or batch, is generated locally with <code>crypto.randomUUID()</code> or the <code>Math.random()</code> fallback — there's no input to send in the first place, and nothing is transmitted anywhere.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <!-- COLOR CONVERTER -->
   <section class="panel" id="panel-color">
     <div class="card">
       <div class="field">
         <label for="colorHex">HEX</label>
-        <input type="text" id="colorHex" value="#0D7A7C">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="color" id="colorPicker" value="#0D7A7C" aria-label="Pick a color" style="width:48px;height:40px;padding:2px;border:1px solid var(--line);border-radius:8px;cursor:pointer;flex-shrink:0;background:#fff;">
+          <input type="text" id="colorHex" value="#0D7A7C" style="flex:1;">
+        </div>
       </div>
       <div class="swatch" id="colorSwatch"></div>
       <div class="color-values">
@@ -459,35 +226,17 @@
         <div class="color-value-row"><label>HSL</label><input type="text" id="outHsl" readonly><button class="copy-mini" data-copy="outHsl">Copy</button></div>
       </div>
       <div class="status" id="colorStatus"></div>
-    </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Worked example</h3>
-  <p class="sub" style="margin:0;">The box loads with <code>#0D7A7C</code> already filled in, and conversion runs immediately and again on every keystroke after that — there's no button to click. That starting value converts to <code>rgb(13, 122, 124)</code> and <code>hsl(181, 81%, 27%)</code>, and the HEX output re-renders as lowercase (<code>#0d7a7c</code>) regardless of how you typed it, since it's rebuilt from the calculated values rather than echoing your input back. Three-digit shorthand works too — typing <code>#0d7</code> expands each digit (0→00, d→dd, 7→77) into <code>rgb(0, 221, 119)</code>.</p>
 
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">Can I type an RGB or HSL value and convert it the other way?</p>
-    <p class="faq-a">No — HEX is the only editable field here. RGB and HSL are read-only outputs calculated from whatever's in the HEX box, so conversion only runs in one direction.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What hue does a pure gray, like #808080, get?</p>
-    <p class="faq-a">0. Hue is mathematically undefined for a color with no saturation — where red, green, and blue are all equal — and this tool explicitly reports 0 in that case rather than leaving it blank.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What happens if I type an incomplete or invalid hex code?</p>
-    <p class="faq-a">The status line shows "Enter a valid hex color, like #0D7A7C or #0d7," and the swatch and output fields simply stop updating, keeping whatever they last showed. Only exactly 3 or 6 hex digits (with or without a leading #) are accepted — any other length is rejected outright.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does the HEX output preserve the uppercase or lowercase I typed?</p>
-    <p class="faq-a">No. The HEX output is always lowercase no matter how you typed it, because it's rebuilt from the calculated RGB values rather than reusing your original characters.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does converting a color here send it anywhere?</p>
-    <p class="faq-a">No. The hex-to-RGB-to-HSL math runs entirely in your browser — nothing you type into this tool leaves your machine.</p>
-  </div>
-</div>
-</section>
+      <div class="field" style="margin-top:22px;border-top:1px solid var(--line);padding-top:18px;">
+        <label for="contrastHex">WCAG contrast check &mdash; against</label>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <input type="color" id="contrastPicker" value="#FFFFFF" aria-label="Pick a comparison color" style="width:48px;height:40px;padding:2px;border:1px solid var(--line);border-radius:8px;cursor:pointer;flex-shrink:0;background:#fff;">
+          <input type="text" id="contrastHex" value="#FFFFFF" style="flex:1;">
+        </div>
+      </div>
+      <div class="uuid-display" id="contrastResult" style="margin-top:12px;font-size:0.95rem;text-align:left;"></div>
+    </div>
+  </section>
 
   <!-- URL ENCODE/DECODE -->
   <section class="panel" id="panel-url">
@@ -509,34 +258,7 @@
         <button class="action-btn secondary" id="urlCopyBtn" type="button">Copy result</button>
       </div>
     </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Worked example</h3>
-  <p class="sub" style="margin:0;">The box loads with <code>hello world &amp; special=chars?</code>. Clicking Encode writes <code>hello%20world%20%26%20special%3Dchars%3F</code> into the Result box — the space becomes <code>%20</code> rather than <code>+</code>, and <code>&amp;</code>, <code>=</code>, and <code>?</code> are each percent-escaped, since <code>encodeURIComponent</code> treats them as reserved characters that need escaping inside a single value. Clicking Decode right after reads that same Result box and writes the original text back above, unchanged.</p>
-
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">Why does a space become %20 here instead of a +?</p>
-    <p class="faq-a">Because this uses <code>encodeURIComponent</code>, which always escapes a space as <code>%20</code>. The <code>+</code>-for-space convention belongs to form submissions (<code>application/x-www-form-urlencoded</code>), not to <code>encodeURIComponent</code> — if you specifically need that form-encoding behavior, this tool's output won't match it.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Can I encode a whole URL with this, like https://example.com/search?q=a b?</p>
-    <p class="faq-a">You can, but the result won't be a usable URL — the status message after encoding says as much: this is meant for text or query values, not full URLs. <code>encodeURIComponent</code> escapes every reserved character it sees, including <code>:</code>, <code>/</code>, <code>?</code>, and <code>&amp;</code>, so encoding a whole URL would also escape the <code>://</code> and path separators you need to keep intact.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What happens if I click Decode on text that isn't valid percent-encoding?</p>
-    <p class="faq-a">The status line shows "Not valid percent-encoded text:" followed by the native error — typically "URI malformed" — and the text box above is left untouched. A <code>%</code> not followed by two valid hex digits is the usual cause.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does this use the older escape()/unescape() functions instead?</p>
-    <p class="faq-a">No — it's <code>encodeURIComponent</code>/<code>decodeURIComponent</code>. That matters most for non-ASCII text: the deprecated <code>escape()</code> leaves characters like <code>+</code> unescaped and encodes non-ASCII text as a non-standard <code>%uXXXX</code> form, while <code>encodeURIComponent</code> percent-encodes the actual UTF-8 bytes, which is what URLs and query strings actually expect.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does encoding or decoding here send my text anywhere?</p>
-    <p class="faq-a">No. Both directions run locally using the browser's built-in <code>encodeURIComponent</code>/<code>decodeURIComponent</code> — nothing you type or paste is sent to a server.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <!-- DUMMY DATA GENERATOR -->
   <section class="panel" id="panel-dummy">
@@ -544,6 +266,18 @@
       <div class="field">
         <label for="dummyCount">Number of rows</label>
         <input type="number" id="dummyCount" value="10" min="1" max="200">
+      </div>
+      <div class="field">
+        <label>Fields to include</label>
+        <div style="display:flex;flex-wrap:wrap;gap:14px;">
+          <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" class="dummyField" value="firstName" checked style="width:auto;margin:0;"> First name</label>
+          <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" class="dummyField" value="lastName" checked style="width:auto;margin:0;"> Last name</label>
+          <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" class="dummyField" value="email" checked style="width:auto;margin:0;"> Email</label>
+          <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" class="dummyField" value="phone" checked style="width:auto;margin:0;"> Phone</label>
+          <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" class="dummyField" value="address" checked style="width:auto;margin:0;"> Address</label>
+          <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" class="dummyField" value="company" style="width:auto;margin:0;"> Company</label>
+          <label style="font-weight:400;display:flex;align-items:center;gap:6px;margin:0;"><input type="checkbox" class="dummyField" value="username" style="width:auto;margin:0;"> Username</label>
+        </div>
       </div>
       <div class="btn-row">
         <button class="action-btn" id="dummyGenBtn" type="button">Generate</button>
@@ -558,31 +292,7 @@
         </table>
       </div>
     </div>
-  
-<div class="card" style="margin-top:20px;">
-  <h3 class="section-title">Frequently asked questions</h3>
-  <div class="faq-item">
-    <p class="faq-q">What fields does this actually generate — is there lorem ipsum or other free text?</p>
-    <p class="faq-a">No lorem ipsum. Each row has exactly five fields — first name, last name, email, phone, and address — assembled from fixed lists of realistic-looking US names, street names, and city/state pairs rather than generated free text. There's no company name, date of birth, username, or any field type beyond those five.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Are the generated addresses and phone numbers real or deliverable?</p>
-    <p class="faq-a">No. City and state are pulled together as a matched pair from a fixed list of ten real combinations, but the street number, the street-name-and-type pairing, and the 5-digit number standing in for a ZIP code are all independently random — so the result looks like a plausible US address without being validated against any real address or area-code database.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">If I generate a lot of rows, will names repeat?</p>
-    <p class="faq-a">Past a certain point, they have to. Each field is picked independently from a fixed list — 40 first names, 30 last names, 10 city/state pairs — with no check against rows already produced in the same batch. Request more than 40 rows (the maximum is 200) and at least one first name is guaranteed to repeat somewhere in the results, simply because there aren't enough unique names to go around; past 30 rows, the same is true for last names.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Do "Copy as CSV" and "Copy as JSON" match the table exactly?</p>
-    <p class="faq-a">The data is identical, but the shape differs. The CSV export uses the same human-readable headers as the table — First Name, Last Name, Email, Phone, Address, written plain on the header line — with each data value below it quoted and any internal quotes doubled, while the JSON export uses the underlying camelCase field names (firstName, lastName, email, phone, address) instead, pretty-printed with 2-space indentation.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does generating or copying this data send it anywhere?</p>
-    <p class="faq-a">No. Every row is generated locally using the Web Crypto API's <code>crypto.getRandomValues</code>, and copying the result to your clipboard doesn't involve a network request — nothing here is sent to or stored on a server.</p>
-  </div>
-</div>
-</section>
+  </section>
 
   <div class="disclaimer">
     Everything on this page runs in your browser &mdash; nothing you paste or generate is sent anywhere, which matters most for JSON that might contain real data. <a href="/how-it-works">See how to check that yourself</a>.
@@ -599,30 +309,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
@@ -648,22 +334,27 @@ if ('serviceWorker' in navigator) {
     if (kind === 'success' && window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
   }
 
-  function copyText(text, btnEl, doneLabel){
+  function copyText(text, btnEl, doneLabel, failLabel){
     var done = function(){
       if (btnEl) { var orig = btnEl.textContent; btnEl.textContent = doneLabel || 'Copied!'; setTimeout(function(){ btnEl.textContent = orig; }, 1500); }
     };
+    var fail = function(){
+      if (btnEl) { var orig = btnEl.textContent; btnEl.textContent = failLabel || 'Copy failed'; setTimeout(function(){ btnEl.textContent = orig; }, 1500); }
+    };
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text, done); });
+      navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text, done, fail); });
     } else {
-      fallbackCopy(text, done);
+      fallbackCopy(text, done, fail);
     }
   }
-  function fallbackCopy(text, done){
+  function fallbackCopy(text, done, fail){
     var ta = document.createElement('textarea');
     ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select();
-    try { document.execCommand('copy'); done(); } catch(e){}
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch(e){ ok = false; }
     document.body.removeChild(ta);
+    if (ok) { done(); } else if (fail) { fail(); }
   }
 </script>
 <script>
@@ -673,16 +364,133 @@ if ('serviceWorker' in navigator) {
   var jsonOutput = document.getElementById('jsonOutput');
   var jsonIndent = document.getElementById('jsonIndent');
 
+  // Scans the raw JSON text (ignoring string contents) for bare integer
+  // literals outside the safe-integer range, where JSON.parse's float
+  // conversion silently changes the numeric value.
+  function hasUnsafeIntegerLiterals(text){
+    var withoutStrings = text.replace(/"(?:[^"\\]|\\.)*"/g, '""');
+    var re = /-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/g;
+    var m;
+    while ((m = re.exec(withoutStrings))) {
+      var tok = m[0];
+      if (tok.indexOf('.') === -1 && tok.indexOf('e') === -1 && tok.indexOf('E') === -1) {
+        try {
+          if (BigInt(tok).toString() !== Number(tok).toString()) return true;
+        } catch(e) { /* not a plain integer literal, ignore */ }
+      }
+    }
+    return false;
+  }
+
+  // Hand-rolled JSON syntax check used ONLY to locate the first error's
+  // line/column for the user. JSON.parse remains the source of truth for
+  // actually parsing; this never changes what is considered valid/invalid.
+  function locateJSONError(text){
+    var i = 0, line = 1, col = 1, len = text.length;
+    function fail(msg){
+      var err = new Error(msg + ' at line ' + line + ', column ' + col);
+      err.line = line; err.column = col;
+      throw err;
+    }
+    function advance(){
+      var ch = text[i];
+      if (ch === '\n') { line++; col = 1; } else { col++; }
+      i++;
+    }
+    function skipWs(){ while (i < len && /[ \t\n\r]/.test(text[i])) advance(); }
+    function parseValue(){
+      skipWs();
+      if (i >= len) fail('Unexpected end of input');
+      var ch = text[i];
+      if (ch === '{') return parseObject();
+      if (ch === '[') return parseArray();
+      if (ch === '"') return parseString();
+      if (ch === '-' || (ch >= '0' && ch <= '9')) return parseNumber();
+      if (text.substr(i, 4) === 'true') { advance();advance();advance();advance(); return; }
+      if (text.substr(i, 5) === 'false') { advance();advance();advance();advance();advance(); return; }
+      if (text.substr(i, 4) === 'null') { advance();advance();advance();advance(); return; }
+      fail("Unexpected token '" + ch + "'");
+    }
+    function parseObject(){
+      advance();
+      skipWs();
+      if (i < len && text[i] === '}') { advance(); return; }
+      for (;;) {
+        skipWs();
+        if (i >= len || text[i] !== '"') fail('Expected a string key');
+        parseString();
+        skipWs();
+        if (i >= len || text[i] !== ':') fail("Expected ':' after key");
+        advance();
+        parseValue();
+        skipWs();
+        if (i < len && text[i] === ',') { advance(); continue; }
+        if (i < len && text[i] === '}') { advance(); return; }
+        fail("Expected ',' or '}'");
+      }
+    }
+    function parseArray(){
+      advance();
+      skipWs();
+      if (i < len && text[i] === ']') { advance(); return; }
+      for (;;) {
+        parseValue();
+        skipWs();
+        if (i < len && text[i] === ',') { advance(); continue; }
+        if (i < len && text[i] === ']') { advance(); return; }
+        fail("Expected ',' or ']'");
+      }
+    }
+    function parseString(){
+      advance();
+      for (;;) {
+        if (i >= len) fail('Unterminated string');
+        var ch = text[i];
+        if (ch === '"') { advance(); return; }
+        if (ch === '\\') { advance(); if (i >= len) fail('Unterminated string escape'); advance(); }
+        else if (ch === '\n') { fail('Unterminated string (newline inside string)'); }
+        else { advance(); }
+      }
+    }
+    function parseNumber(){
+      if (text[i] === '-') advance();
+      if (i >= len || !/[0-9]/.test(text[i])) fail('Invalid number');
+      while (i < len && /[0-9]/.test(text[i])) advance();
+      if (i < len && text[i] === '.') {
+        advance();
+        if (i >= len || !/[0-9]/.test(text[i])) fail('Invalid number');
+        while (i < len && /[0-9]/.test(text[i])) advance();
+      }
+      if (i < len && (text[i] === 'e' || text[i] === 'E')) {
+        advance();
+        if (i < len && (text[i] === '+' || text[i] === '-')) advance();
+        if (i >= len || !/[0-9]/.test(text[i])) fail('Invalid number');
+        while (i < len && /[0-9]/.test(text[i])) advance();
+      }
+    }
+    parseValue();
+    skipWs();
+    if (i < len) fail("Unexpected trailing content '" + text[i] + "'");
+  }
+
   function formatJSON(){
     var indentVal = jsonIndent.value;
     var indent = indentVal === '0' ? undefined : parseInt(indentVal, 10);
     try {
       var parsed = JSON.parse(jsonInput.value);
       jsonOutput.value = JSON.stringify(parsed, null, indent);
-      setStatusById('jsonStatus', 'success', 'Valid JSON, formatted below.');
+      var msg = 'Valid JSON, formatted below.';
+      if (hasUnsafeIntegerLiterals(jsonInput.value)) {
+        msg += ' Warning: this contains integer(s) larger than 2^53 — JavaScript numbers cannot represent those exactly, so their value may have changed. Keep such IDs as strings if exact value matters.';
+      }
+      setStatusById('jsonStatus', 'success', msg);
     } catch(e) {
       jsonOutput.value = '';
-      setStatusById('jsonStatus', 'error', 'Not valid JSON: ' + e.message);
+      var detail = e.message;
+      try { locateJSONError(jsonInput.value); } catch(e2) {
+        if (e2 && typeof e2.line === 'number') detail = e2.message;
+      }
+      setStatusById('jsonStatus', 'error', 'Not valid JSON: ' + detail);
     }
   }
   document.getElementById('jsonFormatBtn').addEventListener('click', formatJSON);
@@ -701,28 +509,60 @@ function utf8ToBase64(str){
   for (var i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
   return btoa(binary);
 }
+// Normalizes URL-safe Base64 (RFC 4648 §5: '-'/'_' and no padding) to
+// standard Base64 so atob() can decode it, auto-detecting when it's used.
+function normalizeBase64Input(b64){
+  var isUrlSafe = /[-_]/.test(b64) && !/[+/]/.test(b64);
+  var out = b64;
+  if (isUrlSafe) out = out.replace(/-/g, '+').replace(/_/g, '/');
+  var padNeeded = (4 - (out.length % 4)) % 4;
+  if (padNeeded) out += '='.repeat(padNeeded);
+  return { value: out, wasUrlSafe: isUrlSafe };
+}
 function base64ToUtf8(b64){
   var binary = atob(b64);
   var bytes = new Uint8Array(binary.length);
   for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return new TextDecoder().decode(bytes);
+  var lossy = false, text;
+  try {
+    text = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+  } catch (e) {
+    text = new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+    lossy = true;
+  }
+  return { text: text, lossy: lossy };
 }
 
   var b64Text = document.getElementById('b64Text');
   var b64Result = document.getElementById('b64Result');
+  var b64UrlSafe = document.getElementById('b64UrlSafe');
 
   document.getElementById('b64EncodeBtn').addEventListener('click', function(){
     try {
-      b64Result.value = utf8ToBase64(b64Text.value);
+      var encoded = utf8ToBase64(b64Text.value);
+      if (b64UrlSafe && b64UrlSafe.checked) {
+        encoded = encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+      }
+      b64Result.value = encoded;
       setStatusById('b64Status', 'success', 'Encoded.');
     } catch(e) {
       setStatusById('b64Status', 'error', 'Could not encode: ' + e.message);
     }
   });
   document.getElementById('b64DecodeBtn').addEventListener('click', function(){
+    var raw = b64Result.value.trim();
+    if (!raw) {
+      setStatusById('b64Status', 'error', 'The Base64 field is empty — nothing to decode. (The text box above was left untouched.)');
+      return;
+    }
     try {
-      b64Text.value = base64ToUtf8(b64Result.value.trim());
-      setStatusById('b64Status', 'success', 'Decoded into the text box above.');
+      var normalized = normalizeBase64Input(raw);
+      var decoded = base64ToUtf8(normalized.value);
+      b64Text.value = decoded.text;
+      var msg = 'Decoded into the text box above.';
+      if (normalized.wasUrlSafe) msg += ' Detected URL-safe Base64 (-/_) and converted it automatically.';
+      if (decoded.lossy) msg += ' Warning: the decoded bytes were not valid UTF-8 — invalid sequences were replaced with �, so this output may be corrupted.';
+      setStatusById('b64Status', decoded.lossy ? 'error' : 'success', msg);
     } catch(e) {
       setStatusById('b64Status', 'error', 'Not valid Base64: ' + e.message);
     }
@@ -734,15 +574,72 @@ function base64ToUtf8(b64){
 </script>
 <script>
 (function(){
-  // ---- UUID v4 Generator ----
-  function genUUID(){
+  // ---- UUID Generator (v4 random, v1 time-based, v7 sortable/time-ordered) ----
+  var MAX_BATCH = 100;
+
+  function randomBytes(n){
+    var arr = new Uint8Array(n);
+    if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(arr);
+    else { for (var i=0;i<n;i++) arr[i] = Math.floor(Math.random()*256); }
+    return arr;
+  }
+  function hex(n, len){ return n.toString(16).padStart(len, '0'); }
+  function bytesToUuid(bytes){
+    var h = Array.from(bytes).map(function(b){ return hex(b,2); }).join('');
+    return h.slice(0,8)+'-'+h.slice(8,12)+'-'+h.slice(12,16)+'-'+h.slice(16,20)+'-'+h.slice(20);
+  }
+
+  function genUUIDv4(){
     if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c){
       var r = Math.random()*16|0, v = c === 'x' ? r : (r&0x3|0x8);
       return v.toString(16);
     });
   }
+
+  // RFC 4122 version 1 (time-based). Browsers have no MAC address, so the
+  // node ID is random with its multicast bit set, per RFC 4122 §4.5 — the
+  // standard, spec-compliant way to generate v1 UUIDs without real hardware.
+  function genUUIDv1(){
+    var intervals = BigInt(Date.now()) * 10000n + 122192928000000000n; // 100ns units since 1582-10-15
+    var jitter = randomBytes(2);
+    intervals += BigInt((jitter[0] << 8 | jitter[1]) % 10000);
+    var timeLow = intervals & 0xFFFFFFFFn;
+    var timeMid = (intervals >> 32n) & 0xFFFFn;
+    var timeHi = ((intervals >> 48n) & 0x0FFFn) | 0x1000n; // version 1
+    var rand = randomBytes(8);
+    var clockSeq = ((rand[0] << 8 | rand[1]) & 0x3FFF) | 0x8000; // variant 10
+    var node = rand.slice(2, 8);
+    node[0] |= 0x01; // mark node id as random, not a real MAC address
+    return hex(Number(timeLow),8)+'-'+hex(Number(timeMid),4)+'-'+hex(Number(timeHi),4)+'-'+hex(clockSeq,4)+'-'+Array.from(node).map(function(b){return hex(b,2);}).join('');
+  }
+
+  // RFC 9562 version 7: 48-bit big-endian ms timestamp + version/variant bits
+  // + random tail. Lexicographically sortable by creation time.
+  function genUUIDv7(){
+    var bytes = randomBytes(16);
+    var ts = Date.now();
+    bytes[0] = Math.floor(ts / 2**40) & 0xFF;
+    bytes[1] = Math.floor(ts / 2**32) & 0xFF;
+    bytes[2] = Math.floor(ts / 2**24) & 0xFF;
+    bytes[3] = Math.floor(ts / 2**16) & 0xFF;
+    bytes[4] = Math.floor(ts / 2**8) & 0xFF;
+    bytes[5] = ts & 0xFF;
+    bytes[6] = (bytes[6] & 0x0F) | 0x70; // version 7
+    bytes[8] = (bytes[8] & 0x3F) | 0x80; // variant 10
+    return bytesToUuid(bytes);
+  }
+
+  function genUUID(){
+    var version = document.getElementById('uuidVersion').value;
+    if (version === '1') return genUUIDv1();
+    if (version === '7') return genUUIDv7();
+    return genUUIDv4();
+  }
+
   var single = document.getElementById('uuidSingle');
+  var lastBatch = [];
+
   document.getElementById('uuidGenBtn').addEventListener('click', function(){
     single.textContent = genUUID();
     if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
@@ -751,16 +648,32 @@ function base64ToUtf8(b64){
     if (single.textContent !== '—') copyText(single.textContent, this);
   });
   document.getElementById('uuidBatchBtn').addEventListener('click', function(){
-    var n = Math.max(1, Math.min(100, parseInt(document.getElementById('uuidCount').value, 10) || 1));
+    var requestedRaw = parseInt(document.getElementById('uuidCount').value, 10);
+    var requested = isNaN(requestedRaw) ? 1 : requestedRaw;
+    var n = Math.max(1, Math.min(MAX_BATCH, requested));
     var list = document.getElementById('uuidList');
     list.innerHTML = '';
+    lastBatch = [];
     for (var i=0;i<n;i++){
+      var uuid = genUUID();
+      lastBatch.push(uuid);
       var div = document.createElement('div');
       div.className = 'uuid-display';
-      div.textContent = genUUID();
+      div.textContent = uuid;
       list.appendChild(div);
     }
+    document.getElementById('uuidCopyAllRow').style.display = lastBatch.length ? '' : 'none';
+    if (requested > MAX_BATCH) {
+      setStatusById('uuidStatus', 'error', 'Generated ' + n + ' UUIDs — requested ' + requested + ', but ' + MAX_BATCH + ' per batch is the maximum.');
+    } else if (requested < 1) {
+      setStatusById('uuidStatus', 'success', 'Generated ' + n + ' UUID (minimum is 1).');
+    } else {
+      setStatusById('uuidStatus', 'success', 'Generated ' + n + ' UUID' + (n === 1 ? '' : 's') + '.');
+    }
     if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
+  });
+  document.getElementById('uuidCopyAllBtn').addEventListener('click', function(){
+    if (lastBatch.length) copyText(lastBatch.join('\n'), this, 'Copied!');
   });
   single.textContent = genUUID();
 })();
@@ -770,17 +683,36 @@ function base64ToUtf8(b64){
   // ---- Color Converter (hex/rgb/hsl, verified against grayscale edge cases and round-trip accuracy) ----
 function hexToRgb(hex){
   hex = hex.replace('#','').trim();
-  if (hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
-  if (!/^[0-9a-fA-F]{6}$/.test(hex)) return null;
+  if (hex.length === 3 || hex.length === 4) hex = hex.split('').map(function(c){ return c+c; }).join('');
+  if (!/^[0-9a-fA-F]{6}$/.test(hex) && !/^[0-9a-fA-F]{8}$/.test(hex)) return null;
+  var a = 1;
+  if (hex.length === 8) {
+    a = parseInt(hex.slice(6,8),16) / 255;
+    hex = hex.slice(0,6);
+  }
   return {
     r: parseInt(hex.slice(0,2),16),
     g: parseInt(hex.slice(2,4),16),
-    b: parseInt(hex.slice(4,6),16)
+    b: parseInt(hex.slice(4,6),16),
+    a: a
   };
 }
-function rgbToHex(r,g,b){
+function rgbToHex(r,g,b,a){
   function h(n){ return Math.max(0,Math.min(255,Math.round(n))).toString(16).padStart(2,'0'); }
-  return '#' + h(r) + h(g) + h(b);
+  var out = '#' + h(r) + h(g) + h(b);
+  if (typeof a === 'number' && a < 1) out += h(a*255);
+  return out;
+}
+function round2(n){ return Math.round(n*100)/100; }
+function relativeLuminance(r,g,b){
+  function chan(c){ c/=255; return c<=0.03928 ? c/12.92 : Math.pow((c+0.055)/1.055, 2.4); }
+  return 0.2126*chan(r) + 0.7152*chan(g) + 0.0722*chan(b);
+}
+function contrastRatio(rgb1, rgb2){
+  var l1 = relativeLuminance(rgb1.r,rgb1.g,rgb1.b);
+  var l2 = relativeLuminance(rgb2.r,rgb2.g,rgb2.b);
+  var lighter = Math.max(l1,l2), darker = Math.min(l1,l2);
+  return (lighter + 0.05) / (darker + 0.05);
 }
 function rgbToHsl(r,g,b){
   r/=255; g/=255; b/=255;
@@ -824,22 +756,65 @@ function hslToRgb(h,s,l){
 }
 
   var hexInput = document.getElementById('colorHex');
+  var colorPicker = document.getElementById('colorPicker');
+  var contrastHexInput = document.getElementById('contrastHex');
+  var contrastPicker = document.getElementById('contrastPicker');
 
   function renderColor(){
     var rgb = hexToRgb(hexInput.value);
     if (!rgb) {
-      setStatusById('colorStatus', 'error', 'Enter a valid hex color, like #0D7A7C or #0d7');
+      setStatusById('colorStatus', 'error', 'Enter a valid hex color, like #0D7A7C, #0d7, or with alpha like #0D7A7C80 / #0d7f.');
+      updateContrast();
       return;
     }
-    var hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+    var hex = rgbToHex(rgb.r, rgb.g, rgb.b, rgb.a);
     var hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-    document.getElementById('colorSwatch').style.background = hex;
+    document.getElementById('colorSwatch').style.background = 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',' + rgb.a + ')';
     document.getElementById('outHex').value = hex;
-    document.getElementById('outRgb').value = 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
-    document.getElementById('outHsl').value = 'hsl(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)';
+    document.getElementById('outRgb').value = rgb.a < 1
+      ? 'rgba(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ', ' + round2(rgb.a) + ')'
+      : 'rgb(' + rgb.r + ', ' + rgb.g + ', ' + rgb.b + ')';
+    document.getElementById('outHsl').value = rgb.a < 1
+      ? 'hsla(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%, ' + round2(rgb.a) + ')'
+      : 'hsl(' + hsl.h + ', ' + hsl.s + '%, ' + hsl.l + '%)';
+    if (colorPicker) colorPicker.value = rgbToHex(rgb.r, rgb.g, rgb.b);
     setStatusById('colorStatus', 'success', 'Converted.');
+    updateContrast();
   }
+
+  function updateContrast(){
+    var resultEl = document.getElementById('contrastResult');
+    if (!resultEl) return;
+    var rgb1 = hexToRgb(hexInput.value);
+    var rgb2 = hexToRgb(contrastHexInput.value);
+    if (!rgb1 || !rgb2) {
+      resultEl.textContent = 'Enter two valid hex colors to check contrast.';
+      return;
+    }
+    var ratio = contrastRatio(rgb1, rgb2);
+    var ratioText = round2(ratio).toFixed(2) + ':1';
+    function badge(pass){ return pass ? '✓ Pass' : '✗ Fail'; }
+    var alphaNote = (rgb1.a < 1 || rgb2.a < 1) ? ' (alpha ignored — computed on the opaque RGB values)' : '';
+    resultEl.innerHTML =
+      'Contrast ratio: <strong>' + ratioText + '</strong>' + alphaNote + '<br>' +
+      'Normal text — AA (4.5:1): ' + badge(ratio >= 4.5) + ' &nbsp; AAA (7:1): ' + badge(ratio >= 7) + '<br>' +
+      'Large text — AA (3:1): ' + badge(ratio >= 3) + ' &nbsp; AAA (4.5:1): ' + badge(ratio >= 4.5);
+  }
+
   hexInput.addEventListener('input', renderColor);
+  contrastHexInput.addEventListener('input', updateContrast);
+  if (colorPicker) {
+    colorPicker.addEventListener('input', function(){
+      hexInput.value = colorPicker.value;
+      renderColor();
+    });
+  }
+  if (contrastPicker) {
+    contrastPicker.addEventListener('input', function(){
+      contrastHexInput.value = contrastPicker.value;
+      updateContrast();
+    });
+  }
   document.querySelectorAll('.copy-mini').forEach(function(btn){
     btn.addEventListener('click', function(){
       var val = document.getElementById(btn.dataset.copy).value;
@@ -856,17 +831,32 @@ function hslToRgb(h,s,l){
   var urlText = document.getElementById('urlText');
   var urlResult = document.getElementById('urlResult');
 
+  function looksAlreadyPercentEncoded(str){
+    if (!/%[0-9A-Fa-f]{2}/.test(str)) return false;
+    try { return decodeURIComponent(str) !== str; } catch(e) { return false; }
+  }
+
   document.getElementById('urlEncodeBtn').addEventListener('click', function(){
     try {
-      urlResult.value = encodeURIComponent(urlText.value);
-      setStatusById('urlStatus', 'success', 'Encoded. This encodes text/query values — not full URLs, since encoding the whole thing would also escape :// and other structural characters.');
+      var input = urlText.value;
+      urlResult.value = encodeURIComponent(input);
+      var msg = 'Encoded. This encodes text/query values — not full URLs, since encoding the whole thing would also escape :// and other structural characters.';
+      if (looksAlreadyPercentEncoded(input)) {
+        msg = 'Encoded — but your input already looked percent-encoded (it contains %XX sequences), so this likely double-encodes it (e.g. %20 becomes %2520). Decode first, or paste the original unencoded text, if that is not what you wanted.';
+      }
+      setStatusById('urlStatus', 'success', msg);
     } catch(e) {
       setStatusById('urlStatus', 'error', 'Could not encode: ' + e.message);
     }
   });
   document.getElementById('urlDecodeBtn').addEventListener('click', function(){
+    var raw = urlResult.value.trim();
+    if (!raw) {
+      setStatusById('urlStatus', 'error', 'The result field is empty — nothing to decode. (The text box above was left untouched.)');
+      return;
+    }
     try {
-      urlText.value = decodeURIComponent(urlResult.value.trim());
+      urlText.value = decodeURIComponent(raw);
       setStatusById('urlStatus', 'success', 'Decoded into the text box above.');
     } catch(e) {
       setStatusById('urlStatus', 'error', 'Not valid percent-encoded text: ' + e.message);
@@ -886,6 +876,8 @@ var STREET_NAMES = ['Main','Oak','Maple','Cedar','Elm','Washington','Lake','Hill
 var STREET_TYPES = ['St','Ave','Blvd','Dr','Ln','Rd','Way','Ct'];
 var CITIES_STATES = [['Springfield','IL'],['Franklin','TN'],['Greenville','SC'],['Clinton','MD'],['Salem','OR'],['Georgetown','TX'],['Madison','WI'],['Arlington','VA'],['Bristol','CT'],['Ashland','OH']];
 var EMAIL_DOMAINS = ['gmail.com','yahoo.com','outlook.com','example.com','mail.com'];
+var COMPANY_WORDS = ['Summit','Harbor','Bright','Northwind','Silverline','Granite','Cedar','Union','Vista','Clearwater','Redwood','Anchor'];
+var COMPANY_SUFFIXES = ['Inc.','LLC','Co.','Group','Partners','Solutions'];
 
 function pick(arr){ return arr[Math.floor(secureRandom() * arr.length)]; }
 function secureRandom(){
@@ -907,7 +899,9 @@ function generateRow(){
     lastName: last,
     email: (first + '.' + last + Math.floor(secureRandom()*100)).toLowerCase() + '@' + pick(EMAIL_DOMAINS),
     phone: '(' + randomDigits(3) + ') ' + randomDigits(3) + '-' + randomDigits(4),
-    address: streetNum + ' ' + pick(STREET_NAMES) + ' ' + pick(STREET_TYPES) + ', ' + cityState[0] + ', ' + cityState[1] + ' ' + randomDigits(5)
+    address: streetNum + ' ' + pick(STREET_NAMES) + ' ' + pick(STREET_TYPES) + ', ' + cityState[0] + ', ' + cityState[1] + ' ' + randomDigits(5),
+    company: pick(COMPANY_WORDS) + ' ' + pick(COMPANY_SUFFIXES),
+    username: (first.charAt(0) + last).toLowerCase() + randomDigits(2)
   };
 }
 
@@ -918,37 +912,67 @@ function generateRows(count){
 }
 
 
-  var DUMMY_COLUMNS = ['firstName','lastName','email','phone','address'];
-  var DUMMY_LABELS = ['First Name','Last Name','Email','Phone','Address'];
+  var MAX_ROWS = 200;
+  var FIELD_DEFS = [
+    { key:'firstName', label:'First Name' },
+    { key:'lastName', label:'Last Name' },
+    { key:'email', label:'Email' },
+    { key:'phone', label:'Phone' },
+    { key:'address', label:'Address' },
+    { key:'company', label:'Company' },
+    { key:'username', label:'Username' }
+  ];
   var lastRows = [];
+  var lastFields = FIELD_DEFS.slice(0, 5);
 
-  function renderDummyTable(rows){
+  function getSelectedFields(){
+    var checkedKeys = Array.from(document.querySelectorAll('.dummyField:checked')).map(function(cb){ return cb.value; });
+    return FIELD_DEFS.filter(function(f){ return checkedKeys.indexOf(f.key) !== -1; });
+  }
+
+  function renderDummyTable(rows, fields){
     var head = document.getElementById('dummyHead');
-    head.innerHTML = DUMMY_LABELS.map(function(l){ return '<th style="text-align:left;padding:6px 10px;background:var(--paper-2);font-family:\'IBM Plex Mono\',monospace;font-size:0.7rem;text-transform:uppercase;">' + l + '</th>'; }).join('');
+    head.innerHTML = fields.map(function(f){ return '<th style="text-align:left;padding:6px 10px;background:var(--paper-2);font-family:\'IBM Plex Mono\',monospace;font-size:0.7rem;text-transform:uppercase;">' + f.label + '</th>'; }).join('');
     var body = document.getElementById('dummyBody');
     body.innerHTML = rows.map(function(r){
-      return '<tr>' + DUMMY_COLUMNS.map(function(c){ return '<td style="padding:6px 10px;border-bottom:1px solid var(--line);">' + r[c] + '</td>'; }).join('') + '</tr>';
+      return '<tr>' + fields.map(function(f){ return '<td style="padding:6px 10px;border-bottom:1px solid var(--line);">' + r[f.key] + '</td>'; }).join('') + '</tr>';
     }).join('');
   }
 
   document.getElementById('dummyGenBtn').addEventListener('click', function(){
-    var count = Math.max(1, Math.min(200, parseInt(document.getElementById('dummyCount').value, 10) || 10));
+    var fields = getSelectedFields();
+    if (!fields.length) {
+      setStatusById('dummyStatus', 'error', 'Select at least one field to generate.');
+      return;
+    }
+    var requestedRaw = parseInt(document.getElementById('dummyCount').value, 10);
+    var requested = isNaN(requestedRaw) ? 10 : requestedRaw;
+    var count = Math.max(1, Math.min(MAX_ROWS, requested));
     lastRows = generateRows(count);
-    renderDummyTable(lastRows);
-    setStatusById('dummyStatus', 'success', 'Generated ' + count + ' rows.');
+    lastFields = fields;
+    renderDummyTable(lastRows, lastFields);
+    var msg = 'Generated ' + count + ' row' + (count === 1 ? '' : 's') + '.';
+    if (requested > MAX_ROWS) msg = 'Generated ' + count + ' rows (requested ' + requested + '; ' + MAX_ROWS + ' per batch is the maximum).';
+    else if (requested < 1) msg = 'Generated ' + count + ' row (minimum is 1).';
+    setStatusById('dummyStatus', 'success', msg);
   });
 
   document.getElementById('dummyCsvBtn').addEventListener('click', function(){
     if (!lastRows.length) return;
-    var header = DUMMY_LABELS.join(',');
+    var header = lastFields.map(function(f){ return f.label; }).join(',');
     var lines = lastRows.map(function(r){
-      return DUMMY_COLUMNS.map(function(c){ return '"' + String(r[c]).replace(/"/g,'""') + '"'; }).join(',');
+      return lastFields.map(function(f){ return '"' + String(r[f.key]).replace(/"/g,'""') + '"'; }).join(',');
     });
     copyText([header].concat(lines).join('\n'), this, 'Copied');
   });
   document.getElementById('dummyJsonBtn').addEventListener('click', function(){
     if (!lastRows.length) return;
-    copyText(JSON.stringify(lastRows, null, 2), this, 'Copied');
+    var trimmed = lastRows.map(function(r){
+      var o = {};
+      lastFields.forEach(function(f){ o[f.key] = r[f.key]; });
+      return o;
+    });
+    copyText(JSON.stringify(trimmed, null, 2), this, 'Copied');
   });
 
   document.getElementById('dummyGenBtn').click();

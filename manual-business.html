@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -191,51 +71,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <a class="nav-link" href="/manual">All manual sections</a>
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/manual">All manual sections</a></nav>
   </div>
 </header>
 
@@ -255,34 +91,34 @@
   <section class="tool-section" id="invoice">
     <span class="tool-tag">Tab 1</span>
     <h2>Invoice Generator</h2>
-    <p class="what-for">Creates a professional invoice as a downloadable PDF, ready to send to a client.</p>
+    <p class="what-for">Creates a clean invoice as a downloadable PDF, ready to send to a client.</p>
     <ol>
-      <li><strong>Open the tool.</strong> Go to Business Tools and make sure "Invoice Generator" is selected.</li>
-      <li><strong>Fill in your business details</strong> — your name or company name, address, and contact information.</li>
-      <li><strong>Fill in your client's details</strong> the same way.</li>
-      <li><strong>Add an invoice number and date</strong> if not already filled in for you.</li>
-      <li><strong>Add line items.</strong> Click "Add item" for each product or service, filling in a description, quantity, and price. The line total and running total update automatically.</li>
-      <li><strong>Add tax or a discount</strong> if applicable, using the relevant fields.</li>
-      <li><strong>Add payment terms or notes</strong> if you want them on the invoice (like a due date or bank details).</li>
-      <li><strong>Preview</strong> to check everything looks right.</li>
-      <li><strong>Click "Download PDF."</strong></li>
+      <li><strong>Open the tool.</strong> Go to Business Tools and make sure "Invoice Generator" is selected (it's the first tab).</li>
+      <li><strong>Fill in the From / To details.</strong> "Your name / business," "Your email," and (optionally) "Your address" go on the left; "Bill to," "Client email," and (optionally) "Client address" go on the right. Addresses can run over several lines.</li>
+      <li><strong>Fill in the invoice details.</strong> "Invoice #," "Date," and "Due date" are plain text boxes, so type them the way you want them to appear (the greyed examples show the idea, like INV-001 and 2026-08-24). Leave any of them empty and it simply won't be printed.</li>
+      <li><strong>Edit the line items.</strong> Two example lines are there to start with — change them or remove them with the × button on the right of each row. Click "+ Add line item" for each product or service, then fill in a description, a quantity, and a unit price. The line total appears automatically. The ↑ and ↓ buttons move a line up or down. Quantity and price can't go below zero.</li>
+      <li><strong>Add a discount or tax if you need to.</strong> "Discount (%)" (0 to 100) is taken off the subtotal first, and "Tax rate (%)" is then charged on the discounted amount. The box beside them shows Subtotal, Discount (only when there is one), Tax, and Total as you type, so you can check the numbers before downloading. All amounts are in US dollars ($).</li>
+      <li><strong>Add notes if you want them.</strong> Anything in "Notes (optional)" — payment terms, bank details, a thank-you — is printed at the bottom of the invoice, and the line breaks you type are kept.</li>
+      <li><strong>Click "Download Invoice PDF."</strong> The PDF downloads named after your invoice number (for example INV-001.pdf), or invoice.pdf if you left the number empty. A long invoice simply continues onto a second page.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Nothing you enter is saved anywhere between visits — if you send invoices to the same clients regularly, keep a copy of the filled-in details somewhere on your own device so you're not retyping them every time.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Nothing you enter is saved anywhere between visits — if you send invoices to the same clients regularly, keep a copy of the filled-in details somewhere on your own device so you're not retyping them every time. The invoice PDF uses a standard font, so English and Western European letters (é, ñ, ü), numbers, and symbols like € all work, but Korean, Chinese, Japanese, Arabic, Cyrillic, and emoji can't be drawn on it. If you type one, the tool tells you which box and which character is the problem so you can write that part in Latin letters and try again.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="qr">
     <span class="tool-tag">Tab 2</span>
     <h2>QR Code Generator</h2>
-    <p class="what-for">Turns a link or short text into a scannable QR code, with custom colors, downloadable as a PNG.</p>
+    <p class="what-for">Turns a link or text into a scannable QR code, with your own colors, downloadable as a PNG.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "QR Code Generator" tab.</li>
-      <li><strong>Type or paste your link or text</strong> into the input field.</li>
-      <li><strong>Watch the QR code update live</strong> as you type — there's no separate "generate" button to click first.</li>
-      <li><strong>Customize the colors</strong> if you want, using the color pickers for the foreground and background.</li>
-      <li><strong>Click "Download"</strong> to save it as a PNG image.</li>
+      <li><strong>Type or paste your link or text</strong> into "Link or text." The code updates as you type — there's no separate "generate" button. The box can hold several lines, which is handy for a contact card or an address. If you clear it, the code goes away and a note asks you to type something (the tool never quietly makes a code for a different link).</li>
+      <li><strong>Customize the colors (optional).</strong> Click the colored squares under "Code color" and "Background" to pick new colors; the code you see updates immediately.</li>
+      <li><strong>Choose the size.</strong> "Size" sets the picture you download: 256, 512 (the default), or 1024 pixels square. The preview on screen stays the same size.</li>
+      <li><strong>Choose the error correction.</strong> Low gives the smallest, simplest code; High (the default) is the most resistant to smudges, scratches, or a logo placed over it, but makes the code denser. If your text is too long for the level you chose, the tool uses the next lower level automatically and tells you.</li>
+      <li><strong>Read the notes under the code.</strong> A message appears if the two colors are too close together, if the code is lighter than its background, or if there is so much text that the code gets very dense and needs a bigger size.</li>
+      <li><strong>Click "Download PNG."</strong> The code downloads as qr-code.png at the size you chose, with the blank border that scanners need already around it.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Before printing a QR code anywhere permanent (business cards, signage), scan it yourself with your phone's camera first to confirm it goes to the right place — this is especially important if you customized the colors, since low contrast between foreground and background can make a code harder for some scanners to read.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Before printing a QR code anywhere permanent (business cards, signage), scan it yourself with your phone's camera first to confirm it goes to the right place — this matters most if you customized the colors. Dark code on a light background is the safest combination. A code can hold about 2,900 characters at Low error correction and about 1,270 at High, but shorter text makes an easier-to-scan code, so links and short messages work best. Korean and other non-English text, accented letters, and emoji scan back exactly as typed.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -298,30 +134,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

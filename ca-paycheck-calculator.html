@@ -53,126 +53,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
 
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
@@ -230,12 +110,6 @@
   }
   .disclaimer strong{color:var(--ink);}
 
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
-
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -256,50 +130,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 <div class="install-bar" id="installBar" hidden data-tool-name="CA Paycheck">
@@ -314,13 +145,13 @@
 <main class="wrap" id="main-content">
   <span class="eyebrow">Money &amp; Tax · 2026</span>
   <h1>Canada Paycheck Calculator</h1>
-  <p class="lede">Enter your salary and province to see what's left after federal tax, provincial tax, CPP/CPP2, and EI — all 10 provinces and 3 territories.</p>
+  <p class="lede">Enter your salary and province to see what's left after federal tax, provincial tax, CPP/CPP2 (QPP and QPIP in Quebec), and EI — all 10 provinces and 3 territories.</p>
 
   <div class="verify-badge">
     <div class="verify-grid">
       <div class="verify-item"><span class="verify-label">Source</span><span class="verify-value"><a href="https://www.canada.ca/en/revenue-agency/services/tax/individuals/frequently-asked-questions-individuals/canadian-income-tax-rates-individuals-current-previous-years.html" target="_blank" rel="noopener">canada.ca</a>, revenuquebec.ca</span></div>
       <div class="verify-item"><span class="verify-label">Rates for</span><span class="verify-value">2026</span></div>
-      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">September 2026</span></div>
+      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">October 2026</span></div>
     </div>
     <p class="verify-note">If a chatbot gives you a different number, it’s worth checking against the source above &mdash; general AI assistants frequently get jurisdiction-specific rates like these wrong, especially outside a handful of major states or countries. See <a href="/how-we-verify">how we check these figures</a>, or what’s been corrected on the <a href="/changelog">changelog</a>.</p>
   </div>
@@ -395,40 +226,11 @@
       </div>
 
       <div class="disclaimer">
-        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal and provincial/territorial tax brackets, the federal Basic Personal Amount, Ontario's surtax, and CPP/CPP2/EI (verified against canada.ca and revenuquebec.ca). It doesn't include provincial basic personal amount credits, RRSP or other deductions, or Quebec's QPIP premium — Quebec uses an approximation (standard CPP/CPP2 rates and the federal abatement) rather than a fully separate QPP model. Any of these can change your real paycheque. Confirm anything important with the CRA (or Revenu Québec) or your payroll department. Your income and province never leave your device — <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
+        <strong>This is an estimate, not tax advice.</strong> It follows the CRA's 2026 payroll-deduction formulas (T4127): federal and provincial/territorial tax brackets, the basic personal amounts, the credits for CPP/QPP and EI premiums, the Canada employment amount, the deduction for the enhanced part of CPP/QPP, Ontario's surtax and Health Premium, and British Columbia's tax reduction. Quebec uses its own QPP, QPIP and EI rates, Revenu Québec's tax brackets and basic personal amount, Quebec's deduction for workers and the 16.5% federal abatement. It doesn't include RRSP or other deductions, spouse, dependant or other credits, union dues, benefit or pension-plan contributions, or credits you only receive when you file (such as the GST/HST credit, Quebec's solidarity credit, or the Canada Workers Benefit). Any of these can change your real paycheque. Confirm anything important with the CRA (or Revenu Québec) or your payroll department. Your income and province never leave your device — <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
       </div>
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
         <strong>Curious how the surtax and Quebec's rules actually work?</strong> Read <a href="/canada-tax-mechanics">How We Handle Ontario's Surtax and Quebec's Rules</a> — including a bug we caught and fixed.
-      </div>
-
-      <div class="panel">
-        <h2>Worked example</h2>
-        <p style="margin:0;color:var(--ink-soft);">The default view above: a <strong style="color:var(--ink);">$70,000/year</strong> salary in Ontario, paid biweekly. Federal tax comes to about <strong style="color:var(--ink);">$8,243</strong> (the $16,452 Basic Personal Amount credit is fully available below the $181,440 phase-out start). Ontario provincial tax adds about <strong style="color:var(--ink);">$4,195</strong> — below the $5,818 threshold where Ontario's surtax would start applying. CPP contributions come to about <strong style="color:var(--ink);">$3,957</strong> (5.95% on earnings between the $3,500 exemption and the $74,600 ceiling); CPP2 doesn't apply yet since $70,000 is still under that ceiling. EI adds about <strong style="color:var(--ink);">$1,123</strong>. Total deductions land around $17,518/year, leaving roughly <strong style="color:var(--ink);">$52,482/year</strong> take-home (about <strong style="color:var(--ink);">$2,019 per biweekly paycheque</strong>) — an effective rate of about 25.0%. Of that, federal and provincial income tax alone account for about 17.8 percentage points; the rest is CPP and EI.</p>
-      </div>
-
-      <div class="panel">
-        <h2>Frequently asked questions</h2>
-        <div class="faq-item">
-          <p class="faq-q">How does Quebec work differently in this calculator?</p>
-          <p class="faq-a">Quebec runs its own provincial pension plan (QPP) instead of CPP, but this calculator doesn't model QPP separately — it uses the standard CPP/CPP2 rates as an approximation, as the note under the province dropdown says. What it does apply correctly for Quebec is the federal abatement (a 16.5% reduction to net federal tax) and Quebec's lower EI rate (1.30% instead of 1.63%), since Quebec runs its own parental insurance plan alongside EI.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">What is CPP2, and why isn't it in my breakdown?</p>
-          <p class="faq-a">CPP2 is a second CPP tier that only applies to earnings between $74,600 and $85,000, at 4%. At the $70,000 default it comes to $0, so the row doesn't show — raise the salary above $74,600 and you'll see it appear.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Why might my real paycheque show a different number?</p>
-          <p class="faq-a">This uses 2026 federal and provincial/territorial tax brackets with the federal Basic Personal Amount, Ontario's surtax, and CPP/CPP2/EI. It doesn't include provincial basic personal amount credits, RRSP contributions, or other deductions, so treat it as a solid planning estimate rather than your exact paycheque.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Does this send my salary or province anywhere?</p>
-          <p class="faq-a">No — the whole calculation happens in your browser with JavaScript. Nothing you enter is transmitted, logged, or stored on a server.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">What is the "surtax" mentioned for Ontario?</p>
-          <p class="faq-a">Ontario is the only province in this calculator with a surtax: once your basic Ontario tax passes $5,818, a 20% surtax applies on the amount above that, rising to 36% once basic tax passes $7,446. It's a tax on your tax, layered on top of the regular brackets — which is why Ontario's provincial tax can climb faster once you're comfortably into six figures.</p>
-        </div>
       </div>
     </div>
   </div>
@@ -444,30 +246,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script src="/install-prompt.js" defer></script>
 <script>
@@ -479,129 +257,200 @@ if ('serviceWorker' in navigator) {
 </script>
 <script>
 (function(){
-  // ---- Verified 2026 Canadian tax data (canada.ca / revenuquebec.ca, verified 2026-08-25) ----
-function pt(income, brackets){
+// ===== Canada engine (federal + all 10 provinces and 3 territories), 2026 =====
+// Method: CRA "T4127 Payroll Deductions Formulas", 122nd edition (effective January 1, 2026), for the federal
+// government and the twelve non-Quebec jurisdictions; Revenu Quebec's 2026 parameters for Quebec.
+// Tax payable = tax on annual taxable income, minus the non-refundable credits every employee gets (basic
+// personal amount, base CPP/QPP contributions, EI and QPIP premiums, Canada employment amount), plus
+// Ontario's surtax and Health Premium. The enhanced (first additional) CPP/QPP contributions and CPP2/QPP2 are
+// deducted from income instead of credited.
+function caBracketTax(income, brackets){
   if (income <= 0) return 0;
   var tax = 0;
-  for (var i=0;i<brackets.length;i++){
-    var lo=brackets[i][0], hi=brackets[i][1], rate=brackets[i][2];
-    if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
+  for (var i = 0; i < brackets.length; i++){
+    var lo = brackets[i][0], hi = brackets[i][1], rate = brackets[i][2];
+    if (income > lo){ tax += (Math.min(income, hi) - lo) * rate; } else { break; }
   }
   return tax;
 }
 
-// ---- Federal 2026 (CRA, verified 2026-08-25) ----
-var FED_BRACKETS = [[0,58523,0.14],[58523,117045,0.205],[117045,181440,0.26],[181440,258482,0.29],[258482,Infinity,0.33]];
-var BPA_MAX = 16452, BPA_MIN = 14829, BPA_PHASE_START = 181440, BPA_PHASE_END = 258482;
-var BPA_CREDIT_RATE = 0.14; // lowest federal bracket rate
-
-function federalBPA(income){
-  if (income <= BPA_PHASE_START) return BPA_MAX;
-  if (income >= BPA_PHASE_END) return BPA_MIN;
-  var frac = (income - BPA_PHASE_START) / (BPA_PHASE_END - BPA_PHASE_START);
-  return BPA_MAX - (BPA_MAX - BPA_MIN) * frac;
-}
-
-function federalTax(income, isQuebec){
-  var gross = pt(income, FED_BRACKETS);
-  var credit = federalBPA(income) * BPA_CREDIT_RATE;
-  var tax = Math.max(0, gross - credit);
-  if (isQuebec) tax = tax * (1 - 0.165); // Quebec federal abatement
-  return tax;
-}
-
-// ---- Provinces/territories 2026 (CRA + Revenu Quebec, verified 2026-08-25) ----
-var PROVINCES = {
-  AB: { name:"Alberta", brackets:[[0,61200,0.08],[61200,154259,0.10],[154259,185111,0.12],[185111,246813,0.13],[246813,370220,0.14],[370220,Infinity,0.15]] },
-  BC: { name:"British Columbia", brackets:[[0,50363,0.056],[50363,100728,0.077],[100728,115648,0.105],[115648,140430,0.1229],[140430,190405,0.147],[190405,265545,0.168],[265545,Infinity,0.205]] },
-  MB: { name:"Manitoba", brackets:[[0,47564,0.108],[47564,101200,0.1275],[101200,Infinity,0.174]] },
-  NB: { name:"New Brunswick", brackets:[[0,52333,0.094],[52333,104666,0.14],[104666,193861,0.16],[193861,Infinity,0.195]] },
-  NL: { name:"Newfoundland and Labrador", brackets:[[0,44678,0.087],[44678,89354,0.145],[89354,159528,0.158],[159528,223340,0.178],[223340,285319,0.198],[285319,570638,0.208],[570638,1141275,0.213],[1141275,Infinity,0.218]] },
-  NS: { name:"Nova Scotia", brackets:[[0,30995,0.0879],[30995,61991,0.1495],[61991,97417,0.1667],[97417,157124,0.175],[157124,Infinity,0.21]] },
-  NT: { name:"Northwest Territories", brackets:[[0,53003,0.059],[53003,106009,0.086],[106009,172346,0.122],[172346,Infinity,0.1405]] },
-  NU: { name:"Nunavut", brackets:[[0,55801,0.04],[55801,111602,0.07],[111602,181439,0.09],[181439,Infinity,0.115]] },
-  ON: { name:"Ontario", brackets:[[0,53891,0.0505],[53891,107785,0.0915],[107785,150000,0.1116],[150000,220000,0.1216],[220000,Infinity,0.1316]], surtax:[[5818,0.20],[7446,0.36]] },
-  PE: { name:"Prince Edward Island", brackets:[[0,33928,0.095],[33928,65820,0.1347],[65820,106890,0.166],[106890,142520,0.1762],[142520,200000,0.19],[200000,Infinity,0.20]] },
-  QC: { name:"Quebec", brackets:[[0,54345,0.14],[54345,108680,0.19],[108680,132245,0.24],[132245,Infinity,0.2575]] },
-  SK: { name:"Saskatchewan", brackets:[[0,54532,0.105],[54532,155805,0.125],[155805,Infinity,0.145]] },
-  YT: { name:"Yukon", brackets:[[0,58523,0.064],[58523,117045,0.09],[117045,181440,0.109],[181440,500000,0.128],[500000,Infinity,0.15]] }
+// ---- Federal 2026 (CRA T4127, Table 8.1) ----
+var CA_FED = {
+  brackets: [[0,58523,0.14],[58523,117045,0.205],[117045,181440,0.26],[181440,258482,0.29],[258482,Infinity,0.33]],
+  creditRate: 0.14,                         // lowest federal rate: used for every federal non-refundable credit
+  bpaMax: 16452, bpaMin: 14829, bpaFrom: 181440, bpaTo: 258482,   // basic personal amount, reduced for high incomes
+  employmentAmount: 1501,                   // Canada employment amount
+  quebecAbatement: 0.165                    // federal tax reduction for Quebec residents
 };
 
-function provincialTax(code, income){
-  var p = PROVINCES[code];
-  var basicTax = pt(income, p.brackets);
-  var tax = basicTax;
-  if (p.surtax){
-    p.surtax.forEach(function(tier){
-      if (basicTax > tier[0]) tax += (basicTax - tier[0]) * tier[1];
-    });
+// ---- CPP / CPP2 / QPP / QPIP / EI 2026 (CRA; Revenu Quebec) ----
+var CA_PAY = {
+  exemption: 3500, ympe: 74600, yampe: 85000,
+  cppRate: 0.0595, cppBaseRate: 0.0495,     // CPP: 4.95% base + 1.00% first additional contribution
+  qppRate: 0.0630, qppBaseRate: 0.0530,     // QPP: 5.30% base + 1.00% first additional contribution
+  secondRate: 0.04,                         // CPP2 / QPP2 on earnings between the YMPE and the YAMPE
+  eiMax: 68900, eiRate: 0.0163, eiRateQC: 0.0130,
+  qpipMax: 103000, qpipRate: 0.0043
+};
+
+// ---- Provinces/territories 2026 (CRA T4127 Table 8.1 rates and thresholds; basic personal amounts from CRA/provincial TD1 values) ----
+// rate = lowest bracket rate, which is also the rate for that province's non-refundable credits
+var PROVINCES = {
+  AB: { name:"Alberta", rate:0.08, bpa:22769, brackets:[[0,61200,0.08],[61200,154259,0.10],[154259,185111,0.12],[185111,246813,0.13],[246813,370220,0.14],[370220,Infinity,0.15]] },
+  BC: { name:"British Columbia", rate:0.0506, bpa:13216, taxReduction:true, brackets:[[0,50363,0.0506],[50363,100728,0.077],[100728,115648,0.105],[115648,140430,0.1229],[140430,190405,0.147],[190405,265545,0.168],[265545,Infinity,0.205]] },
+  MB: { name:"Manitoba", rate:0.108, bpa:15780, bpaPhaseOut:[200000,400000], brackets:[[0,47000,0.108],[47000,100000,0.1275],[100000,Infinity,0.174]] },
+  NB: { name:"New Brunswick", rate:0.094, bpa:13664, brackets:[[0,52333,0.094],[52333,104666,0.14],[104666,193861,0.16],[193861,Infinity,0.195]] },
+  NL: { name:"Newfoundland and Labrador", rate:0.087, bpa:11188, brackets:[[0,44678,0.087],[44678,89354,0.145],[89354,159528,0.158],[159528,223340,0.178],[223340,285319,0.198],[285319,570638,0.208],[570638,1141275,0.213],[1141275,Infinity,0.218]] },
+  NS: { name:"Nova Scotia", rate:0.0879, bpa:11932, brackets:[[0,30995,0.0879],[30995,61991,0.1495],[61991,97417,0.1667],[97417,157124,0.175],[157124,Infinity,0.21]] },
+  NT: { name:"Northwest Territories", rate:0.059, bpa:18198, brackets:[[0,53003,0.059],[53003,106009,0.086],[106009,172346,0.122],[172346,Infinity,0.1405]] },
+  NU: { name:"Nunavut", rate:0.04, bpa:19659, brackets:[[0,55801,0.04],[55801,111602,0.07],[111602,181439,0.09],[181439,Infinity,0.115]] },
+  ON: { name:"Ontario", rate:0.0505, bpa:12989, surtax:[[5818,0.20],[7446,0.36]], healthPremium:true, brackets:[[0,53891,0.0505],[53891,107785,0.0915],[107785,150000,0.1116],[150000,220000,0.1216],[220000,Infinity,0.1316]] },
+  PE: { name:"Prince Edward Island", rate:0.095, bpa:15000, brackets:[[0,33928,0.095],[33928,65820,0.1347],[65820,106890,0.166],[106890,142520,0.1762],[142520,Infinity,0.19]] },
+  QC: { name:"Quebec", rate:0.14, bpa:18952, quebec:true, workerRate:0.06, workerMax:1450, brackets:[[0,54345,0.14],[54345,108680,0.19],[108680,132245,0.24],[132245,Infinity,0.2575]] },
+  SK: { name:"Saskatchewan", rate:0.105, bpa:20381, brackets:[[0,54532,0.105],[54532,155805,0.125],[155805,Infinity,0.145]] },
+  YT: { name:"Yukon", rate:0.064, bpa:16452, bpaLikeFederal:true, employmentCredit:true, brackets:[[0,58523,0.064],[58523,117045,0.09],[117045,181440,0.109],[181440,500000,0.128],[500000,Infinity,0.15]] }
+};
+
+function caFederalBPA(netIncome){
+  if (netIncome <= CA_FED.bpaFrom) return CA_FED.bpaMax;
+  if (netIncome >= CA_FED.bpaTo) return CA_FED.bpaMin;
+  return CA_FED.bpaMax - (netIncome - CA_FED.bpaFrom) * (CA_FED.bpaMax - CA_FED.bpaMin) / (CA_FED.bpaTo - CA_FED.bpaFrom);
+}
+
+function caProvincialBPA(p, netIncome){
+  if (p.bpaLikeFederal) return caFederalBPA(netIncome);          // Yukon follows the federal amount
+  if (p.bpaPhaseOut){                                            // Manitoba: phased out between $200,000 and $400,000
+    var from = p.bpaPhaseOut[0], to = p.bpaPhaseOut[1];
+    if (netIncome <= from) return p.bpa;
+    if (netIncome >= to) return 0;
+    return p.bpa - (netIncome - from) * p.bpa / (to - from);
   }
-  return tax;
+  return p.bpa;
 }
 
-// ---- CPP / CPP2 / EI 2026 (CRA, verified 2026-08-25) ----
-var CPP_EXEMPT = 3500, CPP_YMPE = 74600, CPP_RATE = 0.0595;
-var CPP2_YAMPE = 85000, CPP2_RATE = 0.04;
-var EI_MIE = 68900, EI_RATE = 0.0163, EI_RATE_QC = 0.0130;
-
-function calcCPP(income){
-  var base = Math.max(0, Math.min(income, CPP_YMPE) - CPP_EXEMPT) * CPP_RATE;
-  var cpp2 = Math.max(0, Math.min(income, CPP2_YAMPE) - CPP_YMPE) * CPP2_RATE;
-  return { base: base, cpp2: cpp2, total: base + cpp2 };
+// Ontario Health Premium (a flat amount by income band, not part of the brackets)
+function caOntarioHealthPremium(a){
+  if (a <= 20000) return 0;
+  if (a <= 36000) return Math.min(300, 0.06 * (a - 20000));
+  if (a <= 48000) return Math.min(450, 300 + 0.06 * (a - 36000));
+  if (a <= 72000) return Math.min(600, 450 + 0.25 * (a - 48000));
+  if (a <= 200000) return Math.min(750, 600 + 0.25 * (a - 72000));
+  return Math.min(900, 750 + 0.25 * (a - 200000));
 }
 
-function calcEI(income, isQuebec){
-  var rate = isQuebec ? EI_RATE_QC : EI_RATE;
-  return Math.min(income, EI_MIE) * rate;
+// British Columbia tax reduction for lower incomes
+function caBCTaxReduction(a, t4){
+  if (a <= 25570) return Math.min(t4, 575);
+  if (a <= 41722) return Math.max(0, Math.min(t4, 575 - (a - 25570) * 0.0356));
+  return 0;
 }
 
 function calcCanadaTax(gross, provinceCode){
-  var isQC = provinceCode === 'QC';
-  var fed = federalTax(gross, isQC);
-  var prov = provincialTax(provinceCode, gross);
-  var cpp = calcCPP(gross);
-  var ei = calcEI(gross, isQC);
-  var totalDeductions = fed + prov + cpp.total + ei;
+  gross = (isFinite(gross) && gross > 0) ? gross : 0;
+  var p = PROVINCES[provinceCode];
+  var isQC = !!p.quebec;
+
+  // Payroll contributions (CPP/CPP2 or QPP/QPP2, EI, QPIP)
+  var contributory = Math.max(0, Math.min(gross, CA_PAY.ympe) - CA_PAY.exemption);
+  var pension = contributory * (isQC ? CA_PAY.qppRate : CA_PAY.cppRate);
+  var pensionBase = contributory * (isQC ? CA_PAY.qppBaseRate : CA_PAY.cppBaseRate);
+  var pension2 = Math.max(0, Math.min(gross, CA_PAY.yampe) - CA_PAY.ympe) * CA_PAY.secondRate;
+  var ei = Math.min(gross, CA_PAY.eiMax) * (isQC ? CA_PAY.eiRateQC : CA_PAY.eiRate);
+  var qpip = isQC ? Math.min(gross, CA_PAY.qpipMax) * CA_PAY.qpipRate : 0;
+
+  // Annual taxable income: the enhanced part of CPP/QPP and all of CPP2/QPP2 are deductions
+  var a = Math.max(0, gross - (pension - pensionBase) - pension2);
+
+  // Federal tax
+  var fedCredits = CA_FED.creditRate * (caFederalBPA(a) + pensionBase + ei + qpip + Math.min(gross, CA_FED.employmentAmount));
+  var fed = Math.max(0, caBracketTax(a, CA_FED.brackets) - fedCredits);
+  if (isQC) fed *= (1 - CA_FED.quebecAbatement);
+
+  // Provincial / territorial tax
+  var prov;
+  if (isQC){
+    var worker = Math.min(p.workerRate * gross, p.workerMax);     // Quebec deduction for workers
+    var qcIncome = Math.max(0, a - worker);
+    prov = Math.max(0, caBracketTax(qcIncome, p.brackets) - p.rate * p.bpa);
+  } else {
+    var credits = p.rate * (caProvincialBPA(p, a) + pensionBase + ei);
+    if (p.employmentCredit) credits += p.rate * Math.min(gross, CA_FED.employmentAmount);   // Yukon
+    var t4 = Math.max(0, caBracketTax(a, p.brackets) - credits);
+    prov = t4;
+    if (p.surtax){                                                // Ontario surtax: both tiers on the same basic tax
+      var v1 = 0;
+      p.surtax.forEach(function(tier){ if (t4 > tier[0]) v1 += (t4 - tier[0]) * tier[1]; });
+      var withSurtax = t4 + v1;
+      var reduction = Math.max(0, Math.min(withSurtax, 600 - withSurtax));   // Ontario tax reduction (low incomes)
+      prov = withSurtax - reduction;
+    }
+    if (p.healthPremium) prov += caOntarioHealthPremium(a);
+    if (p.taxReduction) prov -= caBCTaxReduction(a, t4);
+  }
+
+  var total = fed + prov + pension + pension2 + ei + qpip;
   return {
-    federal: fed, provincial: prov, cpp: cpp.base, cpp2: cpp.cpp2, ei: ei,
-    totalDeductions: totalDeductions, net: gross - totalDeductions
+    federal: fed, provincial: prov, cpp: pension, cpp2: pension2, ei: ei, qpip: qpip,
+    pensionName: isQC ? 'QPP' : 'CPP',
+    totalDeductions: total, net: gross - total
   };
 }
-
+  // Each line is rounded to whole dollars on its own and take-home pay is gross minus those rounded
+  // figures, so every column of the table adds up exactly to what is on screen.
+  function column(gross, deductions, periods){
+    var g = Math.round(gross / periods);
+    var shown = deductions.map(function(d){ return Math.round(d / periods); });
+    var net = shown.reduce(function(sum, v){ return sum - v; }, g);
+    return { gross: g, deductions: shown, net: net };
+  }
 
   function fmt(n){
     var sign = n < 0 ? '-' : '';
     return sign + '$' + Math.abs(n).toLocaleString('en-CA', {maximumFractionDigits:0});
   }
 
+  function hintFor(code){
+    var p = PROVINCES[code];
+    if (code === 'QC') return 'Quebec: QPP, QPIP and the 1.30% Quebec EI rate are used, with Quebec\u2019s deduction for workers and the 16.5% federal abatement.';
+    if (code === 'ON') return 'Ontario tax includes the Ontario surtax and the Ontario Health Premium.';
+    if (code === 'BC') return 'British Columbia tax is after the BC tax reduction for lower incomes.';
+    if (code === 'YT') return 'Yukon tax is after the Yukon basic personal amount (the same as the federal one) and the Canada employment credit.';
+    return p.name + ' provincial tax, after the basic personal amount credit.';
+  }
+
   function calc(){
-    var gross = Math.max(0, parseFloat(document.getElementById('salary').value) || 0);
+    var gross = parseFloat(document.getElementById('salary').value);
+    if (!isFinite(gross) || gross < 0) gross = 0;
     var provinceCode = document.getElementById('province').value;
     var periods = parseInt(document.getElementById('frequency').value, 10);
 
     var r = calcCanadaTax(gross, provinceCode);
-    var netAnnual = gross - r.totalDeductions;
+    var p = PROVINCES[provinceCode];
     var effRate = gross > 0 ? (r.totalDeductions/gross*100) : 0;
     var combinedRate = gross > 0 ? ((r.federal + r.provincial)/gross*100) : 0;
 
-    document.getElementById('provinceHint').textContent = provinceCode === 'QC'
-      ? 'Quebec: federal abatement applied; CPP/CPP2 rates used as an approximation for QPP.'
-      : PROVINCES[provinceCode].name + ' provincial tax' + (PROVINCES[provinceCode].surtax ? ' (includes Ontario surtax)' : '') + '.';
+    document.getElementById('provinceHint').textContent = hintFor(provinceCode);
 
-    document.getElementById('netPerPeriod').textContent = fmt(netAnnual/periods);
-    document.getElementById('netAnnualSub').textContent = fmt(netAnnual) + ' per year, after all deductions';
+    var lines = [
+      { label: 'Federal tax', value: r.federal },
+      { label: p.name + ' tax', value: r.provincial },
+      { label: r.pensionName, value: r.cpp }
+    ];
+    if (r.cpp2 > 0) lines.push({ label: r.pensionName + '2', value: r.cpp2 });
+    lines.push({ label: 'EI', value: r.ei });
+    if (r.qpip > 0) lines.push({ label: 'QPIP', value: r.qpip });
+    var values = lines.map(function(l){ return l.value; });
+    var yr = column(gross, values, 1);
+    var pp = column(gross, values, periods);
+
+    document.getElementById('netPerPeriod').textContent = fmt(pp.net);
+    document.getElementById('netAnnualSub').textContent = fmt(yr.net) + ' per year, after all deductions';
     document.getElementById('effRate').textContent = effRate.toFixed(1) + '%';
     document.getElementById('combinedRate').textContent = combinedRate.toFixed(1) + '%';
 
-    var rows = [
-      ['Gross pay', gross, gross/periods, false],
-      ['Federal tax', -r.federal, -r.federal/periods, true],
-      [PROVINCES[provinceCode].name + ' tax', -r.provincial, -r.provincial/periods, true],
-      ['CPP', -r.cpp, -r.cpp/periods, true]
-    ];
-    if (r.cpp2 > 0) rows.push(['CPP2', -r.cpp2, -r.cpp2/periods, true]);
-    rows.push(['EI', -r.ei, -r.ei/periods, true]);
-    rows.push(['Take-home pay', netAnnual, netAnnual/periods, false]);
+    var rows = [['Gross pay', yr.gross, pp.gross, false]];
+    lines.forEach(function(l, i){ rows.push([l.label, -yr.deductions[i], -pp.deductions[i], true]); });
+    rows.push(['Take-home pay', yr.net, pp.net, false]);
 
     var body = document.getElementById('breakdownBody');
     body.innerHTML = '';

@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -191,9 +71,10 @@
   table.items .col-desc{width:46%;}
   table.items .col-qty, table.items .col-price{width:16%;}
   table.items .col-total{width:16%;text-align:right;font-family:'IBM Plex Mono',monospace;font-size:0.9rem;padding-top:11px;}
-  table.items .col-remove{width:24px;}
+  table.items .col-actions{width:86px;white-space:nowrap;}
   .icon-btn{background:none;border:1px solid var(--line);border-radius:6px;width:26px;height:26px;cursor:pointer;color:var(--ink-soft);margin-top:2px;}
   .icon-btn:hover{border-color:var(--orange);color:var(--orange);}
+  .icon-btn.move-up:hover, .icon-btn.move-down:hover{border-color:var(--teal);color:var(--teal);}
   .add-btn{background:none;border:1px dashed var(--line);border-radius:8px;padding:8px 14px;font-size:0.85rem;font-weight:600;color:var(--teal);cursor:pointer;margin-bottom:16px;}
   .add-btn:hover{border-color:var(--teal);background:rgba(15,139,141,0.05);}
 
@@ -204,6 +85,7 @@
   .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.98rem;padding:12px 24px;border-radius:999px;cursor:pointer;margin-top:12px;}
   .action-btn:hover{opacity:0.92;}
   .action-btn.teal{background:var(--teal);}
+  .action-btn:disabled{opacity:0.45;cursor:not-allowed;}
   .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
   .status.show{display:block;}
   .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
@@ -222,12 +104,6 @@
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
   footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
-
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -237,50 +113,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 
@@ -322,7 +155,7 @@
 
     <h3 class="section-title">Line items</h3>
     <table class="items">
-      <thead><tr><th class="col-desc">Description</th><th class="col-qty">Qty</th><th class="col-price">Unit price</th><th class="col-total">Total</th><th class="col-remove"></th></tr></thead>
+      <thead><tr><th class="col-desc">Description</th><th class="col-qty">Qty</th><th class="col-price">Unit price</th><th class="col-total">Total</th><th class="col-actions"></th></tr></thead>
       <tbody id="inv-items-body"></tbody>
     </table>
     <button class="add-btn" id="inv-add-item" type="button">+ Add line item</button>
@@ -330,9 +163,11 @@
     <div class="row2" style="align-items:start;">
       <div class="field"><label for="inv-notes">Notes (optional)</label><textarea id="inv-notes" placeholder="Thank you for your business! Payment due within 14 days."></textarea></div>
       <div>
+        <div class="field"><label for="inv-discount">Discount (%)</label><input type="number" id="inv-discount" value="0" step="0.01" min="0" max="100"></div>
         <div class="field"><label for="inv-tax">Tax rate (%)</label><input type="number" id="inv-tax" value="0" step="0.01" min="0"></div>
         <div class="totals" id="inv-totals">
           <div><span>Subtotal</span><span id="inv-subtotal">$0.00</span></div>
+          <div id="inv-discount-row" style="display:none;"><span>Discount</span><span id="inv-discount-amt">$0.00</span></div>
           <div><span>Tax</span><span id="inv-tax-amt">$0.00</span></div>
           <div class="grand"><span>Total</span><span id="inv-grand-total">$0.00</span></div>
         </div>
@@ -341,32 +176,7 @@
 
     <button class="action-btn" id="inv-download-btn" type="button">Download Invoice PDF</button>
     <div class="status" id="inv-status"></div>
-  
-<h3 class="section-title">Worked example</h3>
-<p class="sub" style="margin:0;">The invoice loads with two example line items already filled in — "Website design" at 1 &times; $1,200.00, and "Hosting setup" at 2 &times; $75.50 — with the tax rate left at its default of 0%. Each line's total is quantity &times; unit price, so those come to <strong style="color:var(--ink);">$1,200.00</strong> and <strong style="color:var(--ink);">$151.00</strong>, and the subtotal is the two added together: <strong style="color:var(--ink);">$1,351.00</strong>. Because the tax rate defaults to 0%, the tax line reads $0.00 and the total matches the subtotal exactly. Change the tax rate — say, to 8% — and the calculator reapplies it to the subtotal immediately: 8% of $1,351.00 is $108.08, pushing the total to <strong style="color:var(--ink);">$1,459.08</strong>, with no need to touch the download button first. The same figures shown on screen are what get printed into the downloaded PDF.</p>
-
-<h3 class="section-title">Frequently asked questions</h3>
-<div class="faq-item">
-  <p class="faq-q">How are the subtotal, tax, and total calculated?</p>
-  <p class="faq-a">Each line item's total is its quantity multiplied by its unit price. The subtotal adds up every line item's total, tax is the subtotal multiplied by the tax rate percentage you enter, and the total is the subtotal plus that tax. All of it recalculates live as you type — quantities, prices, or the tax rate — so the numbers on screen always match what goes into the PDF.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">What happens if I leave a field like an address, invoice number, or notes blank?</p>
-  <p class="faq-a">It's simply left out of the PDF rather than printed as a blank line or placeholder. Your address, the client's address, the invoice number, the dates, and the notes section are all optional — the invoice only includes whichever of those you've actually filled in.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Can I bill for partial quantities, like 2.5 hours?</p>
-  <p class="faq-a">Yes. The quantity field accepts decimals, so something like 2.5 hours or 1.5 units works fine, and the line total is calculated as that exact quantity times the unit price.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Will the layout still hold up if I have a long list of line items or long descriptions?</p>
-  <p class="faq-a">Long descriptions wrap onto multiple lines instead of running off the page, and once the items on a page reach the bottom margin, the invoice automatically continues onto a new page. That automatic page break is checked item by item, though, not after the list — so an unusually long set of line items could in rare cases leave the subtotal/tax/total block tight against the bottom edge of the last page.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Does this tool send my invoice details anywhere?</p>
-  <p class="faq-a">No. Everything you type — names, addresses, line items, amounts — stays in your browser and is used only to build the PDF locally; it's never transmitted anywhere. The page does load the pdf-lib library from a CDN to do that PDF construction, but that's a one-time download of the library's own code, not a place your invoice data goes.</p>
-</div>
-</section>
+  </section>
 
   <!-- QR CODE GENERATOR -->
   <section class="panel" id="panel-qr">
@@ -374,7 +184,7 @@
     <p class="sub">Type a link or text, customize the colors, and download a high-resolution PNG.</p>
     <div class="qr-layout">
       <div>
-        <div class="field"><label for="qr-text">Link or text</label><input type="text" id="qr-text" value="https://poppopmake.com" placeholder="https://example.com"></div>
+        <div class="field"><label for="qr-text">Link or text</label><textarea id="qr-text" rows="3" placeholder="https://example.com" spellcheck="false">https://poppopmake.com</textarea></div>
         <div class="row2">
           <div class="field">
             <label for="qr-color-dark">Code color</label>
@@ -393,6 +203,15 @@
             <option value="1024">1024 &times; 1024 px</option>
           </select>
         </div>
+        <div class="field">
+          <label for="qr-ecl">Error correction</label>
+          <select id="qr-ecl" style="width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;">
+            <option value="L">Low — smallest, densest code</option>
+            <option value="M">Medium</option>
+            <option value="Q">Quartile</option>
+            <option value="H" selected>High — most resistant to damage</option>
+          </select>
+        </div>
       </div>
       <div class="qr-preview">
         <div id="qr-canvas-holder"></div>
@@ -400,32 +219,10 @@
       </div>
     </div>
     <div class="status" id="qr-status"></div>
-  
-<h3 class="section-title">Frequently asked questions</h3>
-<div class="faq-item">
-  <p class="faq-q">Does this shorten or modify the link or text I enter?</p>
-  <p class="faq-a">No. Whatever you type is encoded exactly as entered — scanning the result returns that exact text or URL, with no shortening, redirect, or lookup service involved. If you clear the field entirely, the preview falls back to encoding the PopPopMake homepage URL rather than generating an empty code.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Does the Size dropdown change the preview I see on screen?</p>
-  <p class="faq-a">No — the preview always renders at the same fixed size regardless of which option is selected. The Size dropdown only sets the pixel dimensions (256&times;256, 512&times;512, or 1024&times;1024) of the PNG file you get when you click download.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">What happens if I type something too long to fit in a QR code?</p>
-  <p class="faq-a">QR codes have a fixed data capacity. If the text or link you enter is too long to encode, generation fails and the tool shows an error message instead of producing a broken or unreadable code.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">How reliable will the code be if it's printed small or gets a little worn?</p>
-  <p class="faq-a">Both the preview and the downloaded file are generated with qrcodejs's highest error-correction setting. That trades a slightly denser pattern for more built-in redundancy, so the code should still scan reliably even with minor smudges, creases, or print-quality issues.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Does this tool send the text or link I enter anywhere?</p>
-  <p class="faq-a">No. The QR code is generated and rendered entirely in your browser by the qrcodejs library — whatever you type never leaves your device. The library itself is loaded once from a CDN when the page opens, but that's just the code that does the generating, not a destination for what you type.</p>
-</div>
-</section>
+  </section>
 
   <div class="disclaimer">
-    <strong>How this works:</strong> Both tools run entirely in your browser — your invoice details and QR content are never sent anywhere (<a href="/how-it-works">see how to check that yourself</a>). The invoice PDF is built with pdf-lib; the QR code is generated with the open-source qrcodejs library.
+    <strong>How this works:</strong> Both tools run entirely in your browser — your invoice details and QR content are never sent anywhere (<a href="/how-it-works">see how to check that yourself</a>). The invoice PDF is built with pdf-lib; the QR code is generated with the open-source qrcode-generator library (MIT license).
   </div>
 </main>
 
@@ -438,33 +235,9 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="/qrcode-generator.min.js"></script>
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
@@ -489,7 +262,12 @@ if ('serviceWorker' in navigator) {
   });
 
   function setStatus(el, kind, msg){ el.className = 'status show ' + kind; el.textContent = msg; if (kind === 'success' && window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); }
-  function money(n){ var r = Math.round(n*100)/100; if (r === 0) r = 0; return '$' + r.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function money(n){
+    var r = Math.round(n*100)/100; if (r === 0) r = 0;
+    var neg = r < 0;
+    var formatted = '$' + Math.abs(r).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    return neg ? '-' + formatted : formatted;
+  }
 
   // ================= INVOICE GENERATOR =================
   var itemsBody = document.getElementById('inv-items-body');
@@ -503,25 +281,44 @@ if ('serviceWorker' in navigator) {
       '<td class="col-qty"><input type="number" class="item-qty" value="1" step="0.01" min="0"></td>' +
       '<td class="col-price"><input type="number" class="item-price" value="0" step="0.01" min="0"></td>' +
       '<td class="col-total"><span class="item-total">$0.00</span></td>' +
-      '<td class="col-remove"><button type="button" class="icon-btn" title="Remove" aria-label="Remove">&times;</button></td>';
+      '<td class="col-actions">' +
+        '<button type="button" class="icon-btn move-up" title="Move up" aria-label="Move item up">&uarr;</button>' +
+        '<button type="button" class="icon-btn move-down" title="Move down" aria-label="Move item down">&darr;</button>' +
+        '<button type="button" class="icon-btn remove-item" title="Remove" aria-label="Remove">&times;</button>' +
+      '</td>';
     tr.querySelector('.item-desc').value = desc || '';
     tr.querySelector('.item-qty').value = qty != null ? qty : 1;
     tr.querySelector('.item-price').value = price != null ? price : 0;
-    tr.querySelector('.icon-btn').addEventListener('click', function(){ tr.remove(); recalcInvoice(); });
-    tr.querySelectorAll('.item-qty, .item-price').forEach(function(inp){ inp.addEventListener('input', recalcInvoice); });
+    tr.querySelector('.remove-item').addEventListener('click', function(){ tr.remove(); recalcInvoice(); });
+    tr.querySelector('.move-up').addEventListener('click', function(){
+      var prev = tr.previousElementSibling;
+      if (prev) { itemsBody.insertBefore(tr, prev); recalcInvoice(); }
+    });
+    tr.querySelector('.move-down').addEventListener('click', function(){
+      var next = tr.nextElementSibling;
+      if (next) { itemsBody.insertBefore(next, tr); recalcInvoice(); }
+    });
+    tr.querySelectorAll('.item-qty, .item-price').forEach(function(inp){
+      inp.addEventListener('input', function(){
+        var v = parseFloat(inp.value);
+        if (!isNaN(v) && v < 0) inp.value = 0;
+        recalcInvoice();
+      });
+    });
     itemsBody.appendChild(tr);
     recalcInvoice();
   }
   document.getElementById('inv-add-item').addEventListener('click', function(){ addItemRow(); });
   document.getElementById('inv-tax').addEventListener('input', recalcInvoice);
+  document.getElementById('inv-discount').addEventListener('input', recalcInvoice);
 
   function getInvoiceItems(){
     var rows = itemsBody.querySelectorAll('tr');
     var items = [];
     rows.forEach(function(row){
       var desc = row.querySelector('.item-desc').value.trim();
-      var qty = parseFloat(row.querySelector('.item-qty').value) || 0;
-      var price = parseFloat(row.querySelector('.item-price').value) || 0;
+      var qty = Math.max(0, parseFloat(row.querySelector('.item-qty').value) || 0);
+      var price = Math.max(0, parseFloat(row.querySelector('.item-price').value) || 0);
       var lineTotal = qty * price;
       row.querySelector('.item-total').textContent = money(lineTotal);
       items.push({ description: desc, qty: qty, price: price, lineTotal: lineTotal });
@@ -532,13 +329,19 @@ if ('serviceWorker' in navigator) {
   function recalcInvoice(){
     var items = getInvoiceItems();
     var subtotal = items.reduce(function(sum, it){ return sum + it.lineTotal; }, 0);
+    var discountRate = Math.min(100, Math.max(0, parseFloat(document.getElementById('inv-discount').value) || 0));
+    var discount = subtotal * (discountRate/100);
+    var taxable = subtotal - discount;
     var taxRate = parseFloat(document.getElementById('inv-tax').value) || 0;
-    var tax = subtotal * (taxRate/100);
-    var total = subtotal + tax;
+    var tax = taxable * (taxRate/100);
+    var total = taxable + tax;
     document.getElementById('inv-subtotal').textContent = money(subtotal);
+    var discountRow = document.getElementById('inv-discount-row');
+    discountRow.style.display = discount > 0 ? 'flex' : 'none';
+    document.getElementById('inv-discount-amt').textContent = money(-discount);
     document.getElementById('inv-tax-amt').textContent = money(tax);
     document.getElementById('inv-grand-total').textContent = money(total);
-    return { items: items, subtotal: subtotal, tax: tax, total: total };
+    return { items: items, subtotal: subtotal, discountRate: discountRate, discount: discount, tax: tax, total: total };
   }
 
   addItemRow('Website design', 1, 1200);
@@ -611,6 +414,7 @@ if ('serviceWorker' in navigator) {
         calc.items.forEach(function(item){
           if (!item.description && !item.qty && !item.price) return;
           var descLines = wrapText(item.description || '', font, 9.5, 280);
+          if (descLines.length === 0) descLines = ['']; // keep the page-break check below running even for a blank description
           var startY = y;
           descLines.forEach(function(l, i){
             if (y < 80) { page = doc.addPage([pageW, pageH]); y = pageH - 56; startY = y; }
@@ -623,12 +427,20 @@ if ('serviceWorker' in navigator) {
           y -= 6;
         });
 
+        // The totals block is about 60-75pt tall. If the line items ended too close to the bottom edge, start a fresh page for it,
+        // otherwise the Total line is drawn below the edge of the page and is silently missing from the PDF.
+        if (y - 10 - (calc.discount > 0 ? 74 : 59) < 56) { page = doc.addPage([pageW, pageH]); y = pageH - 56; }
         y -= 10;
         page.drawLine({ start:{x:marginX+300,y:y}, end:{x:pageW-marginX,y:y}, thickness:0.5, color:rgb(0.8,0.8,0.8) });
         y -= 16;
         page.drawText('Subtotal', {x:marginX+300, y:y, size:9.5, font:font});
         page.drawText(money(calc.subtotal), {x:pageW-marginX-60, y:y, size:9.5, font:font});
         y -= 15;
+        if (calc.discount > 0){
+          page.drawText('Discount (' + calc.discountRate + '%)', {x:marginX+300, y:y, size:9.5, font:font});
+          page.drawText(money(-calc.discount), {x:pageW-marginX-60, y:y, size:9.5, font:font});
+          y -= 15;
+        }
         page.drawText('Tax', {x:marginX+300, y:y, size:9.5, font:font});
         page.drawText(money(calc.tax), {x:pageW-marginX-60, y:y, size:9.5, font:font});
         y -= 18;
@@ -638,8 +450,20 @@ if ('serviceWorker' in navigator) {
 
         var notes = document.getElementById('inv-notes').value.trim();
         if (notes){
+          if (y < 90) { page = doc.addPage([pageW, pageH]); y = pageH - 56; }
           page.drawText('NOTES', {x:marginX, y:y, size:9, font:bold, color:rgb(0.3,0.55,0.55)}); y -= 14;
-          wrapText(notes, font, 9.5, pageW-marginX*2).forEach(function(l){ page.drawText(l, {x:marginX, y:y, size:9.5, font:font}); y -= 13; });
+          // Keep the line breaks the person typed (bank details, payment terms...), and carry long notes onto more pages.
+          var noteLines = [];
+          notes.split(/\r?\n/).forEach(function(par){
+            var wrapped = wrapText(par, font, 9.5, pageW-marginX*2);
+            if (!wrapped.length) noteLines.push('');
+            else wrapped.forEach(function(l){ noteLines.push(l); });
+          });
+          noteLines.forEach(function(l){
+            if (y < 56) { page = doc.addPage([pageW, pageH]); y = pageH - 56; }
+            if (l) page.drawText(l, {x:marginX, y:y, size:9.5, font:font});
+            y -= 13;
+          });
         }
 
         var bytes = await doc.save();
@@ -651,73 +475,211 @@ if ('serviceWorker' in navigator) {
         setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
         setStatus(statusEl, 'success', 'Done. Your invoice PDF has started downloading.');
       } catch(err){
-        setStatus(statusEl, 'error', 'Could not build the invoice: ' + err.message);
+        var msg = (err && err.message) ? err.message : String(err);
+        if (/cannot encode/i.test(msg)) {
+          // pdf-lib's own wording ("WinAnsi cannot encode ...") means nothing to most people: say which box and which character.
+          try {
+            var bad = await findUnprintable();
+            if (bad) {
+              setStatus(statusEl, 'error', 'The invoice can’t include “' + bad.ch + '” (in “' + bad.where + '”). The PDF uses a standard font that covers English and Western European letters (é, ñ, ü…), numbers and common symbols, but not Korean, Chinese, Japanese, Arabic, Cyrillic, Greek or emoji. Please write that part with Latin letters and try again.');
+              return;
+            }
+          } catch(e2) { /* fall through to the general message */ }
+        }
+        setStatus(statusEl, 'error', 'Could not build the invoice: ' + msg);
       }
     })();
   });
 
+  // The invoice PDF uses a standard (Latin) font. Finds the first character, and the box it was typed in, that this font cannot draw.
+  async function findUnprintable(){
+    var d = await PDFDocument.create();
+    var f = await d.embedFont(StandardFonts.Helvetica);
+    function bad(text){
+      var chars = Array.from(text || '');
+      for (var i = 0; i < chars.length; i++){
+        if (chars[i] === '\n' || chars[i] === '\r') continue;
+        try { f.encodeText(chars[i]); } catch(e) { return chars[i]; }
+      }
+      return null;
+    }
+    var boxes = [['inv-from-name', 'Your name / business'], ['inv-from-email', 'Your email'], ['inv-from-addr', 'Your address'],
+                 ['inv-to-name', 'Bill to'], ['inv-to-email', 'Client email'], ['inv-to-addr', 'Client address'],
+                 ['inv-number', 'Invoice #'], ['inv-date', 'Date'], ['inv-due', 'Due date']];
+    for (var i = 0; i < boxes.length; i++){
+      var c = bad(document.getElementById(boxes[i][0]).value);
+      if (c) return { ch: c, where: boxes[i][1] };
+    }
+    var rows = itemsBody.querySelectorAll('tr');
+    for (var r = 0; r < rows.length; r++){
+      var c2 = bad(rows[r].querySelector('.item-desc').value);
+      if (c2) return { ch: c2, where: 'Description, line item ' + (r + 1) };
+    }
+    var c3 = bad(document.getElementById('inv-notes').value);
+    if (c3) return { ch: c3, where: 'Notes' };
+    return null;
+  }
+
   // ================= QR CODE GENERATOR =================
+  // Drawn with qrcode-generator (MIT, self-hosted at /qrcode-generator.min.js). Text is encoded as proper UTF-8,
+  // so Korean, accented letters and emoji scan back exactly, and codes can hold up to ~2,900 characters.
   var qrHolder = document.getElementById('qr-canvas-holder');
-  var qrInstance = null;
   var qrTextInput = document.getElementById('qr-text');
   var qrDark = document.getElementById('qr-color-dark');
   var qrLight = document.getElementById('qr-color-light');
   var qrSize = document.getElementById('qr-size');
+  var qrEcl = document.getElementById('qr-ecl');
   var qrStatus = document.getElementById('qr-status');
+  var qrDownloadBtn = document.getElementById('qr-download-btn');
+  var qrBuilt = null;                       // the code currently on screen (what Download saves)
+
+  var QR_LEVELS = ['L', 'M', 'Q', 'H'];
+  var QR_LEVEL_NAMES = { L: 'Low', M: 'Medium', Q: 'Quartile', H: 'High' };
+  var QR_QUIET = 4;                         // blank border, in modules, that scanners need around a code
+  var QR_PREVIEW_PX = 440;                  // drawn at 2x and shown at 220px so it stays sharp on high-density screens
+
+  if (typeof qrcode === 'function' && qrcode.stringToBytesFuncs) qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+
+  function hexToRgb(hex){
+    hex = (hex || '').replace('#','');
+    if (hex.length === 3) hex = hex.split('').map(function(c){ return c+c; }).join('');
+    var num = parseInt(hex, 16) || 0;
+    return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+  }
+  function relLuminance(rgb){
+    var srgb = [rgb.r, rgb.g, rgb.b].map(function(v){
+      v = v / 255;
+      return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4);
+    });
+    return 0.2126*srgb[0] + 0.7152*srgb[1] + 0.0722*srgb[2];
+  }
+  function contrastRatio(hexA, hexB){
+    var La = relLuminance(hexToRgb(hexA));
+    var Lb = relLuminance(hexToRgb(hexB));
+    var lighter = Math.max(La, Lb), darker = Math.min(La, Lb);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  // Shows a note under the code without counting as "a success" for the thank-you card (this runs on every keystroke).
+  function showQrNote(kind, msg){
+    qrStatus.className = 'status show ' + kind;
+    qrStatus.textContent = msg;
+  }
+  function clearQrNote(){ qrStatus.className = 'status'; qrStatus.textContent = ''; }
+
+  // Builds the code for this text. If it does not fit at the chosen error-correction level, the next lower levels are tried.
+  // Returns { qr, level, count } or null when even Low does not fit.
+  function buildQR(text, level){
+    var start = QR_LEVELS.indexOf(level);
+    if (start < 0) start = QR_LEVELS.length - 1;
+    for (var i = start; i >= 0; i--){
+      try {
+        var qr = qrcode(0, QR_LEVELS[i]);
+        qr.addData(text, 'Byte');
+        qr.make();
+        return { qr: qr, level: QR_LEVELS[i], count: qr.getModuleCount() };
+      } catch(e) { /* does not fit at this level: try a lower one */ }
+    }
+    return null;
+  }
+
+  // Draws the code on a canvas of exactly size x size pixels: whole-pixel modules, centred, with the blank border around them.
+  // Returns the pixel size of one module.
+  function paintQR(canvas, built, size, dark, light){
+    var total = built.count + QR_QUIET * 2;
+    var ms = Math.max(1, Math.floor(size / total));
+    var off = Math.floor((size - ms * total) / 2);
+    canvas.width = size; canvas.height = size;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = light;
+    ctx.fillRect(0, 0, size, size);
+    ctx.fillStyle = dark;
+    for (var r = 0; r < built.count; r++){
+      for (var c = 0; c < built.count; c++){
+        if (built.qr.isDark(r, c)) ctx.fillRect(off + (c + QR_QUIET) * ms, off + (r + QR_QUIET) * ms, ms, ms);
+      }
+    }
+    return ms;
+  }
+
+  function utf8Length(text){ return new TextEncoder().encode(text).length; }
 
   function renderQR(){
-    var text = qrTextInput.value.trim() || 'https://poppopmake.com';
-    var previewSize = 220;
+    var text = qrTextInput.value.trim();
     qrHolder.innerHTML = '';
-    try {
-      qrInstance = new QRCode(qrHolder, {
-        text: text,
-        width: previewSize,
-        height: previewSize,
-        colorDark: qrDark.value,
-        colorLight: qrLight.value,
-        correctLevel: QRCode.CorrectLevel.H
-      });
-      qrStatus.className = 'status';
-    } catch(err){
-      setStatus(qrStatus, 'error', 'Could not generate a QR code for this text: ' + err.message);
+    qrBuilt = null;
+    qrDownloadBtn.disabled = true;
+    if (typeof qrcode !== 'function'){
+      showQrNote('error', 'The QR code library did not load. Reload the page; if this keeps happening, check your connection or any content blocker.');
+      return;
     }
+    if (!text){
+      showQrNote('success', 'Type a link or some text above and the QR code appears here.');
+      return;
+    }
+    var built = buildQR(text, qrEcl.value);
+    if (!built){
+      showQrNote('error', 'This text is too long for a QR code (' + utf8Length(text).toLocaleString('en-US') + ' bytes; the limit is about 2,900 even at Low error correction). Shorten it, or use a short link instead.');
+      return;
+    }
+    qrBuilt = built;
+    qrDownloadBtn.disabled = false;
+    var canvas = document.createElement('canvas');
+    paintQR(canvas, built, QR_PREVIEW_PX, qrDark.value, qrLight.value);
+    canvas.style.width = '220px'; canvas.style.height = '220px'; canvas.style.imageRendering = 'pixelated';
+    canvas.setAttribute('role', 'img');
+    canvas.setAttribute('aria-label', 'QR code for: ' + (text.length > 80 ? text.slice(0, 80) + '…' : text));
+    qrHolder.appendChild(canvas);
+
+    var notes = [], kind = 'success';
+    if (built.level !== qrEcl.value) {
+      notes.push('This much text doesn’t fit with ' + QR_LEVEL_NAMES[qrEcl.value] + ' error correction, so ' + QR_LEVEL_NAMES[built.level] + ' was used instead.');
+    }
+    var ratio = contrastRatio(qrDark.value, qrLight.value);
+    if (ratio < 3) {
+      notes.push('Low contrast between the code and background colors (about ' + ratio.toFixed(1) + ':1) — this QR code may not scan reliably. Try making the two colors more different.');
+      kind = 'error';
+    } else if (relLuminance(hexToRgb(qrDark.value)) > relLuminance(hexToRgb(qrLight.value))) {
+      notes.push('The code is lighter than its background. Many scanners can’t read a light code on a dark background — dark on light is the safest choice.');
+      kind = 'error';
+    }
+    var dlModule = Math.floor(parseInt(qrSize.value, 10) / (built.count + QR_QUIET * 2));
+    if (dlModule < 4) {
+      notes.push('A lot of text makes a dense code. Choose a larger Size so it scans easily.');
+    }
+    if (notes.length) showQrNote(kind, notes.join(' ')); else clearQrNote();
   }
 
   qrTextInput.addEventListener('input', renderQR);
+  qrEcl.addEventListener('change', renderQR);
+  qrSize.addEventListener('change', renderQR);
   qrDark.addEventListener('input', function(){ document.getElementById('qr-color-dark-hex').textContent = qrDark.value.toUpperCase(); renderQR(); });
   qrLight.addEventListener('input', function(){ document.getElementById('qr-color-light-hex').textContent = qrLight.value.toUpperCase(); renderQR(); });
 
-  document.getElementById('qr-download-btn').addEventListener('click', function(){
-    var text = qrTextInput.value.trim() || 'https://poppopmake.com';
+  qrDownloadBtn.addEventListener('click', function(){
+    if (!qrBuilt) return;
     var size = parseInt(qrSize.value, 10);
-    var offscreen = document.createElement('div');
-    offscreen.style.position = 'fixed';
-    offscreen.style.left = '-9999px';
-    document.body.appendChild(offscreen);
+    var canvas = document.createElement('canvas');
     try {
-      new QRCode(offscreen, {
-        text: text, width: size, height: size,
-        colorDark: qrDark.value, colorLight: qrLight.value,
-        correctLevel: QRCode.CorrectLevel.H
-      });
-      setTimeout(function(){
-        var canvas = offscreen.querySelector('canvas');
-        if (!canvas){
-          setStatus(qrStatus, 'error', 'Could not render a downloadable QR code in this browser.');
-          document.body.removeChild(offscreen);
-          return;
-        }
-        var url = canvas.toDataURL('image/png');
-        var a = document.createElement('a');
-        a.href = url; a.download = 'qr-code.png';
-        document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        document.body.removeChild(offscreen);
-        setStatus(qrStatus, 'success', 'Done. Your ' + size + '\u00d7' + size + ' QR code has started downloading.');
-      }, 50);
-    } catch(err){
+      paintQR(canvas, qrBuilt, size, qrDark.value, qrLight.value);
+    } catch(err) {
       setStatus(qrStatus, 'error', 'Could not generate the QR code: ' + err.message);
-      document.body.removeChild(offscreen);
+      return;
+    }
+    function save(url, revoke){
+      var a = document.createElement('a');
+      a.href = url; a.download = 'qr-code.png';
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      if (revoke) setTimeout(function(){ URL.revokeObjectURL(url); }, 2000);
+      setStatus(qrStatus, 'success', 'Done. Your ' + size + '×' + size + ' QR code has started downloading.');
+    }
+    if (canvas.toBlob) {
+      canvas.toBlob(function(blob){
+        if (!blob) { setStatus(qrStatus, 'error', 'Could not render a downloadable QR code in this browser.'); return; }
+        save(URL.createObjectURL(blob), true);
+      }, 'image/png');
+    } else {
+      save(canvas.toDataURL('image/png'), false);
     }
   });
 

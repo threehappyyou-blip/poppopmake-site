@@ -52,126 +52,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -190,7 +70,7 @@
   .action-btn:hover:not(:disabled){opacity:0.92;}
   .preset-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
   .preset-btn:hover{border-color:var(--teal);color:var(--ink);}
-  .preset-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .preset-btn.active{background:var(--teal);color:#fff;border-color:var(--teal);}
   .basis-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
   .basis-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);}
   .preset-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
@@ -207,15 +87,6 @@
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
   footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
-
-  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
-  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
-  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:24px;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -225,50 +96,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/document-tools">More document &amp; image tools</a></nav>
   </div>
 </header>
 <div class="install-bar" id="installBar" hidden data-tool-name="Markup">
@@ -348,33 +176,6 @@
   <div class="disclaimer">
     <strong>How this works:</strong> This is plain canvas drawing &mdash; no AI model, nothing to download, nothing uploaded to a server. The image never leaves your device at any point, from opening it to downloading the result &mdash; <a href="/how-it-works">see how to check that yourself</a>. Looking for face detection, background removal, OCR, or AI-powered upscaling and object removal instead? Those live in <a href="/document-tools">Document &amp; Image Tools</a>. Read our <a href="/privacy">Privacy Policy</a> for more.
   </div>
-<div class="panel">
-  <h2>Frequently asked questions</h2>
-  <div class="faq-item">
-    <p class="faq-q">Is the mosaic tool a blur, or does it actually destroy the detail underneath?</p>
-    <p class="faq-a">It's a true pixelation, not a blur. Dragging over an area reads the real pixel colors in that region and repaints it as a grid of flat-colored blocks, so the original detail is overwritten rather than just softened — the block size scales with how large an area you drag, down to a minimum of 4 pixels per block.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">How far back can Undo go — all the way to the original image?</p>
-    <p class="faq-a">Yes. Every pen stroke, shape, text box, and mosaic you add is kept as a separate step, and Undo removes the most recent one at a time, redrawing from your original image plus whatever steps are left. You can keep clicking it all the way back to a completely clean image.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Why does applying a crop clear my Undo history, like the hint on the page says?</p>
-    <p class="faq-a">Cropping flattens everything you've drawn so far directly into a new base image rather than keeping it as a separate, removable step — that's what makes the crop itself permanent. Once that happens there's no longer an original-plus-steps to undo back through, so draw everything else first if you want the option to undo it, and crop last.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">What file format do I get when I click Download?</p>
-    <p class="faq-a">A PNG, regardless of what format the image you uploaded was in. The canvas renders your original image plus every mark on top of it and exports that as a single flattened PNG file.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Can I keep editing after I download, or does downloading lock it in?</p>
-    <p class="faq-a">Downloading doesn't change or lock anything — it just saves a PNG snapshot of the canvas at that moment. Your workspace stays open with its full mark history intact, so you can keep drawing, undo further, or download again afterward.</p>
-  </div>
-  <div class="faq-item">
-    <p class="faq-q">Does this tool send my image anywhere?</p>
-    <p class="faq-a">No. Every tool here — pen, highlighter, shapes, text, mosaic, and crop — runs as plain canvas drawing in your own browser. Your image is never uploaded anywhere, from the moment you open it to the moment you download the result.</p>
-  </div>
-</div>
 </main>
 
 <footer>
@@ -387,30 +188,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script src="/install-prompt.js" defer></script>
 <script>
@@ -496,6 +273,23 @@ if ('serviceWorker' in navigator) {
   var mkCurrentMark = null;
   var mkActiveInput = null;
   var mkPendingCrop = null;
+  var mkDragScale = 1;
+  var mkDragWidth = 4;
+
+  // How many picture pixels one on-screen pixel stands for: a big screenshot is shown smaller than it really is,
+  // so a line meant to look 4 px thick has to be drawn thicker than 4 px on the picture itself.
+  function mkScale(){
+    var w = mkOverlayCanvas.getBoundingClientRect().width;
+    return w > 0 ? mkBaseCanvas.width / w : 1;
+  }
+  // The dashed frame shown while choosing a Mosaic or Crop area: 2 screen pixels thick however big the picture is.
+  function mkDrawFrame(ctx, r, color, scale){
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = 2 * scale;
+    ctx.setLineDash([6 * scale, 4 * scale]);
+    ctx.strokeRect(r.x, r.y, r.width, r.height);
+    ctx.restore();
+  }
 
   function mkDrawArrow(ctx, x1, y1, x2, y2, color, width){
     ctx.strokeStyle = color; ctx.fillStyle = color;
@@ -601,7 +395,7 @@ if ('serviceWorker' in navigator) {
     var pos = mkActiveInput._canvasPos;
     mkCancelTextInput();
     if (!text) return;
-    mkMarks.push({ type: 'text', x: pos.x, y: pos.y, text: text, color: mkColor, fontSize: mkFontSize * (mkBaseCanvas.width / mkOverlayCanvas.getBoundingClientRect().width || 1) });
+    mkMarks.push({ type: 'text', x: pos.x, y: pos.y, text: text, color: mkColor, fontSize: mkFontSize * mkScale() });
     redrawMarkup();
   }
   function mkStartTextInput(clientX, clientY){
@@ -636,8 +430,10 @@ if ('serviceWorker' in navigator) {
     if (mkTool === 'text') return;
     mkDragging = true;
     mkDragStart = pointerToCanvasCoords(mkOverlayCanvas, e.clientX, e.clientY);
+    mkDragScale = mkScale();                       // fixed for the whole drag, so the preview and the finished mark agree
+    mkDragWidth = mkWidth * mkDragScale;
     if (mkTool === 'pen' || mkTool === 'highlighter') {
-      mkCurrentMark = { type: mkTool, points: [mkDragStart], color: mkColor, width: mkWidth * (mkBaseCanvas.width / mkOverlayCanvas.getBoundingClientRect().width || 1) };
+      mkCurrentMark = { type: mkTool, points: [mkDragStart], color: mkColor, width: mkDragWidth };
     }
   }
   function mkPointerMove(e){
@@ -651,14 +447,9 @@ if ('serviceWorker' in navigator) {
       var r = normalizeRect(mkDragStart.x, mkDragStart.y, p.x, p.y);
       mkOverlayCtx.clearRect(0, 0, mkOverlayCanvas.width, mkOverlayCanvas.height);
       if (mkTool === 'shape') {
-        mkOverlayCtx.lineWidth = mkWidth;
-        mkPaintMark(mkOverlayCtx, { type: 'shape', shape: mkShape, x1: mkDragStart.x, y1: mkDragStart.y, x2: p.x, y2: p.y, color: mkColor, width: mkWidth });
+        mkPaintMark(mkOverlayCtx, { type: 'shape', shape: mkShape, x1: mkDragStart.x, y1: mkDragStart.y, x2: p.x, y2: p.y, color: mkColor, width: mkDragWidth });
       } else if (mkTool === 'mosaic' || mkTool === 'crop') {
-        mkOverlayCtx.strokeStyle = mkTool === 'crop' ? 'rgba(15,139,141,0.9)' : 'rgba(193,67,36,0.9)';
-        mkOverlayCtx.setLineDash([6,4]);
-        mkOverlayCtx.lineWidth = 2;
-        mkOverlayCtx.strokeRect(r.x, r.y, r.width, r.height);
-        mkOverlayCtx.setLineDash([]);
+        mkDrawFrame(mkOverlayCtx, r, mkTool === 'crop' ? 'rgba(15,139,141,0.9)' : 'rgba(193,67,36,0.9)', mkDragScale);
       }
     }
   }
@@ -682,7 +473,7 @@ if ('serviceWorker' in navigator) {
     if (r.width <= 2 && r.height <= 2 && mkTool !== 'shape') return;
     if (mkTool === 'shape') {
       if (Math.abs(p.x - mkDragStart.x) < 2 && Math.abs(p.y - mkDragStart.y) < 2) return;
-      mkMarks.push({ type: 'shape', shape: mkShape, x1: mkDragStart.x, y1: mkDragStart.y, x2: p.x, y2: p.y, color: mkColor, width: mkWidth });
+      mkMarks.push({ type: 'shape', shape: mkShape, x1: mkDragStart.x, y1: mkDragStart.y, x2: p.x, y2: p.y, color: mkColor, width: mkDragWidth });
       redrawMarkup();
     } else if (mkTool === 'mosaic') {
       mkMarks.push({ type: 'mosaic', x: r.x, y: r.y, width: r.width, height: r.height });
@@ -690,11 +481,7 @@ if ('serviceWorker' in navigator) {
     } else if (mkTool === 'crop') {
       mkPendingCrop = r;
       document.getElementById('markup-crop-apply-btn').style.display = 'inline-block';
-      mkOverlayCtx.strokeStyle = 'rgba(15,139,141,0.9)';
-      mkOverlayCtx.setLineDash([6,4]);
-      mkOverlayCtx.lineWidth = 2;
-      mkOverlayCtx.strokeRect(r.x, r.y, r.width, r.height);
-      mkOverlayCtx.setLineDash([]);
+      mkDrawFrame(mkOverlayCtx, r, 'rgba(15,139,141,0.9)', mkDragScale);
     }
   }
   mkOverlayCanvas.addEventListener('pointerdown', mkPointerDown);

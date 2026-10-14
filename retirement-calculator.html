@@ -53,126 +53,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
 
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
@@ -220,7 +100,7 @@
   .bar-value{width:100px;flex-shrink:0;text-align:right;font-size:0.85rem;font-weight:600;font-family:'IBM Plex Mono',monospace;}
 
   table.breakdown{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;}
-  table.breakdown th, table.breakdown td{padding:12px 16px;text-align:right;font-size:0.92rem;border-bottom:1px solid var(--line);}
+  table.breakdown th, table.breakdown td{padding:12px 10px;text-align:right;font-size:0.9rem;border-bottom:1px solid var(--line);}
   table.breakdown th:first-child, table.breakdown td:first-child{text-align:left;}
   table.breakdown thead th{
     font-family:'IBM Plex Mono',monospace;font-size:0.72rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink-soft);
@@ -243,12 +123,6 @@
   }
   .disclaimer strong{color:var(--ink);}
 
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
-
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -260,6 +134,44 @@
   .verify-label{display:block;font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--teal);margin-bottom:2px;}
   .verify-value{font-size:0.88rem;color:var(--ink);}
   .verify-note{font-size:0.85rem;color:var(--ink-soft);margin:0;padding-top:10px;border-top:1px solid var(--line);}
+  select{
+    width:100%;padding:11px 8px 11px 10px;border:1px solid var(--line);border-radius:8px;
+    font-family:'Inter',sans-serif;font-size:0.95rem;background:#fff;color:var(--ink);
+  }
+  .field .opt{font-weight:400;color:var(--ink-soft);}
+  .field-note{font-size:0.78rem;color:var(--orange);margin-top:4px;}
+  .field-note[hidden]{display:none;}
+  .take-home .sub + .sub{margin-top:2px;}
+
+  .callout{background:#FFF8E8;border:1px solid #EBD9A8;border-left:4px solid var(--yellow);border-radius:8px;padding:14px 16px;margin-bottom:18px;font-size:0.92rem;}
+  .callout.good{background:#EDF7F4;border-color:#BCDDD4;border-left-color:var(--teal);}
+  .callout[hidden]{display:none;}
+
+  .layout > *{min-width:0;}
+  .table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--radius);}
+  .table-scroll th:first-child, .table-scroll td:first-child{position:sticky;left:0;background:var(--card);}
+  .table-scroll thead th:first-child{background:var(--paper-2);z-index:1;}
+  .table-scroll tr.net td:first-child{background:#E8F2F1;}
+  table.breakdown td .incl{display:block;font-size:0.72rem;font-weight:400;color:var(--ink-soft);line-height:1.3;margin-top:2px;}
+  table.breakdown td.neg{color:#8A2B1B;}
+  .table-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:8px 0 4px;}
+  .table-tools .scroll-hint{display:none;font-size:0.78rem;color:var(--ink-soft);}
+  .link-btn{white-space:nowrap;background:none;border:none;color:var(--teal);font:inherit;font-size:0.88rem;font-weight:600;cursor:pointer;padding:6px 0;text-decoration:underline;}
+  .link-btn[hidden]{display:none;}
+  .results h2.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin:30px 0 4px;}
+  .section-sub{color:var(--ink-soft);font-size:0.88rem;margin:0 0 12px;}
+  .limit-note + .limit-note{margin-top:6px;}
+  #whatIfTable td:first-child{font-weight:600;white-space:nowrap;}
+  #whatIfTable tr.now td{background:rgba(15,139,141,0.06);}
+  #whatIfTable td.gain{color:var(--teal);font-weight:600;}
+  table.breakdown th:first-child, table.breakdown td:first-child{padding-left:14px;}
+  table.breakdown th:last-child, table.breakdown td:last-child{padding-right:14px;}
+  @media (max-width:600px){
+    .table-tools .scroll-hint{display:block;}
+    table.breakdown th, table.breakdown td{padding:10px 9px;font-size:0.86rem;}
+    .bar-label{width:104px;}
+    .bar-value{width:84px;}
+  }
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -269,50 +181,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 <div class="install-bar" id="installBar" hidden data-tool-name="Retirement">
@@ -333,7 +202,7 @@
     <div class="verify-grid">
       <div class="verify-item"><span class="verify-label">Source</span><span class="verify-value"><a href="https://www.irs.gov/newsroom/401k-limit-increases-to-24500-for-2026-ira-limit-increases-to-7500" target="_blank" rel="noopener">IRS 2026 contribution limits</a> (IRS Notice 2025-67)</span></div>
       <div class="verify-item"><span class="verify-label">Rates for</span><span class="verify-value">2026</span></div>
-      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">September 2026</span></div>
+      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">October 2026</span></div>
     </div>
     <p class="verify-note">If a chatbot gives you a different number, it’s worth checking against the source above &mdash; general AI assistants frequently get jurisdiction-specific rates like these wrong, especially outside a handful of major states or countries. See <a href="/how-we-verify">how we check these figures</a>, or what’s been corrected on the <a href="/changelog">changelog</a>.</p>
   </div>
@@ -374,7 +243,20 @@
       <div class="field">
         <label for="matchCapPct">Match caps out at</label>
         <div class="suffix-wrap"><input type="number" id="matchCapPct" value="6" min="0" max="100" step="0.5"><span>% of pay</span></div>
-        <div class="hint">E.g. "50% match up to 6%" means your employer adds 50¢ per dollar you contribute, on the first 6% of your pay.</div>
+        <div class="hint">E.g. "50% match up to 6%" means your employer adds 50¢ per dollar you contribute, on the first 6% of your pay. Tiered formulas (like 100% of the first 3% plus 50% of the next 2%) aren't supported &mdash; enter the closest single rate and cap.</div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="depositAmount">One-time deposit</label>
+          <div class="prefix-wrap"><span>$</span><input type="number" id="depositAmount" placeholder="optional" min="0" step="1000"></div>
+        </div>
+        <div class="field">
+          <label for="depositAge">At age</label>
+          <input type="number" id="depositAge" placeholder="now" min="18" max="84" step="1">
+        </div>
+      </div>
+      <div class="field" style="margin-top:-6px;">
+        <div class="hint">Optional &mdash; for example a rollover from an old 401(k). It goes in at the start of that year and doesn't count toward the yearly contribution limit. Leave the age empty for "now".</div>
       </div>
 
       <h3>Assumptions</h3>
@@ -388,61 +270,70 @@
           <div class="suffix-wrap"><input type="number" id="salaryGrowth" value="3" min="0" max="20" step="0.5"><span>%</span></div>
         </div>
       </div>
+      <div class="row2">
+        <div class="field">
+          <label for="inflation">Inflation</label>
+          <div class="suffix-wrap"><input type="number" id="inflation" value="2.5" min="0" max="10" step="0.5"><span>% a year</span></div>
+        </div>
+        <div class="field">
+          <label for="timing">Contributions go in</label>
+          <select id="timing">
+            <option value="spread" selected>Each paycheck</option>
+            <option value="start">Start of year</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" style="margin-top:-6px;">
+        <div class="hint">Return and raise are before inflation. "Each paycheck" gives a year's contributions about half a year of growth; "Start of year" gives them a full year.</div>
+      </div>
     </div>
 
     <div class="results">
-      <div class="take-home">
+      <div class="take-home" aria-live="polite" aria-atomic="true">
         <h2>Projected balance at retirement</h2>
         <div class="amount" id="finalBalance">$0</div>
         <div class="sub" id="finalBalanceSub"></div>
+        <div class="sub" id="finalReal"></div>
       </div>
+
+      <div class="callout" id="matchCallout" hidden></div>
 
       <div class="bar-chart">
         <h3>Where it came from</h3>
         <div id="barRows"></div>
       </div>
 
-      <table class="breakdown">
-        <thead><tr><th>Age</th><th>Start of year</th><th>You contribute</th><th>Employer match</th><th>Growth</th><th>End of year</th></tr></thead>
-        <tbody id="yearBody"></tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="breakdown" id="yearTable">
+          <thead><tr><th>Age</th><th>Start of year</th><th>You contribute</th><th>Employer match</th><th>Growth</th><th>End of year</th></tr></thead>
+          <tbody id="yearBody"></tbody>
+        </table>
+      </div>
+      <div class="table-tools">
+        <button type="button" class="link-btn" id="toggleYears" aria-pressed="false">Show every year</button>
+        <span class="scroll-hint">Swipe the table sideways to see every column.</span>
+      </div>
       <div class="limit-note" id="limitNote"></div>
+      <div class="limit-note" id="matchLimitNote"></div>
+
+      <div id="whatIfSection">
+        <h2 class="section-title">What if you saved more?</h2>
+        <p class="section-sub">Same assumptions &mdash; only your contribution changes. "Max out" means the most the IRS lets you put in each year.</p>
+        <p class="section-sub" id="whatIfNone" hidden>You're already contributing the most the IRS allows in every year, so saving a higher percentage wouldn't change this projection.</p>
+        <div class="table-scroll" id="whatIfWrap">
+          <table class="breakdown" id="whatIfTable">
+            <thead><tr><th>Your contribution</th><th>Monthly (year 1)</th><th>At retirement</th><th>Change</th></tr></thead>
+            <tbody id="whatIfBody"></tbody>
+          </table>
+        </div>
+      </div>
 
       <div class="disclaimer">
-        <strong>This is a projection, not a promise.</strong> Investment returns aren't guaranteed and will vary year to year — 7% is a common long-run planning assumption, not a forecast. Contribution limits use the 2026 IRS figures ($24,500 base, plus age-based catch-up) held flat in today's dollars for every future year, rather than guessing at future inflation adjustments. It doesn't account for taxes on withdrawal, vesting schedules on employer match, or fees. Your numbers never leave your device — <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
+        <strong>This is a projection, not a promise.</strong> Investment returns aren't guaranteed and will vary year to year — 7% is a common long-run planning assumption, not a forecast. Years are 12-month periods starting today, and your raise is applied once a year. Contribution limits use the 2026 IRS figures ($24,500 base, plus age-based catch-up, a $360,000 cap on the pay a plan can count and a $72,000 cap on total yearly additions) and are assumed to rise with your inflation setting in later years, since the IRS adjusts them for inflation. Your employer match is worked out on what you can actually contribute after those limits. It doesn't account for taxes on withdrawal, vesting schedules on employer match, tiered match formulas, or fees. Your numbers never leave your device — <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
       </div>
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
         <strong>Did you know there's a bigger catch-up limit at 60?</strong> Read <a href="/401k-super-catchup-explained">The Four-Year Window Where Your 401(k) Limit Jumps Higher</a>.
-      </div>
-
-      <div class="panel">
-        <h2>Worked example</h2>
-        <p style="margin:0;color:var(--ink-soft);">With the defaults above — starting at age 30 with a $20,000 balance and a $70,000 salary, contributing 6% of pay with a 50% employer match up to 6%, a 7% annual return, and 3% annual raises — year one works like this: you contribute <strong style="color:var(--ink);">$4,200</strong> (6% of $70,000), your employer adds <strong style="color:var(--ink);">$2,100</strong> (50% of that same 6%), and the combined $6,300 added to your $20,000 starting balance grows by <strong style="color:var(--ink);">$1,841</strong> at 7%, ending year one at <strong style="color:var(--ink);">$28,141</strong>. Repeat that loop every year — salary, contribution, and match dollars all rising 3% a year — for all 35 years until age 65, and the projected balance is <strong style="color:var(--ink);">$1,538,596</strong>: about $253,941 from your own contributions, $126,970 from your employer's match, and $1,137,685 from investment growth alone.</p>
-      </div>
-
-      <div class="panel">
-        <h2>Frequently asked questions</h2>
-        <div class="faq-item">
-          <p class="faq-q">How exactly does the employer match get calculated?</p>
-          <p class="faq-a">The tool takes the smaller of your contribution percentage or the match cap percentage, then multiplies by your match rate. With the defaults (6% contribution, matched 50% up to a 6% cap), your entire 6% is eligible, so your employer adds 50 cents per dollar you contribute — $2,100 on a $70,000 salary in year one. Contribute more than the cap and the extra goes unmatched; contribute less and only that smaller amount gets matched.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">What IRS contribution limit does this use, and does my example hit it?</p>
-          <p class="faq-a">It uses the 2026 IRS 401(k) limits: a $24,500 base limit, an $8,000 catch-up for ages 50–59 and 64+, and the SECURE 2.0 super catch-up of $11,250 for ages 60–63 specifically. In the default example your desired contribution never gets close to any of these — even in the final projected year (age 64) it's only around $11,474, well under that year's $32,500 limit — but raise the salary or contribution percentage enough and the tool will cap you at the limit for your age.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Is the final balance shown in today's dollars or future dollars?</p>
-          <p class="faq-a">Today's dollars — the projection labels itself that way. That effectively treats the 7% return assumption as an inflation-adjusted return rather than a raw nominal one, and it's why the IRS contribution limit is held flat across all 35 years instead of being projected upward for future inflation.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Why might my real 401(k) balance end up different from this projection?</p>
-          <p class="faq-a">This is a projection, not a promise. Real investment returns vary year to year instead of compounding at a flat 7%, and the tool doesn't model vesting schedules on your employer match, investment fees, or the taxes you'll eventually pay on withdrawal — all of which change your real number.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Does this calculator send my salary or balance anywhere?</p>
-          <p class="faq-a">No. The entire projection runs in your browser; nothing you enter is transmitted to or stored on a server.</p>
-        </div>
       </div>
     </div>
   </div>
@@ -458,30 +349,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script src="/install-prompt.js" defer></script>
 <script>
@@ -493,141 +360,340 @@ if ('serviceWorker' in navigator) {
 </script>
 <script>
 (function(){
-  // ---- 2026 IRS 401(k) limits (IRS Notice 2025-70), verified 2026-08-25 ----
-var BASE_LIMIT = 24500;
-var CATCHUP_50 = 8000;      // ages 50-59 and 64+
-var CATCHUP_60_63 = 11250;  // ages 60-63 (SECURE 2.0 super catch-up)
+  'use strict';
 
-function contributionLimitForAge(age){
-  if (age >= 60 && age <= 63) return BASE_LIMIT + CATCHUP_60_63;
-  if (age >= 50) return BASE_LIMIT + CATCHUP_50;
-  return BASE_LIMIT;
-}
-
-function projectRetirement(opts){
-  var age = opts.currentAge;
-  var salary = opts.salary;
-  var balance = opts.currentBalance;
-  var contribPct = opts.contribPct / 100;
-  var matchRate = opts.matchRate / 100;     // e.g. 0.5 for "50% match"
-  var matchCapPct = opts.matchCapPct / 100; // e.g. 0.06 for "up to 6% of salary"
-  var returnRate = opts.returnRate / 100;
-  var salaryGrowth = opts.salaryGrowth / 100;
-
-  var years = [];
-  var totalEmployeeContrib = 0;
-  var totalEmployerContrib = 0;
-  var totalGrowth = 0;
-
-  while (age < opts.retirementAge) {
-    var limit = contributionLimitForAge(age);
-    var desiredEmployee = salary * contribPct;
-    var employeeContrib = Math.min(desiredEmployee, limit);
-
-    var matchedPct = Math.min(contribPct, matchCapPct);
-    var employerContrib = salary * matchedPct * matchRate;
-
-    var startBalance = balance;
-    var contribThisYear = employeeContrib + employerContrib;
-    var endBalance = (startBalance + contribThisYear) * (1 + returnRate);
-    var growthThisYear = endBalance - startBalance - contribThisYear;
-
-    totalEmployeeContrib += employeeContrib;
-    totalEmployerContrib += employerContrib;
-    totalGrowth += growthThisYear;
-
-    years.push({
-      age: age, startBalance: startBalance, employeeContrib: employeeContrib,
-      employerContrib: employerContrib, growth: growthThisYear, endBalance: endBalance
-    });
-
-    balance = endBalance;
-    salary = salary * (1 + salaryGrowth);
-    age += 1;
-  }
-
-  return {
-    years: years,
-    finalBalance: balance,
-    totalEmployeeContrib: totalEmployeeContrib,
-    totalEmployerContrib: totalEmployerContrib,
-    totalGrowth: totalGrowth,
-    totalContributed: totalEmployeeContrib + totalEmployerContrib + opts.currentBalance
+  // ---- 2026 IRS limits (IRS Notice 2025-67), re-checked October 2026 ----
+  var LIMITS = {
+    deferral: 24500,     // most you can put in yourself in a year (IRC 402(g))
+    catchup50: 8000,     // catch-up for ages 50-59 and 64+
+    catchup6063: 11250,  // higher catch-up for ages 60-63 (SECURE 2.0): 150% of the 2024 catch-up ...
+    catchup6063Indexed: 10000, // ... or $10,000 adjusted for inflation from 2026, whichever is greater
+    comp: 360000,        // most pay a plan can count, used for the employer match (IRC 401(a)(17))
+    additions: 72000     // most that can go in per year from you (not counting catch-up) plus your employer (IRC 415(c))
   };
-}
 
+  // The IRS raises these each year for inflation and rounds down to a fixed step.
+  // For future years we do the same using the inflation rate from the form.
+  function indexed(value, step, factor){ return Math.floor(value * factor / step + 1e-9) * step; }
 
-  function fmt(n){
-    return '$' + Math.max(0,n).toLocaleString('en-US', {maximumFractionDigits:0});
+  function limitsFor(age, yearIndex, inflation){
+    var f = Math.pow(1 + inflation, yearIndex);
+    var base = indexed(LIMITS.deferral, 500, f);
+    var catchup = 0;
+    if (age >= 60 && age <= 63) catchup = Math.max(LIMITS.catchup6063, indexed(LIMITS.catchup6063Indexed, 500, f));
+    else if (age >= 50) catchup = indexed(LIMITS.catchup50, 500, f);
+    return {
+      base: base,
+      limit: base + catchup,
+      comp: indexed(LIMITS.comp, 5000, f),
+      additions: indexed(LIMITS.additions, 1000, f)
+    };
   }
 
-  function calc(){
-    var opts = {
-      currentAge: parseInt(document.getElementById('currentAge').value, 10) || 0,
-      retirementAge: parseInt(document.getElementById('retirementAge').value, 10) || 0,
-      currentBalance: Math.max(0, parseFloat(document.getElementById('currentBalance').value) || 0),
-      salary: Math.max(0, parseFloat(document.getElementById('salary').value) || 0),
-      contribPct: Math.max(0, parseFloat(document.getElementById('contribPct').value) || 0),
-      matchRate: Math.max(0, parseFloat(document.getElementById('matchRate').value) || 0),
-      matchCapPct: Math.max(0, parseFloat(document.getElementById('matchCapPct').value) || 0),
-      returnRate: parseFloat(document.getElementById('returnRate').value) || 0,
-      salaryGrowth: Math.max(0, parseFloat(document.getElementById('salaryGrowth').value) || 0)
-    };
+  function project(o){
+    var pct = o.contribPct / 100;
+    var matchRate = o.matchRate / 100;      // 0.5 for "50% match"
+    var matchCap = o.matchCapPct / 100;     // 0.06 for "up to 6% of pay"
+    var ret = o.returnRate / 100;
+    var raise = o.salaryGrowth / 100;
+    var infl = o.inflation / 100;
 
-    if (opts.retirementAge <= opts.currentAge) {
-      document.getElementById('finalBalance').textContent = fmt(opts.currentBalance);
-      document.getElementById('finalBalanceSub').textContent = 'Retirement age must be after your current age.';
-      document.getElementById('barRows').innerHTML = '';
-      document.getElementById('yearBody').innerHTML = '';
-      document.getElementById('limitNote').textContent = '';
-      return;
+    var balance = o.currentBalance;
+    var years = [];
+    var totals = { employee: 0, employer: 0, growth: 0, deposit: 0 };
+
+    for (var age = o.currentAge, i = 0; age < o.retirementAge; age++, i++) {
+      var salary = o.salary * Math.pow(1 + raise, i);
+      var L = limitsFor(age, i, infl);
+
+      // You: the percentage you chose, held at the IRS limit for your age.
+      var desired = salary * pct;
+      var employee = Math.min(desired, L.limit);
+
+      // Employer: matches what you actually put in (not what you wished you could),
+      // on at most the first $360,000 of pay, and never past the total-additions cap.
+      var counted = Math.min(salary, L.comp);
+      var employer = matchRate * Math.min(employee, matchCap * counted);
+      var room = Math.max(0, Math.min(L.additions, salary) - Math.min(employee, L.base));
+      if (employer > room) employer = room;
+      var wished = matchRate * Math.min(desired, matchCap * salary);   // match with no IRS limits at all
+
+      var deposit = (o.depositAmount > 0 && age === o.depositAge) ? o.depositAmount : 0;
+
+      var start = balance;
+      var base = start + deposit;
+      var put = employee + employer;
+      var end = (o.timing === 'start')
+        ? (base + put) * (1 + ret)                       // everything goes in on day one
+        : base * (1 + ret) + put * Math.sqrt(1 + ret);   // spread through the year: about half a year of growth
+      var growth = end - base - put;
+
+      totals.employee += employee;
+      totals.employer += employer;
+      totals.growth += growth;
+      totals.deposit += deposit;
+
+      years.push({
+        age: age, startBalance: start, deposit: deposit, employeeContrib: employee, employerContrib: employer,
+        growth: growth, endBalance: end, limit: L.limit,
+        capped: desired > L.limit + 0.005,
+        matchCut: wished - employer > 0.5
+      });
+      balance = end;
     }
 
-    var r = projectRetirement(opts);
-    var yearsToGo = opts.retirementAge - opts.currentAge;
+    return {
+      years: years,
+      finalBalance: balance,
+      finalReal: balance / Math.pow(1 + infl, years.length),
+      totals: totals
+    };
+  }
 
-    document.getElementById('finalBalance').textContent = fmt(r.finalBalance);
-    document.getElementById('finalBalanceSub').textContent = 'In ' + yearsToGo + ' years, at age ' + opts.retirementAge + ' (today\'s dollars, before any withdrawal taxes)';
+  // ---------- reading the form ----------
+  var FIELDS = {
+    currentAge:     { min: 18, max: 80, whole: true, required: true },
+    retirementAge:  { min: 19, max: 85, whole: true, required: true },
+    currentBalance: { min: 0, max: 1e9, money: true },
+    salary:         { min: 0, max: 1e9, money: true },
+    contribPct:     { min: 0, max: 100, pct: true },
+    matchRate:      { min: 0, max: 200, pct: true },
+    matchCapPct:    { min: 0, max: 100, pct: true },
+    returnRate:     { min: -10, max: 20, pct: true },
+    salaryGrowth:   { min: 0, max: 20, pct: true },
+    inflation:      { min: 0, max: 10, pct: true },
+    depositAmount:  { min: 0, max: 1e9, money: true },
+    depositAge:     { whole: true }
+  };
 
-    var startBal = opts.currentBalance;
-    var parts = [
-      ['Starting balance', startBal, '#4B534F'],
-      ['Your contributions', r.totalEmployeeContrib, '#C14324'],
-      ['Employer match', r.totalEmployerContrib, '#F4B740'],
-      ['Investment growth', r.totalGrowth, '#0D7A7C']
-    ];
-    var maxPart = Math.max.apply(null, parts.map(function(p){ return p[1]; }));
-    var barsHtml = '';
-    parts.forEach(function(p){
-      var pct = maxPart > 0 ? (p[1]/maxPart*100) : 0;
-      barsHtml += '<div class="bar-row"><div class="bar-label">'+p[0]+'</div>' +
-        '<div class="bar-track"><div class="bar-fill" style="width:'+pct+'%;background:'+p[2]+';"></div></div>' +
-        '<div class="bar-value">'+fmt(p[1])+'</div></div>';
+  function show(f, n){
+    if (f.pct) return trim(n) + '%';
+    if (f.money) return '$' + n.toLocaleString('en-US');
+    return String(n);
+  }
+  function trim(n){ return String(Math.round(n * 100) / 100); }
+
+  function readField(id){
+    var f = FIELDS[id];
+    var raw = document.getElementById(id).value;
+    var n = parseFloat(raw);
+    var out = { value: f.required ? NaN : 0, blank: false, note: '' };
+    if (raw === '' || !isFinite(n)) { out.blank = true; return out; }
+    if (f.whole && n !== Math.floor(n)) { n = Math.floor(n); out.note = 'Using ' + n + ' (whole years only).'; }
+    if (f.min !== undefined && n < f.min) { n = f.min; out.note = 'Using ' + show(f, n) + ' (the lowest this calculator accepts).'; }
+    if (f.max !== undefined && n > f.max) { n = f.max; out.note = 'Using ' + show(f, n) + ' (the highest this calculator accepts).'; }
+    out.value = n;
+    return out;
+  }
+
+  function read(){
+    var v = {}, notes = {}, blank = {};
+    Object.keys(FIELDS).forEach(function(id){
+      if (id === 'depositAge') return;
+      var r = readField(id);
+      v[id] = r.value; blank[id] = r.blank;
+      if (r.note) notes[id] = r.note;
     });
-    document.getElementById('barRows').innerHTML = barsHtml;
+    v.timing = document.getElementById('timing').value === 'start' ? 'start' : 'spread';
 
-    var hitLimit = r.years.some(function(y){ return y.employeeContrib < opts.salary * (opts.contribPct/100) - 0.5; });
-    document.getElementById('limitNote').textContent = hitLimit
-      ? 'In at least one year, your desired contribution was capped at the IRS annual limit for your age.'
-      : '';
+    if (blank.currentAge || blank.retirementAge) {
+      return { ok: false, msg: 'Enter your current age and the age you plan to retire to see a projection.', notes: notes };
+    }
+    if (v.retirementAge <= v.currentAge) {
+      return { ok: false, msg: 'Retirement age must be after your current age.', notes: notes };
+    }
 
-    var body = document.getElementById('yearBody');
-    body.innerHTML = '';
-    var toShow = r.years.filter(function(y, i){
-      return i === 0 || i === r.years.length-1 || (i+1) % 5 === 0;
-    });
-    toShow.forEach(function(y, idx){
-      var tr = document.createElement('tr');
-      if (idx === toShow.length-1) tr.className = 'net';
-      tr.innerHTML = '<td>'+y.age+'</td><td>'+fmt(y.startBalance)+'</td><td>'+fmt(y.employeeContrib)+'</td><td>'+fmt(y.employerContrib)+'</td><td>'+fmt(y.growth)+'</td><td>'+fmt(y.endBalance)+'</td>';
-      body.appendChild(tr);
+    // The deposit age depends on the two ages above.
+    var d = readField('depositAge');
+    v.depositAge = v.currentAge;
+    if (v.depositAmount > 0) {
+      if (!d.blank) {
+        v.depositAge = d.value;
+        if (d.note) notes.depositAge = d.note;
+        if (v.depositAge < v.currentAge) { v.depositAge = v.currentAge; notes.depositAge = 'Using ' + v.depositAge + ' (your age today).'; }
+        if (v.depositAge > v.retirementAge - 1) { v.depositAge = v.retirementAge - 1; notes.depositAge = 'Using ' + v.depositAge + ' (your last year before retirement).'; }
+      }
+    }
+    return { ok: true, v: v, notes: notes };
+  }
+
+  // ---------- showing results ----------
+  function fmt(n){
+    var r = Math.round(n);
+    if (r === 0) r = 0;
+    return (r < 0 ? '-' : '') + '$' + Math.abs(r).toLocaleString('en-US');
+  }
+  function fmtChange(n){ var r = Math.round(n); return (r > 0 ? '+' : '') + fmt(n); }
+  function el(id){ return document.getElementById(id); }
+
+  function setNotes(notes){
+    Object.keys(FIELDS).forEach(function(id){
+      var box = el('note-' + id);
+      if (!box) return;
+      var text = notes[id] || '';
+      box.textContent = text;
+      box.hidden = !text;
     });
   }
 
-  ['currentAge','retirementAge','currentBalance','salary','contribPct','matchRate','matchCapPct','returnRate','salaryGrowth'].forEach(function(id){
-    document.getElementById(id).addEventListener('input', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
-    document.getElementById(id).addEventListener('change', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
+  function clearResults(msg){
+    el('finalBalance').textContent = '—';
+    el('finalBalanceSub').textContent = msg;
+    el('finalReal').textContent = '';
+    el('matchCallout').hidden = true;
+    el('barRows').innerHTML = '';
+    el('yearBody').innerHTML = '';
+    el('limitNote').textContent = '';
+    el('matchLimitNote').textContent = '';
+    el('whatIfBody').innerHTML = '';
+    el('whatIfSection').hidden = true;
+    el('toggleYears').hidden = true;
+  }
+
+  function withPct(v, pct){
+    var c = {};
+    Object.keys(v).forEach(function(k){ c[k] = v[k]; });
+    c.contribPct = pct;
+    return c;
+  }
+
+  var showAllYears = false;
+
+  function calc(){
+    var inp = read();
+    setNotes(inp.notes);
+    if (!inp.ok) { clearResults(inp.msg); return; }
+    var v = inp.v;
+    var r = project(v);
+    var n = r.years.length;
+
+    if (!isFinite(r.finalBalance)) { clearResults('These numbers are too large to project. Try smaller amounts.'); return; }
+
+    el('finalBalance').textContent = fmt(r.finalBalance);
+    el('finalBalanceSub').textContent = 'In ' + n + (n === 1 ? ' year' : ' years') + ', at age ' + v.retirementAge + ' · before any taxes on withdrawals';
+    el('finalReal').textContent = 'About ' + fmt(r.finalReal) + " in today's dollars (with " + trim(v.inflation) + '% yearly inflation)';
+
+    // --- where it came from ---
+    // Every figure is shown in whole dollars and growth is what is left of the projected balance after the other parts,
+    // so the parts below always add up to the number at the top (rounding each one separately could land a dollar away).
+    var shownStart = Math.round(v.currentBalance), shownDeposit = Math.round(r.totals.deposit),
+        shownYou = Math.round(r.totals.employee), shownMatch = Math.round(r.totals.employer);
+    var shownGrowth = Math.round(r.finalBalance) - shownStart - shownDeposit - shownYou - shownMatch;
+    var growthLabel = r.totals.growth < 0 ? 'Investment losses' : 'Investment growth';
+    var parts = [['Starting balance', shownStart, '#4B534F']];
+    if (r.totals.deposit > 0) parts.push(['One-time deposit', shownDeposit, '#6B7A74']);
+    parts.push(['Your contributions', shownYou, '#C14324']);
+    parts.push(['Employer match', shownMatch, '#F4B740']);
+    parts.push([growthLabel, shownGrowth, r.totals.growth < 0 ? '#8A2B1B' : '#0D7A7C']);
+    var maxPart = Math.max.apply(null, parts.map(function(p){ return Math.abs(p[1]); }));
+    var barsHtml = '';
+    parts.forEach(function(p){
+      var w = maxPart > 0 ? Math.abs(p[1]) / maxPart * 100 : 0;
+      barsHtml += '<div class="bar-row"><div class="bar-label">' + p[0] + '</div>' +
+        '<div class="bar-track"><div class="bar-fill" style="width:' + w + '%;background:' + p[2] + ';"></div></div>' +
+        '<div class="bar-value">' + fmt(p[1]) + '</div></div>';
+    });
+    el('barRows').innerHTML = barsHtml;
+
+    // --- employer match callout ---
+    var callout = el('matchCallout');
+    var first = r.years[0];
+    callout.hidden = true;
+    if (v.matchRate > 0 && v.matchCapPct > 0 && v.salary > 0) {
+      var fullMatchNow = (v.matchRate / 100) * (v.matchCapPct / 100) * Math.min(v.salary, LIMITS.comp);
+      if (first.employerContrib >= fullMatchNow - 0.5) {
+        callout.className = 'callout good';
+        callout.textContent = "You're contributing enough to get your employer's full match.";
+        callout.hidden = false;
+      } else if (v.contribPct < v.matchCapPct) {
+        var full = project(withPct(v, v.matchCapPct));
+        callout.className = 'callout';
+        callout.textContent = "You're leaving employer money on the table. Your employer matches up to " + trim(v.matchCapPct) + '% of pay, but you contribute ' + trim(v.contribPct) + '%. Contributing ' + trim(v.matchCapPct) + '% would bring in about ' + fmt(full.years[0].employerContrib - first.employerContrib) + ' more in employer match in year 1 and add about ' + fmt(full.finalBalance - r.finalBalance) + ' to your balance at retirement.';
+        callout.hidden = false;
+      }
+    }
+
+    // --- year-by-year table ---
+    var body = el('yearBody');
+    body.innerHTML = '';
+    var rows = r.years.filter(function(y, i){
+      return showAllYears || i === 0 || i === n - 1 || (i + 1) % 5 === 0 || y.deposit > 0;
+    });
+    rows.forEach(function(y, idx){
+      var tr = document.createElement('tr');
+      if (idx === rows.length - 1) tr.className = 'net';
+      // whole dollars, and each row adds up as shown: start + you + employer + growth = end
+      // (growth is what is left of the end balance; the start of a year is always the end of the year before)
+      var rowStart = Math.round(y.startBalance + y.deposit), rowYou = Math.round(y.employeeContrib), rowMatch = Math.round(y.employerContrib),
+          rowEnd = Math.round(y.endBalance), rowGrowth = rowEnd - rowStart - rowYou - rowMatch;
+      tr.innerHTML = '<td>' + y.age + '</td><td>' + fmt(rowStart) + (y.deposit > 0 ? '<span class="incl">incl. ' + fmt(y.deposit) + ' deposit</span>' : '') + '</td><td>' + fmt(rowYou) + '</td><td>' + fmt(rowMatch) + '</td><td' + (rowGrowth < 0 ? ' class="neg"' : '') + '>' + fmt(rowGrowth) + '</td><td>' + fmt(rowEnd) + '</td>';
+      body.appendChild(tr);
+    });
+    var toggle = el('toggleYears');
+    toggle.hidden = n <= 2;
+    toggle.textContent = showAllYears ? 'Show fewer years' : 'Show every year';
+    toggle.setAttribute('aria-pressed', showAllYears ? 'true' : 'false');
+
+    // --- IRS limit notes ---
+    var capped = r.years.filter(function(y){ return y.capped; });
+    el('limitNote').textContent = capped.length
+      ? 'Starting at age ' + capped[0].age + ', ' + trim(v.contribPct) + '% of your pay is more than the IRS limit, so your contribution is held at the limit (' + fmt(capped[0].limit) + ' that year). This applies in ' + capped.length + ' of ' + n + ' years.'
+      : '';
+    var cut = r.years.filter(function(y){ return y.matchCut; });
+    el('matchLimitNote').textContent = cut.length
+      ? 'IRS limits (on what you can contribute, on the pay a plan can count — $360,000 in 2026 — and on total yearly contributions — $72,000 in 2026) reduce your employer match in ' + cut.length + ' of ' + n + ' years.'
+      : '';
+
+    // --- what if you saved more ---
+    var section = el('whatIfSection');
+    var tbody = el('whatIfBody');
+    tbody.innerHTML = '';
+    section.hidden = !(v.salary > 0);
+    if (v.salary > 0) {
+      var scenarios = [{ label: trim(v.contribPct) + '% (now)', pct: v.contribPct, now: true, res: r }];
+      var seen = {}; seen[v.contribPct] = true;
+      [1, 3, 5].forEach(function(d){
+        var p = Math.min(100, v.contribPct + d);
+        if (!seen[p]) { seen[p] = true; scenarios.push({ label: trim(p) + '%', pct: p }); }
+      });
+      if (!seen[100]) scenarios.push({ label: 'Max out (IRS limit)', pct: 100 });
+      scenarios.forEach(function(s){ if (!s.res) s.res = project(withPct(v, s.pct)); });
+      // A row that changes nothing (you are already at the IRS limit) only adds noise.
+      var useful = scenarios.filter(function(s){ return s.now || Math.abs(s.res.finalBalance - r.finalBalance) >= 0.5; });
+      var anyMore = useful.length > 1;
+      el('whatIfWrap').hidden = !anyMore;
+      el('whatIfNone').hidden = anyMore;
+      if (anyMore) {
+        useful.forEach(function(s){
+          var tr = document.createElement('tr');
+          if (s.now) tr.className = 'now';
+          var diff = Math.round(s.res.finalBalance) - Math.round(r.finalBalance);   // difference of the two numbers shown
+          tr.innerHTML = '<td>' + s.label + '</td><td>' + fmt(s.res.years[0].employeeContrib / 12) + '</td><td>' + fmt(s.res.finalBalance) + '</td><td' + (!s.now ? ' class="gain"' : '') + '>' + (s.now ? '—' : fmtChange(diff)) + '</td>';
+          tbody.appendChild(tr);
+        });
+      }
+    }
+  }
+
+  // ---------- wiring ----------
+  Object.keys(FIELDS).forEach(function(id){
+    var input = el(id);
+    var box = document.createElement('div');
+    box.className = 'field-note';
+    box.id = 'note-' + id;
+    box.setAttribute('role', 'status');
+    box.hidden = true;
+    var wrap = input.parentNode.classList.contains('prefix-wrap') || input.parentNode.classList.contains('suffix-wrap') ? input.parentNode : input;
+    wrap.parentNode.insertBefore(box, wrap.nextSibling);
+    input.setAttribute('aria-describedby', ((input.getAttribute('aria-describedby') || '') + ' note-' + id).trim());
   });
+
+  function onChange(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); }
+  Object.keys(FIELDS).concat(['timing']).forEach(function(id){
+    el(id).addEventListener('input', onChange);
+    el(id).addEventListener('change', onChange);
+  });
+  el('toggleYears').addEventListener('click', function(){ showAllYears = !showAllYears; calc(); });
   calc();
 })();
 </script>

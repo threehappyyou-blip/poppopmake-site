@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -191,51 +71,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <a class="nav-link" href="/manual">All manual sections</a>
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/manual">All manual sections</a></nav>
   </div>
 </header>
 
@@ -268,13 +104,13 @@
     <p class="what-for">Combines two or more PDF files into a single file, in whatever order you choose.</p>
     <ol>
       <li><strong>Open the tool.</strong> Go to Document &amp; Image Tools and make sure the "Merge PDFs" tab is selected (it's the first one, and selected by default).</li>
-      <li><strong>Add your files.</strong> Drag two or more PDF files from your computer directly onto the box that says "Drag PDFs here," or click "Choose PDF files" to open a file picker. You can select multiple files at once in that picker by holding Ctrl (Windows) or Cmd (Mac) while clicking each one.</li>
-      <li><strong>Check the order.</strong> Your files appear in a list in the order they'll be merged. If you need a different order, drag any file up or down in the list until it's right.</li>
-      <li><strong>Remove a file if needed.</strong> Each file in the list has a small remove (×) button next to it if you added one by mistake.</li>
-      <li><strong>Click "Merge PDFs."</strong> The button is near the bottom of the box.</li>
-      <li><strong>Download.</strong> A single combined PDF downloads automatically to your computer's usual downloads folder.</li>
+      <li><strong>Add your files.</strong> Drag two or more PDF files from your computer onto the box that says "Drag PDFs here," or click "Choose PDF files" to open a file picker (hold Ctrl on Windows or Cmd on a Mac to pick several at once). You can add more files later — new ones go to the end of the list. Anything that isn't a PDF is skipped, and a red message names each file that was left out.</li>
+      <li><strong>Check the order.</strong> Your files appear in a list in the order they'll be merged. To change the order, use the &uarr; and &darr; arrow buttons next to a file to move it up or down.</li>
+      <li><strong>Remove a file if needed.</strong> Each file has a × button on its row if you added one by mistake.</li>
+      <li><strong>Click "Merge PDFs."</strong> The button stays greyed out until the list has at least two files.</li>
+      <li><strong>Download.</strong> One combined PDF, merged.pdf, downloads automatically, and the message under the button tells you how many pages it has.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> There's no limit on file size or how many PDFs you merge, and no daily limit either. Because everything happens in your browser, very large files (100+ MB total) may take longer, since your own device is doing the work instead of a server.</div>
+    <div class="tip-box"><strong>Good to know:</strong> There's no limit on file size, how many PDFs you merge, or how often you use it. Because everything happens in your browser, very large files (100+ MB total) may take longer, since your own device is doing the work instead of a server. A PDF that is password-protected or has copy/edit restrictions can't be merged without producing a broken file, so the tool refuses it and names the file; open it in a PDF viewer, use Print → Save as PDF to make an unprotected copy, and add that copy instead. PDFs you make in Split PDF or Images to PDF can be sent straight to this list with their "Send … to Merge →" buttons.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -284,13 +120,13 @@
     <p class="what-for">Pulls specific pages out of a PDF and saves them as a new, separate PDF.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "Split PDF" tab.</li>
-      <li><strong>Add your file.</strong> Drag one PDF onto the drop area, or click "Choose a PDF file."</li>
-      <li><strong>See your pages.</strong> Once loaded, you'll see a thumbnail or list entry for every page in the document, numbered.</li>
-      <li><strong>Choose which pages to keep.</strong> Type the page numbers you want in the text field — for example, "1-3, 5" keeps pages 1 through 3 and page 5, skipping page 4.</li>
-      <li><strong>Click "Split PDF."</strong></li>
-      <li><strong>Download.</strong> A new PDF containing only the pages you chose downloads automatically.</li>
+      <li><strong>Add your file.</strong> Drag one PDF onto the drop area, or click "Choose a PDF file." This tool works on one file at a time — if you choose several, only the first is opened, and a note under the box says so.</li>
+      <li><strong>See how many pages it has.</strong> Once the file is read, a "Pages to extract" box appears with a line underneath saying how many pages the PDF has.</li>
+      <li><strong>Type the pages you want.</strong> Separate page numbers and ranges with commas — for example, "1-3, 5, 7-9" keeps pages 1 to 3, page 5, and pages 7 to 9. Page numbers that don't exist in the document are ignored. Pages always come out in their original order, each one once, however you type them.</li>
+      <li><strong>Click "Extract Pages."</strong> The button turns on as soon as at least one valid page is entered.</li>
+      <li><strong>Download.</strong> A new PDF named extracted.pdf, containing only the pages you chose, downloads automatically. A "Send extracted pages to Merge →" button also appears, in case you want to combine those pages with other PDFs.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Your original file is never changed — this always creates a new file with your chosen pages, leaving the file you uploaded untouched (though "untouched" just describes the copy in your browser's memory during this session, since nothing was ever saved anywhere in the first place).</div>
+    <div class="tip-box"><strong>Good to know:</strong> Your original file is never changed — you always get a new file. If you change the page numbers after extracting, the "Send to Merge" button disappears so it can't hand over pages that no longer match what's typed. A password-protected or restricted PDF is refused with a message explaining how to make an unprotected copy first.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -300,12 +136,13 @@
     <p class="what-for">Turns one or more JPG or PNG photos into a single PDF file, one image per page.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "Images to PDF" tab.</li>
-      <li><strong>Add your images.</strong> Drag one or more JPG/PNG files onto the drop area, or click "Choose images" and select multiple at once.</li>
-      <li><strong>Reorder if needed.</strong> Drag any thumbnail left or right to change which page it becomes.</li>
+      <li><strong>Add your images.</strong> Drag JPG or PNG files onto the drop area, or click "Choose images" and select several at once. Other file types are skipped, and a red message names them (for phone HEIC or WebP photos, open and re-save them as JPG first).</li>
+      <li><strong>Reorder if needed.</strong> Each image appears in a list with a thumbnail. Use the &uarr; and &darr; arrow buttons to move it up or down (the top image becomes page 1), or × to remove it.</li>
+      <li><strong>Choose the page layout.</strong> "Page size" is "Same as each image" by default, or you can pick A4 or US Letter. When you pick A4 or Letter, "Orientation" turns on: Automatic (landscape for wide images, portrait for tall ones), Portrait, or Landscape. "Margin" adds white space around the image: None, Small (0.25 in), or Medium (0.5 in).</li>
       <li><strong>Click "Convert to PDF."</strong></li>
-      <li><strong>Download.</strong> One PDF, with each image as its own full page, downloads automatically.</li>
+      <li><strong>Download.</strong> One PDF, images.pdf, with each image on its own page, downloads automatically. A "Send this PDF to Merge →" button appears if you want to combine it with other PDFs.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Each image becomes a page sized to match that image's own dimensions, so a mix of portrait and landscape photos will produce a PDF with different page sizes throughout — that's expected, not an error.</div>
+    <div class="tip-box"><strong>Good to know:</strong> With "Same as each image," each page is sized to match its photo, so a mix of portrait and landscape photos produces pages of different sizes. With A4 or Letter, every page is the same size and each image is scaled down to fit inside the margins, centered and never stretched. Phone photos that are stored sideways are turned upright automatically. If you change a setting after converting, the "Send to Merge" button disappears, because the PDF you made no longer matches the settings shown.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -315,13 +152,13 @@
     <p class="what-for">Automatically detects the main subject in a photo and removes everything behind it, leaving a transparent background — good for product photos or profile pictures.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "Remove Background" tab.</li>
-      <li><strong>Add your photo.</strong> Drag a JPG or PNG onto the drop area, or click "Choose an image."</li>
-      <li><strong>Wait for the first-time download.</strong> The first time you use this tool in a browser, it downloads a small AI model (a one-time thing — it's cached after that, so it's instant on future visits). You'll see a status message while this happens.</li>
-      <li><strong>Wait for processing.</strong> Once the model is ready, the background removal itself usually takes a few seconds.</li>
-      <li><strong>Review the result.</strong> You'll see a preview with the background removed, shown against a checkerboard pattern (the standard way to show transparency).</li>
-      <li><strong>Download.</strong> Click "Download" to save it as a PNG, which is the only common format that supports transparency.</li>
+      <li><strong>Choose the photo type.</strong> "Portrait / simple background" (about 25 MB, faster) suits a person against a fairly simple background. "Complex scene / multiple subjects" (about 220 MB, slower) handles busy backgrounds, several subjects, or products better.</li>
+      <li><strong>Add your photo.</strong> Drag a JPG or PNG onto the drop area, or click "Choose a photo." Your original appears on the left under "ORIGINAL." Other formats are refused with a message (for phone HEIC or WebP photos, re-save them as JPG first).</li>
+      <li><strong>Click "Remove Background."</strong> The first time you use each photo type, the tool downloads its AI model — a one-time download that stays on your device, so later visits are much faster. A status message tells you what it's doing; the first run can take up to a couple of minutes.</li>
+      <li><strong>Review the result.</strong> The cut-out appears on the right under "RESULT," shown on a checkerboard pattern (the standard way to show transparency).</li>
+      <li><strong>Download.</strong> Click "Download PNG" — PNG is the common format that keeps the transparent background. If you'd like to turn the cut-out into a PDF page, "Send this photo to Images to PDF →" adds it to that tool's list.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This works best when there's a clear, single main subject. Fine details like loose hair strands or fur edges can come out slightly imperfect — review the result before using it somewhere that needs a clean edge.</div>
+    <div class="tip-box"><strong>Good to know:</strong> This works best when there's a clear main subject. Fine details like loose hair strands or fur edges can come out slightly imperfect, and the tool says so in the result message: if it still looks off, try the other photo type. Review the result before using it somewhere that needs a clean edge.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -332,11 +169,11 @@
     <ol>
       <li><strong>Open the tool.</strong> Click the "Clean Metadata" tab.</li>
       <li><strong>Add your file.</strong> Drag a PDF onto the drop area, or click "Choose a PDF file."</li>
-      <li><strong>See what's currently in it.</strong> The tool shows you the existing metadata fields it found — this is worth a look, since it's often more revealing than people expect.</li>
-      <li><strong>Click "Clean Metadata."</strong></li>
-      <li><strong>Download.</strong> A copy of your PDF with those fields removed downloads automatically. The visible content of the document is completely unchanged — only the hidden fields are affected.</li>
+      <li><strong>See what's currently in it.</strong> A table lists the hidden fields found in the file — title, author, subject, keywords, producer, creator, created and modified dates, and whether an XMP metadata stream (often added by Adobe-family tools) is present. If there's nothing, it says "No metadata found — this file already looks clean." It's worth a look: it's often more revealing than people expect.</li>
+      <li><strong>Optionally set a title and author.</strong> Instead of leaving them blank, you can type a book title and/or author name to put into the cleaned file — handy before uploading a manuscript to KDP, for example. Leave both empty to remove everything.</li>
+      <li><strong>Click "Clean and Download."</strong> A copy of your PDF named cleaned-&lt;original name&gt;.pdf downloads automatically.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This removes standard metadata fields properly, including the underlying XMP data stream some tools leave behind even after clearing the visible fields — not just what shows in a basic "Properties" panel.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The visible content of the document is completely unchanged — only the hidden fields are affected. The tool removes the standard fields and also the underlying XMP data stream that some tools leave behind even after the visible fields are cleared, not just what shows in a basic "Properties" panel. It can't remove anything printed on the pages themselves, and a password-protected PDF is refused with a message explaining how to make an unprotected copy first.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -346,62 +183,65 @@
     <p class="what-for">Shrinks a photo's file size, and/or converts it between JPG, PNG, and WebP formats.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "Compress &amp; Convert Image" tab.</li>
-      <li><strong>Add your photo.</strong> Drag an image onto the drop area, or click "Choose an image."</li>
-      <li><strong>Pick your output format.</strong> Choose JPG, PNG, or WebP from the format options — WebP usually gives the smallest file size for the same visual quality, but JPG is more universally supported by older software.</li>
-      <li><strong>Adjust quality if you want.</strong> A quality slider lets you trade off file size against visual quality — drag it and watch the estimated file size update.</li>
-      <li><strong>Click "Download."</strong> The converted, compressed file downloads immediately — there's no separate "convert" step before download.</li>
+      <li><strong>Add your photo.</strong> Drag an image onto the drop area, or click "Choose an image." JPG, PNG, WebP and most other formats your browser can open work. The original's size in pixels and file size appear on the left.</li>
+      <li><strong>Pick your output format.</strong> Choose JPG (the default), WebP, or PNG. WebP usually gives the smallest file for the same visual quality, but JPG is more universally supported by older software.</li>
+      <li><strong>Set a maximum size if you want.</strong> "Max dimension (px, optional)" limits the longer side of the picture — for example, 1600 shrinks anything larger so its long side is 1600 pixels. Leave it empty to keep the original size. A picture is never enlarged.</li>
+      <li><strong>Adjust the quality.</strong> The slider runs from 1% to 100% (80% to start). Lower means a smaller file with more visible compression. The "Result" side updates a moment after every change, showing the new size in pixels, the new file size, and how much smaller (or larger) it is.</li>
+      <li><strong>Click "Download."</strong> The file downloads as &lt;original name&gt;_compressed with the new extension. There's no separate "convert" step.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> PNG is lossless (no quality slider effect) — if you need to shrink a PNG's file size, converting to JPG or WebP first usually helps far more than any PNG-specific compression could.</div>
+    <div class="tip-box"><strong>Good to know:</strong> PNG is lossless, so the quality slider is switched off for PNG output — if you need to shrink a PNG's file size, converting to JPG or WebP usually helps far more. JPG can't store transparency, so transparent areas turn white. If the result comes out larger than the original, the Result side says so and suggests lowering quality or changing format. If your browser can't save WebP files (some older Safari versions), the tool tells you rather than quietly giving you a different format.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="redact">
     <span class="tool-tag">Tab 7</span>
     <h2>Redact PDF</h2>
-    <p class="what-for">Permanently blacks out sensitive information in a PDF — an ID number, an account number, a signature — so it's genuinely gone, not just covered up. Can also write new text over what you've blacked out.</p>
+    <p class="what-for">Permanently blacks out sensitive information in a PDF — an ID number, an account number, a signature — so it's genuinely gone, not just covered up. Can search for words and numbers for you, and can also write new text over what you've blacked out.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "Redact PDF" tab.</li>
-      <li><strong>Add your file.</strong> Drag a PDF onto the drop area, or click "Choose a PDF file." The page renders as an image you can draw on.</li>
-      <li><strong>Navigate to the right page.</strong> If your PDF has multiple pages, use "Prev" and "Next" above the page to find the one you need.</li>
-      <li><strong>Choose black-out or add-text mode.</strong> The two mode buttons at the top switch between "■ Black out" (permanently hides an area) and "Aa Add text" (writes new text, useful for correcting something you've just blacked out).</li>
-      <li><strong>Draw over what you want to hide.</strong> Click and drag directly on the page image to draw a box over the sensitive area. Draw it generously — a little wider than the text itself — since only what's inside the box gets covered.</li>
-      <li><strong>Add replacement text if needed.</strong> Switch to "Add text" mode, drag a box over the same spot (wide enough for your new text), then type your replacement and press Enter.</li>
-      <li><strong>Undo if you make a mistake.</strong> The "Undo last change" button removes your most recent box or text, one step at a time.</li>
+      <li><strong>Add your file.</strong> Drag a PDF onto the drop area, or click "Choose a PDF file." The page renders as an image you can draw on. A PDF that needs a password to open is refused with a message telling you to remove the password first (open it, then Print → Save as PDF).</li>
+      <li><strong>Navigate to the right page.</strong> If your PDF has several pages, use "Prev" and "Next" above the page to move through them; the label between them shows which page you're on.</li>
+      <li><strong>Let the tool find things for you (optional).</strong> Open "Find &amp; black out automatically." Type the words or numbers to look for, one per line, and/or tick Email addresses, Phone numbers, ID numbers (SSN, resident registration no.), or Card numbers. Click "Find &amp; mark on all pages" and black boxes appear on every page where something matched; the message tells you how many matches it found. Flip through the pages to check each box — they're placed by estimating where each word sits, so draw an extra box wherever one falls short. "Remove auto-marked boxes" deletes only the automatic ones and keeps any you drew yourself, and running Find again replaces the earlier automatic boxes.</li>
+      <li><strong>Draw over what you want to hide.</strong> With the "■ Black out" button selected, click and drag directly on the page image to draw a box over the sensitive area. Draw it generously — a little wider than the text itself — since only what's inside the box gets covered.</li>
+      <li><strong>Add replacement text if needed.</strong> Switch to "Aa Add text," drag a box over the old text, type your replacement, and press Enter (Esc cancels). The box gets a white background first so nothing underneath shows through, and it grows to fit your text if the text is longer than the box. The "Size" field sets the text size.</li>
+      <li><strong>Undo if you make a mistake.</strong> "Undo last change on this page" removes the most recent box or text on the page you're looking at, one step at a time.</li>
       <li><strong>Repeat for other pages.</strong> Navigate to each page that needs redaction and repeat.</li>
       <li><strong>Click "Redact All Pages &amp; Download."</strong> This processes every page in the document, not just the ones you visited.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This works best on scanned or photographed documents (like a photo of an ID card) — the most common real case for needing this. The finished file has no selectable text on any page, since every page becomes a flat image; that's what makes the redaction genuinely permanent, but it also means the output PDF is no longer searchable or copy-pasteable, even on pages you didn't touch.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Every page of the finished file becomes a flat picture, so nothing underneath a black box can be selected or copied — that's what makes the redaction genuinely permanent. It also means the output PDF is no longer searchable or copy-pasteable, even on pages you didn't touch. "Find &amp; black out automatically" only works on PDFs that contain real text; on a scanned PDF it tells you there's nothing to search, so draw boxes by hand (or run Extract Text (OCR) first to see what's in it). The tool works best on scanned or photographed documents, such as a photo of an ID card.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="ocr">
     <span class="tool-tag">Tab 8</span>
     <h2>Extract Text (OCR)</h2>
-    <p class="what-for">Reads the text in a photo or scanned image and turns it into text you can select, copy, and paste — a photo of a sign, a printed page, a screenshot.</p>
+    <p class="what-for">Reads the text in a photo, a scanned page, a screenshot, or a PDF (including multi-page ones) and turns it into text you can select, copy, and save.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "Extract Text (OCR)" tab.</li>
-      <li><strong>Add your image.</strong> Drag a photo or screenshot onto the drop area, or click "Choose an image."</li>
-      <li><strong>Wait for the download and processing.</strong> The first use downloads a small OCR engine (cached after that); you'll see a progress bar while the image is being read.</li>
-      <li><strong>Review the extracted text.</strong> It appears in a text box below the image. Check it over — no OCR tool is perfect, especially with unusual fonts, low resolution, or handwriting.</li>
-      <li><strong>Copy it.</strong> Click "Copy Text" to copy everything to your clipboard, ready to paste wherever you need it.</li>
+      <li><strong>Add your file.</strong> Drag an image or a PDF onto the drop area, or click "Choose a file."</li>
+      <li><strong>Pick the language.</strong> Choose what's actually written in the file from the Language list (33 languages, including English, Korean, Japanese, Chinese, Spanish, French, German, Russian, Arabic and Hindi). If the text mixes that language with English, tick "Also recognize English." The wrong language gives much worse results than a slow correct one. Each language downloads its own data the first time you use it (a few MB), then it's cached.</li>
+      <li><strong>Click "Extract Text."</strong> A progress bar shows the OCR engine loading and then the pages being read one by one (for example, "Page 2 of 5"). A "Stop" button next to it cancels the job; nothing is extracted if you stop.</li>
+      <li><strong>Review the extracted text.</strong> It appears in the text box. For a multi-page PDF, each page starts with a "--- Page N ---" line. A page with no text is marked, and so is a page that couldn't be read; the message above the box names them. Check the text over — no OCR tool is perfect, especially with unusual fonts, low resolution, or handwriting.</li>
+      <li><strong>Copy or save it.</strong> Click "Copy text" to copy everything to your clipboard, or "Download .txt" to save it as a text file named after your original.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Clear, well-lit, horizontal text works best. Handwriting, heavily stylized fonts, and text at an angle are all harder for any OCR engine, including this one — always proofread the result rather than trusting it blindly.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Clear, well-lit, horizontal text works best. Handwriting, heavily stylized fonts, and text at an angle are all harder for any OCR engine, including this one — always proofread the result rather than trusting it blindly. If "Copy text" doesn't work in your browser, the text is selected for you, so press Ctrl+C (Cmd+C on a Mac).</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="face-mosaic">
     <span class="tool-tag">Tab 9</span>
     <h2>Face Mosaic</h2>
-    <p class="what-for">Automatically finds every face in a photo and covers each one — good for group photos or screenshots you're about to share publicly.</p>
+    <p class="what-for">Automatically finds the faces in a photo and covers them — and lets you cover any it missed, or leave one uncovered, by hand. Good for group photos or screenshots you're about to share publicly.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "Face Mosaic" tab.</li>
       <li><strong>Add your photo.</strong> Drag an image onto the drop area, or click "Choose an image."</li>
-      <li><strong>Wait for detection.</strong> The tool finds every face automatically — no clicking on faces yourself is needed.</li>
-      <li><strong>Choose a style.</strong> Pick "Pixelate," "Blur," or "Black box" from the style buttons above the image; the result updates instantly when you switch, without needing to re-detect faces.</li>
-      <li><strong>Check the result.</strong> Look over the photo to make sure every face that needed covering was found — detection can occasionally miss a face at an unusual angle or in poor lighting.</li>
-      <li><strong>Click "Download."</strong></li>
+      <li><strong>Wait for detection.</strong> The first time, the tool downloads a small face-detection model (it's cached afterward). Then it finds the faces automatically, and the message tells you how many it found.</li>
+      <li><strong>Choose a style.</strong> Pick "Pixelate," "Blur," or "Black box" above the photo; every box updates instantly, without re-detecting.</li>
+      <li><strong>Fix what the detector got wrong.</strong> <strong>Missed a face?</strong> Drag a box over it. <strong>Don't want one covered?</strong> Click its box to switch it off (click again to bring it back; clicking a box you drew yourself removes it). "Undo last box" removes the box you drew most recently.</li>
+      <li><strong>Read the outlines.</strong> A teal outline marks a face found automatically, orange is a box you added, and a dashed grey outline is a box that's switched off. Untick "Show outlines" to see the plain result. The outlines are only a guide — they never appear in the downloaded photo.</li>
+      <li><strong>Click "Download."</strong> The photo is saved as face-mosaic.png.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> If a face is missed, this tool doesn't currently offer a way to manually cover it — for that, use "Screenshot Markup" instead, which has a manual, click-and-drag mosaic area that works on anything, not just detected faces.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Automatic detection can miss faces at unusual angles or in poor lighting, so always look the whole photo over before you share it. A box you draw covers whatever is under it, face or not, so you can also use it to hide something like a name tag. Photos larger than 50 megapixels are reduced first, and a note tells you the new size.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -412,12 +252,12 @@
     <ol>
       <li><strong>Open the tool.</strong> Click the "Enhance Quality" tab.</li>
       <li><strong>Add your photo.</strong> Drag an image onto the drop area, or click "Choose an image."</li>
-      <li><strong>Choose a method.</strong> "Fast" is instant and needs no download — genuinely the right choice for most photos. "AI Upscale" reconstructs more real detail on very soft images, at the cost of a one-time model download and slower processing.</li>
-      <li><strong>Choose a scale</strong> (2× or 4×) if you're using Fast mode. AI Upscale always produces a 4× result, regardless of this setting.</li>
-      <li><strong>Click "Enhance."</strong></li>
-      <li><strong>Download.</strong></li>
+      <li><strong>Choose a method.</strong> "Fast" is instant and needs no download — genuinely the right choice for most photos. "AI Upscale" can recover more real detail on very soft images, at the cost of a one-time model download and slower processing.</li>
+      <li><strong>Choose a scale.</strong> 2× or 4× for Fast mode. AI Upscale always produces a 4× result, whichever scale button is selected, and the message says so when it finishes.</li>
+      <li><strong>Click "Enhance."</strong> With AI Upscale, a progress bar shows the model downloading the first time (it then stays on your device). If your photo is larger than about 1 megapixel, a warning appears, because the AI method can then be very slow or run out of memory; Fast mode handles any size.</li>
+      <li><strong>Review and download.</strong> The enlarged photo appears below; click "Download" to save it as enhanced.png.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> No upscaling method, AI or otherwise, can recover detail that was never captured in the original photo — it can sharpen and reduce blur, but it can't turn a truly tiny, low-detail thumbnail into a crisp, high-detail image out of nowhere.</div>
+    <div class="tip-box"><strong>Good to know:</strong> No upscaling method, AI or otherwise, can recover detail that was never captured in the original photo — it can sharpen and reduce blur, but it can't turn a truly tiny, low-detail thumbnail into a crisp image out of nowhere. In Fast mode, if the size you picked would be bigger than your browser can build (roughly 8000 × 8000 pixels), the tool automatically uses a smaller scale and tells you what you got; if even 2× is too big, it asks you to shrink or crop the photo first.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -427,14 +267,15 @@
     <p class="what-for">Removes an unwanted object, person, or sign from a photo, with AI filling in what was probably behind it.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "AI Eraser" tab.</li>
-      <li><strong>Add your photo.</strong> Drag an image onto the drop area, or click "Choose an image." Your photo is resized to a fixed 512×512 working copy — this is the resolution the AI model operates at.</li>
-      <li><strong>Adjust the brush size</strong> using the slider if the default is too big or small for what you're removing.</li>
-      <li><strong>Paint over what you want removed.</strong> Click and drag directly on the photo, covering the object completely — the AI can only work with what you've marked.</li>
+      <li><strong>Add your photo.</strong> Drag an image onto the drop area, or click "Choose an image." Your photo stays at its original resolution (photos over 50 megapixels are reduced first, and a note tells you the new size).</li>
+      <li><strong>Adjust the brush size</strong> with the slider if the default is too big or too small for what you're removing.</li>
+      <li><strong>Paint over what you want removed.</strong> Click and drag directly on the photo, covering the object completely and a little beyond its edges — the AI can only work with what you've marked.</li>
       <li><strong>Undo a stroke if needed</strong> using "Undo brush stroke," which removes your most recent stroke.</li>
-      <li><strong>Click "Erase."</strong> The first use downloads the AI model — it's a larger download (roughly 200MB), so it's worth doing on Wi-Fi. This is cached after the first time.</li>
-      <li><strong>Review and download.</strong> Check the result, then click "Download."</li>
+      <li><strong>Click "Erase."</strong> The first use downloads the AI model — a large download (roughly 200 MB), so it's worth doing on Wi-Fi. A progress bar shows the percentage; after that the model stays on your device.</li>
+      <li><strong>Review the result.</strong> The painted area is filled in and the rest of your photo is unchanged. Not what you wanted? "Undo last erase" steps back one erase at a time, and you can try again, painting a little beyond the object's edges. You can also paint another object and press Erase again.</li>
+      <li><strong>Click "Download."</strong> The photo is saved as erased.png at its original size.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This works best for removing a person, sign, or object from an otherwise simple, photo-realistic background — not for large areas or very intricate detail. The 512×512 working size means the output won't match your original photo's exact resolution.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The AI repaints a 512×512 patch around what you painted and pastes it back, so the rest of your photo stays untouched at full resolution. It works best for removing a person, sign, or object from an otherwise simple, photo-realistic background; very large areas come out soft, and very intricate detail won't be reproduced.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -453,7 +294,7 @@
       <li><strong>Undo if needed</strong> using the Undo button, which removes your most recent action.</li>
       <li><strong>Click "Download."</strong></li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Unlike Face Mosaic, this tool's mosaic is entirely manual — you decide exactly what area gets covered, which makes it the right choice for hiding something that isn't a face.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Face Mosaic also lets you draw boxes by hand, but if you're already marking up a screenshot, "Mosaic area" here lets you hide a license plate, an address, or a logo in the same pass as your arrows and text — you decide exactly what area gets covered. Everything you draw is saved into the PNG you download (markup.png).</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -469,30 +310,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

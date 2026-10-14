@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -191,51 +71,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <a class="nav-link" href="/manual">All manual sections</a>
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/manual">All manual sections</a></nav>
   </div>
 </header>
 
@@ -259,83 +95,84 @@
   <section class="tool-section" id="age">
     <span class="tool-tag">Tab 1</span>
     <h2>Age Calculator</h2>
-    <p class="what-for">Calculates exact age — or the time between any two dates — down to years, months, and days.</p>
+    <p class="what-for">Works out exact age in years, months, and days — as of today or as of any other date — along with the total days lived and the days left until the next birthday.</p>
     <ol>
-      <li><strong>Enter a birth date</strong> (or the earlier of two dates you're comparing) using the date field.</li>
-      <li><strong>Enter the date to calculate to</strong> — today's date is often filled in by default, but you can change it to any other date.</li>
-      <li><strong>Read the result:</strong> the exact number of years, months, and days between the two dates.</li>
+      <li><strong>Enter the date of birth</strong> in the "Date of birth" field — type it or pick it from the calendar. The field starts at January 1, 2000, so replace it with the real date.</li>
+      <li><strong>Leave "Calculate age as of" on today,</strong> or pick another date to see the age on that day — for example, how old someone will be at a future event or was at a past one. Clearing the field goes back to today.</li>
+      <li><strong>Read the result.</strong> The large line shows the age as years, months, and days (for example 36y 4m 29d), and the line under it writes the same age out in words.</li>
+      <li><strong>Check the three chips below it:</strong> "Total days lived", "Days to next birthday" (it says "Today!" on the birthday itself), and "Born on a" (the weekday of the birth date).</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This also works for calculating the time until a future date, not just age from a past birth date — enter a future date as the "to" date to see a countdown instead.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The same steps give the time between any two dates: enter the earlier date as the date of birth and the later one as "Calculate age as of". A future "as of" date shows the age on that day — it is not a countdown to an event — and "Days to next birthday" is counted from the "as of" date. A birth date after the "as of" date shows "That birth date is in the future", and an incomplete date shows "Enter a valid date". A February 29 birthday counts as March 1 in years that are not leap years.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="percentage">
     <span class="tool-tag">Tab 2</span>
     <h2>Percentage Calculator</h2>
-    <p class="what-for">Handles three common percentage questions: what is X% of Y, what percent is X of Y, and percent change between two numbers.</p>
+    <p class="what-for">Answers four everyday percentage questions: what is X% of Y, X is what percent of Y, the percent change from one number to another, and a number increased or decreased by a percentage.</p>
     <ol>
-      <li><strong>Choose which type of question</strong> you're asking, using the tabs or toggle for each mode.</li>
-      <li><strong>Enter your numbers</strong> into the two fields for that mode.</li>
-      <li><strong>Read the result,</strong> which updates live as you type.</li>
+      <li><strong>Pick the question</strong> with the four buttons at the top: "X% of Y", "X is what % of Y", "% change, X to Y", or "Increase/decrease by %".</li>
+      <li><strong>Fill in the two boxes that appear for that question:</strong> "Percentage" and "Of this number"; "This number" and "Is what % of this"; "From" and "To"; or "Starting number" and "Percentage". Each question starts with example numbers, so type over them.</li>
+      <li><strong>For "Increase/decrease by %",</strong> choose "Increase" or "Decrease" under the boxes (Increase is selected first).</li>
+      <li><strong>Read the result</strong> in the large box — it updates as you type — with a one-line explanation under it, such as "Increase from 100 to 150" or "100 increased by 20% = 120".</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> "Percent change" and "percentage points" are different things this tool distinguishes correctly — going from 10% to 15% is a 5 percentage-point increase, but a 50% relative increase. Check which one you actually mean before quoting a figure.</div>
+    <div class="tip-box"><strong>Good to know:</strong> "% change, X to Y" divides by the starting number, so going from 10 to 15 is +50%, while going from 15 back to 10 is -33.33%, not -50%. A change from 0, or "X is what % of 0", cannot be written as a percentage, so the result says "Undefined" and explains why instead of showing a made-up number. This calculator works with percent change, not percentage points (the 5-point gap between 10% and 15%).</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="tip">
     <span class="tool-tag">Tab 3</span>
     <h2>Tip &amp; Split Calculator</h2>
-    <p class="what-for">Splits a restaurant bill among any number of people, with a choice of tipping on the subtotal or the after-tax total.</p>
+    <p class="what-for">Works out the tip and each person's share of a restaurant bill, with an optional sales-tax line and a choice of tipping on the subtotal or on the total after tax.</p>
     <ol>
-      <li><strong>Enter the subtotal</strong> (the amount before tax, from your receipt).</li>
-      <li><strong>Enter the sales tax rate</strong> if you want tax included in the breakdown.</li>
-      <li><strong>Choose a tip percentage</strong> using the preset buttons (15%, 18%, 20%, 25%) or type a custom amount.</li>
-      <li><strong>Choose what the tip is calculated on</strong> — subtotal (before tax) or total (after tax). Most etiquette guides suggest tipping on the subtotal.</li>
-      <li><strong>Enter the number of people</strong> splitting the bill.</li>
-      <li><strong>Read the breakdown:</strong> subtotal, tax, tip, and total, both overall and per person.</li>
+      <li><strong>Enter the "Subtotal (before tax)"</strong> — the amount for the food and drink on the receipt, before tax.</li>
+      <li><strong>Enter the "Sales tax" rate</strong> as a percent if you want tax in the breakdown. It starts at 0, which leaves the tax row out.</li>
+      <li><strong>Set the "Tip percentage":</strong> press 15%, 18%, 20%, or 25%, or type your own number. The highlighted button always matches the number in the box.</li>
+      <li><strong>Choose what the tip is calculated on:</strong> "Subtotal (before tax)" or "Total (after tax)".</li>
+      <li><strong>Enter the "Number of people"</strong> sharing the bill.</li>
+      <li><strong>Read the table.</strong> It has a row each for Subtotal, Tax (only when the sales tax is above 0), Tip, and Total, with the amount for the whole table in the "Total" column and each person's share in "Per person".</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Tipping on the total instead of the subtotal means you're also tipping on the tax itself — a small difference, but worth knowing which one you're actually doing.</div>
+    <div class="tip-box"><strong>Good to know:</strong> When an amount does not divide evenly to the cent, the shares are split so they still add up exactly: "$21.12×2 + $21.13×2" means two people pay $21.12 and two pay $21.13. Tipping on the total also tips on the tax itself; most etiquette guides suggest tipping on the subtotal. Fewer than 1 person counts as 1 person, a fraction is dropped (2.9 counts as 2), and a negative amount counts as 0.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="password">
     <span class="tool-tag">Tab 4</span>
     <h2>Password Generator</h2>
-    <p class="what-for">Generates a random, secure password using your chosen length and character types.</p>
+    <p class="what-for">Creates a random password of 6 to 64 characters from the character types you choose.</p>
     <ol>
-      <li><strong>Set the length</strong> using the slider or number field — longer is generally more secure.</li>
-      <li><strong>Choose which character types to include</strong> — uppercase letters, lowercase letters, numbers, and symbols, using the checkboxes.</li>
-      <li><strong>Read the generated password,</strong> shown in a field at the top.</li>
-      <li><strong>Click "Copy"</strong> to copy it to your clipboard, or click "Generate" again for a new one if you don't like the first result.</li>
+      <li><strong>Set the length</strong> with the slider. The label above it shows the number ("Length: 16 characters").</li>
+      <li><strong>Tick the character types to include:</strong> Uppercase (A-Z), Lowercase (a-z), Numbers (0-9), and Symbols (!@#$...). A new password appears every time you change the length or a checkbox.</li>
+      <li><strong>Click "↻ Regenerate"</strong> for another password with the same settings.</li>
+      <li><strong>Click "Copy"</strong> to put the password on your clipboard. The button says "Copied!" for a moment.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> The password is generated using your browser's cryptographically secure random number generator, not a simple pseudo-random one — and since nothing is uploaded anywhere, the password never exists outside your own device until you copy and use it yourself.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Every type you tick appears in the password at least once, so it also satisfies sites that insist on a capital letter, a number, and a symbol. The password is made in your browser with its secure random number generator and is never sent anywhere; reload the page and it is gone. If your browser refuses to copy, the password is selected for you with a note to press Ctrl+C (⌘C on a Mac). With no box ticked, the page says "Select at least one character type".</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="unit">
     <span class="tool-tag">Tab 5</span>
     <h2>Unit Converter</h2>
-    <p class="what-for">Converts between units of height, weight, and temperature.</p>
+    <p class="what-for">Converts height, weight, temperature, distance, and volume between metric and US units — all five conversions are on the page at once.</p>
     <ol>
-      <li><strong>Choose a category</strong> — height, weight, or temperature.</li>
-      <li><strong>Choose your "from" unit</strong> (like centimeters, pounds, or Celsius) and enter your value.</li>
-      <li><strong>Choose your "to" unit</strong> (like feet and inches, kilograms, or Fahrenheit).</li>
-      <li><strong>Read the converted value,</strong> which updates live as you type.</li>
+      <li><strong>Find the card you need:</strong> Height (centimeters ↔ feet and inches), Weight (pounds ↔ kilograms), Temperature (°F ↔ °C), Length / Distance (kilometers ↔ miles), or Volume (liters ↔ US gallons).</li>
+      <li><strong>Type a value in either box of that card.</strong> For Height that means centimeters, or feet and inches (the inches box accepts decimals).</li>
+      <li><strong>Read the other box.</strong> It updates as you type. Each card works in both directions, so there is no "from" and "to" to choose.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Height conversions to feet and inches round correctly at the edges — for example, a value that rounds up to a full extra foot displays as that next foot with zero inches, not as an incorrect "12 inches" within the previous foot.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Results are rounded: weight, distance, and volume to 2 decimals; centimeters, inches, and temperature to 1 decimal. Heights carry over properly — 182.8 cm shows as 6 ft 0 in, never "5 ft 12 in". Clearing a box sets the other one to 0. Gallons are US gallons (3.785 liters), not UK gallons.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="timezone">
     <span class="tool-tag">Tab 6</span>
     <h2>Time Zone Converter</h2>
-    <p class="what-for">Shows what one specific moment in time looks like across 11 different time zones at once.</p>
+    <p class="what-for">Shows what one moment looks like in 11 time zones at once, and flags the zones where it falls on a different date than yours.</p>
     <ol>
-      <li><strong>Enter a date and time</strong> in your own time zone.</li>
-      <li><strong>Read the converted times</strong> shown for all 11 zones at once, side by side.</li>
-      <li><strong>Check the day-offset flags.</strong> Zones where the converted time falls on a different calendar day (the day before or after) are marked clearly, since this is the detail that's easy to miss and causes the most scheduling mistakes.</li>
+      <li><strong>Enter the date and time</strong> in "Date and time (your local time)". It starts at the current moment. Enter it in your own time zone, not the other person's.</li>
+      <li><strong>Read the table.</strong> It lists Pacific (US), Mountain (US), Central (US), Eastern (US), UTC, London, Paris, Seoul, Tokyo, Shanghai, and Sydney, each with the local time and a short zone name such as PDT or GMT+9.</li>
+      <li><strong>Look for "(+1 day)" or "(-1 day)"</strong> after a time. It means that in that zone the moment falls on the next or the previous calendar day compared with the date you entered.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Always double-check the day, not just the time, when scheduling something across time zones — a meeting that's "3pm your time" might already be tomorrow morning somewhere else, and the day-offset flags exist specifically to catch that.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Daylight saving time is applied for the date you pick, so the same zone can be an hour apart in summer and winter. The 11 zones are fixed, and clearing the field brings back the prompt to enter a date and time. Check the day as well as the hour when you schedule something across zones — "3 pm your time" can already be tomorrow morning somewhere else.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -351,30 +188,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

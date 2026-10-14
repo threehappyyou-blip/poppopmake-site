@@ -53,126 +53,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
 
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
@@ -190,7 +70,7 @@
   .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin-bottom:20px;}
 
   .mode-group{display:flex;border:1px solid var(--line);border-radius:8px;overflow:hidden;margin-bottom:20px;}
-  .mode-group button{flex:1;padding:10px 8px;min-height:44px;background:#fff;border:none;font-size:0.85rem;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;}
+  .mode-group button{flex:1;padding:10px 8px;background:#fff;border:none;font-size:0.85rem;font-family:'Inter',sans-serif;color:var(--ink-soft);cursor:pointer;}
   .mode-group button.active{background:var(--teal);color:#fff;font-weight:600;}
   .mode-group button:not(:last-child){border-right:1px solid var(--line);}
 
@@ -204,6 +84,8 @@
 
   .check-row{display:flex;align-items:center;gap:8px;font-size:0.9rem;color:var(--ink-soft);cursor:pointer;margin-top:4px;}
   .check-row input{width:16px;height:16px;flex-shrink:0;}
+  .range-hint{display:none;font-size:0.88rem;color:var(--orange);margin:14px 0 0;}
+  .range-hint.show{display:block;}
 
   .result-panel{text-align:center;padding:32px 24px;}
   .big-stat{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:3rem;letter-spacing:-0.02em;line-height:1;}
@@ -221,12 +103,6 @@
 
   .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:8px;margin-bottom:20px;font-size:0.88rem;color:var(--ink-soft);}
   .disclaimer strong{color:var(--ink);}
-
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 
   .related-link{display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:var(--ink);gap:12px;}
   .related-link:hover .related-arrow{transform:translateX(3px);}
@@ -257,50 +133,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 <div class="install-bar" id="installBar" hidden data-tool-name="BMI Calc">
@@ -320,7 +153,7 @@
   <div class="verify-badge">
     <div class="verify-grid">
       <div class="verify-item"><span class="verify-label">Source</span><span class="verify-value"><a href="https://www.who.int/news-room/fact-sheets/detail/obesity-and-overweight" target="_blank" rel="noopener">WHO — Obesity and overweight fact sheet</a></span></div>
-      <div class="verify-item"><span class="verify-label">Standard</span><span class="verify-value">WHO BMI classification</span></div>
+      <div class="verify-item"><span class="verify-label">Standard</span><span class="verify-value" id="bmiStandardLabel">WHO BMI classification</span></div>
       <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">September 2026</span></div>
     </div>
     <p class="verify-note">The Asian-specific thresholds below come from a separate source: <a href="https://doi.org/10.1016/S0140-6736(03)15268-3" target="_blank" rel="noopener">WHO Expert Consultation, <em>The Lancet</em>, 2004</a>. If a chatbot gives you a flat "25 is overweight" answer, it's usually just skipping the population-specific cutoffs — see <a href="/how-we-verify">how we check figures like this</a>.</p>
@@ -334,13 +167,13 @@
 
     <div id="metricFields">
       <div class="field-row">
-        <div class="field"><label for="weightKg">Weight (kg)</label><input type="number" id="weightKg" value="70" min="1" max="400" step="0.1"></div>
-        <div class="field"><label for="heightCm">Height (cm)</label><input type="number" id="heightCm" value="175" min="1" max="272" step="0.1"></div>
+        <div class="field"><label for="weightKg">Weight (kg)</label><input type="number" id="weightKg" value="70" min="10" max="400" step="0.1"></div>
+        <div class="field"><label for="heightCm">Height (cm)</label><input type="number" id="heightCm" value="175" min="50" max="272" step="0.1"></div>
       </div>
     </div>
     <div id="imperialFields" style="display:none;">
       <div class="field-row">
-        <div class="field"><label for="weightLb">Weight (lb)</label><input type="number" id="weightLb" value="154" min="1" max="880" step="0.1"></div>
+        <div class="field"><label for="weightLb">Weight (lb)</label><input type="number" id="weightLb" value="154" min="22" max="880" step="0.1"></div>
         <div class="field">
           <label for="heightFt">Height</label>
           <div class="ht-pair">
@@ -357,6 +190,7 @@
       <input type="checkbox" id="asianToggle">
       Use Asian BMI thresholds (WHO Western Pacific Region — lower cutoffs, same formula)
     </label>
+    <p class="range-hint" id="rangeHint" role="status"></p>
   </div>
 
   <div class="panel result-panel" aria-live="polite">
@@ -369,36 +203,7 @@
   </div>
 
   <div class="disclaimer">
-    <strong>BMI is a screening number, not a diagnosis.</strong> It doesn't distinguish muscle from fat, and can misclassify very muscular or very lean people, older adults, and pregnant women. Treat it as one data point — for anything about your own health, a doctor who can look at the whole picture is the right call, not a formula.
-  </div>
-
-  <div class="panel">
-    <h2>Worked example</h2>
-    <p style="margin:0;color:var(--ink-soft);">Someone who is 175&nbsp;cm tall and weighs 70&nbsp;kg: BMI&nbsp;=&nbsp;70&nbsp;÷&nbsp;(1.75&nbsp;×&nbsp;1.75)&nbsp;=&nbsp;70&nbsp;÷&nbsp;3.0625&nbsp;≈&nbsp;<strong style="color:var(--ink);">22.9</strong>. Under the WHO general standard (18.5–24.9 = normal), that's comfortably "normal weight." Under the Asian-specific thresholds (18.5–22.9 = normal), the same 22.9 sits right at the top edge — one more kilogram would tip it into "overweight (at risk)." Same body, two different labels, depending on which population reference is used — which is exactly why the toggle above exists.</p>
-  </div>
-
-  <div class="panel">
-    <h2>Frequently asked questions</h2>
-    <div class="faq-item">
-      <p class="faq-q">Is BMI accurate for muscular or athletic people?</p>
-      <p class="faq-a">No. BMI can't distinguish muscle from fat, so it commonly misclassifies muscular or very athletic people as "overweight" or "obese" even at healthy body-fat levels. It's a population-level screening number, not an individual diagnosis.</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">Why does this calculator have an "Asian BMI thresholds" option?</p>
-      <p class="faq-a">Because health risk at a given BMI isn't identical across populations. A 2004 WHO Expert Consultation, published in <em>The Lancet</em>, found that people of Asian descent tend to show higher diabetes and cardiovascular risk at lower BMI values than the WHO's general cutoffs assume — so several health authorities in Asia use lower thresholds (23 instead of 25 for "overweight," 25 instead of 30 for "obese") with the exact same formula.</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">What counts as a "normal" BMI?</p>
-      <p class="faq-a">Under the WHO general standard, 18.5–24.9 is classed as normal weight. Under the Asian-specific thresholds, the normal range is narrower: 18.5–22.9.</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">My BMI says "overweight" but my doctor isn't concerned — why?</p>
-      <p class="faq-a">Because a doctor looks at more than one number: muscle mass, waist circumference, blood pressure, blood sugar, family history. BMI is one input among several, not a verdict on its own.</p>
-    </div>
-    <div class="faq-item">
-      <p class="faq-q">Does this tool store or send my height and weight anywhere?</p>
-      <p class="faq-a">No. The calculation runs entirely in your browser; nothing you type is sent to a server, logged, or saved after you close the tab.</p>
-    </div>
+    <strong>BMI is a screening number, not a diagnosis.</strong> It doesn't distinguish muscle from fat, and can misclassify very muscular or very lean people, older adults, and pregnant women. The categories are for adults (18 and over); for children and teens, BMI is read against growth charts for their age and sex instead. Treat it as one data point — for anything about your own health, a doctor who can look at the whole picture is the right call, not a formula.
   </div>
 
   <a class="panel related-link" href="/calorie-calculator">
@@ -417,30 +222,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script src="/install-prompt.js" defer></script>
 <script>
@@ -505,11 +286,35 @@ if ('serviceWorker' in navigator) {
   scaleTrack.appendChild(marker);
 
   var unit = 'metric';
+
+  function fieldNum(id){ return parseFloat(document.getElementById(id).value); }
+  function round1(n){ return Math.round(n * 10) / 10; }
+  // Switching units converts what is already typed, instead of leaving the other unit's boxes at their old values.
+  function convertUnits(from, to){
+    if (from === 'metric' && to === 'imperial') {
+      var kg = fieldNum('weightKg'), cm = fieldNum('heightCm');
+      if (kg > 0) document.getElementById('weightLb').value = round1(kg / 0.45359237);
+      if (cm > 0) {
+        var totalIn = round1(cm / 2.54);
+        var ft = Math.floor(totalIn / 12);
+        document.getElementById('heightFt').value = ft;
+        document.getElementById('heightIn').value = round1(totalIn - ft * 12);
+      }
+    } else if (from === 'imperial' && to === 'metric') {
+      var lb = fieldNum('weightLb');
+      var f = fieldNum('heightFt') || 0, i = fieldNum('heightIn') || 0;
+      if (lb > 0) document.getElementById('weightKg').value = round1(lb * 0.45359237);
+      if (f * 12 + i > 0) document.getElementById('heightCm').value = round1((f * 12 + i) * 2.54);
+    }
+  }
+
   document.querySelectorAll('.unit-btn').forEach(function(btn){
     btn.addEventListener('click', function(){
+      var previous = unit;
       document.querySelectorAll('.unit-btn').forEach(function(b){ b.classList.remove('active'); });
       btn.classList.add('active');
       unit = btn.dataset.unit;
+      if (unit !== previous) convertUnits(previous, unit);
       document.getElementById('metricFields').style.display = unit === 'metric' ? '' : 'none';
       document.getElementById('imperialFields').style.display = unit === 'imperial' ? '' : 'none';
       calc();
@@ -535,8 +340,13 @@ if ('serviceWorker' in navigator) {
     }
 
     var pill = document.getElementById('bmiCategoryPill');
+    var hintEl = document.getElementById('rangeHint');
+    hintEl.classList.remove('show'); hintEl.textContent = '';
     var isAsian = document.getElementById('asianToggle').checked;
     scaleTrack.style.background = buildScale(isAsian);
+    document.getElementById('bmiStandardLabel').textContent = isAsian
+      ? 'WHO Asian-specific BMI classification'
+      : 'WHO BMI classification (standard)';
 
     if (!weightKg || !heightCm || weightKg <= 0 || heightCm <= 0) {
       document.getElementById('bmiValue').textContent = '—';
@@ -546,13 +356,39 @@ if ('serviceWorker' in navigator) {
       return;
     }
 
-    var bmi = calcBMI(weightKg, heightCm);
-    var cat = isAsian ? bmiCategoryAsian(bmi) : bmiCategoryStandard(bmi);
+    // A height or weight that cannot be a real person's is almost always a typo or the wrong unit (1.75 typed into
+    // the centimeter box, say). Say so, rather than printing a BMI like 22,857 with a category next to it.
+    var problem = '';
+    if (heightCm < 50 || heightCm > 272) {
+      problem = unit === 'metric'
+        ? 'That height looks off. Enter it in centimeters, between 50 and 272 (for example 175).'
+        : 'That height looks off. Enter it between 1 ft 8 in and 8 ft 11 in.';
+    } else if (weightKg < 10 || weightKg > 400) {
+      problem = unit === 'metric'
+        ? 'That weight looks off. Enter it in kilograms, between 10 and 400 (for example 70).'
+        : 'That weight looks off. Enter it between about 22 and 880 lb.';
+    }
+    if (problem) {
+      document.getElementById('bmiValue').textContent = '—';
+      pill.textContent = '—';
+      pill.className = 'category-pill';
+      marker.style.left = '0%';
+      hintEl.textContent = problem;
+      hintEl.classList.add('show');
+      return;
+    }
 
-    document.getElementById('bmiValue').textContent = bmi.toFixed(1);
+    var bmi = calcBMI(weightKg, heightCm);
+    // Sort into a category by the number that is shown: 24.96 displays as 25.0, so it must not sit next to
+    // "Normal weight" when the scale below says 25 is where "Overweight" starts.
+    var bmiText = bmi.toFixed(1);
+    var shown = parseFloat(bmiText);
+    var cat = isAsian ? bmiCategoryAsian(shown) : bmiCategoryStandard(shown);
+
+    document.getElementById('bmiValue').textContent = bmiText;
     pill.textContent = cat.label;
     pill.className = 'category-pill ' + cat.cls;
-    marker.style.left = pct(bmi) + '%';
+    marker.style.left = pct(shown) + '%';
 
     if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
   }

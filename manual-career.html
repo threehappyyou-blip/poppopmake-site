@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -191,51 +71,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <a class="nav-link" href="/manual">All manual sections</a>
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/manual">All manual sections</a></nav>
   </div>
 </header>
 
@@ -259,63 +95,63 @@
     <h2>Resume Builder</h2>
     <p class="what-for">Builds a clean, single-column resume as a downloadable PDF, formatted to be easy for both people and applicant tracking systems to read.</p>
     <ol>
-      <li><strong>Open the tool.</strong> Go to Career Tools and make sure "Resume Builder" is selected.</li>
-      <li><strong>Fill in your contact information</strong> — name, email, phone, location.</li>
-      <li><strong>Add your work experience.</strong> Click "Add job" for each position, filling in the company, title, dates, and a few bullet points describing what you did.</li>
-      <li><strong>Add your education</strong> the same way — school, degree, dates.</li>
-      <li><strong>Add skills</strong> as a list.</li>
-      <li><strong>Reorder sections if needed</strong> by dragging them, if the tool offers drag handles for section order.</li>
-      <li><strong>Preview</strong> to see how it looks as you go.</li>
-      <li><strong>Click "Download PDF"</strong> once you're happy with it.</li>
+      <li><strong>Open the tool.</strong> Go to Career Tools and make sure "Resume Builder" is selected (it's the first tab).</li>
+      <li><strong>Fill in your contact info.</strong> "Full name," "Email," "Phone," and "Location," plus an optional "LinkedIn / portfolio" link.</li>
+      <li><strong>Write a short summary (optional).</strong> Two or three sentences on who you are and what you're looking for.</li>
+      <li><strong>Add your work experience.</strong> Click "+ Add work experience" for each job. Fill in the job title, company, and dates (typed as you want them to appear, like "Jan 2022 - Present"), then put one bullet per line in the description. Use the ↑ and ↓ buttons on a job to move it up or down, and the × in its corner to remove it.</li>
+      <li><strong>Add your education.</strong> Click "+ Add education" for each school: degree, school, and dates.</li>
+      <li><strong>Add your skills.</strong> Type them in the Skills box, separated by commas.</li>
+      <li><strong>Click "Preview" (optional).</strong> Your resume appears in a viewer below the buttons, so you can check the layout before you download.</li>
+      <li><strong>Click "Download Resume PDF."</strong> The PDF is named after you (for example Jane_Doe_Resume.pdf). A long resume simply continues onto more pages.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> The single-column layout is a deliberate choice — multi-column resumes can confuse automated resume-scanning software (ATS) into reading text out of order, which single-column formats avoid entirely.</div>
+    <div class="tip-box"><strong>Good to know:</strong> The single-column layout is a deliberate choice — multi-column resumes can confuse automated resume-scanning software (ATS) into reading text out of order, which single-column formats avoid entirely. Sections you leave empty are left out, and nothing is saved between visits, so keep your own copy of what you type. The PDF uses a standard font, so English and Western European letters (é, ñ, ü), numbers, and symbols like € work, but Korean, Chinese, Japanese, Arabic, Cyrillic, and emoji can't be drawn; if you type one, the tool tells you which box and which character to change.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="ats">
     <span class="tool-tag">Tab 2</span>
     <h2>ATS Score Checker</h2>
-    <p class="what-for">Compares your resume's text against a specific job description's keywords, showing which important terms are missing.</p>
+    <p class="what-for">Compares your resume's text against a specific job description's keywords, showing which important terms are in your resume and which are missing.</p>
     <ol>
       <li><strong>Open the tool.</strong> Click the "ATS Score Checker" tab.</li>
-      <li><strong>Paste your resume text</strong> into the first box — a plain-text copy works fine, you don't need to upload a file.</li>
-      <li><strong>Paste the job description</strong> into the second box, copied from the job posting.</li>
+      <li><strong>Paste your resume text</strong> into the first box ("Your resume") — plain text copied from your resume works fine; you don't need to upload a file.</li>
+      <li><strong>Paste the job description</strong> into the second box, copied from the job posting. Paste the whole posting if you can: a very short one doesn't contain enough keywords to compare, and the tool will say so.</li>
       <li><strong>Click "Check Match."</strong></li>
-      <li><strong>Read the results.</strong> You'll see a match score and a list of keywords from the job description that don't appear in your resume.</li>
-      <li><strong>Adjust your resume</strong> based on genuinely relevant missing keywords, then re-check if you want to see the updated score.</li>
+      <li><strong>Read the results.</strong> You'll see a percentage score, a line saying how many keywords from the job description appear in your resume (for example, "14 of 20"), and two lists of keywords: "Matched keywords" and "Missing keywords."</li>
+      <li><strong>Adjust your resume</strong> to add any genuinely relevant missing keywords, then paste the updated text and check again to see the new score.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This is a keyword-matching tool, not a simulation of any specific company's actual ATS software — those vary widely and their exact scoring logic isn't public. Treat a low score as "worth a look," not a verdict on whether you'll get an interview.</div>
+    <div class="tip-box"><strong>Good to know:</strong> This is a keyword-matching tool, not a simulation of any specific company's actual ATS software — those vary widely and their exact scoring logic isn't public. It picks out the most important terms in the job description (up to 20), matches whole words rather than pieces of words (so "Java" isn't counted as found inside "JavaScript"), and treats simple word endings as the same word (manage, managed, and managing). It reads English text only. Treat a low score as "worth a look," not a verdict on whether you'll get an interview, and only add a keyword if it honestly describes your experience.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="cover-letter">
     <span class="tool-tag">Tab 3</span>
     <h2>Cover Letter Generator</h2>
-    <p class="what-for">Assembles a one-page cover letter PDF from your own answers to a few prompts — it doesn't write content for you, it formats what you provide.</p>
+    <p class="what-for">Assembles a cover letter PDF from your own answers to a few prompts — it doesn't write content for you, it formats what you provide.</p>
     <ol>
-      <li><strong>Open the tool.</strong> Click the "Cover Letter Generator" tab.</li>
-      <li><strong>Fill in the company name and role</strong> you're applying for.</li>
-      <li><strong>Fill in your qualifications</strong> — a few sentences or bullet points about why you're a fit, in your own words.</li>
-      <li><strong>Fill in your contact information.</strong></li>
-      <li><strong>Preview</strong> the assembled letter.</li>
-      <li><strong>Click "Download PDF."</strong></li>
+      <li><strong>Open the tool.</strong> Click the "Cover Letter" tab.</li>
+      <li><strong>Fill in your details.</strong> "Full name" and "Email" are printed at the top; "Phone" is optional.</li>
+      <li><strong>Fill in the role.</strong> "Job title" and "Company name" are required (along with your name). "Hiring manager" is optional — leave it blank and the letter starts "Dear Hiring Manager." "Where you saw it posted" is optional too, and adds a phrase like "which I saw on LinkedIn."</li>
+      <li><strong>Say why you're a fit.</strong> Under "Why you're a fit," write each qualification as a phrase that starts with a past-tense verb — the letter adds the "I" for you. For example: "led a redesign that increased signups 20%." Use "+ Add another qualification" for more, and the × to remove one. The letter joins them into natural sentences.</li>
+      <li><strong>Add a personal line (optional).</strong> "Why this company or role" is one or two sentences about what draws you there; leave it blank to skip it.</li>
+      <li><strong>Click "Download Cover Letter PDF."</strong> The PDF is named after you (for example Jane_Doe_Cover_Letter.pdf) and is dated with today's date.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> If you leave the qualifications section blank, the letter is built without a dangling, awkward sentence in its place — the tool skips it cleanly rather than leaving an empty gap.</div>
+    <div class="tip-box"><strong>Good to know:</strong> If you leave the qualifications empty, the letter is built without a dangling, awkward sentence in its place — the tool skips it cleanly rather than leaving an empty gap. What comes out is exactly what you put in, just formatted properly, so read it through before you send it. As in the Resume Builder, the PDF uses a standard font, so Korean, Chinese, Japanese, Arabic, Cyrillic, and emoji can't be drawn; the tool names the box and character if you use one.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="wage">
     <span class="tool-tag">Tab 4</span>
-    <h2>Hourly &harr; Salary Converter</h2>
+    <h2>Hourly ↔ Salary Converter</h2>
     <p class="what-for">Converts between an hourly wage and an equivalent annual salary, using your actual hours per week and weeks per year (not just a flat assumption).</p>
     <ol>
-      <li><strong>Choose your direction</strong> — hourly to salary, or salary to hourly.</li>
-      <li><strong>Enter the amount</strong> (your hourly rate, or your annual salary, depending on direction).</li>
-      <li><strong>Enter your hours per week</strong> — the default is often 40, but adjust it if yours is different.</li>
-      <li><strong>Enter your weeks worked per year</strong> if you don't work all 52 (for example, if you take unpaid time off).</li>
-      <li><strong>Read the converted amount.</strong></li>
+      <li><strong>Open the tool.</strong> Click the "Hourly ↔ Salary" tab.</li>
+      <li><strong>Type in either box.</strong> Enter an "Hourly wage," or an "Annual salary" — the other box updates as you type. There's no direction switch to set; whichever you type in drives the other.</li>
+      <li><strong>Set your hours per week.</strong> It starts at 40. You can enter anything from 1 to 168.</li>
+      <li><strong>Set your weeks worked per year.</strong> It starts at 52 (no unpaid time off). If you take 2 weeks unpaid, enter 50. You can enter anything from 1 to 52.</li>
+      <li><strong>Read the converted amount.</strong> Changing hours or weeks recalculates the annual salary from the hourly wage you have on screen.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> The default assumption of a standard 40-hour, 52-week year is common but not universal — always double check the hours and weeks fields match your actual situation before trusting the converted number.</div>
+    <div class="tip-box"><strong>Good to know:</strong> A standard 40-hour, 52-week year is common but not universal — always check that the hours and weeks match your actual situation before trusting the converted number. Values outside the allowed range are corrected for you (for example, 80 weeks becomes 52). Annual salary is rounded to the nearest dollar, and hourly wage to the nearest cent. All amounts are in dollars and before taxes; to see what you'd actually take home, use the US Paycheck Calculator.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -331,30 +167,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

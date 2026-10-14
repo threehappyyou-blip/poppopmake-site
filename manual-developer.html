@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -191,51 +71,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <a class="nav-link" href="/manual">All manual sections</a>
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/manual">All manual sections</a></nav>
   </div>
 </header>
 
@@ -261,12 +97,13 @@
     <h2>JSON Formatter</h2>
     <p class="what-for">Formats messy JSON into a clean, readable, indented structure — or minifies it down to a single compact line — and checks it's valid along the way.</p>
     <ol>
-      <li><strong>Paste your JSON</strong> into the input box.</li>
-      <li><strong>Click "Format"</strong> to pretty-print it with indentation, or "Minify" to compress it onto one line.</li>
-      <li><strong>Check for errors.</strong> If your JSON isn't valid, an error message points to roughly where the problem is, rather than just failing silently.</li>
-      <li><strong>Copy the result</strong> using the copy button.</li>
+      <li><strong>Paste your JSON</strong> into the "Paste JSON" box (it starts with a small example you can replace).</li>
+      <li><strong>Choose the indent size.</strong> "2 spaces" (the default) or "4 spaces" pretty-prints it with indentation; "Minify (no spaces)" squeezes it onto one line.</li>
+      <li><strong>Click "Format."</strong> The formatted version appears in the "Result" box below. A green message says "Valid JSON, formatted below."</li>
+      <li><strong>Check for errors.</strong> If your JSON isn't valid, a red message says "Not valid JSON" and points to the line and column where the first problem is (for example, <em>Expected ',' or '}' at line 3, column 5</em>), instead of just failing silently. The Result box stays empty until the problem is fixed.</li>
+      <li><strong>Copy the result</strong> with the "Copy result" button.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> A common cause of "invalid JSON" errors is a trailing comma after the last item in an object or array — valid in JavaScript object literals, but not valid in strict JSON.</div>
+    <div class="tip-box"><strong>Good to know:</strong> A common cause of "invalid JSON" errors is a trailing comma after the last item in an object or array, or single quotes instead of double quotes — both fine in JavaScript, but not in strict JSON. Another thing to watch: if your JSON has a whole number larger than 9,007,199,254,740,991 (2<sup>53</sup>), such as a long ID, JavaScript can't store it exactly. The tool still formats it, but adds a warning that the value may have changed — keep IDs like that as strings.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -275,52 +112,53 @@
     <h2>Base64 Encode/Decode</h2>
     <p class="what-for">Converts text to and from Base64 encoding, correctly handling non-Latin text and emoji.</p>
     <ol>
-      <li><strong>Choose "Encode" or "Decode"</strong> using the mode toggle.</li>
-      <li><strong>Paste your text</strong> into the input box (plain text to encode, or a Base64 string to decode).</li>
-      <li><strong>Read the result</strong> in the output box, which updates live.</li>
-      <li><strong>Copy the result</strong> using the copy button.</li>
+      <li><strong>To encode:</strong> type or paste plain text into the "Text" box and click "Encode →." The Base64 version appears in the "Base64" box below.</li>
+      <li><strong>To decode:</strong> paste a Base64 string into the "Base64" box and click "← Decode." The plain text appears in the "Text" box above. If the Base64 box is empty, the tool says so and leaves your text untouched.</li>
+      <li><strong>Pick the style (optional).</strong> Tick "URL-safe output" to encode with - and _ instead of + and /, and no trailing = padding — the form used in web addresses and tokens. You don't need to tick anything to decode URL-safe Base64: the tool spots it and converts it automatically, and tells you it did.</li>
+      <li><strong>Copy the result</strong> with the "Copy result" button, which copies the Base64 box.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Some simpler Base64 tools break on non-English text or emoji because of how they handle character encoding — this one is built specifically to handle UTF-8 text correctly, so Korean, Japanese, emoji, and other non-Latin characters round-trip correctly through encode and decode.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Some simpler Base64 tools break on non-English text or emoji because of how they handle character encoding — this one is built to handle UTF-8 correctly, so Korean, Japanese, emoji, and other non-Latin characters round-trip through encode and decode. If you decode something that isn't valid text (for example, Base64 of an image or a file), the tool warns you that the result may be corrupted, because it can't be shown as readable text.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="uuid">
     <span class="tool-tag">Tab 3</span>
     <h2>UUID Generator</h2>
-    <p class="what-for">Generates random v4 UUIDs (universally unique identifiers), one at a time or in a batch.</p>
+    <p class="what-for">Generates UUIDs (universally unique identifiers) — random, time-based, or sortable — one at a time or in a batch.</p>
     <ol>
-      <li><strong>Choose how many you need</strong> — a single one, or a batch (enter the quantity).</li>
-      <li><strong>Click "Generate."</strong></li>
-      <li><strong>Copy the result(s)</strong> using the copy button — a batch is typically copyable as one list, one UUID per line.</li>
+      <li><strong>Choose a version.</strong> "v4 — random" is the default and the right choice for most uses. "v1 — time-based" is built from the current time. "v7 — sortable (time-ordered)" starts with a timestamp, so UUIDs created later sort after earlier ones — handy for database keys.</li>
+      <li><strong>Get one UUID.</strong> A UUID is already shown when the page opens. Click "Generate new UUID" for another, and "Copy" to copy it.</li>
+      <li><strong>Or get a batch.</strong> Under "Generate multiple," enter how many you need (1 to 100) and click "Generate list." A message confirms how many were made; if you ask for more than 100, you get 100 and the message says so.</li>
+      <li><strong>Copy the batch</strong> with "Copy all," which puts one UUID on each line.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Each UUID is generated independently using a cryptographically random source, so even generating thousands in a batch carries no meaningful risk of a duplicate.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Each UUID is generated independently using your browser's secure random source, so even a batch carries no meaningful risk of a duplicate. The version you pick applies to both the single UUID and the batch. Browsers can't read a computer's hardware address, so v1 UUIDs use a random value in its place, as the standard allows.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="color">
     <span class="tool-tag">Tab 4</span>
     <h2>Color Converter</h2>
-    <p class="what-for">Converts a color between HEX, RGB, and HSL formats, with a live preview swatch.</p>
+    <p class="what-for">Converts a color between HEX, RGB, and HSL formats, with a live preview swatch — and checks how readable text in that color is against another color.</p>
     <ol>
-      <li><strong>Enter a color</strong> in any one of the three formats (HEX, RGB, or HSL) — or use the color picker if one is provided.</li>
-      <li><strong>Read the converted values</strong> in the other two formats, updated live.</li>
-      <li><strong>Check the swatch</strong> to confirm it's the color you meant.</li>
+      <li><strong>Enter a color.</strong> Type a HEX code into the HEX box, or click the small color square beside it to pick one visually. A HEX code can be typed with or without the "#", in short form (<em>#0d7</em>) or long form (<em>#0D7A7C</em>), and with an alpha (transparency) part like <em>#0D7A7C80</em>.</li>
+      <li><strong>Read the converted values.</strong> The HEX, RGB, and HSL versions appear below the swatch, updated as you type. With an alpha part, they appear as <em>rgba(…)</em> and <em>hsla(…)</em>.</li>
+      <li><strong>Copy a value</strong> with the "Copy" button on its row.</li>
+      <li><strong>Check text contrast (optional).</strong> Under "WCAG contrast check," choose the color to compare against (white by default) — type a HEX code or use its color square. The tool shows the contrast ratio and whether the pair passes the AA and AAA accessibility levels for normal and large text.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> HEX codes can be typed with or without the leading "#" — the tool accepts either.</div>
+    <div class="tip-box"><strong>Good to know:</strong> If you type something that isn't a valid HEX color, a red message shows the accepted forms, and the last good values stay on screen until you fix it. The contrast check ignores transparency and compares the opaque colors, and says so when you've entered an alpha part. As a rule of thumb, body text should reach at least 4.5:1 to pass AA.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
   <section class="tool-section" id="url">
     <span class="tool-tag">Tab 5</span>
     <h2>URL Encode/Decode</h2>
-    <p class="what-for">Percent-encodes text for safe use in a URL, or decodes an already-encoded URL back to readable text.</p>
+    <p class="what-for">Percent-encodes text for safe use in a URL, or decodes an already-encoded string back to readable text.</p>
     <ol>
-      <li><strong>Choose "Encode" or "Decode."</strong></li>
-      <li><strong>Paste your text or URL</strong> into the input box.</li>
-      <li><strong>Read the result,</strong> updated live.</li>
-      <li><strong>Copy the result</strong> using the copy button.</li>
+      <li><strong>To encode:</strong> type or paste text into the "Text or URL" box and click "Encode →." The encoded version appears in the "Result" box below.</li>
+      <li><strong>To decode:</strong> paste the encoded text into the "Result" box and click "← Decode." The readable text appears in the "Text or URL" box above. If the Result box is empty, the tool says so and leaves your text untouched.</li>
+      <li><strong>Copy the result</strong> with the "Copy result" button.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> This is most often needed for putting special characters (spaces, &amp;, ?, #) safely into a query string parameter — encode just that parameter's value, not the whole URL, or you'll end up encoding the slashes and colons that need to stay as-is.</div>
+    <div class="tip-box"><strong>Good to know:</strong> This is most often needed for putting special characters (spaces, &amp;, ?, #) safely into a query-string value — encode just that value, not the whole URL, because encoding a full address would also escape the slashes and colons that need to stay as they are. If your input already contains codes like %20, the tool warns that encoding it again will double-encode it (%20 becomes %2520); decode it first if that isn't what you want. Decoding text with a broken % code gives an "invalid" message instead of garbage.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -329,13 +167,12 @@
     <h2>Dummy Data Generator</h2>
     <p class="what-for">Generates fake but realistic-looking test data — names, emails, phone numbers, addresses — for testing an app or filling in a demo.</p>
     <ol>
-      <li><strong>Choose which fields you need</strong> (name, email, phone, address, etc.) using the checkboxes.</li>
-      <li><strong>Choose how many rows</strong> of data to generate.</li>
-      <li><strong>Choose your output format</strong> — CSV or JSON.</li>
-      <li><strong>Click "Generate."</strong></li>
-      <li><strong>Copy or download the result.</strong></li>
+      <li><strong>Choose how many rows</strong> in "Number of rows" (1 to 200; a table of 10 is generated when the page opens).</li>
+      <li><strong>Choose which fields you need.</strong> Tick First name, Last name, Email, Phone, Address, Company, and/or Username. The first five are ticked to begin with; you need at least one.</li>
+      <li><strong>Click "Generate."</strong> A preview table shows your rows. If you ask for more than 200 rows, you get 200 and the message says so.</li>
+      <li><strong>Copy the data.</strong> Click "Copy as CSV" or "Copy as JSON" to copy exactly the rows and fields shown, ready to paste into a spreadsheet, a file, or your code.</li>
     </ol>
-    <div class="tip-box"><strong>Good to know:</strong> Every value is randomly generated and entirely fictional — none of it corresponds to a real person, email address, or phone number, so it's safe to use freely in test environments, demos, or sample datasets.</div>
+    <div class="tip-box"><strong>Good to know:</strong> Every value is randomly made up — the names, street addresses, and (US-style) phone numbers are put together from lists and random digits, and nothing is saved or sent anywhere. Because they're random, a generated email address or phone number could coincidentally belong to a real person, so use the data for test databases and mock-ups, never to send real email or make real calls. For test emails that must not reach anyone, use addresses at example.com instead.</div>
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
@@ -351,30 +188,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

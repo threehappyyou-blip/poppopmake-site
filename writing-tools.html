@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 88px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -214,6 +94,10 @@
 
   .smooth-note{font-size:0.86rem;color:var(--ink-soft);margin-top:18px;padding-top:16px;border-top:1px solid var(--line);}
 
+  .stale-note{display:none;background:rgba(244,183,64,0.18);border:1px solid var(--yellow);border-radius:8px;padding:10px 14px;font-size:0.86rem;color:var(--ink);margin-bottom:16px;}
+  .stale-note.show{display:block;}
+  .is-stale{opacity:0.5;transition:opacity .15s ease;}
+
   .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.86rem;color:var(--ink-soft);}
 
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
@@ -221,14 +105,6 @@
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
   footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
-
-  h3.section-title{font-family:'Space Grotesk',sans-serif;font-size:1.02rem;margin:26px 0 12px;padding-top:16px;border-top:1px solid var(--line);}
-  .panel .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
@@ -238,50 +114,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 
@@ -301,74 +134,36 @@
   </section>
 
   <div class="tabs" role="tablist">
-    <button class="tab-btn active" data-tab="check" role="tab" aria-selected="true">Flagged Phrases</button>
+    <button class="tab-btn active" data-tab="check" role="tab" aria-selected="true">AI-Cliché Check</button>
     <button class="tab-btn" data-tab="smooth" role="tab" aria-selected="false">Smooth It Out</button>
     <button class="tab-btn" data-tab="count" role="tab" aria-selected="false">Word Count &amp; Readability</button>
   </div>
 
   <section class="panel active" id="panel-check">
-    <div id="wr-check-empty" class="empty-note">Paste some text above and click <strong>Analyze Text</strong> — flagged phrases will show up here, highlighted in context.</div>
+    <div id="wr-check-empty" class="empty-note">Paste some text above and click <strong>Analyze Text</strong> — AI-cliché words and phrases (not grammar or spelling) will show up here, highlighted in context.</div>
     <div id="wr-check-results" style="display:none;">
-      <p class="legend"><span class="tier-dot t1"></span>strong signal&nbsp;&nbsp;<span class="tier-dot t2"></span>promotional&nbsp;&nbsp;<span class="tier-dot t3"></span>light signal (only matters in clusters)</p>
-      <div class="highlighted-text" id="wr-highlighted-check"></div>
-      <div class="stats-row" id="wr-stats"></div>
-      <ul class="notes-list" id="wr-notes"></ul>
-      <div id="wr-phrase-list"></div>
+      <div class="stale-note" id="wr-check-stale">Text changed since this was analyzed &mdash; click <strong>Analyze Text</strong> above to refresh these results.</div>
+      <div id="wr-check-content">
+        <p class="legend"><span class="tier-dot t1"></span>strong signal&nbsp;&nbsp;<span class="tier-dot t2"></span>promotional&nbsp;&nbsp;<span class="tier-dot t3"></span>light signal (only matters in clusters)</p>
+        <div class="highlighted-text" id="wr-highlighted-check"></div>
+        <div class="stats-row" id="wr-stats"></div>
+        <ul class="notes-list" id="wr-notes"></ul>
+        <div id="wr-phrase-list"></div>
+      </div>
     </div>
-  
-<h3 class="section-title">Frequently asked questions</h3>
-<div class="faq-item">
-  <p class="faq-q">Is this working from an actual list, or is it doing something smarter than that?</p>
-  <p class="faq-a">It's a fixed list of regex patterns for specific words and phrases — things like delve, tapestry, multifaceted, synergy, and full phrases like "in today's fast-paced world" or "it's important to note that." There's no scoring model or language understanding behind it: if a pattern in that list matches your text, it's flagged and highlighted above, and if it doesn't, it isn't. Hover over any highlighted phrase to see its suggested swap, and paste at least a dozen words before Analyze Text will produce anything.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">What do the orange, yellow, and teal dots mean?</p>
-  <p class="faq-a">They're three fixed groups within that same list, not a calculated score. Orange (tier 1) covers words and phrases rare enough in ordinary writing to be a strong signal on their own — delve, paradigm shift, synergy, "navigate the complexities." Yellow (tier 2) covers promotional-sounding words that only look suspicious in clusters — robust, leverage, foster, empower. Teal (tier 3) is everyday transition words — additionally, furthermore, moreover, notably, crucial — that barely mean anything alone and only matter if several pile up in one passage.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Does it check anything besides specific words and phrases?</p>
-  <p class="faq-a">Yes — separately from the phrase list, it also checks a few structural patterns: whether the text opens or closes on a stock phrase, whether every sentence runs about the same length with little variation, whether a passage of 80 words or more has zero contractions anywhere, and whether em dashes show up more often than usual. These surface as plain-language notes above the phrase list, not as highlights in the text itself.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">If nothing gets flagged, does that mean my text wasn't AI-written?</p>
-  <p class="faq-a">No. This only matches a fixed set of known clichés and patterns — it has no way to evaluate meaning, and plenty of human writers use these exact words too. Careful AI-assisted writing can also avoid every single one of them. Treat a clean result as "no obvious tells by this one check," not as proof either way.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Does this tool send my text anywhere?</p>
-  <p class="faq-a">No. The phrase matching runs as plain JavaScript in your browser against the pattern list described above — there's no fetch or API call anywhere in the code, and nothing you paste leaves the page.</p>
-</div>
-</section>
+  </section>
 
   <section class="panel" id="panel-smooth">
     <div id="wr-smooth-empty" class="empty-note">Paste some text above and click <strong>Analyze Text</strong> — swap suggestions will show up here.</div>
     <div id="wr-smooth-results" style="display:none;">
-      <div class="highlighted-text" id="wr-highlighted-smooth"></div>
-      <div id="wr-suggestion-list"></div>
-      <p class="smooth-note">Word swaps are a starting point, not the whole fix. Stiff writing is usually more about uniform sentence rhythm and vague claims than any single word — if every sentence runs about the same length and nothing is concrete, that reads as AI even with zero phrases flagged above.</p>
+      <div class="stale-note" id="wr-smooth-stale">Text changed since this was analyzed &mdash; click <strong>Analyze Text</strong> above to refresh these suggestions.</div>
+      <div id="wr-smooth-content">
+        <div class="highlighted-text" id="wr-highlighted-smooth"></div>
+        <div id="wr-suggestion-list"></div>
+        <p class="smooth-note">Word swaps are a starting point, not the whole fix. Stiff writing is usually more about uniform sentence rhythm and vague claims than any single word — if every sentence runs about the same length and nothing is concrete, that reads as AI even with zero phrases flagged above.</p>
+      </div>
     </div>
-  
-<h3 class="section-title">Frequently asked questions</h3>
-<div class="faq-item">
-  <p class="faq-q">Does "Smooth It Out" rewrite my text for me?</p>
-  <p class="faq-a">No — your original text is never changed. This tab runs the exact same phrase check as Flagged Phrases, then lists each flagged phrase next to its suggested replacement — for example, leverage → use, or at the end of the day → cut it, or say what you mean directly. You still make every edit yourself; nothing here is an automatic rewriter or find-and-replace.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Where do the suggested replacements come from?</p>
-  <p class="faq-a">Each flagged word or phrase has one fixed suggestion built into the same list the Flagged Phrases tab uses — it's a lookup table, not something generated for your specific sentence. The same word always gets the same suggestion, regardless of the sentence around it.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Why do some suggestions read like instructions instead of an actual word?</p>
-  <p class="faq-a">Not every flagged phrase has a clean one-word substitute. Vague words like multifaceted or tapestry get a suggestion like "name the specific facets instead" or "be concrete instead of this metaphor," because the actual fix is adding a specific detail, not swapping in a different vague word.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">I swapped every suggested word and the text still reads stiff — why?</p>
-  <p class="faq-a">Word-level swaps only fix individual clichés, not sentence rhythm. Text often reads as stiff or AI-generated for structural reasons — uniform sentence length, vague claims, no concrete detail — and no single word swap touches any of that. The note under the suggestion list says this directly; the Flagged Phrases tab's structural notes (sentence-length uniformity, missing contractions, and so on) are a better place to look.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Does this tool send my text anywhere?</p>
-  <p class="faq-a">No. The suggestion list is generated locally from the same in-browser phrase check as Flagged Phrases — nothing you paste is transmitted anywhere.</p>
-</div>
-</section>
+  </section>
 
   <section class="panel" id="panel-count">
     <div id="wr-count-empty" class="empty-note">Start typing in the box above — this tab updates live, no need to click Analyze.</div>
@@ -403,31 +198,9 @@
         </div>
         <div style="font-size:0.82rem;color:var(--ink-soft);margin-top:8px;" id="wc-grade"></div>
       </div>
-      <p class="smooth-note" style="margin-top:14px;">Syllable counting is a standard heuristic, not a dictionary lookup — it gets the vast majority of words right, but the occasional word (especially uncommon ones) can be off by one syllable. Across a real paragraph those small misses average out; treat the score as a solid estimate, not a certified grade level.</p>
+      <p class="smooth-note" style="margin-top:14px;">Syllable counting is a standard heuristic, not a dictionary lookup — it gets the vast majority of words right, but the occasional word (especially uncommon ones) can be off by one syllable. Across a real paragraph those small misses average out; treat the score as a solid estimate, not a certified grade level. The 0&ndash;100 scale and the US grade-level labels come from a formula calibrated on English prose, so for other Latin-script languages treat them as a rough signal, not a literal grade-level comparison. For Korean and other scripts the counts above still work, but no score is shown: the formula would give a number that looks real and means nothing.</p>
     </div>
-  
-<h3 class="section-title">Frequently asked questions</h3>
-<div class="faq-item">
-  <p class="faq-q">What formula does the readability score use?</p>
-  <p class="faq-a">Flesch Reading Ease: 206.835 minus 1.015 times the average number of words per sentence, minus 84.6 times the average number of syllables per word. Higher scores mean easier reading — 90 and up is roughly 5th-grade level, under 30 is roughly college-graduate level. The grade-level line underneath comes from the related Flesch-Kincaid Grade Level formula, built from those same two inputs.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">How does syllable counting actually work?</p>
-  <p class="faq-a">It's a heuristic, not a dictionary lookup: the tool strips common silent endings — a trailing silent e, or -ed/-es — then counts the remaining groups of vowels in what's left, treating y as a vowel too. Any word of three letters or fewer is automatically counted as one syllable. It gets the large majority of real words right, but it's guessing from spelling patterns, not checking actual pronunciation.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">What does the readability score not take into account?</p>
-  <p class="faq-a">Flesch Reading Ease only measures sentence length and syllables per word — it has no sense of meaning, jargon, or whether an idea is actually clear. A sentence built from short nonsense words can score "easy"; a longer sentence built from plain, familiar words can score "difficult." The reading-time estimate has a similar limit — it's just your word count divided by 225 words per minute, and doesn't adjust for how dense the material actually is.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Why might the sentence or paragraph count look off for text I paste in?</p>
-  <p class="faq-a">Sentences are counted as chunks of text ending in a period, question mark, or exclamation point, so a final clause with no closing punctuation at the very end of your text won't be counted. Paragraphs are counted by blank lines between blocks of text, so a single line break (one Enter key press) is treated as the same paragraph, not a new one.</p>
-</div>
-<div class="faq-item">
-  <p class="faq-q">Does this tool send my text anywhere?</p>
-  <p class="faq-a">No. Word count, sentence/paragraph counting, syllable estimation, and the readability formulas all run as plain JavaScript in your browser, recalculating on every keystroke — there's no fetch or API call in the code, and nothing you type is sent anywhere.</p>
-</div>
-</section>
+  </section>
 
   <div class="disclaimer">
     <strong>How this works:</strong> This scans for common AI-writing clichés and patterns — it's a pattern-matcher, not a real AI detector, and it runs entirely in your browser (<a href="/how-it-works">see how to check that yourself</a>). It can't prove text is or isn't AI-written: human writers use plenty of these words too, and polished AI writing can avoid every one of them. Treat flags as a nudge to reconsider a phrase, not a verdict — that matters especially for careful, formal, or non-native English writing, which these kinds of checks can unfairly flag.
@@ -444,30 +217,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
@@ -545,6 +294,32 @@ if ('serviceWorker' in navigator) {
     return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
   }
 
+  // Sentence splitter shared by the Check tab and the Word Count tab, so both always agree.
+  // A sentence ends at . ! ? or an ellipsis when that is followed by whitespace or the end of the text (an optional
+  // closing quote/bracket may sit in between), and at the full-width marks used in Chinese and Japanese.
+  // A period inside a number (3.14) or a web address (example.com) never ends a sentence, nor does one after a
+  // title or abbreviation such as Dr., Mr., Mrs., Ms., Prof., vs., e.g., i.e., nor the dot of a list marker ("1. First").
+  // Text left over after the last mark (no final period) still counts as a sentence.
+  var NOT_AN_ENDING = /(?:^|\s)(?:Mr|Mrs|Ms|Mx|Dr|Prof|Sr|Jr|vs|e\.g|i\.e)$/i;
+  var LIST_MARKER = /(?:^|\n)[ \t]*\d{1,3}$/;
+  function splitSentences(text){
+    var out = [], last = 0, m;
+    var re = /[.!?\u2026]+["'\u201d\u2019)\]]*(?=\s|$)|[\u3002\uff01\uff1f]+["'\u201d\u2019)\]\u300d\u300f]*/g;
+    while ((m = re.exec(text)) !== null){
+      var end = m.index + m[0].length;
+      if (/^\.["'\u201d\u2019)\]]*$/.test(m[0])){
+        var before = text.slice(last, m.index);
+        if (NOT_AN_ENDING.test(before) || LIST_MARKER.test(before)) continue;
+      }
+      var piece = text.slice(last, end).trim();
+      if (piece) out.push(piece);
+      last = end;
+    }
+    var rest = text.slice(last).trim();
+    if (rest) out.push(rest);
+    return out;
+  }
+
   function analyzeText(text){
     var matches = [];
     PHRASES.forEach(function(entry){
@@ -571,7 +346,7 @@ if ('serviceWorker' in navigator) {
 
     var words = text.trim().split(/\s+/).filter(Boolean);
     var wordCount = words.length;
-    var sentences = text.split(/[.!?]+(?:\s+|$)/).map(function(s){return s.trim();}).filter(Boolean);
+    var sentences = splitSentences(text);
     var sentenceLengths = sentences.map(function(s){ return s.split(/\s+/).filter(Boolean).length; });
     var avgLen = sentenceLengths.length ? sentenceLengths.reduce(function(a,b){return a+b;},0) / sentenceLengths.length : 0;
     var variance = sentenceLengths.length ? sentenceLengths.reduce(function(a,b){return a + Math.pow(b-avgLen,2);},0) / sentenceLengths.length : 0;
@@ -678,27 +453,76 @@ if ('serviceWorker' in navigator) {
     if (kind === 'success' && window.ppmMaybeShowThanks) window.ppmMaybeShowThanks();
   }
 
+  // ---- Stale-result tracking for the Check & Smooth tabs ----
+  // Those two tabs only update when "Analyze Text" is clicked, so if the user keeps typing
+  // afterwards the highlighted text/suggestions silently go stale. Flag that clearly instead
+  // of letting an old result keep looking current.
+  var lastAnalyzedText = null;
+  function updateStaleState(){
+    var current = document.getElementById('wr-input').value;
+    var isStale = lastAnalyzedText !== null && current !== lastAnalyzedText;
+    var checkResults = document.getElementById('wr-check-results');
+    var smoothResults = document.getElementById('wr-smooth-results');
+    var checkVisible = checkResults.style.display !== 'none';
+    var smoothVisible = smoothResults.style.display !== 'none';
+    document.getElementById('wr-check-stale').classList.toggle('show', isStale && checkVisible);
+    document.getElementById('wr-smooth-stale').classList.toggle('show', isStale && smoothVisible);
+    document.getElementById('wr-check-content').classList.toggle('is-stale', isStale && checkVisible);
+    document.getElementById('wr-smooth-content').classList.toggle('is-stale', isStale && smoothVisible);
+  }
+
 
   // ================= WORD COUNT & READABILITY (live, no Analyze click needed) =================
+// Precomposed Hangul syllable blocks (U+AC00-U+D7A3, e.g. "가"-"힣") -- unlike English,
+// each one of these code points IS exactly one spoken syllable, so counting them is both simple
+// and accurate (no heuristic needed, unlike the vowel-group guess below).
+var HANGUL_SYLLABLE_RE = /[가-힣]/g;
+// Any character outside Latin letters and Hangul that we don't have a real syllable rule for
+// (CJK ideographs, Arabic, Cyrillic, Thai, etc.) -- used only to decide whether the readability
+// score is trustworthy enough to show, not to count syllables.
+var OTHER_SCRIPT_RE = /[^\x00-\x7F가-힣\s]/;
+
 function countSyllables(word){
-  word = word.toLowerCase().replace(/[^a-z]/g, '');
-  if (word.length === 0) return 0;
-  if (word.length <= 3) return 1;
+  var hangul = word.match(HANGUL_SYLLABLE_RE);
+  if (hangul && hangul.length > 0) return hangul.length;
+
+  var latin = word.toLowerCase().replace(/[^a-z]/g, '');
+  if (latin.length === 0) return 0;
+  if (latin.length <= 3) return 1;
 
   // Strip common silent-e and -es/-ed endings before counting vowel groups
-  word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
-  word = word.replace(/^y/, '');
+  latin = latin.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '');
+  latin = latin.replace(/^y/, '');
 
-  var matches = word.match(/[aeiouy]+/g);
+  var matches = latin.match(/[aeiouy]+/g);
   var count = matches ? matches.length : 1;
   return Math.max(1, count);
+}
+
+// What fraction of words contain at least one Latin letter. The Flesch formula was calibrated on English
+// (other Latin-script languages give a rough signal at best); for text that is mostly some other script
+// (Korean, Chinese, Japanese, Arabic, Cyrillic, Thai...) the number would look real while being meaningless,
+// so no score is shown for it.
+function syllableCountableCoverage(words){
+  if (!words.length) return 1;
+  var countable = 0;
+  words.forEach(function(w){ if (/[a-zA-Z]/.test(w)) countable++; });
+  return countable / words.length;
+}
+// Korean words average roughly three syllables, which pins the English-calibrated scale at "very difficult"
+// (score 0) for almost any Korean text, so Hangul-heavy text gets its own explanation instead of a flat 0.
+function hangulShare(words){
+  if (!words.length) return 0;
+  var n = 0;
+  words.forEach(function(w){ if (/[가-힣]/.test(w)) n++; });
+  return n / words.length;
 }
 
 function analyzeReadability(text){
   var trimmed = text.trim();
   if (!trimmed) {
     return { words: 0, characters: 0, charactersNoSpaces: 0, sentences: 0, paragraphs: 0,
-      syllables: 0, readingTimeMin: 0, fleschScore: null, gradeLevel: null };
+      syllables: 0, readingTimeMin: 0, fleschScore: null, gradeLevel: null, syllableCoverage: 1, hangulShare: 0 };
   }
 
   var words = trimmed.split(/\s+/).filter(Boolean);
@@ -706,18 +530,22 @@ function analyzeReadability(text){
   var characters = text.length;
   var charactersNoSpaces = text.replace(/\s/g, '').length;
 
-  var sentenceMatches = trimmed.match(/[^.!?]+[.!?]+/g);
-  var sentenceCount = sentenceMatches ? sentenceMatches.length : (wordCount > 0 ? 1 : 0);
+  var sentenceCount = Math.max(splitSentences(trimmed).length, wordCount > 0 ? 1 : 0);
 
   var paragraphs = trimmed.split(/\n\s*\n/).filter(function(p){ return p.trim().length > 0; });
   var paragraphCount = Math.max(1, paragraphs.length);
 
   var totalSyllables = words.reduce(function(sum, w){ return sum + countSyllables(w); }, 0);
+  var coverage = syllableCountableCoverage(words);
+  var hangul = hangulShare(words);
 
   var readingTimeMin = wordCount / 225; // average adult silent reading speed
 
+  // Only trust the syllable-based score when most of the text is in a script we can actually
+  // count syllables for (Latin or Hangul) -- otherwise countSyllables silently returns 0 for
+  // whole words and the score would look like a real number while being meaningless.
   var fleschScore = null, gradeLevel = null;
-  if (wordCount > 0 && sentenceCount > 0) {
+  if (wordCount > 0 && sentenceCount > 0 && coverage >= 0.5) {
     var wordsPerSentence = wordCount / sentenceCount;
     var syllablesPerWord = totalSyllables / wordCount;
     fleschScore = 206.835 - 1.015 * wordsPerSentence - 84.6 * syllablesPerWord;
@@ -727,7 +555,8 @@ function analyzeReadability(text){
   return {
     words: wordCount, characters: characters, charactersNoSpaces: charactersNoSpaces,
     sentences: sentenceCount, paragraphs: paragraphCount, syllables: totalSyllables,
-    readingTimeMin: readingTimeMin, fleschScore: fleschScore, gradeLevel: gradeLevel
+    readingTimeMin: readingTimeMin, fleschScore: fleschScore, gradeLevel: gradeLevel,
+    syllableCoverage: coverage, hangulShare: hangul
   };
 }
 
@@ -773,10 +602,19 @@ function fleschLabel(score){
       document.getElementById('wc-flesch').textContent = clampedFlesch.toFixed(0);
       document.getElementById('wc-flesch-label').textContent = fleschLabel(r.fleschScore);
       document.getElementById('wc-grade').textContent = 'Approximate reading level: ' + fmtGrade(r.gradeLevel);
+    } else {
+      document.getElementById('wc-flesch').textContent = '—';
+      document.getElementById('wc-flesch-label').textContent = 'Not available for this text';
+      document.getElementById('wc-grade').textContent = r.hangulShare >= 0.5
+        ? 'The Flesch score was built for English. Korean words have more syllables, so it would call almost any Korean text \u201cvery difficult\u201d \u2014 the counts above are still accurate, but we\u2019re not showing a score rather than showing a misleading one.'
+        : 'Syllable counting here only works for Latin-script text (English and similar), so we\u2019re not showing a score rather than showing a wrong one. The counts above still apply.';
     }
   }
 
-  document.getElementById('wr-input').addEventListener('input', renderCount);
+  document.getElementById('wr-input').addEventListener('input', function(){
+    renderCount();
+    updateStaleState();
+  });
   renderCount();
 
   document.getElementById('wr-analyze-btn').addEventListener('click', function(){
@@ -812,6 +650,9 @@ function fleschLabel(score){
     document.getElementById('wr-suggestion-list').innerHTML = renderSuggestionList(entries);
 
     setStatus('success', 'Analyzed ' + r.wordCount + ' words \u2014 ' + totalMatches + ' flagged instance' + (totalMatches===1?'':'s') + ' across ' + entries.length + ' unique phrase' + (entries.length===1?'':'s') + '.');
+
+    lastAnalyzedText = text;
+    updateStaleState();
   });
 
 })();

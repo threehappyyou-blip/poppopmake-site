@@ -300,9 +300,9 @@
       <div class="verify-item"><span class="verify-label">State source</span><span class="verify-value"><a href="https://www.revenue.alabama.gov/tax-type/individual-income-tax/" target="_blank" rel="noopener">Alabama Department of Revenue</a></span></div>
       <div class="verify-item"><span class="verify-label">Federal source</span><span class="verify-value"><a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" target="_blank" rel="noopener">IRS Rev. Proc. 2025-32</a></span></div>
       <div class="verify-item"><span class="verify-label">Rates for</span><span class="verify-value">2026</span></div>
-      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">September 2026</span></div>
+      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">October 2026</span></div>
     </div>
-    <p class="verify-note">State figures are cross-checked against the Tax Foundation's 2026 state income tax survey as well as the state source above. If a chatbot gives you a different number, it's worth checking directly &mdash; general AI assistants frequently get jurisdiction-specific rates wrong. See <a href="/how-we-verify">how we check these figures</a>, or what's been corrected on the <a href="/changelog">changelog</a>.</p>
+    <p class="verify-note">State figures come from the state tax agency above (forms, instructions and rate notices) and are cross-checked against an open-source tax model, PolicyEngine; where a state hasn't published its 2026 amounts yet, the latest published ones are used and this page says so. If a chatbot gives you a different number, it's worth checking directly &mdash; general AI assistants frequently get jurisdiction-specific rates wrong. See <a href="/how-we-verify">how we check these figures</a>, or what's been corrected on the <a href="/changelog">changelog</a>.</p>
   </div>
 
   <div class="trust-box">
@@ -316,61 +316,13 @@
   </div>
 
   <div class="layout">
-    <div class="panel">
-      <div class="field">
-        <label for="salary">Annual salary</label>
-        <div class="salary-wrap">
-          <span>$</span>
-          <input type="number" id="salary" value="65000" min="0" step="500">
-        </div>
-      </div>
-      <div class="field">
-        <label for="filingStatus">Filing status</label>
-        <select id="filingStatus">
-          <option value="single">Single</option>
-          <option value="mfj">Married filing jointly</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="state">State</label>
-        <select id="state">
-          <option value="AL">Alabama</option>
-        </select>
-        <div class="hint" id="stateHint"></div>
-      </div>
-      <div class="field">
-        <label for="frequency">Pay frequency</label>
-        <select id="frequency">
-          <option value="52">Weekly</option>
-          <option value="26" selected>Biweekly</option>
-          <option value="24">Semi-monthly</option>
-          <option value="12">Monthly</option>
-          <option value="1">Annual</option>
-        </select>
-      </div>
-    </div>
+    <div class="panel" id="ppmInputs"><p class="hint">Loading the calculator&hellip; If it doesn't appear, check your connection and reload.</p></div>
 
     <div class="results">
-      <div class="take-home">
-        <h2>Take-home pay per paycheck</h2>
-        <div class="amount" id="netPerPeriod">$0</div>
-        <div class="sub" id="netAnnualSub"></div>
-      </div>
-
-      <table class="breakdown">
-        <thead>
-          <tr><th>Item</th><th>Per year</th><th>Per paycheck</th></tr>
-        </thead>
-        <tbody id="breakdownBody"></tbody>
-      </table>
-
-      <div class="rate-strip">
-        <span class="chip">Effective tax rate: <b id="effRate">0%</b></span>
-        <span class="chip">Marginal federal bracket: <b id="marginalRate">0%</b></span>
-      </div>
+      <div id="ppmResults"></div>
 
       <div class="disclaimer">
-        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal brackets (IRS Rev. Proc. 2025-32) and Alabama's 2026 state tax rules (Tax Foundation), with standard deductions only &mdash; it doesn't account for pre-tax 401(k)/HSA contributions, other credits, local city taxes, or your actual W-4 elections, which can change your real paycheck. Confirm anything important with a CPA or your payroll department. Your income and filing details never leave your device &mdash; <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
+        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal brackets (IRS Rev. Proc. 2025-32) and Alabama's 2026 state tax rules (from the state's tax agency), with the standard deduction plus anything you add under More options (401(k), bonus, overtime, a spouse's pay, children) &mdash; it doesn't account for itemized deductions, most state credits and dependent exemptions, local (city or county) income taxes, or your actual W-4 elections, which can change your real paycheck. Confirm anything important with a CPA or your payroll department. Your income and filing details never leave your device &mdash; <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
       </div>
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
@@ -383,7 +335,7 @@
 
   <div class="panel">
     <h2>Worked example</h2>
-    <p style="margin:0;color:var(--ink-soft);">A single filer in Alabama earning <strong style="color:var(--ink);">$65,000/year</strong>, paid biweekly: federal income tax is about $5,620, FICA (Social Security + Medicare) is about $4,973, and Alabama's state tax comes to about $2,985/year in this example, on top of federal tax and FICA. That leaves roughly <strong style="color:var(--ink);">$51,423/year</strong> take-home (about $1,978 per biweekly paycheck) &mdash; an effective tax rate of about 20.9%. Change the salary above to see your own number.</p>
+    <p style="margin:0;color:var(--ink-soft);">A single filer in Alabama earning <strong style="color:var(--ink);">$65,000/year</strong>, paid biweekly: federal income tax is about $5,620, FICA (Social Security + Medicare) is about $4,973, and Alabama's state tax comes to about $2,605/year in this example, on top of federal tax and FICA. That leaves roughly <strong style="color:var(--ink);">$51,802/year</strong> take-home (about $1,993 per biweekly paycheck) &mdash; an effective tax rate of about 20.3%. Change the salary above to see your own number.</p>
   </div>
 
   <div class="panel">
@@ -397,7 +349,7 @@
         <tr><td>$3,000 and up</td><td colspan="2">5%</td></tr>
       </tbody>
     </table>
-    <p style="color:var(--ink-soft);margin-top:14px;margin-bottom:0;">Alabama applies a standard deduction ($3,000 single / $8,500 married filing jointly for 2026) and a personal exemption ($1,500 single / $3,000 married filing jointly) before any of these rates apply. Alabama also lets you subtract a personal exemption on top of the standard deduction before these rates apply, and several Alabama cities &mdash; Birmingham among them &mdash; add their own local occupational tax on wages, which this calculator doesn't include.</p>
+    <p style="color:var(--ink-soft);margin-top:14px;margin-bottom:0;">Alabama applies a standard deduction of up to $3,000 for single filers (up to $8,500 married filing jointly) for 2026, shrinking as income rises, and a personal exemption ($1,500 single / $3,000 married filing jointly) before any of these rates apply. Several Alabama cities &mdash; Birmingham among them &mdash; add their own local occupational tax on wages, which this calculator doesn't include.</p>
   </div>
 
   <div class="panel">
@@ -408,7 +360,7 @@
     </div>
     <div class="faq-item">
       <p class="faq-q">Why might my real paycheck be different from this estimate?</p>
-      <p class="faq-a">This tool uses 2026 federal brackets and Alabama's 2026 state tax rules with standard deductions only. It doesn't know about your actual W-4 elections, pre-tax 401(k) or HSA contributions, other tax credits, or local city taxes &mdash; all of which can shift your real number. Treat it as a solid planning estimate, not your exact paycheck.</p>
+      <p class="faq-a">This tool uses 2026 federal brackets and Alabama's 2026 state tax rules with the standard deduction, plus whatever you add under More options (401(k), health/HSA, bonus, overtime, a spouse's pay, children). It doesn't know about your actual W-4 elections, itemized deductions, most state credits and dependent exemptions, or local (city or county) income taxes &mdash; all of which can shift your real number. Treat it as a solid planning estimate, not your exact paycheck.</p>
     </div>
     <div class="faq-item">
       <p class="faq-q">Does this calculator send my salary or personal details anywhere?</p>
@@ -420,11 +372,11 @@
     </div>
     <div class="faq-item">
       <p class="faq-q">What's the standard deduction in Alabama for 2026?</p>
-      <p class="faq-a">$3,000 for single filers ($8,500 married filing jointly), applied before the state tax brackets above.</p>
+      <p class="faq-a">Up to $3,000 for single filers (up to $8,500 married filing jointly), shrinking as income rises, applied before the state tax brackets above.</p>
     </div>
     <div class="faq-item">
       <p class="faq-q">Is Alabama's income tax the same everywhere in the state?</p>
-      <p class="faq-a">Yes, for state tax. Alabama also lets you subtract a personal exemption on top of the standard deduction before these rates apply, and several Alabama cities &mdash; Birmingham among them &mdash; add their own local occupational tax on wages, which this calculator doesn't include.</p>
+      <p class="faq-a">Yes, for state tax. Several Alabama cities &mdash; Birmingham among them &mdash; add their own local occupational tax on wages, which this calculator doesn't include.</p>
     </div>
   </div>
     </div>
@@ -473,208 +425,15 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<script src="/paycheck-engine.js"></script>
 <script>
 (function(){
-// ---- Verified 2026 tax data ----
-  // Federal: IRS Rev. Proc. 2025-32 (irs.gov, Oct 9 2025 release)
-  var FEDERAL_BRACKETS = {
-    single: [[0,12400,.10],[12400,50400,.12],[50400,105700,.22],[105700,201775,.24],[201775,256225,.32],[256225,640600,.35],[640600,Infinity,.37]],
-    mfj:    [[0,24800,.10],[24800,100800,.12],[100800,211400,.22],[211400,403550,.24],[403550,512450,.32],[512450,768700,.35],[768700,Infinity,.37]]
-  };
-  var FEDERAL_STD_DEDUCTION = { single: 16100, mfj: 32200 };
-
-  // FICA 2026: SSA.gov (wage base $184,500) + IRS (Additional Medicare thresholds)
-  var SS_WAGE_BASE = 184500;
-  var SS_RATE = 0.062;
-  var MEDICARE_RATE = 0.0145;
-  var ADDL_MEDICARE_RATE = 0.009;
-  var ADDL_MEDICARE_THRESHOLD = { single: 200000, mfj: 250000 };
-
-  function pt(income, brackets){
-    if (income <= 0) return 0;
-    var tax = 0;
-    for (var i=0;i<brackets.length;i++){
-      var lo=brackets[i][0], hi=brackets[i][1], rate=brackets[i][2];
-      if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
-    }
-    return tax;
+  if (window.PPMPaycheck) {
+    PPMPaycheck.mount({ state: 'AL' });
+  } else {
+    var p = document.getElementById('ppmInputs');
+    if (p) p.innerHTML = '<p class="hint">The calculator could not load. Check your connection and reload the page.</p>';
   }
-
-  // ---- State tax data (2026) ----
-  // Sourced from the Tax Foundation's 2026 State Individual Income Tax Rates
-  // and Brackets report (taxfoundation.org), cross-checked against each
-  // state's Dept. of Revenue guidance where noted. Local/city income taxes
-  // (NYC, Philadelphia, Ohio municipalities, etc.) are not included.
-  var STATES = {
-    AK: {name:"Alaska",type:"none"},
-    AL: {name:"Alabama",type:"calc",baseType:"gross",brackets:{single:[[0,500,0.02],[500,3000,0.04],[3000,Infinity,0.05]],mfj:[[0,1000,0.02],[1000,6000,0.04],[6000,Infinity,0.05]]},stdDed:{single:3000,mfj:8500},exemption:{single:1500,mfj:3000}},
-    AR: {name:"Arkansas",type:"calc",baseType:"gross",brackets:{single:[[0,4600,0.02],[4600,Infinity,0.039]],mfj:[[0,4600,0.02],[4600,Infinity,0.039]]},stdDed:{single:2470,mfj:4940},credit:{single:29,mfj:58}},
-    AZ: {name:"Arizona",type:"calc",baseType:"gross",rate:0.025,stdDed:{single:8350,mfj:16700}},
-    CA: {name:"California",type:"calc",baseType:"gross",brackets:{single:[[0,11079,0.01],[11079,26264,0.02],[26264,41452,0.04],[41452,57542,0.06],[57542,72724,0.08],[72724,371479,0.093],[371479,445771,0.103],[445771,742953,0.113],[742953,Infinity,0.123]],mfj:[[0,22158,0.01],[22158,52528,0.02],[52528,82904,0.04],[82904,115084,0.06],[115084,145448,0.08],[145448,742958,0.093],[742958,891542,0.103],[891542,1485906,0.113],[1485906,Infinity,0.123]]},stdDed:{single:5540,mfj:11080},credit:{single:153,mfj:306},surchargeThreshold:1000000,surchargeRate:0.01,addon:{rate:0.013,label:"California SDI (1.3%)",short:"SDI (1.3%, uncapped)"}},
-    CO: {name:"Colorado",type:"calc",baseType:"fedTaxable",rate:0.044},
-    CT: {name:"Connecticut",type:"calc",baseType:"gross",brackets:{single:[[0,10000,0.02],[10000,50000,0.045],[50000,100000,0.055],[100000,200000,0.06],[200000,250000,0.065],[250000,500000,0.069],[500000,Infinity,0.0699]],mfj:[[0,20000,0.02],[20000,100000,0.045],[100000,200000,0.055],[200000,400000,0.06],[400000,500000,0.065],[500000,1000000,0.069],[1000000,Infinity,0.0699]]},exemption:{single:15000,mfj:24000}},
-    DC: {name:"Washington DC",type:"calc",baseType:"gross",brackets:{single:[[0,10000,0.04],[10000,40000,0.06],[40000,60000,0.065],[60000,250000,0.085],[250000,500000,0.0925],[500000,1000000,0.0975],[1000000,Infinity,0.1075]],mfj:[[0,10000,0.04],[10000,40000,0.06],[40000,60000,0.065],[60000,250000,0.085],[250000,500000,0.0925],[500000,1000000,0.0975],[1000000,Infinity,0.1075]]},stdDed:{single:16100,mfj:32200}},
-    DE: {name:"Delaware",type:"calc",baseType:"gross",brackets:{single:[[0,2000,0],[2000,5000,0.022],[5000,10000,0.039],[10000,20000,0.048],[20000,25000,0.052],[25000,60000,0.0555],[60000,Infinity,0.066]],mfj:[[0,2000,0],[2000,5000,0.022],[5000,10000,0.039],[10000,20000,0.048],[20000,25000,0.052],[25000,60000,0.0555],[60000,Infinity,0.066]]},stdDed:{single:3250,mfj:6500},credit:{single:110,mfj:220}},
-    FL: {name:"Florida",type:"none"},
-    GA: {name:"Georgia",type:"calc",baseType:"gross",rate:0.0519,stdDed:{single:12000,mfj:24000}},
-    HI: {name:"Hawaii",type:"calc",baseType:"gross",brackets:{single:[[0,9600,0.014],[9600,14400,0.032],[14400,19200,0.055],[19200,24000,0.064],[24000,36000,0.068],[36000,48000,0.072],[48000,125000,0.076],[125000,175000,0.079],[175000,225000,0.0825],[225000,275000,0.09],[275000,325000,0.1],[325000,Infinity,0.11]],mfj:[[0,19200,0.014],[19200,28800,0.032],[28800,38400,0.055],[38400,48000,0.064],[48000,72000,0.068],[72000,96000,0.072],[96000,250000,0.076],[250000,350000,0.079],[350000,450000,0.0825],[450000,550000,0.09],[550000,650000,0.1],[650000,Infinity,0.11]]},stdDed:{single:4400,mfj:8800},credit:{single:1144,mfj:2288}},
-    IA: {name:"Iowa",type:"calc",baseType:"fedTaxable",rate:0.038,credit:{single:40,mfj:80}},
-    ID: {name:"Idaho",type:"calc",baseType:"fedTaxable",rate:0.053,extra:{single:4811,mfj:9622}},
-    IL: {name:"Illinois",type:"calc",baseType:"fedTaxable",rate:0.0495},
-    IN: {name:"Indiana",type:"calc",baseType:"gross",rate:0.0295,stdDed:{single:1000,mfj:2000}},
-    KS: {name:"Kansas",type:"calc",baseType:"gross",brackets:{single:[[0,23000,0.052],[23000,Infinity,0.0558]],mfj:[[0,46000,0.052],[46000,Infinity,0.0558]]},stdDed:{single:3605,mfj:8240},exemption:{single:9160,mfj:18320}},
-    KY: {name:"Kentucky",type:"calc",baseType:"gross",rate:0.035,stdDed:{single:3360,mfj:3360}},
-    LA: {name:"Louisiana",type:"calc",baseType:"gross",rate:0.03,stdDed:{single:12875,mfj:25750}},
-    MA: {name:"Massachusetts",type:"calc",baseType:"gross",brackets:{single:[[0,1083150,0.05],[1083150,Infinity,0.09]],mfj:[[0,1083150,0.05],[1083150,Infinity,0.09]]},exemption:{single:4400,mfj:8800},addon:{rate:0.0046,label:"Massachusetts PFML (0.46%)",short:"PFML (0.46%)",cap:184500}},
-    MD: {name:"Maryland",type:"calc",baseType:"gross",brackets:{single:[[0,1000,0.02],[1000,2000,0.03],[2000,3000,0.04],[3000,100000,0.0475],[100000,125000,0.05],[125000,150000,0.0525],[150000,250000,0.055],[250000,500000,0.0575],[500000,1000000,0.0625],[1000000,Infinity,0.065]],mfj:[[0,1000,0.02],[1000,2000,0.03],[2000,3000,0.04],[3000,150000,0.0475],[150000,175000,0.05],[175000,225000,0.0525],[225000,300000,0.055],[300000,600000,0.0575],[600000,1200000,0.0625],[1200000,Infinity,0.065]]},stdDed:{single:3350,mfj:6700},exemption:{single:3200,mfj:6400}},
-    ME: {name:"Maine",type:"calc",baseType:"gross",brackets:{single:[[0,27399,0.058],[27399,64849,0.0675],[64849,Infinity,0.0715]],mfj:[[0,54849,0.058],[54849,129749,0.0675],[129749,Infinity,0.0715]]},stdDed:{single:8350,mfj:16700},exemption:{single:5300,mfj:10600}},
-    MI: {name:"Michigan",type:"calc",baseType:"gross",rate:0.0425,stdDed:{single:5900,mfj:11800}},
-    MN: {name:"Minnesota",type:"calc",baseType:"gross",brackets:{single:[[0,33310,0.0535],[33310,109430,0.068],[109430,203150,0.0785],[203150,Infinity,0.0985]],mfj:[[0,48700,0.0535],[48700,193480,0.068],[193480,337930,0.0785],[337930,Infinity,0.0985]]},stdDed:{single:15300,mfj:30600}},
-    MO: {name:"Missouri",type:"calc",baseType:"gross",brackets:{single:[[0,1348,0],[1348,2696,0.02],[2696,4044,0.025],[4044,5392,0.03],[5392,6740,0.035],[6740,8088,0.04],[8088,9436,0.045],[9436,Infinity,0.047]],mfj:[[0,1348,0],[1348,2696,0.02],[2696,4044,0.025],[4044,5392,0.03],[5392,6740,0.035],[6740,8088,0.04],[8088,9436,0.045],[9436,Infinity,0.047]]},stdDed:{single:16100,mfj:32200}},
-    MS: {name:"Mississippi",type:"calc",baseType:"gross",rate:0.04,stdDed:{single:2300,mfj:4600},exemption:{single:6000,mfj:12000},zeroBracket:10000},
-    MT: {name:"Montana",type:"calc",baseType:"fedTaxable",brackets:{single:[[0,47500,0.047],[47500,Infinity,0.0565]],mfj:[[0,95000,0.047],[95000,Infinity,0.0565]]}},
-    NC: {name:"North Carolina",type:"calc",baseType:"gross",rate:0.0399,stdDed:{single:12750,mfj:25500}},
-    ND: {name:"North Dakota",type:"calc",baseType:"fedTaxable",brackets:{single:[[0,48475,0],[48475,244825,0.0195],[244825,Infinity,0.025]],mfj:[[0,80975,0],[80975,298075,0.0195],[298075,Infinity,0.025]]}},
-    NE: {name:"Nebraska",type:"calc",baseType:"gross",brackets:{single:[[0,4130,0.0246],[4130,24760,0.0351],[24760,Infinity,0.0455]],mfj:[[0,8250,0.0246],[8250,49530,0.0351],[49530,Infinity,0.0455]]},stdDed:{single:8850,mfj:17700},credit:{single:176,mfj:352}},
-    NH: {name:"New Hampshire",type:"none"},
-    NJ: {name:"New Jersey",type:"calc",baseType:"gross",brackets:{single:[[0,20000,0.014],[20000,35000,0.0175],[35000,40000,0.035],[40000,75000,0.05525],[75000,500000,0.0637],[500000,1000000,0.0897],[1000000,Infinity,0.1075]],mfj:[[0,20000,0.014],[20000,50000,0.0175],[50000,70000,0.0245],[70000,80000,0.035],[80000,150000,0.05525],[150000,500000,0.0637],[500000,1000000,0.0897],[1000000,Infinity,0.1075]]},exemption:{single:1000,mfj:2000},addon:{rate:0.0035,label:"New Jersey SDI + FLI (0.35%)",short:"SDI + FLI (0.35%)",cap:161400}},
-    NM: {name:"New Mexico",type:"calc",baseType:"fedTaxable",brackets:{single:[[0,5500,0.015],[5500,16500,0.032],[16500,33500,0.043],[33500,66500,0.047],[66500,210000,0.049],[210000,Infinity,0.059]],mfj:[[0,8000,0.015],[8000,25000,0.032],[25000,50000,0.043],[50000,100000,0.047],[100000,315000,0.049],[315000,Infinity,0.059]]}},
-    NV: {name:"Nevada",type:"none"},
-    NY: {name:"New York",type:"calc",baseType:"gross",brackets:{single:[[0,8500,0.039],[8500,11700,0.044],[11700,13900,0.0515],[13900,80650,0.054],[80650,215400,0.059],[215400,1077550,0.0685],[1077550,5000000,0.0965],[5000000,25000000,0.103],[25000000,Infinity,0.109]],mfj:[[0,17150,0.039],[17150,23600,0.044],[23600,27900,0.0515],[27900,161550,0.054],[161550,323200,0.059],[323200,2155350,0.0685],[2155350,5000000,0.0965],[5000000,25000000,0.103],[25000000,Infinity,0.109]]},stdDed:{single:8000,mfj:16050}},
-    OH: {name:"Ohio",type:"calc",baseType:"gross",rate:0.0275,stdDed:{single:28450,mfj:30850}},
-    OK: {name:"Oklahoma",type:"calc",baseType:"gross",brackets:{single:[[0,3750,0.025],[3750,4900,0.035],[4900,Infinity,0.045]],mfj:[[0,7500,0.025],[7500,9800,0.035],[9800,Infinity,0.045]]},stdDed:{single:6350,mfj:12700},exemption:{single:1000,mfj:2000}},
-    OR: {name:"Oregon",type:"calc",baseType:"gross",brackets:{single:[[0,4550,0.0475],[4550,11400,0.0675],[11400,125000,0.0875],[125000,Infinity,0.099]],mfj:[[0,9100,0.0475],[9100,22800,0.0675],[22800,250000,0.0875],[250000,Infinity,0.099]]},stdDed:{single:2910,mfj:5820},credit:{single:256,mfj:512}},
-    PA: {name:"Pennsylvania",type:"calc",baseType:"gross",rate:0.0307},
-    RI: {name:"Rhode Island",type:"calc",baseType:"gross",brackets:{single:[[0,82050,0.0375],[82050,186450,0.0475],[186450,Infinity,0.0599]],mfj:[[0,82050,0.0375],[82050,186450,0.0475],[186450,Infinity,0.0599]]},stdDed:{single:11200,mfj:22400},exemption:{single:5250,mfj:10500}},
-    SC: {name:"South Carolina",type:"calc",baseType:"gross",brackets:{single:[[0,3640,0],[3640,18230,0.03],[18230,Infinity,0.06]],mfj:[[0,3640,0],[3640,18230,0.03],[18230,Infinity,0.06]]},stdDed:{single:8350,mfj:16700}},
-    SD: {name:"South Dakota",type:"none"},
-    TN: {name:"Tennessee",type:"none"},
-    TX: {name:"Texas",type:"none"},
-    UT: {name:"Utah",type:"calc",baseType:"gross",rate:0.045,credit:{single:966,mfj:1932}},
-    VA: {name:"Virginia",type:"calc",baseType:"gross",brackets:{single:[[0,3000,0.02],[3000,5000,0.03],[5000,17000,0.05],[17000,Infinity,0.0575]],mfj:[[0,3000,0.02],[3000,5000,0.03],[5000,17000,0.05],[17000,Infinity,0.0575]]},stdDed:{single:8750,mfj:17500},exemption:{single:930,mfj:1860}},
-    VT: {name:"Vermont",type:"calc",baseType:"gross",brackets:{single:[[0,49400,0.0335],[49400,119700,0.066],[119700,249700,0.076],[249700,Infinity,0.0875]],mfj:[[0,82500,0.0335],[82500,199450,0.066],[199450,304000,0.076],[304000,Infinity,0.0875]]},stdDed:{single:7650,mfj:15300},exemption:{single:5300,mfj:10600}},
-    WA: {name:"Washington",type:"none",addon:{rate:0.0058,label:"WA Cares payroll tax (0.58%)",short:"WA Cares (0.58%)"}},
-    WI: {name:"Wisconsin",type:"calc",baseType:"gross",brackets:{single:[[0,15110,0.035],[15110,51950,0.044],[51950,332720,0.053],[332720,Infinity,0.0765]],mfj:[[0,20150,0.035],[20150,69260,0.044],[69260,443630,0.053],[443630,Infinity,0.0765]]},stdDed:{single:13960,mfj:25840},exemption:{single:700,mfj:1400}},
-    WV: {name:"West Virginia",type:"calc",baseType:"gross",brackets:{single:[[0,10000,0.0222],[10000,25000,0.0296],[25000,40000,0.0333],[40000,60000,0.0444],[60000,Infinity,0.0482]],mfj:[[0,10000,0.0222],[10000,25000,0.0296],[25000,40000,0.0333],[40000,60000,0.0444],[60000,Infinity,0.0482]]},exemption:{single:2000,mfj:4000}},
-    WY: {name:"Wyoming",type:"none"}
-  };
-
-  function calcState(code, gross, status, fedTaxable){
-    var s = STATES[code];
-    if (s.type === 'none') {
-      var addon0 = 0;
-      if (s.addon) {
-        var abase0 = s.addon.cap ? Math.min(gross, s.addon.cap) : gross;
-        addon0 = abase0 * s.addon.rate;
-      }
-      return { tax: 0, addon: addon0, hint: s.name + ' has no state income tax.' + (s.addon ? ' It has a small ' + s.addon.short + ' payroll tax.' : '') };
-    }
-    var base = (s.baseType === 'fedTaxable') ? fedTaxable : gross;
-    if (s.stdDed) base = Math.max(0, base - s.stdDed[status]);
-    if (s.exemption) base = Math.max(0, base - s.exemption[status]);
-    if (s.extra) base = Math.max(0, base - s.extra[status]);
-    var tax;
-    if (s.brackets) {
-      tax = pt(base, s.brackets[status]);
-    } else {
-      var taxableForRate = s.zeroBracket ? Math.max(0, base - s.zeroBracket) : base;
-      tax = taxableForRate * s.rate;
-    }
-    if (s.credit) tax -= s.credit[status];
-    if (s.surchargeThreshold && base > s.surchargeThreshold) tax += (base - s.surchargeThreshold) * s.surchargeRate;
-    tax = Math.max(0, tax);
-    var addon = 0;
-    if (s.addon) {
-      var abase = s.addon.cap ? Math.min(gross, s.addon.cap) : gross;
-      addon = abase * s.addon.rate;
-    }
-    return { tax: tax, addon: addon, hint: s.name + ' state income tax' + (s.addon ? ', plus ' + s.addon.short : '') + '.' };
-  }
-
-  function marginalRateOf(income, brackets){
-    var rate = brackets[0][2];
-    for (var i=0;i<brackets.length;i++){
-      if (income > brackets[i][0]) rate = brackets[i][2];
-    }
-    return rate;
-  }
-
-  function populateStates(){
-    var sel = document.getElementById('state');
-    sel.innerHTML = '';
-    var codes = Object.keys(STATES).sort(function(a,b){
-      return STATES[a].name.localeCompare(STATES[b].name);
-    });
-    codes.forEach(function(code){
-      var opt = document.createElement('option');
-      opt.value = code; opt.textContent = STATES[code].name;
-      sel.appendChild(opt);
-    });
-    sel.value = 'AL';
-  }
-
-  function calc(){
-    var gross = Math.max(0, parseFloat(document.getElementById('salary').value) || 0);
-    var status = document.getElementById('filingStatus').value;
-    var stateCode = document.getElementById('state').value;
-    var periods = parseInt(document.getElementById('frequency').value, 10);
-
-    var fedStd = FEDERAL_STD_DEDUCTION[status];
-    var fedTaxable = Math.max(0, gross - fedStd);
-    var fedTax = pt(fedTaxable, FEDERAL_BRACKETS[status]);
-    var marginal = marginalRateOf(fedTaxable, FEDERAL_BRACKETS[status]);
-
-    var ssTax = Math.min(gross, SS_WAGE_BASE) * SS_RATE;
-    var medicareTax = gross * MEDICARE_RATE;
-    var addlMedicare = Math.max(0, gross - ADDL_MEDICARE_THRESHOLD[status]) * ADDL_MEDICARE_RATE;
-    var ficaTotal = ssTax + medicareTax + addlMedicare;
-
-    var st = calcState(stateCode, gross, status, fedTaxable);
-    document.getElementById('stateHint').textContent = st.hint;
-
-    var stateTotal = st.tax + st.addon;
-    var totalTax = fedTax + ficaTotal + stateTotal;
-    var netAnnual = gross - totalTax;
-    var effRate = gross > 0 ? (totalTax/gross*100) : 0;
-
-    document.getElementById('netPerPeriod').textContent = fmt(netAnnual/periods);
-    document.getElementById('netAnnualSub').textContent = fmt(netAnnual) + ' per year, after taxes';
-    document.getElementById('effRate').textContent = effRate.toFixed(1) + '%';
-    document.getElementById('marginalRate').textContent = (marginal*100).toFixed(0) + '%';
-
-    var rows = [
-      ['Gross pay', gross, gross/periods, false],
-      ['Federal income tax', -fedTax, -fedTax/periods, true],
-      ['Social Security (6.2%)', -ssTax, -ssTax/periods, true],
-      ['Medicare (1.45%)', -medicareTax, -medicareTax/periods, true]
-    ];
-    if (addlMedicare > 0) rows.push(['Additional Medicare (0.9%)', -addlMedicare, -addlMedicare/periods, true]);
-    if (st.tax > 0 || STATES[stateCode].type !== 'none') rows.push([STATES[stateCode].name+' state tax', -st.tax, -st.tax/periods, true]);
-    if (st.addon > 0) rows.push([STATES[stateCode].addon ? STATES[stateCode].addon.label : (STATES[stateCode].name+' payroll addon'), -st.addon, -st.addon/periods, true]);
-    rows.push(['Take-home pay', netAnnual, netAnnual/periods, false]);
-
-    var body = document.getElementById('breakdownBody');
-    body.innerHTML = '';
-    rows.forEach(function(r, idx){
-      var tr = document.createElement('tr');
-      if (idx === rows.length-1) tr.className = 'net';
-      var cls = r[3] ? 'neg' : '';
-      tr.innerHTML = '<td>'+r[0]+'</td><td class="'+cls+'">'+fmt(r[1])+'</td><td class="'+cls+'">'+fmt(r[2])+'</td>';
-      body.appendChild(tr);
-    });
-  }
-
-  function fmt(n){
-    var sign = n < 0 ? '-' : '';
-    return sign + '$' + Math.abs(n).toLocaleString('en-US', {maximumFractionDigits:0});
-  }
-
-  populateStates();
-  ['salary','filingStatus','state','frequency'].forEach(function(id){
-    document.getElementById(id).addEventListener('input', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
-    document.getElementById(id).addEventListener('change', function(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); });
-  });
-  calc();
 })();
 </script>
 </body>

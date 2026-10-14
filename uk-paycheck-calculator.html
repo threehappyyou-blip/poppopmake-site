@@ -53,126 +53,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
 
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
@@ -229,12 +109,6 @@
   }
   .disclaimer strong{color:var(--ink);}
 
-  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
-  .faq-item:first-of-type{padding-top:2px;}
-  .faq-item:last-child{border-bottom:none;padding-bottom:0;}
-  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;}
-  .faq-a{font-size:0.9rem;color:var(--ink-soft);margin:0;}
-
   footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
@@ -255,50 +129,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 <div class="install-bar" id="installBar" hidden data-tool-name="UK Paycheck">
@@ -319,7 +150,7 @@
     <div class="verify-grid">
       <div class="verify-item"><span class="verify-label">Source</span><span class="verify-value"><a href="https://www.gov.uk/income-tax-rates" target="_blank" rel="noopener">gov.uk</a>, <a href="https://www.gov.scot/publications/scottish-income-tax-rates-and-bands/pages/2026-to-2027/" target="_blank" rel="noopener">gov.scot</a></span></div>
       <div class="verify-item"><span class="verify-label">Rates for</span><span class="verify-value">2026/27</span></div>
-      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">September 2026</span></div>
+      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">October 2026</span></div>
     </div>
     <p class="verify-note">If a chatbot gives you a different number, it’s worth checking against the source above &mdash; general AI assistants frequently get jurisdiction-specific rates like these wrong, especially outside a handful of major states or countries. See <a href="/how-we-verify">how we check these figures</a>, or what’s been corrected on the <a href="/changelog">changelog</a>.</p>
   </div>
@@ -386,35 +217,6 @@
       <div class="disclaimer" style="border-left-color:var(--orange);">
         <strong>Wondering why Scotland's numbers look different?</strong> Read <a href="/uk-scotland-tax-explained">England/Wales/NI vs Scotland: What Actually Differs</a> — with real numbers showing who it helps and who it costs.
       </div>
-
-      <div class="panel">
-        <h2>Worked example</h2>
-        <p style="margin:0;color:var(--ink-soft);">The default view above: a salary of <strong style="color:var(--ink);">£35,000/year</strong>, paid monthly, in the rest of the UK (not Scotland). The Personal Allowance is fully available at £12,570 — it only starts tapering above £100,000 — leaving £22,430 taxable, all inside the 20% basic-rate band, for Income Tax of <strong style="color:var(--ink);">£4,486</strong>. National Insurance then adds 8% of the £22,430 earned above the £12,570 threshold, for <strong style="color:var(--ink);">£1,794</strong>. Together that's £6,280 in deductions, leaving <strong style="color:var(--ink);">£28,720/year</strong> take-home (about <strong style="color:var(--ink);">£2,393 per month</strong>), an effective rate of about 17.9%. Switch the region dropdown to Scotland and the same £35,000 comes out about £15/year lower — Scotland's rates track the rest of the UK closely at this income level, with the gap widening much more once you're past the higher-rate thresholds.</p>
-      </div>
-
-      <div class="panel">
-        <h2>Frequently asked questions</h2>
-        <div class="faq-item">
-          <p class="faq-q">Does the £12,570 Personal Allowance ever change?</p>
-          <p class="faq-a">It stays at £12,570 for most earners, but this calculator applies the real taper: above £100,000 it shrinks by £1 for every £2 you earn over that, reaching £0 at £125,140. That's why effective tax rates can jump sharply for anyone earning between £100,000 and £125,140 — it isn't a calculator quirk, it's how the actual system works.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Why does National Insurance seem to slow down at higher salaries?</p>
-          <p class="faq-a">Because it does. This calculator charges 8% on earnings between the £12,570 primary threshold and the £50,270 upper earnings limit, then only 2% above £50,270 — so your NI bill grows more slowly, in percentage terms, once you cross £50,270.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Why might my real payslip show a different number?</p>
-          <p class="faq-a">This tool uses 2026/27 Income Tax bands and National Insurance thresholds with the standard Personal Allowance only. It doesn't know about pension contributions, student loan repayments, benefits-in-kind, or your actual tax code (a K code or an emergency code, for example) — any of which change your real take-home. Treat it as a solid estimate, not your exact payslip.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">Does this calculator send my salary or region anywhere?</p>
-          <p class="faq-a">No. Everything runs in your browser with JavaScript — nothing you type is transmitted, logged, or stored on a server.</p>
-        </div>
-        <div class="faq-item">
-          <p class="faq-q">What's actually different about the Scotland option?</p>
-          <p class="faq-a">National Insurance is identical everywhere in the UK — only Income Tax bands differ. Scotland has six bands (rates from 19% up to 48%) instead of the rest of the UK's three, so the difference is small at modest salaries and grows much larger at higher incomes. See the link above for real numbers on who it helps and who it costs.</p>
-        </div>
-      </div>
     </div>
   </div>
 </main>
@@ -429,30 +231,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script src="/install-prompt.js" defer></script>
 <script>
@@ -468,7 +246,7 @@ if ('serviceWorker' in navigator) {
   // Income Tax (England/Wales/NI): gov.uk — Income Tax rates and Personal Allowances
   var RUK_BANDS = [[0,37700,0.20],[37700,125140,0.40],[125140,Infinity,0.45]];
   // Income Tax (Scotland): gov.scot — Scottish Income Tax rates and bands 2026 to 2027
-  var SCOT_BANDS = [[0,3967,0.19],[3967,16956,0.20],[16956,31092,0.21],[31092,62430,0.42],[62430,112570,0.45],[112570,Infinity,0.48]];
+  var SCOT_BANDS = [[0,3967,0.19],[3967,16956,0.20],[16956,31092,0.21],[31092,62430,0.42],[62430,125140,0.45],[125140,Infinity,0.48]];
   // National Insurance (Class 1, Category A): gov.uk — National Insurance rates and categories
   var NI_PRIMARY_THRESHOLD = 12570;
   var NI_UPPER_LIMIT = 50270;
@@ -511,27 +289,39 @@ if ('serviceWorker' in navigator) {
     return sign + '£' + Math.abs(n).toLocaleString('en-GB', {maximumFractionDigits:0});
   }
 
+  // Each line is rounded to whole pounds on its own and take-home pay is gross minus those rounded
+  // figures, so every column of the table adds up exactly to what is on screen.
+  function column(gross, deductions, periods){
+    var g = Math.round(gross / periods);
+    var shown = deductions.map(function(d){ return Math.round(d / periods); });
+    var net = shown.reduce(function(sum, v){ return sum - v; }, g);
+    return { gross: g, deductions: shown, net: net };
+  }
+
   function calc(){
-    var gross = Math.max(0, parseFloat(document.getElementById('salary').value) || 0);
+    var gross = parseFloat(document.getElementById('salary').value);
+    if (!isFinite(gross) || gross < 0) gross = 0;
     var scottish = document.getElementById('region').value === 'scotland';
     var periods = parseInt(document.getElementById('frequency').value, 10);
 
     var it = calcIncomeTax(gross, scottish);
     var ni = calcNI(gross);
     var totalDeductions = it.tax + ni;
-    var netAnnual = gross - totalDeductions;
     var effRate = gross > 0 ? (totalDeductions/gross*100) : 0;
 
-    document.getElementById('netPerPeriod').textContent = fmt(netAnnual/periods);
-    document.getElementById('netAnnualSub').textContent = fmt(netAnnual) + ' per year, after tax and NI';
+    var yr = column(gross, [it.tax, ni], 1);
+    var pp = column(gross, [it.tax, ni], periods);
+
+    document.getElementById('netPerPeriod').textContent = fmt(pp.net);
+    document.getElementById('netAnnualSub').textContent = fmt(yr.net) + ' per year, after tax and NI';
     document.getElementById('effRate').textContent = effRate.toFixed(1) + '%';
     document.getElementById('paUsed').textContent = fmt(it.pa);
 
     var rows = [
-      ['Gross pay', gross, gross/periods, false],
-      ['Income Tax (' + (scottish ? 'Scotland' : 'rest of UK') + ')', -it.tax, -it.tax/periods, true],
-      ['National Insurance', -ni, -ni/periods, true],
-      ['Take-home pay', netAnnual, netAnnual/periods, false]
+      ['Gross pay', yr.gross, pp.gross, false],
+      ['Income Tax (' + (scottish ? 'Scotland' : 'rest of UK') + ')', -yr.deductions[0], -pp.deductions[0], true],
+      ['National Insurance', -yr.deductions[1], -pp.deductions[1], true],
+      ['Take-home pay', yr.net, pp.net, false]
     ];
 
     var body = document.getElementById('breakdownBody');

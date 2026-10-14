@@ -40,126 +40,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
 
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
@@ -241,50 +121,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 
@@ -297,7 +134,7 @@
     <div class="verify-grid">
       <div class="verify-item"><span class="verify-label">Source</span><span class="verify-value">Same verified engines as the individual US, UK, Australia, and Canada calculators</span></div>
       <div class="verify-item"><span class="verify-label">Rates for</span><span class="verify-value">2026 / 2026-27</span></div>
-      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">September 2026</span></div>
+      <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">October 2026</span></div>
     </div>
     <p class="verify-note">If a chatbot gives you a different number, it’s worth checking against the source above &mdash; general AI assistants frequently get jurisdiction-specific rates like these wrong, especially outside a handful of major states or countries. See <a href="/how-we-verify">how we check these figures</a>, or what’s been corrected on the <a href="/changelog">changelog</a>.</p>
   </div>
@@ -385,30 +222,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
@@ -417,152 +230,36 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
+<script src="/paycheck-engine.js"></script>
 <script>
 (function(){
   // ---- Combined, re-verified 2026 tax engines: US, UK, AU, CA ----
-// ===== US engine (Federal + all 50 states + DC) =====
-var FEDERAL_BRACKETS = {
-    single: [[0,12400,.10],[12400,50400,.12],[50400,105700,.22],[105700,201775,.24],[201775,256225,.32],[256225,640600,.35],[640600,Infinity,.37]],
-    mfj:    [[0,24800,.10],[24800,100800,.12],[100800,211400,.22],[211400,403550,.24],[403550,512450,.32],[512450,768700,.35],[768700,Infinity,.37]]
-  };
-  var FEDERAL_STD_DEDUCTION = { single: 16100, mfj: 32200 };
-
-  // FICA 2026: SSA.gov (wage base $184,500) + IRS (Additional Medicare thresholds)
-  var SS_WAGE_BASE = 184500;
-  var SS_RATE = 0.062;
-  var MEDICARE_RATE = 0.0145;
-  var ADDL_MEDICARE_RATE = 0.009;
-  var ADDL_MEDICARE_THRESHOLD = { single: 200000, mfj: 250000 };
-
-  function pt(income, brackets){
-    if (income <= 0) return 0;
-    var tax = 0;
-    for (var i=0;i<brackets.length;i++){
-      var lo=brackets[i][0], hi=brackets[i][1], rate=brackets[i][2];
-      if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
-    }
-    return tax;
+// ===== US engine: the same shared model as the paycheck calculators (/paycheck-engine.js) =====
+var usEngine = window.PPMPaycheck || null;
+var STATES = usEngine ? usEngine.STATES : {};
+// bracket maths still used by the UK / AU / Canada engines below
+function pt(income, brackets){
+  if (income <= 0) return 0;
+  var tax = 0;
+  for (var i=0;i<brackets.length;i++){
+    var lo=brackets[i][0], hi=brackets[i][1], rate=brackets[i][2];
+    if (income > lo){ tax += (Math.min(income,hi)-lo)*rate; } else { break; }
   }
-
-  // ---- State tax data (2026) ----
-  // Sourced from the Tax Foundation's 2026 State Individual Income Tax Rates
-  // and Brackets report (taxfoundation.org), cross-checked against each
-  // state's Dept. of Revenue guidance where noted. Local/city income taxes
-  // (NYC, Philadelphia, Ohio municipalities, etc.) are not included.
-  var STATES = {
-    AK: {name:"Alaska",type:"none"},
-    AL: {name:"Alabama",type:"calc",baseType:"gross",brackets:{single:[[0,500,0.02],[500,3000,0.04],[3000,Infinity,0.05]],mfj:[[0,1000,0.02],[1000,6000,0.04],[6000,Infinity,0.05]]},stdDed:{single:3000,mfj:8500},exemption:{single:1500,mfj:3000}},
-    AR: {name:"Arkansas",type:"calc",baseType:"gross",brackets:{single:[[0,4600,0.02],[4600,Infinity,0.039]],mfj:[[0,4600,0.02],[4600,Infinity,0.039]]},stdDed:{single:2470,mfj:4940},credit:{single:29,mfj:58}},
-    AZ: {name:"Arizona",type:"calc",baseType:"gross",rate:0.025,stdDed:{single:8350,mfj:16700}},
-    CA: {name:"California",type:"calc",baseType:"gross",brackets:{single:[[0,11079,0.01],[11079,26264,0.02],[26264,41452,0.04],[41452,57542,0.06],[57542,72724,0.08],[72724,371479,0.093],[371479,445771,0.103],[445771,742953,0.113],[742953,Infinity,0.123]],mfj:[[0,22158,0.01],[22158,52528,0.02],[52528,82904,0.04],[82904,115084,0.06],[115084,145448,0.08],[145448,742958,0.093],[742958,891542,0.103],[891542,1485906,0.113],[1485906,Infinity,0.123]]},stdDed:{single:5540,mfj:11080},credit:{single:153,mfj:306},surchargeThreshold:1000000,surchargeRate:0.01,addon:{rate:0.013,label:"California SDI (1.3%)",short:"SDI (1.3%, uncapped)"}},
-    CO: {name:"Colorado",type:"calc",baseType:"fedTaxable",rate:0.044},
-    CT: {name:"Connecticut",type:"calc",baseType:"gross",brackets:{single:[[0,10000,0.02],[10000,50000,0.045],[50000,100000,0.055],[100000,200000,0.06],[200000,250000,0.065],[250000,500000,0.069],[500000,Infinity,0.0699]],mfj:[[0,20000,0.02],[20000,100000,0.045],[100000,200000,0.055],[200000,400000,0.06],[400000,500000,0.065],[500000,1000000,0.069],[1000000,Infinity,0.0699]]},exemption:{single:15000,mfj:24000}},
-    DC: {name:"Washington DC",type:"calc",baseType:"gross",brackets:{single:[[0,10000,0.04],[10000,40000,0.06],[40000,60000,0.065],[60000,250000,0.085],[250000,500000,0.0925],[500000,1000000,0.0975],[1000000,Infinity,0.1075]],mfj:[[0,10000,0.04],[10000,40000,0.06],[40000,60000,0.065],[60000,250000,0.085],[250000,500000,0.0925],[500000,1000000,0.0975],[1000000,Infinity,0.1075]]},stdDed:{single:16100,mfj:32200}},
-    DE: {name:"Delaware",type:"calc",baseType:"gross",brackets:{single:[[0,2000,0],[2000,5000,0.022],[5000,10000,0.039],[10000,20000,0.048],[20000,25000,0.052],[25000,60000,0.0555],[60000,Infinity,0.066]],mfj:[[0,2000,0],[2000,5000,0.022],[5000,10000,0.039],[10000,20000,0.048],[20000,25000,0.052],[25000,60000,0.0555],[60000,Infinity,0.066]]},stdDed:{single:3250,mfj:6500},credit:{single:110,mfj:220}},
-    FL: {name:"Florida",type:"none"},
-    GA: {name:"Georgia",type:"calc",baseType:"gross",rate:0.0519,stdDed:{single:12000,mfj:24000}},
-    HI: {name:"Hawaii",type:"calc",baseType:"gross",brackets:{single:[[0,9600,0.014],[9600,14400,0.032],[14400,19200,0.055],[19200,24000,0.064],[24000,36000,0.068],[36000,48000,0.072],[48000,125000,0.076],[125000,175000,0.079],[175000,225000,0.0825],[225000,275000,0.09],[275000,325000,0.1],[325000,Infinity,0.11]],mfj:[[0,19200,0.014],[19200,28800,0.032],[28800,38400,0.055],[38400,48000,0.064],[48000,72000,0.068],[72000,96000,0.072],[96000,250000,0.076],[250000,350000,0.079],[350000,450000,0.0825],[450000,550000,0.09],[550000,650000,0.1],[650000,Infinity,0.11]]},stdDed:{single:4400,mfj:8800},credit:{single:1144,mfj:2288}},
-    IA: {name:"Iowa",type:"calc",baseType:"fedTaxable",rate:0.038,credit:{single:40,mfj:80}},
-    ID: {name:"Idaho",type:"calc",baseType:"fedTaxable",rate:0.053,extra:{single:4811,mfj:9622}},
-    IL: {name:"Illinois",type:"calc",baseType:"fedTaxable",rate:0.0495},
-    IN: {name:"Indiana",type:"calc",baseType:"gross",rate:0.0295,stdDed:{single:1000,mfj:2000}},
-    KS: {name:"Kansas",type:"calc",baseType:"gross",brackets:{single:[[0,23000,0.052],[23000,Infinity,0.0558]],mfj:[[0,46000,0.052],[46000,Infinity,0.0558]]},stdDed:{single:3605,mfj:8240},exemption:{single:9160,mfj:18320}},
-    KY: {name:"Kentucky",type:"calc",baseType:"gross",rate:0.035,stdDed:{single:3360,mfj:3360}},
-    LA: {name:"Louisiana",type:"calc",baseType:"gross",rate:0.03,stdDed:{single:12875,mfj:25750}},
-    MA: {name:"Massachusetts",type:"calc",baseType:"gross",brackets:{single:[[0,1083150,0.05],[1083150,Infinity,0.09]],mfj:[[0,1083150,0.05],[1083150,Infinity,0.09]]},exemption:{single:4400,mfj:8800},addon:{rate:0.0046,label:"Massachusetts PFML (0.46%)",short:"PFML (0.46%)",cap:184500}},
-    MD: {name:"Maryland",type:"calc",baseType:"gross",brackets:{single:[[0,1000,0.02],[1000,2000,0.03],[2000,3000,0.04],[3000,100000,0.0475],[100000,125000,0.05],[125000,150000,0.0525],[150000,250000,0.055],[250000,500000,0.0575],[500000,1000000,0.0625],[1000000,Infinity,0.065]],mfj:[[0,1000,0.02],[1000,2000,0.03],[2000,3000,0.04],[3000,150000,0.0475],[150000,175000,0.05],[175000,225000,0.0525],[225000,300000,0.055],[300000,600000,0.0575],[600000,1200000,0.0625],[1200000,Infinity,0.065]]},stdDed:{single:3350,mfj:6700},exemption:{single:3200,mfj:6400}},
-    ME: {name:"Maine",type:"calc",baseType:"gross",brackets:{single:[[0,27399,0.058],[27399,64849,0.0675],[64849,Infinity,0.0715]],mfj:[[0,54849,0.058],[54849,129749,0.0675],[129749,Infinity,0.0715]]},stdDed:{single:8350,mfj:16700},exemption:{single:5300,mfj:10600}},
-    MI: {name:"Michigan",type:"calc",baseType:"gross",rate:0.0425,stdDed:{single:5900,mfj:11800}},
-    MN: {name:"Minnesota",type:"calc",baseType:"gross",brackets:{single:[[0,33310,0.0535],[33310,109430,0.068],[109430,203150,0.0785],[203150,Infinity,0.0985]],mfj:[[0,48700,0.0535],[48700,193480,0.068],[193480,337930,0.0785],[337930,Infinity,0.0985]]},stdDed:{single:15300,mfj:30600}},
-    MO: {name:"Missouri",type:"calc",baseType:"gross",brackets:{single:[[0,1348,0],[1348,2696,0.02],[2696,4044,0.025],[4044,5392,0.03],[5392,6740,0.035],[6740,8088,0.04],[8088,9436,0.045],[9436,Infinity,0.047]],mfj:[[0,1348,0],[1348,2696,0.02],[2696,4044,0.025],[4044,5392,0.03],[5392,6740,0.035],[6740,8088,0.04],[8088,9436,0.045],[9436,Infinity,0.047]]},stdDed:{single:16100,mfj:32200}},
-    MS: {name:"Mississippi",type:"calc",baseType:"gross",rate:0.04,stdDed:{single:2300,mfj:4600},exemption:{single:6000,mfj:12000},zeroBracket:10000},
-    MT: {name:"Montana",type:"calc",baseType:"fedTaxable",brackets:{single:[[0,47500,0.047],[47500,Infinity,0.0565]],mfj:[[0,95000,0.047],[95000,Infinity,0.0565]]}},
-    NC: {name:"North Carolina",type:"calc",baseType:"gross",rate:0.0399,stdDed:{single:12750,mfj:25500}},
-    ND: {name:"North Dakota",type:"calc",baseType:"fedTaxable",brackets:{single:[[0,48475,0],[48475,244825,0.0195],[244825,Infinity,0.025]],mfj:[[0,80975,0],[80975,298075,0.0195],[298075,Infinity,0.025]]}},
-    NE: {name:"Nebraska",type:"calc",baseType:"gross",brackets:{single:[[0,4130,0.0246],[4130,24760,0.0351],[24760,Infinity,0.0455]],mfj:[[0,8250,0.0246],[8250,49530,0.0351],[49530,Infinity,0.0455]]},stdDed:{single:8850,mfj:17700},credit:{single:176,mfj:352}},
-    NH: {name:"New Hampshire",type:"none"},
-    NJ: {name:"New Jersey",type:"calc",baseType:"gross",brackets:{single:[[0,20000,0.014],[20000,35000,0.0175],[35000,40000,0.035],[40000,75000,0.05525],[75000,500000,0.0637],[500000,1000000,0.0897],[1000000,Infinity,0.1075]],mfj:[[0,20000,0.014],[20000,50000,0.0175],[50000,70000,0.0245],[70000,80000,0.035],[80000,150000,0.05525],[150000,500000,0.0637],[500000,1000000,0.0897],[1000000,Infinity,0.1075]]},exemption:{single:1000,mfj:2000},addon:{rate:0.0035,label:"New Jersey SDI + FLI (0.35%)",short:"SDI + FLI (0.35%)",cap:161400}},
-    NM: {name:"New Mexico",type:"calc",baseType:"fedTaxable",brackets:{single:[[0,5500,0.015],[5500,16500,0.032],[16500,33500,0.043],[33500,66500,0.047],[66500,210000,0.049],[210000,Infinity,0.059]],mfj:[[0,8000,0.015],[8000,25000,0.032],[25000,50000,0.043],[50000,100000,0.047],[100000,315000,0.049],[315000,Infinity,0.059]]}},
-    NV: {name:"Nevada",type:"none"},
-    NY: {name:"New York",type:"calc",baseType:"gross",brackets:{single:[[0,8500,0.039],[8500,11700,0.044],[11700,13900,0.0515],[13900,80650,0.054],[80650,215400,0.059],[215400,1077550,0.0685],[1077550,5000000,0.0965],[5000000,25000000,0.103],[25000000,Infinity,0.109]],mfj:[[0,17150,0.039],[17150,23600,0.044],[23600,27900,0.0515],[27900,161550,0.054],[161550,323200,0.059],[323200,2155350,0.0685],[2155350,5000000,0.0965],[5000000,25000000,0.103],[25000000,Infinity,0.109]]},stdDed:{single:8000,mfj:16050}},
-    OH: {name:"Ohio",type:"calc",baseType:"gross",rate:0.0275,stdDed:{single:28450,mfj:30850}},
-    OK: {name:"Oklahoma",type:"calc",baseType:"gross",brackets:{single:[[0,3750,0.025],[3750,4900,0.035],[4900,Infinity,0.045]],mfj:[[0,7500,0.025],[7500,9800,0.035],[9800,Infinity,0.045]]},stdDed:{single:6350,mfj:12700},exemption:{single:1000,mfj:2000}},
-    OR: {name:"Oregon",type:"calc",baseType:"gross",brackets:{single:[[0,4550,0.0475],[4550,11400,0.0675],[11400,125000,0.0875],[125000,Infinity,0.099]],mfj:[[0,9100,0.0475],[9100,22800,0.0675],[22800,250000,0.0875],[250000,Infinity,0.099]]},stdDed:{single:2910,mfj:5820},credit:{single:256,mfj:512}},
-    PA: {name:"Pennsylvania",type:"calc",baseType:"gross",rate:0.0307},
-    RI: {name:"Rhode Island",type:"calc",baseType:"gross",brackets:{single:[[0,82050,0.0375],[82050,186450,0.0475],[186450,Infinity,0.0599]],mfj:[[0,82050,0.0375],[82050,186450,0.0475],[186450,Infinity,0.0599]]},stdDed:{single:11200,mfj:22400},exemption:{single:5250,mfj:10500}},
-    SC: {name:"South Carolina",type:"calc",baseType:"gross",brackets:{single:[[0,3640,0],[3640,18230,0.03],[18230,Infinity,0.06]],mfj:[[0,3640,0],[3640,18230,0.03],[18230,Infinity,0.06]]},stdDed:{single:8350,mfj:16700}},
-    SD: {name:"South Dakota",type:"none"},
-    TN: {name:"Tennessee",type:"none"},
-    TX: {name:"Texas",type:"none"},
-    UT: {name:"Utah",type:"calc",baseType:"gross",rate:0.045,credit:{single:966,mfj:1932}},
-    VA: {name:"Virginia",type:"calc",baseType:"gross",brackets:{single:[[0,3000,0.02],[3000,5000,0.03],[5000,17000,0.05],[17000,Infinity,0.0575]],mfj:[[0,3000,0.02],[3000,5000,0.03],[5000,17000,0.05],[17000,Infinity,0.0575]]},stdDed:{single:8750,mfj:17500},exemption:{single:930,mfj:1860}},
-    VT: {name:"Vermont",type:"calc",baseType:"gross",brackets:{single:[[0,49400,0.0335],[49400,119700,0.066],[119700,249700,0.076],[249700,Infinity,0.0875]],mfj:[[0,82500,0.0335],[82500,199450,0.066],[199450,304000,0.076],[304000,Infinity,0.0875]]},stdDed:{single:7650,mfj:15300},exemption:{single:5300,mfj:10600}},
-    WA: {name:"Washington",type:"none",addon:{rate:0.0058,label:"WA Cares payroll tax (0.58%)",short:"WA Cares (0.58%)"}},
-    WI: {name:"Wisconsin",type:"calc",baseType:"gross",brackets:{single:[[0,15110,0.035],[15110,51950,0.044],[51950,332720,0.053],[332720,Infinity,0.0765]],mfj:[[0,20150,0.035],[20150,69260,0.044],[69260,443630,0.053],[443630,Infinity,0.0765]]},stdDed:{single:13960,mfj:25840},exemption:{single:700,mfj:1400}},
-    WV: {name:"West Virginia",type:"calc",baseType:"gross",brackets:{single:[[0,10000,0.0222],[10000,25000,0.0296],[25000,40000,0.0333],[40000,60000,0.0444],[60000,Infinity,0.0482]],mfj:[[0,10000,0.0222],[10000,25000,0.0296],[25000,40000,0.0333],[40000,60000,0.0444],[60000,Infinity,0.0482]]},exemption:{single:2000,mfj:4000}},
-    WY: {name:"Wyoming",type:"none"}
-  };
-
-  function calcState(code, gross, status, fedTaxable){
-    var s = STATES[code];
-    if (s.type === 'none') {
-      var addon0 = 0;
-      if (s.addon) {
-        var abase0 = s.addon.cap ? Math.min(gross, s.addon.cap) : gross;
-        addon0 = abase0 * s.addon.rate;
-      }
-      return { tax: 0, addon: addon0, hint: s.name + ' has no state income tax.' + (s.addon ? ' It has a small ' + s.addon.short + ' payroll tax.' : '') };
-    }
-    var base = (s.baseType === 'fedTaxable') ? fedTaxable : gross;
-    if (s.stdDed) base = Math.max(0, base - s.stdDed[status]);
-    if (s.exemption) base = Math.max(0, base - s.exemption[status]);
-    if (s.extra) base = Math.max(0, base - s.extra[status]);
-    var tax;
-    if (s.brackets) {
-      tax = pt(base, s.brackets[status]);
-    } else {
-      var taxableForRate = s.zeroBracket ? Math.max(0, base - s.zeroBracket) : base;
-      tax = taxableForRate * s.rate;
-    }
-    if (s.credit) tax -= s.credit[status];
-    if (s.surchargeThreshold && base > s.surchargeThreshold) tax += (base - s.surchargeThreshold) * s.surchargeRate;
-    tax = Math.max(0, tax);
-    var addon = 0;
-    if (s.addon) {
-      var abase = s.addon.cap ? Math.min(gross, s.addon.cap) : gross;
-      addon = abase * s.addon.rate;
-    }
-    return { tax: tax, addon: addon, hint: s.name + ' state income tax' + (s.addon ? ', plus ' + s.addon.short : '') + '.' };
-  }
-
-  function marginalRateOf(income, brackets){
-    var rate = brackets[0][2];
-    for (var i=0;i<brackets.length;i++){
-      if (income > brackets[i][0]) rate = brackets[i][2];
-    }
-    return rate;
-  }
-
-  
+  return tax;
+}
 function calcUS(gross, status, stateCode){
-  var fedStd = FEDERAL_STD_DEDUCTION[status];
-  var fedTaxable = Math.max(0, gross - fedStd);
-  var fedTax = pt(fedTaxable, FEDERAL_BRACKETS[status]);
-  var ssTax = Math.min(gross, SS_WAGE_BASE) * SS_RATE;
-  var medicareTax = gross * MEDICARE_RATE;
-  var addlMedicare = Math.max(0, gross - ADDL_MEDICARE_THRESHOLD[status]) * ADDL_MEDICARE_RATE;
-  var ficaTotal = ssTax + medicareTax + addlMedicare;
-  var st = calcState(stateCode, gross, status, fedTaxable);
-  var stateTotal = st.tax + st.addon;
-  var totalTax = fedTax + ficaTotal + stateTotal;
-  return { gross: gross, totalTax: totalTax, netAnnual: gross - totalTax,
-    effRate: gross > 0 ? (totalTax/gross*100) : 0, regionName: STATES[stateCode].name };
+  if (!usEngine || !STATES[stateCode]) return { gross: gross, totalTax: 0, netAnnual: gross, effRate: 0, regionName: 'US data unavailable' };
+  var res = usEngine.compute({ salary: gross, status: status, state: stateCode, periods: 1 });
+  var r = res.base;
+  // same rounding as the paycheck pages: every line a whole dollar, take-home = rounded gross minus those lines
+  var shown = usEngine.breakdown ? usEngine.breakdown(res) : null;
+  return { gross: shown ? shown.gross.year : r.gross, totalTax: shown ? shown.taxes.year : r.taxes, netAnnual: shown ? shown.net.year : r.net, effRate: r.effective * 100, regionName: STATES[stateCode].name };
 }
 
 // ===== UK engine (England/Wales/NI + Scotland) =====
 var RUK_BANDS = [[0,37700,0.20],[37700,125140,0.40],[125140,Infinity,0.45]];
   // Income Tax (Scotland): gov.scot — Scottish Income Tax rates and bands 2026 to 2027
-  var SCOT_BANDS = [[0,3967,0.19],[3967,16956,0.20],[16956,31092,0.21],[31092,62430,0.42],[62430,112570,0.45],[112570,Infinity,0.48]];
+  var SCOT_BANDS = [[0,3967,0.19],[3967,16956,0.20],[16956,31092,0.21],[31092,62430,0.42],[62430,125140,0.45],[125140,Infinity,0.48]];
   // National Insurance (Class 1, Category A): gov.uk — National Insurance rates and categories
   var NI_PRIMARY_THRESHOLD = 12570;
   var NI_UPPER_LIMIT = 50270;
@@ -591,11 +288,16 @@ var RUK_BANDS = [[0,37700,0.20],[37700,125140,0.40],[125140,Infinity,0.45]];
   }
 
   
+// take-home pay as the stand-alone pages show it: rounded gross minus each rounded deduction
+function shownNet(gross, parts){
+  return parts.reduce(function(n, d){ return n - Math.round(d); }, Math.round(gross));
+}
+
 function calcUKWrapped(gross, isScottish){
   var it = calcIncomeTax(gross, isScottish);
   var ni = calcNI(gross);
   var totalTax = it.tax + ni;
-  return { gross: gross, totalTax: totalTax, netAnnual: gross - totalTax,
+  return { gross: gross, totalTax: totalTax, netAnnual: shownNet(gross, [it.tax, ni]),
     effRate: gross > 0 ? (totalTax/gross*100) : 0, regionName: isScottish ? "Scotland" : "England/Wales/NI" };
 }
 
@@ -620,99 +322,156 @@ var AU_BRACKETS = [[0,18200,0],[18200,45000,0.15],[45000,135000,0.30],[135000,19
 function calcAUWrapped(gross){
   var grossTax = pt(gross, AU_BRACKETS);
   var lito = calcLITO(gross);
-  var taxAfterOffset = Math.max(0, grossTax - lito);
+  var litoUsed = Math.min(lito, grossTax);
   var medicare = calcMedicareLevy(gross);
-  var totalTax = taxAfterOffset + medicare;
-  return { gross: gross, totalTax: totalTax, netAnnual: gross - totalTax,
+  var totalTax = (grossTax - litoUsed) + medicare;
+  return { gross: gross, totalTax: totalTax, netAnnual: shownNet(gross, [grossTax, -litoUsed, medicare]),
     effRate: gross > 0 ? (totalTax/gross*100) : 0, regionName: "Australia (federal)" };
 }
 
-// ===== Canada engine (Federal + all 13 provinces/territories) =====
-
-
-// ---- Federal 2026 (CRA, verified 2026-08-25) ----
-var FED_BRACKETS = [[0,58523,0.14],[58523,117045,0.205],[117045,181440,0.26],[181440,258482,0.29],[258482,Infinity,0.33]];
-var BPA_MAX = 16452, BPA_MIN = 14829, BPA_PHASE_START = 181440, BPA_PHASE_END = 258482;
-var BPA_CREDIT_RATE = 0.14; // lowest federal bracket rate
-
-function federalBPA(income){
-  if (income <= BPA_PHASE_START) return BPA_MAX;
-  if (income >= BPA_PHASE_END) return BPA_MIN;
-  var frac = (income - BPA_PHASE_START) / (BPA_PHASE_END - BPA_PHASE_START);
-  return BPA_MAX - (BPA_MAX - BPA_MIN) * frac;
-}
-
-function federalTax(income, isQuebec){
-  var gross = pt(income, FED_BRACKETS);
-  var credit = federalBPA(income) * BPA_CREDIT_RATE;
-  var tax = Math.max(0, gross - credit);
-  if (isQuebec) tax = tax * (1 - 0.165); // Quebec federal abatement
-  return tax;
-}
-
-// ---- Provinces/territories 2026 (CRA + Revenu Quebec, verified 2026-08-25) ----
-var PROVINCES = {
-  AB: { name:"Alberta", brackets:[[0,61200,0.08],[61200,154259,0.10],[154259,185111,0.12],[185111,246813,0.13],[246813,370220,0.14],[370220,Infinity,0.15]] },
-  BC: { name:"British Columbia", brackets:[[0,50363,0.056],[50363,100728,0.077],[100728,115648,0.105],[115648,140430,0.1229],[140430,190405,0.147],[190405,265545,0.168],[265545,Infinity,0.205]] },
-  MB: { name:"Manitoba", brackets:[[0,47564,0.108],[47564,101200,0.1275],[101200,Infinity,0.174]] },
-  NB: { name:"New Brunswick", brackets:[[0,52333,0.094],[52333,104666,0.14],[104666,193861,0.16],[193861,Infinity,0.195]] },
-  NL: { name:"Newfoundland and Labrador", brackets:[[0,44678,0.087],[44678,89354,0.145],[89354,159528,0.158],[159528,223340,0.178],[223340,285319,0.198],[285319,570638,0.208],[570638,1141275,0.213],[1141275,Infinity,0.218]] },
-  NS: { name:"Nova Scotia", brackets:[[0,30995,0.0879],[30995,61991,0.1495],[61991,97417,0.1667],[97417,157124,0.175],[157124,Infinity,0.21]] },
-  NT: { name:"Northwest Territories", brackets:[[0,53003,0.059],[53003,106009,0.086],[106009,172346,0.122],[172346,Infinity,0.1405]] },
-  NU: { name:"Nunavut", brackets:[[0,55801,0.04],[55801,111602,0.07],[111602,181439,0.09],[181439,Infinity,0.115]] },
-  ON: { name:"Ontario", brackets:[[0,53891,0.0505],[53891,107785,0.0915],[107785,150000,0.1116],[150000,220000,0.1216],[220000,Infinity,0.1316]], surtax:[[5818,0.20],[7446,0.36]] },
-  PE: { name:"Prince Edward Island", brackets:[[0,33928,0.095],[33928,65820,0.1347],[65820,106890,0.166],[106890,142520,0.1762],[142520,200000,0.19],[200000,Infinity,0.20]] },
-  QC: { name:"Quebec", brackets:[[0,54345,0.14],[54345,108680,0.19],[108680,132245,0.24],[132245,Infinity,0.2575]] },
-  SK: { name:"Saskatchewan", brackets:[[0,54532,0.105],[54532,155805,0.125],[155805,Infinity,0.145]] },
-  YT: { name:"Yukon", brackets:[[0,58523,0.064],[58523,117045,0.09],[117045,181440,0.109],[181440,500000,0.128],[500000,Infinity,0.15]] }
-};
-
-function provincialTax(code, income){
-  var p = PROVINCES[code];
-  var basicTax = pt(income, p.brackets);
-  var tax = basicTax;
-  if (p.surtax){
-    p.surtax.forEach(function(tier){
-      if (basicTax > tier[0]) tax += (basicTax - tier[0]) * tier[1];
-    });
+// ===== Canada engine (federal + all 10 provinces and 3 territories), 2026 =====
+// Method: CRA "T4127 Payroll Deductions Formulas", 122nd edition (effective January 1, 2026), for the federal
+// government and the twelve non-Quebec jurisdictions; Revenu Quebec's 2026 parameters for Quebec.
+// Tax payable = tax on annual taxable income, minus the non-refundable credits every employee gets (basic
+// personal amount, base CPP/QPP contributions, EI and QPIP premiums, Canada employment amount), plus
+// Ontario's surtax and Health Premium. The enhanced (first additional) CPP/QPP contributions and CPP2/QPP2 are
+// deducted from income instead of credited.
+function caBracketTax(income, brackets){
+  if (income <= 0) return 0;
+  var tax = 0;
+  for (var i = 0; i < brackets.length; i++){
+    var lo = brackets[i][0], hi = brackets[i][1], rate = brackets[i][2];
+    if (income > lo){ tax += (Math.min(income, hi) - lo) * rate; } else { break; }
   }
   return tax;
 }
 
-// ---- CPP / CPP2 / EI 2026 (CRA, verified 2026-08-25) ----
-var CPP_EXEMPT = 3500, CPP_YMPE = 74600, CPP_RATE = 0.0595;
-var CPP2_YAMPE = 85000, CPP2_RATE = 0.04;
-var EI_MIE = 68900, EI_RATE = 0.0163, EI_RATE_QC = 0.0130;
+// ---- Federal 2026 (CRA T4127, Table 8.1) ----
+var CA_FED = {
+  brackets: [[0,58523,0.14],[58523,117045,0.205],[117045,181440,0.26],[181440,258482,0.29],[258482,Infinity,0.33]],
+  creditRate: 0.14,                         // lowest federal rate: used for every federal non-refundable credit
+  bpaMax: 16452, bpaMin: 14829, bpaFrom: 181440, bpaTo: 258482,   // basic personal amount, reduced for high incomes
+  employmentAmount: 1501,                   // Canada employment amount
+  quebecAbatement: 0.165                    // federal tax reduction for Quebec residents
+};
 
-function calcCPP(income){
-  var base = Math.max(0, Math.min(income, CPP_YMPE) - CPP_EXEMPT) * CPP_RATE;
-  var cpp2 = Math.max(0, Math.min(income, CPP2_YAMPE) - CPP_YMPE) * CPP2_RATE;
-  return { base: base, cpp2: cpp2, total: base + cpp2 };
+// ---- CPP / CPP2 / QPP / QPIP / EI 2026 (CRA; Revenu Quebec) ----
+var CA_PAY = {
+  exemption: 3500, ympe: 74600, yampe: 85000,
+  cppRate: 0.0595, cppBaseRate: 0.0495,     // CPP: 4.95% base + 1.00% first additional contribution
+  qppRate: 0.0630, qppBaseRate: 0.0530,     // QPP: 5.30% base + 1.00% first additional contribution
+  secondRate: 0.04,                         // CPP2 / QPP2 on earnings between the YMPE and the YAMPE
+  eiMax: 68900, eiRate: 0.0163, eiRateQC: 0.0130,
+  qpipMax: 103000, qpipRate: 0.0043
+};
+
+// ---- Provinces/territories 2026 (CRA T4127 Table 8.1 rates and thresholds; basic personal amounts from CRA/provincial TD1 values) ----
+// rate = lowest bracket rate, which is also the rate for that province's non-refundable credits
+var PROVINCES = {
+  AB: { name:"Alberta", rate:0.08, bpa:22769, brackets:[[0,61200,0.08],[61200,154259,0.10],[154259,185111,0.12],[185111,246813,0.13],[246813,370220,0.14],[370220,Infinity,0.15]] },
+  BC: { name:"British Columbia", rate:0.0506, bpa:13216, taxReduction:true, brackets:[[0,50363,0.0506],[50363,100728,0.077],[100728,115648,0.105],[115648,140430,0.1229],[140430,190405,0.147],[190405,265545,0.168],[265545,Infinity,0.205]] },
+  MB: { name:"Manitoba", rate:0.108, bpa:15780, bpaPhaseOut:[200000,400000], brackets:[[0,47000,0.108],[47000,100000,0.1275],[100000,Infinity,0.174]] },
+  NB: { name:"New Brunswick", rate:0.094, bpa:13664, brackets:[[0,52333,0.094],[52333,104666,0.14],[104666,193861,0.16],[193861,Infinity,0.195]] },
+  NL: { name:"Newfoundland and Labrador", rate:0.087, bpa:11188, brackets:[[0,44678,0.087],[44678,89354,0.145],[89354,159528,0.158],[159528,223340,0.178],[223340,285319,0.198],[285319,570638,0.208],[570638,1141275,0.213],[1141275,Infinity,0.218]] },
+  NS: { name:"Nova Scotia", rate:0.0879, bpa:11932, brackets:[[0,30995,0.0879],[30995,61991,0.1495],[61991,97417,0.1667],[97417,157124,0.175],[157124,Infinity,0.21]] },
+  NT: { name:"Northwest Territories", rate:0.059, bpa:18198, brackets:[[0,53003,0.059],[53003,106009,0.086],[106009,172346,0.122],[172346,Infinity,0.1405]] },
+  NU: { name:"Nunavut", rate:0.04, bpa:19659, brackets:[[0,55801,0.04],[55801,111602,0.07],[111602,181439,0.09],[181439,Infinity,0.115]] },
+  ON: { name:"Ontario", rate:0.0505, bpa:12989, surtax:[[5818,0.20],[7446,0.36]], healthPremium:true, brackets:[[0,53891,0.0505],[53891,107785,0.0915],[107785,150000,0.1116],[150000,220000,0.1216],[220000,Infinity,0.1316]] },
+  PE: { name:"Prince Edward Island", rate:0.095, bpa:15000, brackets:[[0,33928,0.095],[33928,65820,0.1347],[65820,106890,0.166],[106890,142520,0.1762],[142520,Infinity,0.19]] },
+  QC: { name:"Quebec", rate:0.14, bpa:18952, quebec:true, workerRate:0.06, workerMax:1450, brackets:[[0,54345,0.14],[54345,108680,0.19],[108680,132245,0.24],[132245,Infinity,0.2575]] },
+  SK: { name:"Saskatchewan", rate:0.105, bpa:20381, brackets:[[0,54532,0.105],[54532,155805,0.125],[155805,Infinity,0.145]] },
+  YT: { name:"Yukon", rate:0.064, bpa:16452, bpaLikeFederal:true, employmentCredit:true, brackets:[[0,58523,0.064],[58523,117045,0.09],[117045,181440,0.109],[181440,500000,0.128],[500000,Infinity,0.15]] }
+};
+
+function caFederalBPA(netIncome){
+  if (netIncome <= CA_FED.bpaFrom) return CA_FED.bpaMax;
+  if (netIncome >= CA_FED.bpaTo) return CA_FED.bpaMin;
+  return CA_FED.bpaMax - (netIncome - CA_FED.bpaFrom) * (CA_FED.bpaMax - CA_FED.bpaMin) / (CA_FED.bpaTo - CA_FED.bpaFrom);
 }
 
-function calcEI(income, isQuebec){
-  var rate = isQuebec ? EI_RATE_QC : EI_RATE;
-  return Math.min(income, EI_MIE) * rate;
+function caProvincialBPA(p, netIncome){
+  if (p.bpaLikeFederal) return caFederalBPA(netIncome);          // Yukon follows the federal amount
+  if (p.bpaPhaseOut){                                            // Manitoba: phased out between $200,000 and $400,000
+    var from = p.bpaPhaseOut[0], to = p.bpaPhaseOut[1];
+    if (netIncome <= from) return p.bpa;
+    if (netIncome >= to) return 0;
+    return p.bpa - (netIncome - from) * p.bpa / (to - from);
+  }
+  return p.bpa;
+}
+
+// Ontario Health Premium (a flat amount by income band, not part of the brackets)
+function caOntarioHealthPremium(a){
+  if (a <= 20000) return 0;
+  if (a <= 36000) return Math.min(300, 0.06 * (a - 20000));
+  if (a <= 48000) return Math.min(450, 300 + 0.06 * (a - 36000));
+  if (a <= 72000) return Math.min(600, 450 + 0.25 * (a - 48000));
+  if (a <= 200000) return Math.min(750, 600 + 0.25 * (a - 72000));
+  return Math.min(900, 750 + 0.25 * (a - 200000));
+}
+
+// British Columbia tax reduction for lower incomes
+function caBCTaxReduction(a, t4){
+  if (a <= 25570) return Math.min(t4, 575);
+  if (a <= 41722) return Math.max(0, Math.min(t4, 575 - (a - 25570) * 0.0356));
+  return 0;
 }
 
 function calcCanadaTax(gross, provinceCode){
-  var isQC = provinceCode === 'QC';
-  var fed = federalTax(gross, isQC);
-  var prov = provincialTax(provinceCode, gross);
-  var cpp = calcCPP(gross);
-  var ei = calcEI(gross, isQC);
-  var totalDeductions = fed + prov + cpp.total + ei;
+  gross = (isFinite(gross) && gross > 0) ? gross : 0;
+  var p = PROVINCES[provinceCode];
+  var isQC = !!p.quebec;
+
+  // Payroll contributions (CPP/CPP2 or QPP/QPP2, EI, QPIP)
+  var contributory = Math.max(0, Math.min(gross, CA_PAY.ympe) - CA_PAY.exemption);
+  var pension = contributory * (isQC ? CA_PAY.qppRate : CA_PAY.cppRate);
+  var pensionBase = contributory * (isQC ? CA_PAY.qppBaseRate : CA_PAY.cppBaseRate);
+  var pension2 = Math.max(0, Math.min(gross, CA_PAY.yampe) - CA_PAY.ympe) * CA_PAY.secondRate;
+  var ei = Math.min(gross, CA_PAY.eiMax) * (isQC ? CA_PAY.eiRateQC : CA_PAY.eiRate);
+  var qpip = isQC ? Math.min(gross, CA_PAY.qpipMax) * CA_PAY.qpipRate : 0;
+
+  // Annual taxable income: the enhanced part of CPP/QPP and all of CPP2/QPP2 are deductions
+  var a = Math.max(0, gross - (pension - pensionBase) - pension2);
+
+  // Federal tax
+  var fedCredits = CA_FED.creditRate * (caFederalBPA(a) + pensionBase + ei + qpip + Math.min(gross, CA_FED.employmentAmount));
+  var fed = Math.max(0, caBracketTax(a, CA_FED.brackets) - fedCredits);
+  if (isQC) fed *= (1 - CA_FED.quebecAbatement);
+
+  // Provincial / territorial tax
+  var prov;
+  if (isQC){
+    var worker = Math.min(p.workerRate * gross, p.workerMax);     // Quebec deduction for workers
+    var qcIncome = Math.max(0, a - worker);
+    prov = Math.max(0, caBracketTax(qcIncome, p.brackets) - p.rate * p.bpa);
+  } else {
+    var credits = p.rate * (caProvincialBPA(p, a) + pensionBase + ei);
+    if (p.employmentCredit) credits += p.rate * Math.min(gross, CA_FED.employmentAmount);   // Yukon
+    var t4 = Math.max(0, caBracketTax(a, p.brackets) - credits);
+    prov = t4;
+    if (p.surtax){                                                // Ontario surtax: both tiers on the same basic tax
+      var v1 = 0;
+      p.surtax.forEach(function(tier){ if (t4 > tier[0]) v1 += (t4 - tier[0]) * tier[1]; });
+      var withSurtax = t4 + v1;
+      var reduction = Math.max(0, Math.min(withSurtax, 600 - withSurtax));   // Ontario tax reduction (low incomes)
+      prov = withSurtax - reduction;
+    }
+    if (p.healthPremium) prov += caOntarioHealthPremium(a);
+    if (p.taxReduction) prov -= caBCTaxReduction(a, t4);
+  }
+
+  var total = fed + prov + pension + pension2 + ei + qpip;
   return {
-    federal: fed, provincial: prov, cpp: cpp.base, cpp2: cpp.cpp2, ei: ei,
-    totalDeductions: totalDeductions, net: gross - totalDeductions
+    federal: fed, provincial: prov, cpp: pension, cpp2: pension2, ei: ei, qpip: qpip,
+    pensionName: isQC ? 'QPP' : 'CPP',
+    totalDeductions: total, net: gross - total
   };
 }
-
 
   
 function calcCAWrapped(gross, provinceCode){
   var r = calcCanadaTax(gross, provinceCode);
-  return { gross: gross, totalTax: r.totalDeductions, netAnnual: r.net,
+  return { gross: gross, totalTax: r.totalDeductions, netAnnual: shownNet(gross, [r.federal, r.provincial, r.cpp, r.cpp2, r.ei, r.qpip]),
     effRate: gross > 0 ? (r.totalDeductions/gross*100) : 0, regionName: PROVINCES[provinceCode].name };
 }
 
@@ -730,14 +489,14 @@ function calcCAWrapped(gross, provinceCode){
   function extraFieldsHTML(country, side){
     if (country === 'US') {
       return '<div class="row2">' +
-        '<div class="field"><label for="statusUS'+side+'">Filing status</label><select id="statusUS'+side+'"><option value="single" selected>Single</option><option value="mfj">Married filing jointly</option></select></div>' +
+        '<div class="field"><label for="statusUS'+side+'">Filing status</label><select id="statusUS'+side+'"><option value="single" selected>Single</option><option value="mfj">Married filing jointly</option><option value="mfs">Married filing separately</option><option value="hoh">Head of household</option></select></div>' +
         '<div class="field"><label for="stateUS'+side+'">State</label><select id="stateUS'+side+'">'+usStateOptions()+'</select></div>' +
         '</div>';
     }
     if (country === 'UK') {
       return '<div class="field"><label>Region</label><div class="toggle-group" id="ukRegion'+side+'" role="group" aria-label="UK region">' +
-        '<button type="button" data-val="0" class="active">England/Wales/NI</button>' +
-        '<button type="button" data-val="1">Scotland</button>' +
+        '<button type="button" data-val="0" class="active" aria-pressed="true">England/Wales/NI</button>' +
+        '<button type="button" data-val="1" aria-pressed="false">Scotland</button>' +
         '</div></div>';
     }
     if (country === 'CA') {
@@ -749,7 +508,9 @@ function calcCAWrapped(gross, provinceCode){
   function wireExtraFields(side){
     var country = document.getElementById('country'+side).value;
     document.getElementById('extraFields'+side).innerHTML = extraFieldsHTML(country, side);
-    document.getElementById('currencyLabel'+side).textContent = CURRENCY[country];
+    var curLabel = document.getElementById('currencyLabel'+side);
+    curLabel.textContent = CURRENCY[country];
+    document.getElementById('salary'+side).style.paddingLeft = Math.max(34, curLabel.offsetWidth + 24) + 'px';
 
     if (country === 'US') {
       document.getElementById('statusUS'+side).addEventListener('change', calc);
@@ -758,8 +519,9 @@ function calcCAWrapped(gross, provinceCode){
       var group = document.getElementById('ukRegion'+side);
       group.querySelectorAll('button').forEach(function(btn){
         btn.addEventListener('click', function(){
-          group.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); });
+          group.querySelectorAll('button').forEach(function(b){ b.classList.remove('active'); b.setAttribute('aria-pressed','false'); });
           btn.classList.add('active');
+          btn.setAttribute('aria-pressed','true');
           calc();
         });
       });

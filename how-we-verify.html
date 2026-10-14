@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -174,6 +54,7 @@
   table.check thead th{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper-2);}
   table.check tbody tr:last-child td{border-bottom:none;}
   table.check .ok{color:var(--teal);font-weight:600;}
+  table.check .fix{color:var(--orange);font-weight:600;}
   .principle-box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:16px 0;}
   .principle-box strong{color:var(--ink);}
   .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:28px;font-size:0.9rem;color:var(--ink-soft);}
@@ -190,50 +71,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 
@@ -246,7 +84,7 @@
   <ol>
     <li><strong>Every figure traces to one named primary source</strong> &mdash; a specific IRS revenue procedure or notice, a specific gov.uk/gov.scot/ato.gov.au/canada.ca page, never a second-hand summary treated as the original.</li>
     <li><strong>Re-checked whenever there's reason to think something changed</strong> &mdash; a new tax year starting, a rate change reported in the press, or simply enough time passing that a re-check is due. There's no fixed weekly or monthly schedule; the trigger is "is there a reason to believe this might be stale," not a calendar.</li>
-    <li><strong>Cross-checked against more than one source where possible</strong> &mdash; a government page plus at least one independent secondary source (a tax firm's summary, a financial publisher's writeup), looking for agreement rather than trusting either alone.</li>
+    <li><strong>Cross-checked against more than one source where possible</strong> &mdash; a government page plus at least one independent secondary source (a tax firm's summary, a financial publisher's writeup, an open-source tax model), looking for agreement rather than trusting either alone.</li>
     <li><strong>Checked against a worked example when the source provides one</strong> &mdash; the Australia calculator, for instance, was checked against the ATO's own published example (a $80,000 salary reducing to a specific take-home figure) rather than just the bracket table.</li>
     <li><strong>Findings get logged either way</strong> &mdash; both "this changed, here's the fix" and "this was checked and is still correct" go in the <a href="/changelog">changelog</a>, not just the corrections.</li>
   </ol>
@@ -265,6 +103,26 @@
       </tbody>
     </table>
     <p style="margin:14px 0 0;font-size:0.88rem;">All three came back already correct against multiple current sources checked the same day &mdash; which is worth stating plainly instead of manufacturing a correction that didn't happen. The links from each calculator's source badge to the actual government page are new as of this pass; the underlying figures were not.</p>
+  </div>
+
+  <h2>A second one, with corrections</h2>
+  <p>A month later the same kind of pass went further &mdash; every US state instead of three national rates, and how the numbers add up on screen &mdash; and this time it found errors:</p>
+
+  <div class="example-box">
+    <span class="date-label">October 2026 verification pass</span>
+    <table class="check">
+      <thead><tr><th>Calculator</th><th>What was checked</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>US &mdash; state income tax</td><td>Brackets, standard deductions, exemptions and credits for all 50 states and D.C., against independent sources and each state&rsquo;s own forms</td><td class="fix">Corrected in 25 states and D.C.</td></tr>
+        <tr><td>US &mdash; state payroll programs</td><td>Paid-leave, disability and similar premiums taken from employees&rsquo; paychecks</td><td class="fix">Added for 10 states; New Jersey and Washington corrected</td></tr>
+        <tr><td>US &mdash; federal and payroll tax</td><td>Federal brackets and standard deduction, Social Security, Medicare, the 2025&ndash;2028 overtime deduction, the child tax credit</td><td class="ok">Already correct</td></tr>
+        <tr><td>Canada</td><td>Federal and provincial basic personal amounts, the credits for CPP/QPP and EI contributions, Quebec&rsquo;s own system, Ontario and British Columbia adjustments</td><td class="fix">Rebuilt to the CRA&rsquo;s 2026 formulas; take-home was understated by roughly $1,000&ndash;$3,500 in the cases tried</td></tr>
+        <tr><td>UK / Scotland</td><td>Where Scotland&rsquo;s 45% band ends</td><td class="fix">Corrected to &pound;125,140 (was &pound;112,570)</td></tr>
+        <tr><td>Australia</td><td>Low Income Tax Offset and Medicare levy lines at low incomes</td><td class="fix">Offset now limited to the tax it cancels; take-home was already correct</td></tr>
+        <tr><td>Every calculator</td><td>Whether each table&rsquo;s lines add up to the take-home figure shown</td><td class="fix">Fixed: each line is rounded on its own and the total comes from the lines</td></tr>
+      </tbody>
+    </table>
+    <p style="margin:14px 0 0;font-size:0.88rem;">The September check had come back clean, and that was accurate for what it looked at: three national rates and the federal basic personal amount. The October pass went deeper, and the errors were in what the first one had not looked at &mdash; state-by-state detail, the credits around the Canadian rates, and the arithmetic of the tables themselves. The US engine now has 248 automated checks, plus 30 deliberately broken copies of it that the checks must catch; the UK, Australia and Canada calculators have their own (93 checks, 24 broken copies, and 43,920 comparisons of the Canadian engine against a separately written reference). Details and examples are in the <a href="/changelog">changelog</a>.</p>
   </div>
 
   <h2>What this doesn't claim</h2>
@@ -287,30 +145,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
