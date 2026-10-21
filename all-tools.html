@@ -39,130 +39,12 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-0.02em;margin:10px 0 8px;}
   .lede{color:var(--ink-soft);max-width:65ch;margin:0 0 12px;}
+  .help-callout{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--orange);border-radius:8px;padding:12px 16px;margin:0 0 18px;font-size:0.92rem;color:var(--ink-soft);max-width:65ch;}
+  .help-callout a{font-weight:600;}
   .jump-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:32px;}
   .jump-nav a{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;text-decoration:none;color:var(--ink-soft);}
   .jump-nav a:hover{border-color:var(--teal);color:var(--ink);}
@@ -206,50 +88,7 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 
@@ -257,6 +96,8 @@
   <span class="eyebrow">Directory</span>
   <h1>All Tools</h1>
   <p class="lede">Every tool on the site, in one place. Free, no account, runs in your browser — jump to a category or scan the full list below.</p>
+
+  <p class="help-callout">Can&rsquo;t find what you need? <a href="/help-me">Describe it in your own words</a> and we&rsquo;ll point you to the right tool &mdash; or take your request if we haven&rsquo;t built it yet.</p>
 
   <div class="jump-nav">
     <a href="#documents">Documents</a><a href="#money">Money &amp; Tax</a><a href="#health">Health</a><a href="#career">Career</a>
@@ -266,17 +107,17 @@
   <div class="cat-section" id="documents">
     <div class="cat-header"><h2>Documents &amp; Images</h2><a href="/document-tools">Open category →</a></div>
     <div class="tool-grid" style="--accent:#C14324;">
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Merge PDFs</div><div class="tdesc">Combine multiple PDFs into one, reorder pages first.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Split PDF</div><div class="tdesc">Extract specific pages into a new PDF.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Images to PDF</div><div class="tdesc">Convert JPG/PNG photos into a single PDF.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Remove Background</div><div class="tdesc">AI background removal from a photo, entirely in-browser.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Clean Metadata</div><div class="tdesc">Strip author, software name, and dates from a PDF.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Compress &amp; Convert Image</div><div class="tdesc">Shrink a photo or convert between JPG, PNG, WebP.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Redact PDF</div><div class="tdesc">Permanently black out or overwrite sensitive text in a PDF.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Extract Text (OCR)</div><div class="tdesc">Pull selectable text out of a photo or scanned document.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Face Mosaic</div><div class="tdesc">Automatically find and blur every face in a photo.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">Enhance Quality</div><div class="tdesc">Sharpen and enlarge a soft or low-resolution photo.</div></a>
-      <a class="tool-card" href="/document-tools" style="--accent:#C14324;"><div class="tname">AI Eraser</div><div class="tdesc">Paint over something in a photo to remove it.</div></a>
+      <a class="tool-card" href="/document-tools#merge" style="--accent:#C14324;"><div class="tname">Merge PDFs</div><div class="tdesc">Combine multiple PDFs into one, reorder pages first.</div></a>
+      <a class="tool-card" href="/document-tools#split" style="--accent:#C14324;"><div class="tname">Split PDF</div><div class="tdesc">Extract specific pages into a new PDF.</div></a>
+      <a class="tool-card" href="/document-tools#images" style="--accent:#C14324;"><div class="tname">Images to PDF</div><div class="tdesc">Convert JPG/PNG photos into a single PDF.</div></a>
+      <a class="tool-card" href="/document-tools#bgremove" style="--accent:#C14324;"><div class="tname">Remove Background</div><div class="tdesc">AI background removal from a photo, entirely in-browser.</div></a>
+      <a class="tool-card" href="/document-tools#metadata" style="--accent:#C14324;"><div class="tname">Clean Metadata</div><div class="tdesc">Strip author, software name, and dates from a PDF.</div></a>
+      <a class="tool-card" href="/document-tools#compress" style="--accent:#C14324;"><div class="tname">Compress &amp; Convert Image</div><div class="tdesc">Shrink a photo or convert between JPG, PNG, WebP.</div></a>
+      <a class="tool-card" href="/document-tools#redact" style="--accent:#C14324;"><div class="tname">Redact PDF</div><div class="tdesc">Permanently black out or overwrite sensitive text in a PDF.</div></a>
+      <a class="tool-card" href="/document-tools#ocr" style="--accent:#C14324;"><div class="tname">Extract Text (OCR)</div><div class="tdesc">Pull selectable text out of a photo or scanned document.</div></a>
+      <a class="tool-card" href="/document-tools#facemosaic" style="--accent:#C14324;"><div class="tname">Face Mosaic</div><div class="tdesc">Automatically find and blur every face in a photo.</div></a>
+      <a class="tool-card" href="/document-tools#upscale" style="--accent:#C14324;"><div class="tname">Enhance Quality</div><div class="tdesc">Sharpen and enlarge a soft or low-resolution photo.</div></a>
+      <a class="tool-card" href="/document-tools#eraser" style="--accent:#C14324;"><div class="tname">AI Eraser</div><div class="tdesc">Paint over something in a photo to remove it.</div></a>
       <a class="tool-card" href="/screenshot-markup" style="--accent:#C14324;"><div class="tname">Screenshot Markup</div><div class="tdesc">Arrows, shapes, text, highlighter, crop, and a manual mosaic area.</div></a>
     </div>
   </div>
@@ -308,51 +149,51 @@
   <div class="cat-section" id="career">
     <div class="cat-header"><h2>Career</h2><a href="/career-tools">Open category →</a></div>
     <div class="tool-grid">
-      <a class="tool-card" href="/career-tools" style="--accent:#946F27;"><div class="tname">Resume Builder</div><div class="tdesc">Build a clean, single-column resume PDF.</div></a>
-      <a class="tool-card" href="/career-tools" style="--accent:#946F27;"><div class="tname">ATS Score Checker</div><div class="tdesc">Keyword-match your resume against a job description.</div></a>
-      <a class="tool-card" href="/career-tools" style="--accent:#946F27;"><div class="tname">Cover Letter Generator</div><div class="tdesc">Assembles a one-page PDF from your own answers.</div></a>
-      <a class="tool-card" href="/career-tools" style="--accent:#946F27;"><div class="tname">Hourly &harr; Salary Converter</div><div class="tdesc">Convert wage to annual salary with custom hours/weeks.</div></a>
+      <a class="tool-card" href="/career-tools#builder" style="--accent:#946F27;"><div class="tname">Resume Builder</div><div class="tdesc">Build a clean, single-column resume PDF.</div></a>
+      <a class="tool-card" href="/career-tools#ats" style="--accent:#946F27;"><div class="tname">ATS Score Checker</div><div class="tdesc">Keyword-match your resume against a job description.</div></a>
+      <a class="tool-card" href="/career-tools#cover" style="--accent:#946F27;"><div class="tname">Cover Letter Generator</div><div class="tdesc">Assembles a one-page PDF from your own answers.</div></a>
+      <a class="tool-card" href="/career-tools#salary" style="--accent:#946F27;"><div class="tname">Hourly &harr; Salary Converter</div><div class="tdesc">Convert wage to annual salary with custom hours/weeks.</div></a>
     </div>
   </div>
 
   <div class="cat-section" id="business">
     <div class="cat-header"><h2>Business</h2><a href="/business-tools">Open category →</a></div>
     <div class="tool-grid">
-      <a class="tool-card" href="/business-tools" style="--accent:#C14324;"><div class="tname">Invoice Generator</div><div class="tdesc">Create and download a professional invoice PDF.</div></a>
-      <a class="tool-card" href="/business-tools" style="--accent:#C14324;"><div class="tname">QR Code Generator</div><div class="tdesc">Custom-colored QR codes, downloadable PNG.</div></a>
+      <a class="tool-card" href="/business-tools#invoice" style="--accent:#C14324;"><div class="tname">Invoice Generator</div><div class="tdesc">Create and download a professional invoice PDF.</div></a>
+      <a class="tool-card" href="/business-tools#qr" style="--accent:#C14324;"><div class="tname">QR Code Generator</div><div class="tdesc">Custom-colored QR codes, downloadable PNG.</div></a>
     </div>
   </div>
 
   <div class="cat-section" id="writing">
     <div class="cat-header"><h2>Writing &amp; AI</h2><a href="/writing-tools">Open category →</a></div>
     <div class="tool-grid">
-      <a class="tool-card" href="/writing-tools" style="--accent:#0D7A7C;"><div class="tname">Flagged Phrases</div><div class="tdesc">Flags common AI-writing clichés with plain-language swaps.</div></a>
-      <a class="tool-card" href="/writing-tools" style="--accent:#0D7A7C;"><div class="tname">Smooth It Out</div><div class="tdesc">Suggested rewrites for stiff, formulaic sentences.</div></a>
-      <a class="tool-card" href="/writing-tools" style="--accent:#0D7A7C;"><div class="tname">Word Count &amp; Readability</div><div class="tdesc">Live word/sentence count and a Flesch readability score.</div></a>
+      <a class="tool-card" href="/writing-tools#check" style="--accent:#0D7A7C;"><div class="tname">Flagged Phrases</div><div class="tdesc">Flags common AI-writing clichés with plain-language swaps.</div></a>
+      <a class="tool-card" href="/writing-tools#smooth" style="--accent:#0D7A7C;"><div class="tname">Smooth It Out</div><div class="tdesc">Suggested rewrites for stiff, formulaic sentences.</div></a>
+      <a class="tool-card" href="/writing-tools#count" style="--accent:#0D7A7C;"><div class="tname">Word Count &amp; Readability</div><div class="tdesc">Live word/sentence count and a Flesch readability score.</div></a>
     </div>
   </div>
 
   <div class="cat-section" id="everyday">
     <div class="cat-header"><h2>Everyday</h2><a href="/everyday-tools">Open category →</a></div>
     <div class="tool-grid">
-      <a class="tool-card" href="/everyday-tools" style="--accent:#946F27;"><div class="tname">Age Calculator</div><div class="tdesc">Exact years, months, and days.</div></a>
-      <a class="tool-card" href="/everyday-tools" style="--accent:#946F27;"><div class="tname">Percentage Calculator</div><div class="tdesc">X% of Y, what percent, and percent change.</div></a>
-      <a class="tool-card" href="/everyday-tools" style="--accent:#946F27;"><div class="tname">Tip &amp; Split Calculator</div><div class="tdesc">Splits a bill with a pre-tax or post-tax tip option.</div></a>
-      <a class="tool-card" href="/everyday-tools" style="--accent:#946F27;"><div class="tname">Password Generator</div><div class="tdesc">Cryptographically random, adjustable character sets.</div></a>
-      <a class="tool-card" href="/everyday-tools" style="--accent:#946F27;"><div class="tname">Unit Converter</div><div class="tdesc">Height, weight, and temperature conversions.</div></a>
-      <a class="tool-card" href="/everyday-tools" style="--accent:#946F27;"><div class="tname">Time Zone Converter</div><div class="tdesc">One moment across 11 zones, with day-offset flags.</div></a>
+      <a class="tool-card" href="/everyday-tools#age" style="--accent:#946F27;"><div class="tname">Age Calculator</div><div class="tdesc">Exact years, months, and days.</div></a>
+      <a class="tool-card" href="/everyday-tools#pct" style="--accent:#946F27;"><div class="tname">Percentage Calculator</div><div class="tdesc">X% of Y, what percent, and percent change.</div></a>
+      <a class="tool-card" href="/everyday-tools#tip" style="--accent:#946F27;"><div class="tname">Tip &amp; Split Calculator</div><div class="tdesc">Splits a bill with a pre-tax or post-tax tip option.</div></a>
+      <a class="tool-card" href="/everyday-tools#pwd" style="--accent:#946F27;"><div class="tname">Password Generator</div><div class="tdesc">Cryptographically random, adjustable character sets.</div></a>
+      <a class="tool-card" href="/everyday-tools#unit" style="--accent:#946F27;"><div class="tname">Unit Converter</div><div class="tdesc">Height, weight, and temperature conversions.</div></a>
+      <a class="tool-card" href="/everyday-tools#tz" style="--accent:#946F27;"><div class="tname">Time Zone Converter</div><div class="tdesc">One moment across 11 zones, with day-offset flags.</div></a>
     </div>
   </div>
 
   <div class="cat-section" id="developer">
     <div class="cat-header"><h2>Developer</h2><a href="/devtools">Open category →</a></div>
     <div class="tool-grid">
-      <a class="tool-card" href="/devtools" style="--accent:#C14324;"><div class="tname">JSON Formatter</div><div class="tdesc">Format, minify, and validate JSON.</div></a>
-      <a class="tool-card" href="/devtools" style="--accent:#C14324;"><div class="tname">Base64 Encode/Decode</div><div class="tdesc">UTF-8 safe — handles non-Latin text and emoji correctly.</div></a>
-      <a class="tool-card" href="/devtools" style="--accent:#C14324;"><div class="tname">UUID Generator</div><div class="tdesc">v4 UUIDs, single or batch.</div></a>
-      <a class="tool-card" href="/devtools" style="--accent:#C14324;"><div class="tname">Color Converter</div><div class="tdesc">HEX, RGB, HSL conversion with live swatch.</div></a>
-      <a class="tool-card" href="/devtools" style="--accent:#C14324;"><div class="tname">URL Encode/Decode</div><div class="tdesc">Percent-encode text and query values.</div></a>
-      <a class="tool-card" href="/devtools" style="--accent:#C14324;"><div class="tname">Dummy Data Generator</div><div class="tdesc">Fake names, emails, phones, addresses — CSV or JSON.</div></a>
+      <a class="tool-card" href="/devtools#json" style="--accent:#C14324;"><div class="tname">JSON Formatter</div><div class="tdesc">Format, minify, and validate JSON.</div></a>
+      <a class="tool-card" href="/devtools#b64" style="--accent:#C14324;"><div class="tname">Base64 Encode/Decode</div><div class="tdesc">UTF-8 safe — handles non-Latin text and emoji correctly.</div></a>
+      <a class="tool-card" href="/devtools#uuid" style="--accent:#C14324;"><div class="tname">UUID Generator</div><div class="tdesc">v4 UUIDs, single or batch.</div></a>
+      <a class="tool-card" href="/devtools#color" style="--accent:#C14324;"><div class="tname">Color Converter</div><div class="tdesc">HEX, RGB, HSL conversion with live swatch.</div></a>
+      <a class="tool-card" href="/devtools#url" style="--accent:#C14324;"><div class="tname">URL Encode/Decode</div><div class="tdesc">Percent-encode text and query values.</div></a>
+      <a class="tool-card" href="/devtools#dummy" style="--accent:#C14324;"><div class="tname">Dummy Data Generator</div><div class="tdesc">Fake names, emails, phones, addresses — CSV or JSON.</div></a>
     </div>
   </div>
 
@@ -378,30 +219,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

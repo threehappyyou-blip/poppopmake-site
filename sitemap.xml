@@ -136,6 +136,11 @@
     <priority>0.5</priority>
   </url>
   <url>
+    <loc>https://poppopmake.com/help-me</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://poppopmake.com/how-it-works</loc>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>

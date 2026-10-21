@@ -238,6 +238,10 @@
   .results .rcat{font-size:0.78rem;color:var(--ink-soft);flex-shrink:0;}
   .results .rnone{padding:16px;color:var(--ink-soft);font-size:0.92rem;}
 
+  .help-line{margin:14px 0 0;max-width:620px;font-size:0.92rem;line-height:1.5;color:var(--cream-soft);}
+  .help-line a{color:var(--yellow);font-weight:600;text-underline-offset:3px;}
+  .help-line a:hover{color:var(--cream);}
+
   .quick-cats{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
   .quick-cats a{
     font-size:0.86rem;
@@ -458,6 +462,7 @@
         <a href="/devtools">Developer <span>6</span></a>
         <h4>More</h4>
         <a href="/all-tools">All Tools</a>
+        <a href="/help-me">Help me find a tool</a>
         <a href="/guides">Guides</a>
         <a href="/about">About</a>
         <a href="/changelog">Changelog</a>
@@ -482,6 +487,7 @@
       </div>
       <div class="results" id="searchResults" role="listbox"></div>
     </div>
+    <p class="help-line">Not sure which tool you need? <a href="/help-me">Describe it in your own words</a> &mdash; we&rsquo;ll point you to it, or take a request if we don&rsquo;t have it yet.</p>
 
     <div class="quick-cats">
       <a href="#documents">Documents</a>
@@ -647,17 +653,17 @@ if ('serviceWorker' in navigator) {
 
   // ---- Tool search ----
   var TOOLS = [
-    {n:"Merge PDFs", c:"Documents", h:"/document-tools"},
-    {n:"Split PDF", c:"Documents", h:"/document-tools"},
-    {n:"Images to PDF", c:"Documents", h:"/document-tools"},
-    {n:"Remove Background", c:"Documents", h:"/document-tools"},
-    {n:"Clean Metadata", c:"Documents", h:"/document-tools"},
-    {n:"Compress & Convert Image", c:"Documents", h:"/document-tools"},
-    {n:"Redact PDF", c:"Documents", h:"/document-tools"},
-    {n:"Extract Text (OCR)", c:"Documents", h:"/document-tools"},
-    {n:"Face Mosaic", c:"Documents", h:"/document-tools"},
-    {n:"Enhance Quality", c:"Documents", h:"/document-tools"},
-    {n:"AI Eraser", c:"Documents", h:"/document-tools"},
+    {n:"Merge PDFs", c:"Documents", h:"/document-tools#merge"},
+    {n:"Split PDF", c:"Documents", h:"/document-tools#split"},
+    {n:"Images to PDF", c:"Documents", h:"/document-tools#images"},
+    {n:"Remove Background", c:"Documents", h:"/document-tools#bgremove"},
+    {n:"Clean Metadata", c:"Documents", h:"/document-tools#metadata"},
+    {n:"Compress & Convert Image", c:"Documents", h:"/document-tools#compress"},
+    {n:"Redact PDF", c:"Documents", h:"/document-tools#redact"},
+    {n:"Extract Text (OCR)", c:"Documents", h:"/document-tools#ocr"},
+    {n:"Face Mosaic", c:"Documents", h:"/document-tools#facemosaic"},
+    {n:"Enhance Quality", c:"Documents", h:"/document-tools#upscale"},
+    {n:"AI Eraser", c:"Documents", h:"/document-tools#eraser"},
     {n:"Screenshot Markup", c:"Documents", h:"/screenshot-markup"},
     {n:"Paycheck Calculator (US)", c:"Money & Tax", h:"/paycheck-calculator"},
     {n:"Paycheck by State", c:"Money & Tax", h:"/paycheck-states"},
@@ -671,27 +677,27 @@ if ('serviceWorker' in navigator) {
     {n:"Debt Payoff Calculator", c:"Money & Tax", h:"/debt-payoff-calculator"},
     {n:"BMI Calculator", c:"Health", h:"/bmi-calculator"},
     {n:"Calorie / TDEE Calculator", c:"Health", h:"/calorie-calculator"},
-    {n:"Resume Builder", c:"Career", h:"/career-tools"},
-    {n:"ATS Score Checker", c:"Career", h:"/career-tools"},
-    {n:"Cover Letter Generator", c:"Career", h:"/career-tools"},
-    {n:"Hourly ↔ Salary Converter", c:"Career", h:"/career-tools"},
-    {n:"Invoice Generator", c:"Business", h:"/business-tools"},
-    {n:"QR Code Generator", c:"Business", h:"/business-tools"},
-    {n:"Flagged Phrases", c:"Writing & AI", h:"/writing-tools"},
-    {n:"Smooth It Out", c:"Writing & AI", h:"/writing-tools"},
-    {n:"Word Count & Readability", c:"Writing & AI", h:"/writing-tools"},
-    {n:"Age Calculator", c:"Everyday", h:"/everyday-tools"},
-    {n:"Percentage Calculator", c:"Everyday", h:"/everyday-tools"},
-    {n:"Tip & Split Calculator", c:"Everyday", h:"/everyday-tools"},
-    {n:"Password Generator", c:"Everyday", h:"/everyday-tools"},
-    {n:"Unit Converter", c:"Everyday", h:"/everyday-tools"},
-    {n:"Time Zone Converter", c:"Everyday", h:"/everyday-tools"},
-    {n:"JSON Formatter", c:"Developer", h:"/devtools"},
-    {n:"Base64 Encode/Decode", c:"Developer", h:"/devtools"},
-    {n:"UUID Generator", c:"Developer", h:"/devtools"},
-    {n:"Color Converter", c:"Developer", h:"/devtools"},
-    {n:"URL Encode/Decode", c:"Developer", h:"/devtools"},
-    {n:"Dummy Data Generator", c:"Developer", h:"/devtools"}
+    {n:"Resume Builder", c:"Career", h:"/career-tools#builder"},
+    {n:"ATS Score Checker", c:"Career", h:"/career-tools#ats"},
+    {n:"Cover Letter Generator", c:"Career", h:"/career-tools#cover"},
+    {n:"Hourly ↔ Salary Converter", c:"Career", h:"/career-tools#salary"},
+    {n:"Invoice Generator", c:"Business", h:"/business-tools#invoice"},
+    {n:"QR Code Generator", c:"Business", h:"/business-tools#qr"},
+    {n:"Flagged Phrases", c:"Writing & AI", h:"/writing-tools#check"},
+    {n:"Smooth It Out", c:"Writing & AI", h:"/writing-tools#smooth"},
+    {n:"Word Count & Readability", c:"Writing & AI", h:"/writing-tools#count"},
+    {n:"Age Calculator", c:"Everyday", h:"/everyday-tools#age"},
+    {n:"Percentage Calculator", c:"Everyday", h:"/everyday-tools#pct"},
+    {n:"Tip & Split Calculator", c:"Everyday", h:"/everyday-tools#tip"},
+    {n:"Password Generator", c:"Everyday", h:"/everyday-tools#pwd"},
+    {n:"Unit Converter", c:"Everyday", h:"/everyday-tools#unit"},
+    {n:"Time Zone Converter", c:"Everyday", h:"/everyday-tools#tz"},
+    {n:"JSON Formatter", c:"Developer", h:"/devtools#json"},
+    {n:"Base64 Encode/Decode", c:"Developer", h:"/devtools#b64"},
+    {n:"UUID Generator", c:"Developer", h:"/devtools#uuid"},
+    {n:"Color Converter", c:"Developer", h:"/devtools#color"},
+    {n:"URL Encode/Decode", c:"Developer", h:"/devtools#url"},
+    {n:"Dummy Data Generator", c:"Developer", h:"/devtools#dummy"}
   ];
 
   var input = document.getElementById('toolSearch');
@@ -700,14 +706,30 @@ if ('serviceWorker' in navigator) {
     var activeIndex = -1;
     var currentMatches = [];
 
+    // Where "describe it in your own words" goes: the Help page, with what was typed carried over.
+    function helpHref(q) { return '/help-me#q=' + encodeURIComponent(String(q).trim().slice(0, 300)); }
+
     function render(matches, query) {
       panel.innerHTML = '';
       if (!query) { panel.classList.remove('open'); input.setAttribute('aria-expanded','false'); return; }
       if (!matches.length) {
         var none = document.createElement('div');
         none.className = 'rnone';
-        none.textContent = 'No tool matches "' + query + '". Try a shorter word.';
+        none.textContent = 'No tool name matches "' + query + '".';
         panel.appendChild(none);
+        // ...so offer the Help page as a row of its own (pressing Enter does the same)
+        var helpRow = document.createElement('a');
+        helpRow.href = helpHref(query);
+        helpRow.setAttribute('role','option');
+        helpRow.id = 'result-help';
+        var helpLabel = document.createElement('span');
+        helpLabel.textContent = 'Describe what you need';
+        var helpNote = document.createElement('span');
+        helpNote.className = 'rcat';
+        helpNote.textContent = 'we’ll find the tool, or take a request';
+        helpRow.appendChild(helpLabel);
+        helpRow.appendChild(helpNote);
+        panel.appendChild(helpRow);
       } else {
         matches.forEach(function(m, i){
           var a = document.createElement('a');
@@ -743,7 +765,7 @@ if ('serviceWorker' in navigator) {
     });
 
     input.addEventListener('keydown', function(e){
-      var items = panel.querySelectorAll('a');
+      var items = panel.querySelectorAll('a[role="option"]');
       if (e.key === 'ArrowDown' && items.length) {
         e.preventDefault();
         activeIndex = Math.min(activeIndex + 1, items.length - 1);
@@ -753,11 +775,14 @@ if ('serviceWorker' in navigator) {
         e.preventDefault();
         activeIndex = Math.max(activeIndex - 1, 0);
         items.forEach(function(it,i){ it.classList.toggle('active', i===activeIndex); });
-      } else if (e.key === 'Enter') {
+      } else if (e.key === 'Enter' && !e.isComposing) {                // (Enter that only confirms a Korean/Japanese/Chinese word must not navigate)
         if (activeIndex >= 0 && currentMatches[activeIndex]) {
           window.location.href = currentMatches[activeIndex].h;
         } else if (currentMatches.length) {
           window.location.href = currentMatches[0].h;
+        } else if (input.value.trim().length >= 2) {
+          // Nothing is named like that: treat it as a sentence and let the Help page work out what is needed.
+          window.location.href = helpHref(input.value);
         }
       } else if (e.key === 'Escape') {
         input.value = '';

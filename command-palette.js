@@ -5,6 +5,7 @@
 (function () {
   var COMMANDS = [
     { title: 'Home', desc: 'Back to the homepage', href: '/', kw: 'homepage main all tools' },
+    { title: 'Help Me Find a Tool', desc: 'Describe what you need — we point you to the right tool, or take your request', href: '/help-me', kw: 'help me find describe problem cant find request build new tool suggest assistant finder what should i use' },
     { title: 'User Manual', desc: 'Step-by-step instructions for every tool, plus a downloadable Word doc', href: '/manual', kw: 'manual guide help how to use instructions tutorial download docx word' },
     { title: 'About', desc: 'Who builds this site and how accuracy is maintained', href: '/about', kw: 'about who made this creator author trust credibility' },
     { title: 'How We Verify Accuracy', desc: 'The actual process, with a real dated verification example', href: '/how-we-verify', kw: 'verify accuracy methodology source checking process trust' },
@@ -48,7 +49,51 @@
   var isMac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
   var overlay = null, input = null, list = null, results = [], activeIndex = 0, lastFocused = null;
 
+  /* ---- "Describe what you need": the plain-language finder behind /help-me ----
+     The two finder files are only fetched the first time this palette is opened (not on every page view),
+     and they run entirely in the browser: nothing typed here is sent anywhere. If they cannot be loaded,
+     the palette simply behaves as the plain keyword search it always was. */
+  var helpState = (window.PPMHelp && window.PPMHelp.ready) ? 'ready' : 'idle';
+
+  function ensureHelp() {
+    if (helpState !== 'idle') return;
+    helpState = 'loading';
+    var second = null;
+    ['/help-index.js', '/help-assistant.js'].forEach(function (src, i) {
+      var s = document.createElement('script');
+      s.src = src;
+      s.async = false;                                       // keep the order: the data first, then the matcher
+      if (i === 1) second = s;
+      s.onerror = function () { helpState = 'failed'; };
+      document.head.appendChild(s);
+    });
+    second.onload = function () {
+      helpState = (helpState !== 'failed' && window.PPMHelp && window.PPMHelp.ready) ? 'ready' : 'failed';
+      if (helpState === 'ready' && overlay && input) render(input.value);
+    };
+  }
+
+  function helpMeHref(q) { return '/help-me#q=' + encodeURIComponent(String(q).trim().slice(0, 300)); }
+  function onHelpPage() { return /^\/help-me(?:\.html)?\/?$/.test(window.location.pathname); }
+  function sameHref(h) { return String(h).replace(/\/+$/, '') || '/'; }
+
+  /* What the finder thinks this text is asking for: up to three tools, or a note that we have not built it yet. */
+  function smartRows(query) {
+    var rows = [];
+    if (helpState !== 'ready') return rows;
+    var res;
+    try { res = window.PPMHelp.search(query, { prefix: true }); } catch (e) { return rows; }
+    if (!res || res.empty) return rows;
+    var hardGap = res.gap && !res.gap.soft;
+    if (hardGap && !onHelpPage()) rows.push({ title: 'Not built yet: ' + res.gap.label, desc: res.gap.note, href: helpMeHref(query), tag: 'Request it' });
+    (res.results || []).slice(0, 3).forEach(function (r, i) {
+      rows.push({ title: r.name, desc: r.desc, href: r.href, tag: (res.confident && i === 0) ? 'Best match' : (hardGap ? 'Closest' : 'Possible') });
+    });
+    return rows;
+  }
+
   function injectStyles() {
+    if (document.getElementById('ppm-cmdk-style')) return;     // once is enough (it is called at start-up and again on every open)
     var css = [
       '.ppm-cmdk-trigger{display:inline-flex;align-items:center;gap:8px;background:var(--card,#fff);',
       'border:1px solid var(--line,rgba(28,35,33,.15));border-radius:10px;padding:7px 8px 7px 12px;',
@@ -73,12 +118,17 @@
       '.ppm-cmdk-item.active{background:var(--paper,#EEF1EF);}',
       '.ppm-cmdk-item-title{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:0.94rem;color:var(--ink,#1C2321);}',
       '.ppm-cmdk-item-desc{font-size:0.8rem;color:var(--ink-soft,#4B534F);margin-top:2px;}',
-      '#ppm-cmdk-empty{padding:24px 18px;text-align:center;font-size:0.88rem;color:var(--ink-soft,#4B534F);}',
+      '#ppm-cmdk-empty{padding:24px 18px 12px;text-align:center;font-size:0.88rem;color:var(--ink-soft,#4B534F);}',
+      '.ppm-cmdk-item-top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;}',
+      '.ppm-cmdk-tag{flex-shrink:0;font-family:"IBM Plex Mono",monospace;font-size:0.66rem;letter-spacing:.04em;text-transform:uppercase;',
+      'color:var(--teal,#0D7A7C);border:1px solid currentColor;border-radius:999px;padding:1px 7px;}',
+      '.ppm-cmdk-item.describe{border-top:1px solid var(--line,rgba(28,35,33,.12));border-radius:0 0 8px 8px;margin-top:6px;padding-top:12px;}',
       '#ppm-cmdk-footer{border-top:1px solid var(--line,rgba(28,35,33,.12));padding:8px 16px;',
       'font-family:"IBM Plex Mono",monospace;font-size:0.7rem;color:var(--ink-soft,#4B534F);}',
-      '@media (max-width:600px){#ppm-cmdk-overlay{padding-top:8vh;}}'
+      '@media (max-width:600px){#ppm-cmdk-overlay{padding-top:8vh;}.ppm-cmdk-trigger{display:none;}}'
     ].join('');
     var style = document.createElement('style');
+    style.id = 'ppm-cmdk-style';
     style.textContent = css;
     document.head.appendChild(style);
   }
@@ -94,30 +144,64 @@
     var keys = isMac ? '<kbd>\u2318</kbd><kbd>K</kbd>' : '<kbd>Ctrl</kbd><kbd>K</kbd>';
     btn.innerHTML = icon + '<span class="ppm-cmdk-label">Search</span><span class="ppm-cmdk-keys">' + keys + '</span>';
     btn.addEventListener('click', open);
+    var navDisplay = window.getComputedStyle(nav).display;
+    if (navDisplay !== 'flex' && navDisplay !== 'inline-flex' && navDisplay !== 'grid') btn.style.marginLeft = '14px';   // a plain nav has no gap of its own; a flex nav sets its own spacing
     nav.appendChild(btn);
   }
 
   function render(query) {
     var q = query.trim().toLowerCase();
-    results = COMMANDS.filter(function (c) {
-      if (!q) return true;
-      return (c.title + ' ' + c.desc + ' ' + c.kw).toLowerCase().indexOf(q) !== -1;
+    var titleHits = [], otherHits = [];
+    COMMANDS.forEach(function (c) {
+      if (!q) { titleHits.push(c); return; }
+      if ((c.title + ' ' + c.desc + ' ' + c.kw).toLowerCase().indexOf(q) === -1) return;
+      (c.title.toLowerCase().indexOf(q) !== -1 ? titleHits : otherHits).push(c);
     });
+
+    /* order: pages whose title contains the text (what this box always did), then what the finder understood
+       from the words, then the other keyword hits, then a way to describe the problem in full */
+    var rows = [], seen = {};
+    function add(r) { var k = sameHref(r.href); if (seen[k]) return; seen[k] = 1; rows.push(r); }
+    titleHits.forEach(function (c) { add({ title: c.title, desc: c.desc, href: c.href }); });
+    if (q) smartRows(query).forEach(add);
+    otherHits.forEach(function (c) { add({ title: c.title, desc: c.desc, href: c.href }); });
+    var plain = rows.length;
+    if (q.length >= 2 && !onHelpPage()) {
+      add({ title: 'Describe what you need', desc: '“' + query.trim().slice(0, 80) + '” — we’ll point you to the right tool, or take your request', href: helpMeHref(query), describe: true });
+    }
+
+    results = rows;
     activeIndex = 0;
     list.innerHTML = '';
-    if (!results.length) {
+    if (q && !plain) {
       var empty = document.createElement('div');
       empty.id = 'ppm-cmdk-empty';
       empty.textContent = 'Nothing matches "' + query + '".';
       list.appendChild(empty);
-      return;
     }
-    results.forEach(function (c, i) {
+    rows.forEach(function (c, i) {
       var a = document.createElement('a');
       a.href = c.href;
-      a.className = 'ppm-cmdk-item' + (i === 0 ? ' active' : '');
-      a.innerHTML = '<div class="ppm-cmdk-item-title">' + c.title + '</div>' +
-        (c.desc ? '<div class="ppm-cmdk-item-desc">' + c.desc + '</div>' : '');
+      a.className = 'ppm-cmdk-item' + (c.describe ? ' describe' : '') + (i === 0 ? ' active' : '');
+      var top = document.createElement('div');
+      top.className = 'ppm-cmdk-item-top';
+      var title = document.createElement('div');
+      title.className = 'ppm-cmdk-item-title';
+      title.textContent = c.title;
+      top.appendChild(title);
+      if (c.tag) {
+        var tag = document.createElement('span');
+        tag.className = 'ppm-cmdk-tag';
+        tag.textContent = c.tag;
+        top.appendChild(tag);
+      }
+      a.appendChild(top);
+      if (c.desc) {
+        var desc = document.createElement('div');
+        desc.className = 'ppm-cmdk-item-desc';
+        desc.textContent = c.desc;
+        a.appendChild(desc);
+      }
       a.addEventListener('mouseenter', function () { setActive(i); });
       a.addEventListener('click', function () { close(); });
       list.appendChild(a);
@@ -149,7 +233,7 @@
     input = document.createElement('input');
     input.id = 'ppm-cmdk-input';
     input.type = 'text';
-    input.placeholder = 'Search tools\u2026';
+    input.placeholder = 'Search tools, or describe what you need\u2026';
     input.autocomplete = 'off';
 
     list = document.createElement('div');
@@ -167,6 +251,7 @@
 
     render('');
     input.focus();
+    ensureHelp();
 
     input.addEventListener('input', function () { render(input.value); });
     overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
@@ -187,6 +272,7 @@
     else if (e.key === 'ArrowDown') { e.preventDefault(); setActive(activeIndex + 1); }
     else if (e.key === 'ArrowUp') { e.preventDefault(); setActive(activeIndex - 1); }
     else if (e.key === 'Enter') {
+      if (e.isComposing) return;                      // Enter that only confirms a Korean/Japanese/Chinese word is not "open"
       e.preventDefault();
       var items = list.querySelectorAll('.ppm-cmdk-item');
       if (items[activeIndex]) { window.location.href = items[activeIndex].getAttribute('href'); }
@@ -202,6 +288,7 @@
   }
 
   function init() {
+    injectStyles();                                  // so the header button already looks right before the first open
     injectTrigger();
     document.addEventListener('keydown', globalKeydown);
   }
