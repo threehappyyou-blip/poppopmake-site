@@ -78,7 +78,7 @@
 <main class="wrap" id="main-content">
   <span class="eyebrow">User Manual</span>
   <h1>Documents &amp; Images</h1>
-  <p class="lede">All 12 tools live on one page — <a href="/document-tools">Document &amp; Image Tools</a> — organized as tabs across the top. Click a tab name to switch tools; everything below tells you what to do once you're on it.</p>
+  <p class="lede">All 13 tools live on one page — <a href="/document-tools">Document &amp; Image Tools</a> — organized as tabs across the top. Click a tab name to switch tools; everything below tells you what to do once you're on it.</p>
 
   <div class="toc">
     <div class="toc-title">Jump to a tool</div>
@@ -86,6 +86,7 @@
       <li><a href="#merge">Merge PDFs</a></li>
       <li><a href="#split">Split PDF</a></li>
       <li><a href="#images-to-pdf">Images to PDF</a></li>
+      <li><a href="#convert">Convert Files</a></li>
       <li><a href="#remove-bg">Remove Background</a></li>
       <li><a href="#clean-metadata">Clean Metadata</a></li>
       <li><a href="#compress">Compress &amp; Convert Image</a></li>
@@ -146,8 +147,23 @@
     <a class="back-top" href="#main-content">&uarr; Back to top</a>
   </section>
 
-  <section class="tool-section" id="remove-bg">
+  <section class="tool-section" id="convert">
     <span class="tool-tag">Tab 4</span>
+    <h2>Convert Files</h2>
+    <p class="what-for">Changes a photo or a PDF into another format — for example an iPhone HEIC photo into a JPG, or a PDF into pictures, text or a Word file — one file or a whole batch at once.</p>
+    <ol>
+      <li><strong>Open the tool.</strong> Click the "Convert Files" tab.</li>
+      <li><strong>Add your files.</strong> Drag them onto the drop area, or click "Choose files" (on a phone or tablet there is no dragging: the heading reads "Add photos or PDFs" and you tap "Choose files"). You can add up to 100 files at once, and pictures and PDFs can be mixed. HEIC, JPG, PNG, WebP, GIF, BMP, AVIF, ICO, TIFF and PDF files work. Each file appears in a list with its type and size; × takes one out. A file that can't be converted here (a Word or Excel file, say) stays in the list in red with a short reason.</li>
+      <li><strong>Optionally open "Settings (optional)."</strong> Only the settings that apply to your files are shown. "Quality for JPG and WebP" is High (the default), Medium or Small file. "PDF pages as pictures: resolution" is Small (72 DPI), Standard (150 DPI, the default) or High (300 DPI). "PDF pages to convert" takes page numbers like 1-3, 5 (empty means all pages). "Pictures to PDF: page size" is A4, US Letter or "Same size as the picture", and "Put all pictures into one PDF" (shown when you add two or more pictures) is ticked by default — untick it to get one PDF per picture.</li>
+      <li><strong>Click the format you want.</strong> A "Convert to" row lists the formats your files can become: JPG, PNG, WebP, PDF, Text (.txt), Word (.docx), BMP, TIFF and ICO (a picture's own format isn't offered, and only PDFs can become Text or Word). The conversion starts as soon as you click. A progress bar shows where it is, and "Stop" ends it early and keeps what already finished.</li>
+      <li><strong>Download.</strong> Every converted file gets its own row with a "Download" button. A PDF that becomes pictures gives one picture per page (several pages arrive together as one ZIP). When two or more files were converted, "Download all (.zip)" collects everything in one file. "Start over" clears the list so you can begin again.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> Nothing is uploaded — the conversion happens on your device, and iPhone HEIC photos are opened by a small decoder that loads the first time you use one. Converted pictures are saved fresh, which also removes hidden camera and location data (EXIF). Pictures with see-through parts get a white background when saved as JPG or BMP, because those formats can't be see-through; PNG, WebP, TIFF and ICO keep the transparency. A PDF saved as Word or Text keeps only the words — no layout, tables or pictures. A scanned PDF has no text to copy: the tool says so and points you to Extract Text (OCR). Password-protected PDFs are refused with a message explaining how to make an unprotected copy first. An animated GIF keeps only its first frame, TIFF files open only in browsers that can show them (Safari), and saving as HEIC, GIF or AVIF isn't possible.</div>
+    <a class="back-top" href="#main-content">&uarr; Back to top</a>
+  </section>
+
+  <section class="tool-section" id="remove-bg">
+    <span class="tool-tag">Tab 5</span>
     <h2>Remove Background</h2>
     <p class="what-for">Automatically detects the main subject in a photo and removes everything behind it, leaving a transparent background — good for product photos or profile pictures.</p>
     <ol>
@@ -163,7 +179,7 @@
   </section>
 
   <section class="tool-section" id="clean-metadata">
-    <span class="tool-tag">Tab 5</span>
+    <span class="tool-tag">Tab 6</span>
     <h2>Clean Metadata</h2>
     <p class="what-for">Strips hidden information from a PDF — author name, the software that created it, creation and modification dates — that you can't see just by opening the file.</p>
     <ol>
@@ -178,7 +194,7 @@
   </section>
 
   <section class="tool-section" id="compress">
-    <span class="tool-tag">Tab 6</span>
+    <span class="tool-tag">Tab 7</span>
     <h2>Compress &amp; Convert Image</h2>
     <p class="what-for">Shrinks a photo's file size, and/or converts it between JPG, PNG, and WebP formats.</p>
     <ol>
@@ -194,7 +210,7 @@
   </section>
 
   <section class="tool-section" id="redact">
-    <span class="tool-tag">Tab 7</span>
+    <span class="tool-tag">Tab 8</span>
     <h2>Redact PDF</h2>
     <p class="what-for">Permanently blacks out sensitive information in a PDF — an ID number, an account number, a signature — so it's genuinely gone, not just covered up. Can search for words and numbers for you, and can also write new text over what you've blacked out.</p>
     <ol>
@@ -213,7 +229,7 @@
   </section>
 
   <section class="tool-section" id="ocr">
-    <span class="tool-tag">Tab 8</span>
+    <span class="tool-tag">Tab 9</span>
     <h2>Extract Text (OCR)</h2>
     <p class="what-for">Reads the text in a photo, a scanned page, a screenshot, or a PDF (including multi-page ones) and turns it into text you can select, copy, and save.</p>
     <ol>
@@ -229,7 +245,7 @@
   </section>
 
   <section class="tool-section" id="face-mosaic">
-    <span class="tool-tag">Tab 9</span>
+    <span class="tool-tag">Tab 10</span>
     <h2>Face Mosaic</h2>
     <p class="what-for">Automatically finds the faces in a photo and covers them — and lets you cover any it missed, or leave one uncovered, by hand. Good for group photos or screenshots you're about to share publicly.</p>
     <ol>
@@ -246,7 +262,7 @@
   </section>
 
   <section class="tool-section" id="upscale">
-    <span class="tool-tag">Tab 10</span>
+    <span class="tool-tag">Tab 11</span>
     <h2>Enhance Quality</h2>
     <p class="what-for">Sharpens and enlarges a soft, blurry, or low-resolution photo.</p>
     <ol>
@@ -262,7 +278,7 @@
   </section>
 
   <section class="tool-section" id="eraser">
-    <span class="tool-tag">Tab 11</span>
+    <span class="tool-tag">Tab 12</span>
     <h2>AI Eraser</h2>
     <p class="what-for">Removes an unwanted object, person, or sign from a photo, with AI filling in what was probably behind it.</p>
     <ol>
@@ -280,7 +296,7 @@
   </section>
 
   <section class="tool-section" id="markup">
-    <span class="tool-tag">Tab 12</span>
+    <span class="tool-tag">Tab 13</span>
     <h2>Screenshot Markup</h2>
     <p class="what-for">Draws arrows and shapes, adds text, highlights, crops, or manually blurs a specific area of a screenshot — also available as its own <a href="/screenshot-markup">standalone page</a>.</p>
     <ol>

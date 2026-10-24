@@ -56,6 +56,18 @@
     ['image to pdf', 'photo to pdf', 'jpg to pdf', 'png to pdf', 'picture to pdf', 'scan to pdf', 'make a pdf from photos', 'photos into one pdf', 'screenshots to pdf', 'combine images into a pdf', 'camera pictures to pdf', 'turn jpg into pdf'],
     ['jpg', 'jpeg', 'png', 'photo', 'picture', 'image', 'scan']);
 
+  T('file-converter', 'Convert Files', 'Documents', '/document-tools#convert',
+    'Change a photo or PDF into another format: HEIC, JPG, PNG, WebP, BMP, TIFF, ICO or PDF. PDF pages become pictures, text or a Word file. One file or a whole batch.',
+    ['convert heic to jpg', 'heic to jpg', 'heic to png', 'heic to pdf', 'heic to webp', 'iphone photo to jpg', 'iphone photos wont open on my computer', 'convert iphone pictures', 'open a heic file on windows', 'open heic file',
+     'webp to jpg', 'webp to png', 'png to jpg', 'jpg to png', 'jpg to webp', 'png to webp', 'gif to png', 'gif to jpg', 'bmp to jpg', 'bmp to png', 'png to bmp', 'jpg to bmp', 'jpg to tiff', 'png to tiff', 'tiff to jpg', 'tiff to png', 'avif to jpg', 'avif to png',
+     'png to ico', 'jpg to ico', 'make a favicon from a png', 'convert image to ico', 'convert image format', 'change image format', 'change file format', 'convert file format', 'convert file type', 'change file type', 'file format converter', 'file converter', 'file conversion', 'convert a file', 'convert files', 'convert my file', 'convert any file', 'batch convert images', 'convert a whole folder of photos',
+     'pdf to jpg', 'pdf to png', 'pdf to image', 'pdf to images', 'pdf to picture', 'pdf to webp', 'pdf pages as images', 'save pdf pages as pictures', 'pdf to word', 'pdf to docx', 'pdf to txt', 'save pdf as a text file', 'convert pdf to editable word', 'turn a pdf into a word document'],
+    ['convert', 'converter', 'conversion', 'heic', 'heif', 'iphone', 'webp', 'jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff', 'tif', 'ico', 'favicon', 'avif', 'format', 'docx'],
+    { warn: [
+      { any: ['word', 'docx', 'editable'], text: 'Heads up: a PDF can be saved as a Word file here, but the Word file keeps the text only (no layout, tables or pictures), and Word files can’t be opened or converted.' },
+      { any: ['tiff', 'tif'], text: 'Heads up: TIFF files can be opened only by browsers that support them (Safari); saving as TIFF works everywhere.' },
+      { any: ['scan', 'scanned', 'scanner'], text: 'Heads up: a scanned PDF has no text to extract. Use Extract Text (OCR) for that.' }] });
+
   T('remove-bg', 'Remove Background', 'Documents', '/document-tools#bgremove',
     'Cut the subject out of a photo and leave a transparent background.',
     ['remove background', 'remove background from photo', 'erase background', 'delete background', 'transparent background', 'background remover', 'cut out subject', 'cut out a person', 'product photo background', 'profile picture background', 'make png transparent', 'isolate subject'],
@@ -68,8 +80,8 @@
 
   T('compress-image', 'Compress & Convert Image', 'Documents', '/document-tools#compress',
     'Shrink a photo’s file size and/or convert it between JPG, PNG and WebP.',
-    ['compress image', 'compress photo', 'compress picture', 'reduce image file size', 'make image smaller', 'make photo smaller', 'shrink a picture', 'photo too big to upload', 'image too large for email', 'resize image', 'resize photo', 'png to jpg', 'jpg to png', 'webp to jpg', 'jpg to webp', 'png to webp', 'webp to png', 'convert image format', 'change image format', 'optimize image', 'reduce image kb', 'image under 1mb'],
-    ['compress', 'resize', 'shrink', 'jpg', 'png', 'webp', 'convert', 'format', 'smaller', 'kb', 'mb', 'quality', 'dimension', 'optimize']);
+    ['compress image', 'compress photo', 'compress picture', 'reduce image file size', 'make image smaller', 'make photo smaller', 'shrink a picture', 'photo too big to upload', 'image too large for email', 'resize image', 'resize photo', 'optimize image', 'reduce image kb', 'image under 1mb'],
+    ['compress', 'resize', 'shrink', 'jpg', 'png', 'webp', 'smaller', 'kb', 'mb', 'quality', 'dimension', 'optimize']);
 
   T('redact-pdf', 'Redact PDF', 'Documents', '/document-tools#redact',
     'Permanently black out sensitive text in a PDF — by hand or by searching for it.',
@@ -80,7 +92,8 @@
   T('ocr', 'Extract Text (OCR)', 'Documents', '/document-tools#ocr',
     'Read the text in a photo, scanned page, screenshot or PDF so you can copy it.',
     ['extract text from image', 'text from a screenshot', 'text from photo', 'image to text', 'scan to text', 'scanned pdf to text', 'pdf to text', 'ocr', 'copy text from a picture', 'read text in an image', 'convert image to text', 'digitize a document', 'handwriting to text', 'recognize text', 'grab text from pdf', 'make scanned pdf copyable'],
-    ['ocr', 'extract', 'scan', 'scanned', 'recognize', 'digitize', 'handwriting', 'tesseract']);
+    ['ocr', 'extract', 'scan', 'scanned', 'recognize', 'digitize', 'handwriting', 'tesseract'],
+    { warn: [{ any: ['pdf'], text: 'Tip: if the PDF is a normal one (not a scan), Convert Files can save its text as a .txt file right away, with no OCR.' }] });
 
   T('face-mosaic', 'Face Mosaic', 'Documents', '/document-tools#facemosaic',
     'Find faces in a photo automatically and cover them with a mosaic.',
@@ -404,14 +417,14 @@
       not: [['image', 'photo', 'picture', 'jpg', 'jpeg', 'png', 'webp', 'merge', 'split', 'break', 'part', 'parts', 'piece', 'pieces', 'chunk', 'chunks', 'section', 'sections', 'divide', 'separate', 'extract']],
       rx: [/pdf.*\b(too|so|very|really)\s+(big|large|heavy)\b/, /\b(too|so|very|really)\s+(big|large|heavy)\b.*pdf/] },
     'Our compressor works on photos (JPG, PNG, WebP), not on PDF files.', ['compress-image']);
-  G('pdf-convert-out', 'Convert a PDF to Word, Excel, PowerPoint or images',
-    { rx: [/\bpdf\s*(to|into|2)\s*(word|docx?|excel|xlsx?|csv|ppt|pptx|powerpoint|jpe?g|jpg|png|images?|pictures?|photos?|html|epub|rtf|odt|gif|tiff?|svg|markdown)\b/,
-           /\b(convert|turn|change|export|save)\s+(a\s+|my\s+|the\s+|this\s+)?pdf\s+(to|into|as)\s+(a\s+|an\s+)?(word|docx?|excel|xlsx?|csv|ppt|pptx|powerpoint|jpe?g|jpg|png|images?|pictures?|photos?|html|epub|rtf|odt)\b/] },
-    'We can pull the text out of a PDF (Extract Text) and turn photos into a PDF, but we can’t convert a PDF into an editable Word, Excel or image file.', ['ocr']);
+  G('pdf-convert-out', 'Convert a PDF to Excel, PowerPoint, HTML or other formats',
+    { rx: [/\bpdf\s*(to|into|2)\s*(excel|xlsx?|csv|ppt|pptx|powerpoint|html|epub|rtf|odt|gif|tiff?|svg|markdown)\b/,
+           /\b(convert|turn|change|export|save)\s+(a\s+|my\s+|the\s+|this\s+)?pdf\s+(to|into|as)\s+(a\s+|an\s+)?(excel|xlsx?|csv|ppt|pptx|powerpoint|html|epub|rtf|odt)\b/] },
+    'We can turn a PDF into pictures (JPG, PNG, WebP), plain text, or a Word file with the text only, but not into Excel, PowerPoint or other formats.', ['file-converter', 'ocr']);
   G('pdf-convert-in', 'Convert Word, Excel or PowerPoint to PDF',
     { rx: [/\b(word|docx?|excel|xlsx?|powerpoint|pptx?|html|rtf|odt|txt|webpage|web page|google docs?|google sheets?)\s*(to|into|2)\s*pdf\b/,
            /\b(convert|turn|save|export|print)\s+(a\s+|an\s+|my\s+|the\s+)?(word|docx?|excel|xlsx?|powerpoint|ppt|html|google docs?)\b.*\bpdf\b/] },
-    'We can turn photos (JPG, PNG) into a PDF, but not Word, Excel or PowerPoint files.', ['images-to-pdf']);
+    'We can turn photos (JPG, PNG, HEIC and more) into a PDF, but not Word, Excel or PowerPoint files.', ['images-to-pdf', 'file-converter']);
   G('pdf-edit', 'Edit or fill in a PDF',
     { rx: [/\bedit\s+(a\s+|an\s+|my\s+|the\s+|this\s+)?pdf/, /\b(edit|change|modify|replace|rewrite|fix|correct)\b.*\b(text|words?|name|date|number|typo|content)\b.*\bpdf\b/,
            /\b(fill|fill out|fill in)\b.*\b(pdf|forms?)\b/, /\b(complete|type|write)\b.*\bpdf\s+forms?\b/, /\bpdf\s+(editor|filler)\b/, /\bfillable\b/,
@@ -439,9 +452,9 @@
     'We can’t open or convert HWP files. Save the document as a PDF from Hancom Office first — then our PDF tools can merge, split, redact or clean it.', ['merge-pdf', 'split-pdf', 'redact-pdf']);
 
   /* --- images --- */
-  G('image-formats', 'Other image formats (HEIC, GIF, SVG, TIFF, BMP, ICO, favicon)',
-    { rx: [/\b(heic|heif|gif|bmp|tiff?|svg|ico|avif|raw|psd|eps|cr2|nef)\b/, /\bfavicon\b/] },
-    'Our converter reads most formats your browser can open and saves JPG, PNG or WebP. Saving as HEIC, GIF, SVG, TIFF or ICO isn’t supported.', ['compress-image'], true);
+  G('image-formats', 'Other image formats (SVG, RAW, Photoshop, or saving as HEIC, GIF or AVIF)',
+    { rx: [/\b(svg|raw|psd|eps|cr2|nef|dng|arw)\b/, /\b(to|into|as|2)\s+(an?\s+)?(animated\s+)?(heic|heif|gif|avif)\b/] },
+    'We can’t open SVG, camera RAW or Photoshop files, or save pictures as HEIC, GIF or AVIF. HEIC, JPG, PNG, WebP, GIF, BMP and AVIF files can be opened, and saved as JPG, PNG, WebP, BMP, TIFF, ICO or PDF.', ['file-converter'], true);
   G('image-exif', 'Remove location or EXIF data from a photo',
     { all: [['remove', 'delete', 'strip', 'clean', 'erase', 'hide', 'scrub'], ['exif', 'gps', 'location', 'geotag', 'metadata'], ['photo', 'image', 'picture', 'jpg', 'jpeg', 'png', 'selfie']] },
     'Clean Metadata works on PDFs, not on photos.', ['clean-metadata']);
@@ -681,6 +694,9 @@
     tx: 'texas', fl: 'florida', ny: 'new york', nyc: 'new york', nj: 'new jersey', nc: 'north carolina', sc: 'south carolina', tn: 'tennessee'
   };
 
+  /* Words that only share a stem with a synonym above and mean something else: "unit" is not "unite" (merge), "guide" is not "guid" (uuid). */
+  var NO_SYN = ['unit', 'units', 'guide', 'guides', 'guided', 'guiding'];
+
   /* Korean word pieces -> the English words the matcher understands. Matching is "contains",
      so "합치고" (merging) is caught by "합치". Visitors never see this table. */
   var KO = [
@@ -726,7 +742,8 @@
     ['계산', 'calculator'], ['계산기', 'calculator'], ['비교', 'compare'], ['이사', 'relocate'], ['이직', 'job offer compare'],
     ['서명', 'sign signature'], ['사인', 'sign signature'], ['전자서명', 'esign signature'], ['주가', 'stock price'], ['가계부', 'budget expense'], ['예산', 'budget'], ['지출', 'expense'],
     ['암호화', 'encrypt password'], ['해제', 'unlock remove'], ['잠금', 'locked'], ['회전', 'rotate'], ['워터마크', 'watermark'], ['쪽번호', 'page numbers'], ['페이지번호', 'page numbers'],
-    ['편집', 'edit'], ['수정', 'edit'], ['자막', 'subtitles'], ['양식', 'template'], ['파일', 'file'], ['한글', 'korean hangul'], ['한컴', 'hancom']
+    ['편집', 'edit'], ['수정', 'edit'], ['자막', 'subtitles'], ['양식', 'template'], ['파일', 'file'], ['한글', 'korean hangul'], ['한컴', 'hancom'],
+    ['아이폰', 'iphone'], ['헤이크', 'heic'], ['파비콘', 'favicon'], ['웹피', 'webp'], ['제이피지', 'jpg'], ['피엔지', 'png'], ['피디에프', 'pdf']
   ];
   /* Korean filler that should simply be ignored. */
   var KO_STOP = ['싶어', '싶은', '싶습니다', '해주세요', '해줘', '해줄', '주세요', '알려', '도와', '도움', '하고', '하는', '합니다', '하려', '할때', '할려', '있나요', '있어', '있을', '어디', '뭐', '무엇', '이거', '그거', '제가', '저는', '내가', '나는', '우리', '좀', '같은', '해야', '됩니다', '되나요', '가능', '수있', '때', '대한', '관련', '위한', '에서', '으로', '에게', '합니', '해서', '해도', '하면', '하기', '으면', '어떻게', '방법', '하는법', '인가요', '인지', '는데', '입니다', '이에요', '예요', '하고싶'];
@@ -893,6 +910,7 @@
     stop: STOP,
     soft: SOFT,
     syn: SYN,
+    noSyn: NO_SYN,
     ko: KO,
     koStop: KO_STOP,
     stateAbbr: STATE_ABBR,

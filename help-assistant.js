@@ -80,12 +80,13 @@
     return w;
   }
 
-  var STOP = {}, STOP_STEM = {}, SOFT = {}, SYNM = {};
+  var STOP = {}, STOP_STEM = {}, SOFT = {}, SYNM = {}, NOSYN = {};
   IDX.stop.forEach(function (w) { if (w) { STOP[w] = 1; STOP_STEM[stem(w)] = 1; } });
   (IDX.soft || []).forEach(function (w) { SOFT[stem(w)] = 1; });
   Object.keys(IDX.syn).forEach(function (k) {
     SYNM[stem(k)] = IDX.syn[k].split(' ').map(stem);
   });
+  (IDX.noSyn || []).forEach(function (w) { NOSYN[w] = 1; });             // words that only share a stem with a synonym ("unit" / "unite", "guide" / "guid") and must keep their own meaning
   var STATE_ABBR = IDX.stateAbbr || {};
   var PAY_CTX = /\b(paycheck|pay|salary|takehome|take home|income|wage|wages|net|gross|withholding|tax|taxes|payroll)\b/;
   var PHRASES = (IDX.phrases || []).map(function (p) { return [p[0], p[1]]; });
@@ -102,7 +103,7 @@
     if (/^\d+[kmbx]$/.test(w) && w !== '401k' && w !== '403b') return [];
     if (applyStop && STOP[w]) return [];
     var st = stem(w);
-    var arr = SYNM[st] ? SYNM[st].slice() : [st];
+    var arr = (SYNM[st] && !NOSYN[w]) ? SYNM[st].slice() : [st];
     if (applyStop) arr = arr.filter(function (t) { return !STOP_STEM[t] && !STOP[t]; });
     return arr;
   }
@@ -213,7 +214,7 @@
       };
       ENTRIES.push(e);
       BYID[e.id] = e;
-      e.sigs.forEach(function (g) { if (g) (SIGMAP[g] || (SIGMAP[g] = [])).push(e); });
+      e.sigs.forEach(function (g) { if (g) { var L = SIGMAP[g] || (SIGMAP[g] = []); if (L.indexOf(e) === -1) L.push(e); } });     // one page, however many of its sentences boil down to the same words
       var seen = {};
       Object.keys(nameT).concat(Object.keys(keyT)).forEach(function (x) {
         if (seen[x]) return;
@@ -316,7 +317,7 @@
     var raw = String(query == null ? '' : query).slice(0, 600);
     var cleaned = applyPhrases(clean(raw));
     var rs = runs(cleaned);
-    var qt = [], allSet = {}, exact = {}, rxParts = [], unknownKo = 0, content = false;
+    var qt = [], allSet = {}, exact = {}, rxParts = [], unknownKo = 0, content = false, sigParts = [], hasKo = false;
     var payCtx = PAY_CTX.test(cleaned);
     var paAfterNumber = /\d\s*k?\s*pa\b/.test(raw.toLowerCase());
 
@@ -330,10 +331,11 @@
         var k = koRun(run);
         unknownKo += k.unknown;
         rxParts.push(k.english);
+        hasKo = true; sigParts.push(k.english || (run.length > 1 ? run : ''));                    // the sentence-likeness check below reads the English the Korean words stand for, so "pdf를 이미지로" is the sentence "pdf to image"
         if (k.english) { content = true; k.english.split(' ').forEach(function (w) { addWord(w, run); }); }
         else if (k.unknown) content = true;
       } else {
-        rxParts.push(run);
+        rxParts.push(run); sigParts.push(run);
         if (!/^\d+$/.test(run) || run === '1099' || run === '1040') content = true;
         addWord(run, run);
         if (payCtx && STATE_ABBR[run] && !(run === 'pa' && paAfterNumber)) { STATE_ABBR[run].split(' ').forEach(function (w) { addWord(w, run); }); rxParts.push(STATE_ABBR[run]); }
@@ -342,7 +344,8 @@
     /* de-duplicate, keeping order and the first surface word */
     var seen = {}, tokensOut = [];
     qt.forEach(function (x) { if (!seen[x.t]) { seen[x.t] = 1; tokensOut.push(x); } });
-    return { raw: raw, cleaned: cleaned, sig: sig(cleaned), sigw: sigWords(cleaned), tokens: tokensOut, allSet: allSet, exact: exact, unknownKo: unknownKo, content: content,
+    var sigSrc = hasKo ? sigParts.join(' ') : cleaned;
+    return { raw: raw, cleaned: cleaned, sigSrc: sigSrc, sig: sig(sigSrc), sigw: sigWords(sigSrc), tokens: tokensOut, allSet: allSet, exact: exact, unknownKo: unknownKo, content: content,
              textForRx: rxParts.join(' ').replace(/\s+/g, ' ').trim(),
              lastRun: rs.length ? rs[rs.length - 1] : '', nonLatin: /[^\u0000-ɏ\s]/.test(raw) };
   }
@@ -362,7 +365,7 @@
         if (cs.length) { x.orig = x.t; x.t = cs[0]; x.prefix = true; fixes[x.surface] = cs[0]; }
       }
     });
-    A.sigw = sigWords(A.cleaned, fixes);
+    A.sigw = sigWords(A.sigSrc, fixes);
     A.sig = A.sigw.join(' ');
   }
 
@@ -889,7 +892,7 @@
         ]));
       }
       if (res.results.length) {
-        var heading = hardGap ? 'Closest things we do have' : (res.confident ? 'Best match' : (res.ambiguous ? 'A few tools match — which one fits?' : 'Closest we have — may not be what you need'));
+        var heading = hardGap ? 'Closest things we do have' : (res.confident ? 'Best match' : (res.ambiguous && res.results.length > 1 ? 'A few tools match — which one fits?' : 'Closest we have — may not be what you need'));
         out.appendChild(h('div', { class: 'ppmh-h', text: heading }));
         res.results.forEach(function (r, i) { out.appendChild(cardFor(r, i === 0 && res.confident)); shown++; });
       }

@@ -8,16 +8,16 @@
 <meta name="theme-color" content="#1C2321">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Document &amp; Image Tools — PopPopMake</title>
-<meta name="description" content="Merge PDFs, split PDFs, and convert JPG/PNG images to PDF — free, and everything happens in your browser. Files never leave your device.">
+<meta name="description" content="Convert HEIC, JPG, PNG, WebP and PDF files, merge and split PDFs — free, and everything happens in your browser. Files never leave your device.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PopPopMake">
 <meta property="og:url" content="https://poppopmake.com/document-tools">
 <link rel="canonical" href="https://poppopmake.com/document-tools">
 <meta property="og:title" content="Document &amp; Image Tools — PopPopMake">
-<meta property="og:description" content="Merge PDFs, split PDFs, and convert JPG/PNG images to PDF — free, and everything happens in your browser. Files never leave your device.">
+<meta property="og:description" content="Convert HEIC, JPG, PNG, WebP and PDF files, merge and split PDFs — free, and everything happens in your browser. Files never leave your device.">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Document &amp; Image Tools — PopPopMake">
-<meta name="twitter:description" content="Merge PDFs, split PDFs, and convert JPG/PNG images to PDF — free, and everything happens in your browser. Files never leave your device.">
+<meta name="twitter:description" content="Convert HEIC, JPG, PNG, WebP and PDF files, merge and split PDFs — free, and everything happens in your browser. Files never leave your device.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -58,6 +58,8 @@
   }
   .tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
   .tab-btn:hover:not(.active){border-color:var(--teal);color:var(--ink);}
+  .new-pill{display:inline-block;margin-left:6px;padding:1px 7px;border-radius:999px;background:var(--orange);color:#fff;font:600 0.68rem 'IBM Plex Mono',monospace;letter-spacing:0.04em;text-transform:uppercase;vertical-align:1px;}
+  .tab-btn.active .new-pill{background:#fff;color:var(--ink);}
 
   .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;display:none;}
   .panel.active{display:block;}
@@ -148,13 +150,14 @@
 <main class="wrap" id="main-content">
   <span class="eyebrow">Documents</span>
   <h1>Document &amp; Image Tools</h1>
-  <p class="lede">Merge PDFs, split PDFs, and turn JPG/PNG images into a PDF. No sign-up, no watch-it-upload progress bar.</p>
+  <p class="lede">Convert files, merge and split PDFs, and turn pictures into a PDF. No sign-up, no watch-it-upload progress bar.</p>
   <span class="privacy-strip"><span class="pip"></span>Everything runs in your browser. Your files are never uploaded anywhere.</span>
 
   <div class="tabs" role="tablist">
     <button class="tab-btn active" data-tab="merge" role="tab" aria-selected="true">Merge PDFs</button>
     <button class="tab-btn" data-tab="split" role="tab" aria-selected="false">Split PDF</button>
     <button class="tab-btn" data-tab="images" role="tab" aria-selected="false">Images to PDF</button>
+    <button class="tab-btn" data-tab="convert" role="tab" aria-selected="false">Convert Files <span class="new-pill">New</span></button>
     <button class="tab-btn" data-tab="bgremove" role="tab" aria-selected="false">Remove Background</button>
     <button class="tab-btn" data-tab="metadata" role="tab" aria-selected="false">Clean Metadata</button>
     <button class="tab-btn" data-tab="compress" role="tab" aria-selected="false">Compress &amp; Convert Image</button>
@@ -245,6 +248,14 @@
     <div id="images-chain" style="display:none;margin-top:12px;">
       <button class="action-btn" id="images-chain-btn" type="button" style="background:var(--teal);">Send this PDF to Merge &rarr;</button>
     </div>
+  </section>
+
+  <!-- CONVERT FILES PANEL (all of its code lives in /file-converter.js) -->
+  <section class="panel" id="panel-convert">
+    <h2>Convert Files</h2>
+    <p class="sub">Drop a photo or a PDF, click the format you want, and download it. Works with iPhone HEIC photos, JPG, PNG, WebP and more &mdash; one file or a whole batch.</p>
+    <div id="convert-app" data-ppmc></div>
+    <noscript><p class="sub">Converting files needs JavaScript. Please turn it on for this site.</p></noscript>
   </section>
 
   <!-- BACKGROUND REMOVAL PANEL -->
@@ -661,7 +672,7 @@
   </section>
 
   <div class="disclaimer">
-    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Redact PDF renders each page to an image using PDF.js (the same engine Firefox uses to display PDFs), so the exported file has no underlying text layer left anywhere in it — there's nothing to select or copy, including in the redacted area, because after export the whole page is a flat picture rather than text plus a black box drawn on top. That's a real trade-off: the output PDF is no longer searchable or copy-pasteable, on any page, not just the redacted one. Extract Text uses Tesseract.js, a browser build of the open-source Tesseract OCR engine — the same model family used in a lot of commercial OCR tools — downloaded once per language and cached after that. Face Mosaic uses Google's MediaPipe Face Detector (the BlazeFace model). Enhance Quality's Fast mode is plain image-resizing math with no AI involved; AI Upscale and AI Eraser use small open-source models (via Transformers.js and ONNX Runtime Web) that download once and then run entirely on your device — AI Eraser's model is roughly 200MB, so that first download is worth doing on Wi-Fi. Face and object detection can miss things, especially at odd angles or low light — always look over a result before sharing it. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, extracting pages, or removing a background, you can send the result straight into another tool without downloading it first. <a href="/how-it-works">See how to check that yourself</a>, or read our <a href="/privacy">Privacy Policy</a> for more.
+    <strong>How this works:</strong> Merge, split, and image-to-PDF use a JavaScript library (pdf-lib) that runs entirely on your device. Convert Files opens pictures with your browser&rsquo;s own image support, plus a small open-source decoder (libheif) for iPhone HEIC photos that loads the first time you need it (<a href="/libheif-LICENSE.txt">licence and source</a>), and reads PDF pages with PDF.js; the BMP, TIFF, ICO, ZIP and Word files it writes are made by code on this page, and nothing is uploaded. Remove Background uses a separate open-source AI model (Transformers.js + MODNet) that downloads once and then also runs entirely in your browser. Redact PDF renders each page to an image using PDF.js (the same engine Firefox uses to display PDFs), so the exported file has no underlying text layer left anywhere in it — there's nothing to select or copy, including in the redacted area, because after export the whole page is a flat picture rather than text plus a black box drawn on top. That's a real trade-off: the output PDF is no longer searchable or copy-pasteable, on any page, not just the redacted one. Extract Text uses Tesseract.js, a browser build of the open-source Tesseract OCR engine — the same model family used in a lot of commercial OCR tools — downloaded once per language and cached after that. Face Mosaic uses Google's MediaPipe Face Detector (the BlazeFace model). Enhance Quality's Fast mode is plain image-resizing math with no AI involved; AI Upscale and AI Eraser use small open-source models (via Transformers.js and ONNX Runtime Web) that download once and then run entirely on your device — AI Eraser's model is roughly 200MB, so that first download is worth doing on Wi-Fi. Face and object detection can miss things, especially at odd angles or low light — always look over a result before sharing it. Nothing is ever uploaded to a server — that also means very large files (100+ MB) may be slow, since your device is doing all the work. There's no file-size cap and no daily limit either way: process one file or a hundred, today or every day. After converting images to a PDF, extracting pages, or removing a background, you can send the result straight into another tool without downloading it first. <a href="/how-it-works">See how to check that yourself</a>, or read our <a href="/privacy">Privacy Policy</a> for more.
   </div>
 </main>
 
@@ -683,6 +694,7 @@
 <script src="/command-palette.js"></script>
 <script src="/tab-deeplink.js" defer></script>
 <script src="/thanks-card.js"></script>
+<script src="/file-converter.js" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {

@@ -196,7 +196,7 @@
         <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
         <div class="mega">
           <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
+            <a href="/document-tools">Documents <span>13</span></a>
             <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
             <a href="/bmi-calculator">Health <span>2</span></a>
             <a href="/career-tools">Career <span>4</span></a>
@@ -205,7 +205,7 @@
             <a href="/everyday-tools">Everyday <span>6</span></a>
             <a href="/devtools">Developer <span>6</span></a>
           </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
+          <a class="mega-all" href="/all-tools">Browse all 46 tools</a>
         </div>
       </details>
       <a class="nav-link" href="/guides">Guides</a>
@@ -219,7 +219,7 @@
       </summary>
       <div class="mobile-panel">
         <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
+        <a href="/document-tools">Documents <span>13</span></a>
         <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
         <a href="/bmi-calculator">Health <span>2</span></a>
         <a href="/career-tools">Career <span>4</span></a>
@@ -245,6 +245,16 @@
 
   <div class="disclaimer">
     Three kinds of entries show up here: <span class="tag shipped">Shipped</span> for something new, <span class="tag caught">Caught in testing</span> for a bug found and fixed before launch, and <span class="tag reported">Reported</span> for a fix that started with someone else noticing first. That last tag is empty today — it won't stay that way.
+  </div>
+
+  <div class="entry">
+    <div class="entry-date">Oct 23, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>Convert Files: change a photo or PDF into another format &mdash; drop it in, pick the format, download</h2>
+    <p>There&rsquo;s a new tab on the <a href="/document-tools#convert">Documents &amp; Images</a> page, <strong>Convert Files</strong>. Drop in a file (or up to 100 at once), click the format you want, and download the result. Pictures can become JPG, PNG, WebP, BMP, TIFF, an ICO icon or a PDF; a PDF can become pictures (JPG, PNG or WebP, one per page), a plain text file or a Word file. It also opens iPhone photos in HEIC format &mdash; the usual reason a picture won&rsquo;t open on a Windows PC &mdash; and it works on a phone, where you choose files instead of dragging them. Several files come back together as one ZIP.</p>
+    <p>Like every tool here it runs in your browser: the file is never uploaded. Converted pictures are saved fresh, which also drops hidden camera and location data (EXIF). The HEIC reader is the open-source libheif library (LGPL-3.0), served from this site, and its licence is linked from the tab. Pictures with see-through parts get a white background when saved as JPG or BMP, because those formats can&rsquo;t be see-through.</p>
+    <p>What it doesn&rsquo;t do, plainly: it can&rsquo;t open Word, Excel or PowerPoint files, or SVG, RAW or Photoshop files, and it can&rsquo;t save as HEIC, GIF or AVIF. An animated GIF keeps only its first frame. A PDF saved as Word keeps the text only (no layout, tables or pictures). A scanned PDF has no text to save, so the tab points you to <a href="/document-tools#ocr">Extract Text (OCR)</a>. Password-protected PDFs are refused, with instructions for making an unprotected copy first. TIFF files open only in browsers that support them (Safari). When a file can&rsquo;t be converted, the tab says so instead of handing you a wrong one.</p>
+    <p>It&rsquo;s wired in everywhere: the home page, <a href="/all-tools">All Tools</a>, the Search box (Ctrl+K) and <a href="/help-me">Help me find a tool</a> now know about it, in English and Korean. Testing the search turned up two older mistakes in Help me find a tool, both fixed: typing just &ldquo;merge&rdquo; or &ldquo;combine&rdquo; pointed at the Unit Converter instead of Merge PDFs (and &ldquo;guide&rdquo; at the UUID generator), because two unrelated words were being treated as synonyms; and Korean questions ignored which way a conversion goes, so asking for PDF to pictures was answered with Images to PDF.</p>
   </div>
 
   <div class="entry">
