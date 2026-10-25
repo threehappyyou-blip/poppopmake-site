@@ -22,7 +22,7 @@ PopPopMake is a solo-built, ad-supported utility site with no user accounts. Eve
 
 ## Documents & Images
 - [Document & Image Tools](https://poppopmake.com/document-tools): Convert files in the browser (HEIC from an iPhone, JPG, PNG, WebP, GIF, BMP, TIFF, ICO or PDF to another format, one file or a batch; PDF pages to pictures; PDF to text or Word), merge PDFs, split PDFs, convert images to PDF, remove image backgrounds with an in-browser AI model, strip hidden PDF metadata, compress or convert images between JPG/PNG/WebP, redact (permanently black out or overwrite) sensitive text in a PDF, extract text from an image via OCR, automatically detect and blur faces, sharpen or upscale a low-resolution photo, remove an unwanted object from a photo with AI inpainting, and mark up a screenshot with arrows, shapes, freehand pen, highlighter, text, crop, and a manually-selected mosaic area.
-- [Screenshot Markup](https://poppopmake.com/screenshot-markup): Standalone version of the markup tool above (arrows, shapes, pen, highlighter, text, crop, manual mosaic) on its own page, and embeddable on other sites — see /embed.
+- [Screenshot Markup](https://poppopmake.com/screenshot-markup): Standalone version of the markup tool above (arrows, shapes, pen, highlighter, text, crop, manual mosaic) on its own page, and embeddable on other sites — see /embed. Pictures can be pasted (Ctrl+V) or captured from the screen, a window or a browser tab on a desktop browser; nothing is uploaded. It cannot capture a scrolling page.
 
 ## Career
 - [Career Tools](https://poppopmake.com/career-tools): Resume builder that outputs an ATS-friendly PDF, an ATS keyword score checker, a cover letter generator, and an hourly-to-salary wage converter.

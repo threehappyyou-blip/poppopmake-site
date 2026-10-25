@@ -248,6 +248,16 @@
   </div>
 
   <div class="entry">
+    <div class="entry-date">Oct 24, 2026</div>
+    <span class="tag shipped">Shipped</span>
+    <h2>Screenshot Markup: paste a screenshot with Ctrl+V, or capture your screen, a window or a browser tab right on the page</h2>
+    <p>Under the drop area of <a href="/screenshot-markup">Screenshot Markup</a> (and on its tab in <a href="/document-tools#markup">Documents &amp; Images</a>) there are now four buttons. <strong>Paste picture</strong> opens whatever picture is on your clipboard &mdash; take a screenshot with Win+Shift+S (Windows) or &#8984;+Ctrl+Shift+4 (Mac), then press Ctrl+V (&#8984;V on a Mac) anywhere on the page. <strong>Capture window</strong> and <strong>Capture browser tab</strong> ask your browser which window or tab to share and open the picture at once. <strong>Capture screen</strong> takes the whole screen after a countdown of 3, 5 or 10 seconds, so you have time to switch to what you want in the picture; Cancel or Esc stops it. Every picture opens in the same editor as before, so arrows, text, crop and blur work on it straight away, and the last five pictures stay in a &ldquo;Recent pictures&rdquo; row (until you close or reload the page) so you can go back to one.</p>
+    <p>Like every tool here it runs in your browser: nothing is uploaded, and your browser asks for permission each time you capture. The same buttons are in the <a href="/embed">embeddable widget</a>; the one-line embed script gives the widget the browser permission it needs.</p>
+    <p>What it doesn&rsquo;t do, plainly: capturing needs a desktop browser (Chrome, Edge, Firefox or Safari on a computer) &mdash; on a phone or tablet the browser doesn&rsquo;t offer screen capture, so the capture buttons are hidden and only pasting is offered. It can&rsquo;t capture a scrolling page in one go, and a web page can&rsquo;t hear a shortcut key while another program is in front, so there is no hotkey that works everywhere; use the one your computer already has, then paste. Some windows (video players, protected content) come out black, and the tool says so instead of silently handing you a blank picture.</p>
+    <p>Two older problems fixed on the way: the embedded Screenshot Markup widget never told the page around it how tall it had grown, so it stayed at its starting height and the editor was cut off behind a scrollbar of its own (it now reports its height like the other widgets); and every picture opened in the editor was kept in memory until the tab was closed, which would have added up with repeated captures &mdash; each one is now released as soon as it has loaded. <a href="/help-me">Help me find a tool</a>, the Search box (Ctrl+K) and <a href="/all-tools">All Tools</a> know about the new buttons, in English and Korean, and the search now tells you plainly that scrolling screenshots and an everywhere-hotkey are not available.</p>
+  </div>
+
+  <div class="entry">
     <div class="entry-date">Oct 23, 2026</div>
     <span class="tag shipped">Shipped</span>
     <h2>Convert Files: change a photo or PDF into another format &mdash; drop it in, pick the format, download</h2>

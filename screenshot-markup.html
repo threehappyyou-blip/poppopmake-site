@@ -10,17 +10,17 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Markup">
-<title>Screenshot Markup Tool (Free) — Arrows, Text, Blur, Crop — PopPopMake</title>
-<meta name="description" content="Draw arrows and shapes, write on a screenshot, highlight, crop, or blur out a specific area. Free, no sign-up, runs entirely in your browser.">
+<title>Screenshot Markup Tool (Free) — Capture, Arrows, Text, Blur, Crop — PopPopMake</title>
+<meta name="description" content="Capture your screen or paste a screenshot, then add arrows, text and highlights, crop, or blur out an area. Free, no sign-up, runs entirely in your browser.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PopPopMake">
 <meta property="og:url" content="https://poppopmake.com/screenshot-markup">
 <link rel="canonical" href="https://poppopmake.com/screenshot-markup">
-<meta property="og:title" content="Screenshot Markup Tool (Free) — Arrows, Text, Blur, Crop — PopPopMake">
-<meta property="og:description" content="Draw arrows and shapes, write on a screenshot, highlight, crop, or blur out a specific area. Free, no sign-up, runs entirely in your browser.">
+<meta property="og:title" content="Screenshot Markup Tool (Free) — Capture, Arrows, Text, Blur, Crop — PopPopMake">
+<meta property="og:description" content="Capture your screen or paste a screenshot, then add arrows, text and highlights, crop, or blur out an area. Free, no sign-up, runs entirely in your browser.">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Screenshot Markup Tool (Free) — Arrows, Text, Blur, Crop — PopPopMake">
-<meta name="twitter:description" content="Draw arrows and shapes, write on a screenshot, highlight, crop, or blur out a specific area. Free, no sign-up, runs entirely in your browser.">
+<meta name="twitter:title" content="Screenshot Markup Tool (Free) — Capture, Arrows, Text, Blur, Crop — PopPopMake">
+<meta name="twitter:description" content="Capture your screen or paste a screenshot, then add arrows, text and highlights, crop, or blur out an area. Free, no sign-up, runs entirely in your browser.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -116,7 +116,7 @@
 
   <div class="tool-card">
     <h2>Screenshot Markup</h2>
-    <p class="sub">Draw arrows and shapes, write on it, highlight, crop, or blur out a specific area &mdash; the everyday markup you'd do on a screenshot before sending it.</p>
+    <p class="sub">Take a screenshot of your screen, a window or a browser tab &mdash; or paste one &mdash; then draw arrows and shapes, write on it, highlight, crop, or blur out a specific area. Nothing is uploaded.</p>
     <div class="drop" id="markup-drop">
       <div>Drag an image here, or</div>
       <label class="btn-label" for="markup-input">Choose an image</label>
@@ -190,6 +190,7 @@
 <script src="/command-palette.js"></script>
 <script src="/thanks-card.js"></script>
 <script src="/install-prompt.js" defer></script>
+<script src="/capture-tools.js" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
@@ -540,6 +541,7 @@ if ('serviceWorker' in navigator) {
     setStatus(mkStatus, 'info', 'Loading image\u2026');
     try {
       mkOriginalImg = await loadImageFile(files[0]);
+      try { URL.revokeObjectURL(mkOriginalImg.src); } catch(e) {}   // the picture is decoded; keeping its temporary address would hold every picture in memory until the tab closes
       mkMarks = [];
       mkPendingCrop = null;
       document.getElementById('markup-crop-apply-btn').style.display = 'none';

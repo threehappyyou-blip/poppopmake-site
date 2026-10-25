@@ -25,6 +25,8 @@
     iframe.setAttribute('data-ppm-instance', instanceId);
     iframe.setAttribute('title', 'PopPopMake: ' + widgetName);
     iframe.setAttribute('loading', 'lazy');
+    // Only the Markup widget captures the screen and reads the clipboard; a browser allows that inside an iframe only when the page holding it says so.
+    if (widgetName === 'screenshot-markup') iframe.setAttribute('allow', 'display-capture; clipboard-read');
     el.appendChild(iframe);
   }
 

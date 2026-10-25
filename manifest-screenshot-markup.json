@@ -1,7 +1,7 @@
 {
   "name": "Screenshot Markup – PopPopMake",
   "short_name": "Markup",
-  "description": "Draw arrows and shapes, write on a screenshot, highlight, crop, or blur out a specific area. Free, no sign-up, runs entirely in your browser.",
+  "description": "Capture your screen or paste a screenshot, then add arrows, text and highlights, crop, or blur out an area. Free, no sign-up, runs entirely in your browser.",
   "id": "/screenshot-markup",
   "start_url": "/screenshot-markup?source=pwa",
   "scope": "/screenshot-markup",

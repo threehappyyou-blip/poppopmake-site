@@ -615,7 +615,7 @@
   <!-- SCREENSHOT MARKUP PANEL -->
   <section class="panel" id="panel-markup">
     <h2>Screenshot Markup</h2>
-    <p class="sub">Draw arrows and shapes, write on it, highlight, crop, or blur out a specific area &mdash; the everyday markup you'd do on a screenshot before sending it. Also available as its <a href="/screenshot-markup">own standalone page</a>, or <a href="/embed">embeddable on your own site</a>.</p>
+    <p class="sub">Take a screenshot of your screen, a window or a browser tab &mdash; or paste one with Ctrl+V &mdash; then draw arrows and shapes, write on it, highlight, crop, or blur out a specific area. Nothing is uploaded. Also available as its <a href="/screenshot-markup">own standalone page</a>, or <a href="/embed">embeddable on your own site</a>.</p>
     <div class="drop" id="markup-drop">
       <div>Drag an image here, or</div>
       <label class="btn-label" for="markup-input">Choose an image</label>
@@ -695,6 +695,7 @@
 <script src="/tab-deeplink.js" defer></script>
 <script src="/thanks-card.js"></script>
 <script src="/file-converter.js" defer></script>
+<script src="/capture-tools.js" defer></script>
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function () {
@@ -3821,6 +3822,7 @@ function normalizeRect(x1, y1, x2, y2){
     setStatus(mkStatus, 'info', 'Loading image\u2026');
     try {
       mkOriginalImg = await loadImageFile(files[0]);
+      try { URL.revokeObjectURL(mkOriginalImg.src); } catch(e) {}   // the picture is decoded; keeping its temporary address would hold every picture in memory until the tab closes
       mkMarks = [];
       mkPendingCrop = null;
       document.getElementById('markup-crop-apply-btn').style.display = 'none';

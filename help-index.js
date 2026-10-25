@@ -53,7 +53,7 @@
 
   T('images-to-pdf', 'Images to PDF', 'Documents', '/document-tools#images',
     'Turn JPG or PNG photos into a single PDF, one image per page.',
-    ['image to pdf', 'photo to pdf', 'jpg to pdf', 'png to pdf', 'picture to pdf', 'scan to pdf', 'make a pdf from photos', 'photos into one pdf', 'screenshots to pdf', 'combine images into a pdf', 'camera pictures to pdf', 'turn jpg into pdf'],
+    ['image to pdf', 'photo to pdf', 'jpg to pdf', 'png to pdf', 'picture to pdf', 'scan to pdf', 'make a pdf from photos', 'photos into one pdf', 'screenshots to pdf', 'several screenshots in one pdf', 'combine images into a pdf', 'camera pictures to pdf', 'turn jpg into pdf'],
     ['jpg', 'jpeg', 'png', 'photo', 'picture', 'image', 'scan']);
 
   T('file-converter', 'Convert Files', 'Documents', '/document-tools#convert',
@@ -80,7 +80,7 @@
 
   T('compress-image', 'Compress & Convert Image', 'Documents', '/document-tools#compress',
     'Shrink a photo’s file size and/or convert it between JPG, PNG and WebP.',
-    ['compress image', 'compress photo', 'compress picture', 'reduce image file size', 'make image smaller', 'make photo smaller', 'shrink a picture', 'photo too big to upload', 'image too large for email', 'resize image', 'resize photo', 'optimize image', 'reduce image kb', 'image under 1mb'],
+    ['compress image', 'compress photo', 'compress picture', 'compress a screenshot', 'make a screenshot smaller', 'reduce the file size of a screenshot', 'reduce image file size', 'make image smaller', 'make photo smaller', 'shrink a picture', 'photo too big to upload', 'image too large for email', 'resize image', 'resize photo', 'optimize image', 'reduce image kb', 'image under 1mb'],
     ['compress', 'resize', 'shrink', 'jpg', 'png', 'webp', 'smaller', 'kb', 'mb', 'quality', 'dimension', 'optimize']);
 
   T('redact-pdf', 'Redact PDF', 'Documents', '/document-tools#redact',
@@ -111,9 +111,11 @@
     ['erase', 'eraser', 'inpaint', 'retouch', 'object', 'unwanted', 'photobomb', 'person', 'people', 'wire', 'wires']);
 
   T('screenshot-markup', 'Screenshot Markup', 'Documents', '/screenshot-markup',
-    'Annotate a screenshot with arrows, shapes, text and highlights — or crop and blur an area.',
-    ['annotate a screenshot', 'markup screenshot', 'draw arrow on screenshot', 'add arrows to an image', 'add text to an image', 'highlight part of a screenshot', 'crop a screenshot', 'crop an image', 'crop a photo', 'blur part of a screenshot', 'blur out information in a screenshot', 'blur a license plate', 'circle something in a screenshot', 'draw on an image', 'mark up an image', 'write on a photo', 'hide info in a screenshot'],
-    ['screenshot', 'annotate', 'markup', 'arrow', 'highlight', 'crop', 'draw', 'shape', 'blur', 'capture', 'callout']);
+    'Take a screenshot of your screen, a window or a browser tab (or paste one), then add arrows, text and highlights, crop it or blur an area.',
+    ['take a screenshot', 'screenshot tool', 'online screenshot tool', 'screen capture', 'capture my screen', 'capture the whole screen', 'capture a window', 'capture a browser tab', 'screen grab', 'grab part of my screen', 'take a picture of my screen', 'snipping tool', 'online snipping tool', 'print screen', 'screenshot with a timer', 'delayed screenshot', 'paste a screenshot', 'paste an image from the clipboard', 'paste a picture with ctrl v', 'edit the screenshot i just took', 'capture and annotate', 'screen clipper',
+     'annotate a screenshot', 'markup screenshot', 'draw arrow on screenshot', 'add arrows to an image', 'add text to an image', 'highlight part of a screenshot', 'crop a screenshot', 'crop an image', 'crop a photo', 'blur part of a screenshot', 'blur out information in a screenshot', 'blur a license plate', 'circle something in a screenshot', 'draw on an image', 'mark up an image', 'write on a photo', 'hide info in a screenshot'],
+    ['screenshot', 'annotate', 'markup', 'arrow', 'highlight', 'crop', 'draw', 'shape', 'blur', 'capture', 'callout', 'snipping'],
+    { notIf: ['close', 'reopen', 'restore'] });
 
   /* ------------------------------------------------------------------ MONEY & TAX */
   T('paycheck-us', 'Paycheck Calculator (US)', 'Money & Tax', '/paycheck-calculator',
@@ -473,6 +475,15 @@
            /\b(generate|create|draw|design|paint|produce)\b.*\b(images?|pictures?|photos?|art|artwork|drawings?)\b.*\b(ai|artificial intelligence)\b/, /\bai\b.*\b(generate|create|draw|design|paint|produce)\b.*\b(images?|pictures?|photos?|art|artwork|drawings?)\b/],
       not: [['compress', 'resize', 'enhance', 'sharpen', 'remove', 'erase', 'blur', 'upscale', 'unblur']] },
     'We don’t generate images or logos.');
+  G('scroll-capture', 'Scrolling screenshot (a whole long page in one picture)',
+    { rx: [/\b(scroll\w*|full ?page|full ?length|whole (web ?)?(page|site)|entire (web ?)?(page|site)|long (web ?)?page|top to bottom)\b.*\b(screenshot|capture|screen ?cap|screen ?grab|snip)\w*\b/,
+           /\b(screenshot|capture|screen ?cap|screen ?grab|snip)\w*\b.*\b(scroll\w*|full ?page|full ?length|whole (web ?)?(page|site)|entire (web ?)?(page|site)|long (web ?)?page|top to bottom)\b/],
+      not: [['compress', 'pdf', 'merge', 'split', 'resize', 'convert', 'ocr', 'crop', 'blur', 'redact', 'extract', 'jpg', 'png', 'webp', 'heic']] },
+    'We can’t capture a whole scrolling page in one go: Screenshot Markup takes what is on your screen, in a window or in a browser tab at one moment. Firefox and Edge can save a full-page picture themselves (press Ctrl+Shift+S), and Chrome can through its developer tools. You can then drag that picture into Screenshot Markup to mark it up.', ['screenshot-markup']);
+  G('capture-hotkey', 'A screenshot shortcut key that works in any program',
+    { rx: [/\b(hot ?keys?|short ?cuts?|key ?bindings?|key combos?|keyboard)\b.*\b(screenshot|capture|screen ?cap|screen ?grab|snip|print ?screen)\w*\b/,
+           /\b(screenshot|capture|screen ?cap|screen ?grab|snip|print ?screen)\w*\b.*\b(hot ?keys?|short ?cuts?|key ?bindings?|key combos?|keyboard)\b/] },
+    'A web page can only hear your keys while it is the window in front, so we can’t offer a shortcut that works from every program. Your computer already has one: press Win+Shift+S (Windows) or ⌘+Ctrl+Shift+4 (Mac) to pick an area, then paste it on the Screenshot Markup page with Ctrl+V (⌘V on a Mac).', ['screenshot-markup'], true);
   G('video', 'Video tools',
     { rx: [/\b(videos?|mp4|mov|avi|mkv|webm|movies?|clips?|reels?|film|footage|subtitles?|srt|screen recording|screen recorder)\b/] },
     'We don’t have any video tools.');
@@ -574,14 +585,15 @@
     { rx: [/\b(receipt|quote|quotation|estimate template|proposal|contract|nda|non disclosure|agreement|purchase order|timesheet|time tracking|payroll software|profit margin|markup calculator|break even|business plan|pitch deck|business card|logo maker|barcode|shipping label|tracking number|bookkeeping|expense report|late fee|terms and conditions generator|privacy policy generator|letterhead)\b/] },
     'We have an invoice generator and a QR code generator, but no receipts, quotes, contracts, business cards or logos yet.', ['invoice', 'qr-code'], true);
   G('date-other', 'Countdowns, adding days to a date, business days, calendars',
-    { not: [['birthday', 'birth', 'dob', 'age', 'old'], ['timer', 'stopwatch', 'alarm', 'pomodoro']],
+    { not: [['birthday', 'birth', 'dob', 'age', 'old'], ['timer', 'stopwatch', 'alarm', 'pomodoro'], ['screenshot', 'capture']],
       rx: [/\b(countdown|days (until|left|till|to go)|how many days (until|till|to)|weeks until|add (\d+ )?days? to|subtract days|working days|business days|workdays|week number|day of the week|what day|leap year|holiday|zodiac|date calculator|time calculator|hours calculator|time card|duration calculator)\b/] },
     'We have no countdown or date-adding calculator. The Age Calculator gives the exact time between two dates and the days to your next birthday.', ['age-calc'], true);
   G('random-tools', 'Random picker, dice, coin flip, quiz or games',
     { rx: [/\b(random number|random picker|name picker|dice|coin flip|flip a coin|lottery|raffle|spin the wheel|wheel of names|draw lots|magic 8|quiz|trivia|crossword|sudoku|wordle|game|games|fortune|horoscope|tarot|compatibility)\b/] },
     'We don’t have random pickers, games or quizzes.');
   G('productivity', 'Timers, to-do lists, notes or reminders',
-    { rx: [/\b(timer|stopwatch|alarm|pomodoro|reminder|to ?do list|todo|note taking|notepad|sticky notes?|notebook|take notes|notes app|checklist|habit tracker|planner|schedule maker|calendar|gantt|kanban|meeting scheduler)\b/] },
+    { rx: [/\b(timer|stopwatch|alarm|pomodoro|reminder|to ?do list|todo|note taking|notepad|sticky notes?|notebook|take notes|notes app|checklist|habit tracker|planner|schedule maker|calendar|gantt|kanban|meeting scheduler)\b/],
+      not: [['screenshot', 'capture']] },
     'We don’t have timers, to-do lists or planners.');
   G('math-other', 'Math, grades, GPA or science calculators',
     { rx: [/\b(fractions?|scientific calculator|algebra|equations?|quadratic|standard deviation|square root|exponent|gcd|lcm|prime numbers?|pythagorean|triangle area|gpa|grade calculator|final grade|test score|weighted average|probability|permutation|combinations?|statistics|matrix|derivative|integral|logarithm|sine|cosine|median|mean and median)\b/] },
@@ -712,7 +724,7 @@
     ['글자추출', 'ocr'], ['문자인식', 'ocr'], ['글자인식', 'ocr'], ['텍스트', 'text'], ['글자', 'character'], ['문자', 'character'], ['스캔', 'scan'], ['손글씨', 'handwriting'],
     ['화질', 'enhance quality'], ['해상도', 'resolution enhance'], ['선명', 'sharpen'], ['고화질', 'enhance quality'], ['확대', 'enlarge'], ['흐릿', 'blurry'],
     ['지우개', 'eraser'], ['물체', 'object'], ['사물', 'object'],
-    ['화살표', 'arrow'], ['주석', 'annotate'], ['강조', 'highlight'], ['자르기', 'crop'], ['크롭', 'crop'], ['그리기', 'draw'],
+    ['전체', 'whole'], ['스크롤', 'scroll'], ['단축키', 'hotkey shortcut'], ['붙여넣', 'paste'], ['클립보드', 'clipboard'], ['화살표', 'arrow'], ['주석', 'annotate'], ['강조', 'highlight'], ['자르기', 'crop'], ['크롭', 'crop'], ['그리기', 'draw'],
     ['월급', 'paycheck salary'], ['급여', 'paycheck salary'], ['연봉', 'annual salary'], ['실수령', 'takehome paycheck'], ['세후', 'after tax paycheck'], ['세금', 'tax'], ['소득세', 'income tax'], ['시급', 'hourly'], ['주급', 'weekly paycheck'], ['보너스', 'bonus'], ['초과근무', 'overtime'],
     ['한국', 'korea'], ['일본', 'japan'], ['중국', 'china'], ['인도', 'india'], ['독일', 'germany'], ['프랑스', 'france'], ['영국', 'uk'], ['호주', 'australia'], ['캐나다', 'canada'], ['미국', 'us'], ['싱가포르', 'singapore'], ['베트남', 'vietnam'], ['태국', 'thailand'], ['필리핀', 'philippines'], ['브라질', 'brazil'], ['멕시코', 'mexico'],
     ['텍사스', 'texas'], ['캘리포니아', 'california'], ['뉴욕', 'new york'], ['플로리다', 'florida'], ['워싱턴', 'washington'], ['일리노이', 'illinois'], ['조지아', 'georgia'], ['뉴저지', 'new jersey'], ['매사추세츠', 'massachusetts'], ['버지니아', 'virginia'], ['펜실베이니아', 'pennsylvania'], ['오하이오', 'ohio'], ['애리조나', 'arizona'], ['콜로라도', 'colorado'], ['네바다', 'nevada'], ['오리건', 'oregon'], ['하와이', 'hawaii'], ['알래스카', 'alaska'],

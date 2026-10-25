@@ -95,6 +95,7 @@
 
 <div class="credit">Powered by <a href="https://poppopmake.com/screenshot-markup.html" target="_blank" rel="noopener">PopPopMake</a></div>
 
+<script src="/capture-tools.js" defer></script>
 <script>
 (function(){
 
@@ -422,6 +423,7 @@
     setStatus(mkStatus, 'info', 'Loading image\u2026');
     try {
       mkOriginalImg = await loadImageFile(files[0]);
+      try { URL.revokeObjectURL(mkOriginalImg.src); } catch(e) {}   // the picture is decoded; keeping its temporary address would hold every picture in memory until the tab closes
       mkMarks = [];
       mkPendingCrop = null;
       document.getElementById('markup-crop-apply-btn').style.display = 'none';
@@ -441,9 +443,10 @@
 
 
 
+  var instanceId = new URLSearchParams(window.location.search).get('instance') || '';
   function postHeightToParent(){
     if (window.parent !== window) {
-      window.parent.postMessage({ type: 'poppopmake-resize', height: document.documentElement.scrollHeight }, '*');
+      window.parent.postMessage({ type: 'poppopmake-embed-resize', instance: instanceId, height: document.documentElement.scrollHeight }, '*');
     }
   }
   window.addEventListener('load', postHeightToParent);
