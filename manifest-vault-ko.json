@@ -1,7 +1,7 @@
 {
-  "name": "가계부·메모 – PopPopMake",
-  "short_name": "가계부·메모",
-  "description": "이 기기에만 암호화해 보관하는 나만의 가계부와 포스트잇 메모. 가입 필요 없음.",
+  "name": "가계부·메모·일기 – PopPopMake",
+  "short_name": "가계부·메모·일기",
+  "description": "이 기기에만 암호화해 보관하는 나만의 가계부, 포스트잇 메모, 일기. 가입 필요 없음.",
   "lang": "ko",
   "id": "/vault",
   "start_url": "/vault?source=pwa",
@@ -34,6 +34,10 @@
     {
       "name": "메모",
       "url": "/vault?start=notes"
+    },
+    {
+      "name": "일기",
+      "url": "/vault?start=diary"
     }
   ]
 }

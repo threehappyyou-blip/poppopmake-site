@@ -263,6 +263,11 @@
     ['sticky notes', 'sticky note app', 'online sticky notes', 'post it notes', 'post-it notes', 'notepad', 'online notepad', 'notes app', 'take notes', 'note taking', 'quick notes', 'write a note', 'shopping list', 'grocery list', 'private notes', 'secret notes', 'locked notes', 'notes with a password', 'memo pad', 'jot something down'],
     ['notes', 'note', 'sticky', 'notepad', 'memo', 'memos', 'postit']);
 
+  T('private-diary', 'Private Diary', 'Everyday', '/private-diary',
+    'A diary only you can open: moods, photos, #tags, a mood calendar and “on this day” — encrypted on your device, no sign-up.',
+    ['diary', 'diary app', 'online diary', 'private diary', 'secret diary', 'diary with a lock', 'journal', 'journal app', 'private journal', 'daily journal', 'gratitude journal', 'mood journal', 'mood tracker', 'photo diary', 'write about my day', 'dear diary', 'journaling', 'on this day', 'diary with password'],
+    ['diary', 'diaries', 'journal', 'journaling', 'mood', 'gratitude', 'dear']);
+
   T('unit-convert', 'Unit Converter', 'Everyday', '/everyday-tools#unit',
     'Height, weight, temperature, distance and volume between metric and US units.',
     ['unit converter', 'convert units', 'pounds to kg', 'kg to pounds', 'feet to cm', 'cm to feet and inches', 'inches to cm', 'celsius to fahrenheit', 'fahrenheit to celsius', 'miles to km', 'km to miles', 'gallons to liters', 'liters to gallons', 'metric to imperial', 'imperial to metric', 'convert height', 'convert weight', 'convert temperature', 'lbs to kg', 'stone to kg'],
@@ -566,9 +571,6 @@
   G('budget', 'Net worth or splitting rent',
     { rx: [/\b(net worth|rent split|split rent|roommates?|split (the )?(utilities|bills) with)\b/] },
     'We don’t have a net-worth or rent-splitting tool. The Budget Tracker records income and spending; Tip & Split divides a restaurant bill.', ['budget-tracker', 'tip-split'], true);
-  G('journal', 'A diary or journal',
-    { rx: [/\b(diary|diaries|journal|journaling|journalling|dear diary|daily log|gratitude log)\b/], not: [['expense', 'spending', 'budget']] },
-    'There is no diary yet. Notes in the Budget & Notes app are private and encrypted, and work for short entries.', ['sticky-notes'], true);
   G('currency', 'Currency conversion or exchange rates',
     { rx: [/\b(usd|eur|gbp|krw|jpy|cad|aud|inr|cny|mxn|chf|nzd|sgd|hkd|brl|try|zar|dollars?|euros?|pounds?|won|yen|yuan|rupees?|pesos?)\s*(to|in|into|2|vs)\s*(usd|eur|gbp|krw|jpy|cad|aud|inr|cny|mxn|chf|nzd|sgd|hkd|brl|try|zar|dollars?|euros?|pounds?|won|yen|yuan|rupees?|pesos?)\b/, /\b(currency|exchange rate|forex|fx rate|convert (usd|eur|gbp|krw|jpy|cad|aud|dollars?|euros?)|currency converter)\b/] },
     'We don’t convert currencies (live exchange rates would need a data feed).');

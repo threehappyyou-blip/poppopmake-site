@@ -4,15 +4,15 @@
 (function () {
   'use strict';
 
-  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, t = I.t;
+  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, t = I.t;
   var app = document.getElementById('app');
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray'];
-  var TIPS = ['tip.quick', 'tip.notes', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv'];
+  var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv'];
   var FAIL_KEY = 'ppm-vault-fails', THEME_KEY = 'ppm-vault-theme';
 
   var S = {
     phase: 'loading', budget: null, notes: null, settings: null, tab: 'budget', ym: null, budgetView: 'list',
-    searchOpen: false, query: '', notesQuery: '', tip: Math.floor(Math.random() * TIPS.length), tipHidden: false,
+    searchOpen: false, query: '', notesQuery: '', diary: null, diaryYm: null, diaryView: 'list', diarySearch: false, diaryQuery: '', tip: Math.floor(Math.random() * TIPS.length), tipHidden: false,
     installEvt: null, pendingCode: null, lastActive: Date.now(), hiddenAt: null
   };
 
@@ -51,6 +51,7 @@
     pin: ['M12 17v5', 'M8 3h8l-1 6 3 4H6l3-4z'], trash: ['M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14'],
     wallet: ['<rect x="3" y="6" width="18" height="14" rx="2"/>', 'M3 10h18', '<circle cx="16.5" cy="15" r="1.3"/>'],
     note: ['M5 3h14v12l-6 6H5z', 'M13 21v-6h6'],
+    book: ['M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z', 'M20 4h-6a3 3 0 0 0-3 3'],
     gear: ['<circle cx="12" cy="12" r="3"/>', 'M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1'],
     repeat: ['M17 2l4 4-4 4', 'M3 11V9a3 3 0 0 1 3-3h15', 'M7 22l-4-4 4-4', 'M21 13v2a3 3 0 0 1-3 3H3'],
     chev: ['M9 18l6-6-6-6'], shield: ['M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z']
@@ -125,11 +126,13 @@
     return s;
   }
   function loadAll() {
-    return Promise.all([C.load('budget'), C.load('notes'), C.load('settings')]).then(function (r) {
+    return Promise.all([C.load('budget'), C.load('notes'), C.load('settings'), C.load('diary')]).then(function (r) {
       S.budget = B.validate(r[0], I.get(), I.defaultCurrency());
       S.notes = validateNotes(r[1]);
       S.settings = validateSettings(r[2]);
-      S.ym = thisMonth();
+      S.diary = DY.validate(r[3]);
+      S.ym = thisMonth(); S.diaryYm = thisMonth();
+      cleanupPhotos();
       var due = B.applyRecurring(S.budget, today());
       var first = !r[0];
       return (due || first ? saveBudget() : Promise.resolve()).then(function () { return due; });
@@ -161,13 +164,13 @@
   function waitSeconds() { var f = failState(); return Math.max(0, Math.ceil((f.until - Date.now()) / 1000)); }
 
   function lockNow(auto) {
-    flushNote();
+    flushNote(); flushEntry();
     return saving.then(function () {
       return C.lock();
     }).then(function () {
-      S.budget = S.notes = S.settings = null;
+      S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls();
       closeAllModals(); hideToast(); var tb = document.getElementById('toast'); if (tb) tb.textContent = '';
-      S.searchOpen = false; S.query = ''; S.notesQuery = '';
+      S.searchOpen = false; S.query = ''; S.notesQuery = ''; S.diarySearch = false; S.diaryQuery = '';
       S.phase = 'locked';
       render();
       if (auto) toast(t('lockedAuto'));
@@ -180,7 +183,7 @@
     if (document.visibilityState === 'visible' && Date.now() - S.lastActive > S.settings.autoLock * 60000) lockNow(true);
   }, 10000);
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') { S.hiddenAt = Date.now(); flushNote(); return; }
+    if (document.visibilityState === 'hidden') { S.hiddenAt = Date.now(); flushNote(); flushEntry(); return; }
     if (S.phase === 'app' && S.settings && S.hiddenAt && Date.now() - S.hiddenAt > S.settings.autoLock * 60000) lockNow(true);
     S.hiddenAt = null; touch();
   });
@@ -188,11 +191,12 @@
   // Changes made in another tab of this app.
   C.onChange(function (msg, remote) {
     if (!remote) return;
-    if (msg.type === 'wiped') { S.phase = 'welcome'; S.budget = S.notes = S.settings = null; closeAllModals(); render(); return; }
+    if (msg.type === 'wiped') { S.phase = 'welcome'; S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls(); closeAllModals(); render(); return; }
     if (msg.type === 'saved' && S.phase === 'app' && !modalOpen()) {
       C.load(msg.module).then(function (d) {
         if (msg.module === 'budget') S.budget = B.validate(d, I.get(), S.budget.currency);
         else if (msg.module === 'notes') S.notes = validateNotes(d);
+        else if (msg.module === 'diary') S.diary = DY.validate(d);
         else if (msg.module === 'settings') S.settings = validateSettings(d);
         render();
       }).catch(function () {});
@@ -328,7 +332,7 @@
       h('div', { class: 'feature-peek' },
         h('div', { class: 'peek' }, h('span', { 'aria-hidden': 'true', text: '💸' }), h('b', { text: t('tour.1t') })),
         h('div', { class: 'peek' }, h('span', { 'aria-hidden': 'true', text: '📝' }), h('b', { text: t('tour.3t') })),
-        h('div', { class: 'peek' }, h('span', { 'aria-hidden': 'true', text: '📊' }), h('b', { text: t('tour.2t') }))),
+        h('div', { class: 'peek' }, h('span', { 'aria-hidden': 'true', text: '📔' }), h('b', { text: t('tour.4t') }))),
       h('button', { type: 'button', class: 'btn primary block', id: 'start-btn', text: t('setup.start'), on: { click: function () { S.phase = 'create'; render(); } } }),
       h('button', { type: 'button', class: 'btn ghost block', text: t('setup.restore'), on: { click: function () { openRestore(); } } })
     );
@@ -366,10 +370,11 @@
       C.create(a).then(function (r) {
         S.budget = B.newDoc(I.get(), cur.value);
         S.notes = { v: 1, notes: [] };
+        S.diary = DY.newDoc(); S.diaryYm = thisMonth();
         S.settings = validateSettings({ codeSaved: false });
         S.ym = thisMonth();
         S.pendingCode = r.recoveryCode;
-        return Promise.all([saveBudget(), saveNotes(), saveSettings()]);
+        return Promise.all([saveBudget(), saveNotes(), saveDiary(), saveSettings()]);
       }).then(function () {
         C.persist();
         S.phase = 'recovery'; render();
@@ -483,11 +488,12 @@
     var main = h('main', { class: 'main', id: 'main' });
     if (S.tab === 'budget') renderBudget(main);
     else if (S.tab === 'notes') renderNotes(main);
+    else if (S.tab === 'diary') renderDiary(main);
     else renderSettings(main);
     var tabs = h('nav', { class: 'tabbar', 'aria-label': t('app.name') });
-    [['budget', 'wallet'], ['notes', 'note'], ['settings', 'gear']].forEach(function (x) {
+    [['budget', 'wallet'], ['notes', 'note'], ['diary', 'book'], ['settings', 'gear']].forEach(function (x) {
       add(tabs, h('button', { type: 'button', class: 'tab' + (S.tab === x[0] ? ' on' : ''), 'aria-current': S.tab === x[0] ? 'page' : null, 'data-tab': x[0],
-        on: { click: function () { if (S.tab !== x[0]) { flushNote(); hideToast(); S.tab = x[0]; S.searchOpen = false; render(); window.scrollTo(0, 0); } } } },
+        on: { click: function () { if (S.tab !== x[0]) { flushNote(); flushEntry(); hideToast(); S.tab = x[0]; S.searchOpen = false; render(); window.scrollTo(0, 0); } } } },
         icon(x[1]), h('span', { text: t('tab.' + x[0]) })));
     });
     add(shell, main, tabs);
@@ -560,7 +566,7 @@
   function notice() {
     var st = S.settings, nowTs = Date.now();
     if (!st.codeSaved) return noticeCard('⚠️', t('rec.title'), t('code.newBody'), t('set.newCode'), openNewCode, 'notice-code');
-    var hasData = S.budget.tx.length + S.notes.notes.length >= 5;
+    var hasData = S.budget.tx.length + S.notes.notes.length + S.diary.entries.length >= 5;
     var stale = st.lastBackup ? (nowTs - st.lastBackup > 30 * 864e5 && st.lastChange > st.lastBackup) : hasData;
     if (stale) return noticeCard('💾', t('set.backup'), st.lastBackup ? t('backup.remindOld', { d: Math.floor((nowTs - st.lastBackup) / 864e5) }) : t('backup.remindNever'), t('backup.now'), openBackup, 'notice-backup');
     if (S.tipHidden) return null;
@@ -816,6 +822,246 @@
     }, { wide: true });
   }
 
+  // ----- Diary tab -----
+  var MOODS = ['😞', '😕', '😐', '🙂', '😄'];
+  var photoUrls = {};                        // photo id -> temporary address of the decrypted picture (dropped on lock)
+  function moodEmoji(m) { return m ? MOODS[Math.round(m) - 1] : ''; }
+  function nowTime() { var d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function dropPhotoUrls() { Object.keys(photoUrls).forEach(function (k) { try { URL.revokeObjectURL(photoUrls[k]); } catch (e) {} }); photoUrls = {}; }
+  function photoUrl(id) {
+    if (photoUrls[id]) return Promise.resolve(photoUrls[id]);
+    return C.getBlob(id).then(function (b) {
+      if (!b) return null;
+      photoUrls[id] = URL.createObjectURL(new Blob([b.bytes], { type: b.type }));
+      return photoUrls[id];
+    });
+  }
+  // Phone photos are large: shrink to at most 1600 px and re-save as JPEG before encrypting.
+  function shrinkPhoto(file) {
+    function draw(src, w, h) {
+      var scale = Math.min(1, 1600 / Math.max(w, h)), cw = Math.max(1, Math.round(w * scale)), ch = Math.max(1, Math.round(h * scale));
+      var c = document.createElement('canvas'); c.width = cw; c.height = ch;
+      var g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, cw, ch); g.drawImage(src, 0, 0, cw, ch);
+      return new Promise(function (res, rej) { c.toBlob(function (b) { b ? res(b) : rej(new Error('encode')); }, 'image/jpeg', 0.82); });
+    }
+    var p = window.createImageBitmap
+      ? createImageBitmap(file).then(function (bm) { return draw(bm, bm.width, bm.height).then(function (b) { if (bm.close) bm.close(); return b; }); })
+      : new Promise(function (res, rej) {
+          var url = URL.createObjectURL(file), img = new Image();
+          img.onload = function () { URL.revokeObjectURL(url); draw(img, img.naturalWidth, img.naturalHeight).then(res, rej); };
+          img.onerror = function () { URL.revokeObjectURL(url); rej(new Error('decode')); };
+          img.src = url;
+        });
+    return p.then(function (b) { return b.arrayBuffer(); }).then(function (buf) { return new Uint8Array(buf); });
+  }
+  function cleanupPhotos() {                 // pictures no entry points at any more (deleted entries, removed photos)
+    var used = {};
+    S.diary.entries.forEach(function (e) { e.photos.forEach(function (p) { used[p] = true; }); });
+    return C.blobIds().then(function (ids) { return Promise.all(ids.filter(function (id) { return !used[id]; }).map(function (id) { return C.deleteBlob(id); })); }).catch(function () {});
+  }
+  function saveDiary() { return save('diary', function () { return S.diary; }); }
+
+  function renderDiary(main) {
+    if (S.diarySearch) return renderDiarySearch(main);
+    var ym = S.diaryYm, todayS = today();
+    var nav = h('div', { class: 'month-nav' },
+      h('button', { type: 'button', class: 'icon-btn', 'aria-label': t('month.prev'), id: 'diary-prev', on: { click: function () { S.diaryYm = B.addMonths(S.diaryYm, -1); render(); } } }, icon('left')),
+      h('h1', { class: 'month', id: 'diary-month', text: I.monthLabel(ym) }),
+      h('button', { type: 'button', class: 'icon-btn', 'aria-label': t('month.next'), id: 'diary-next', on: { click: function () { S.diaryYm = B.addMonths(S.diaryYm, 1); render(); } } }, icon('right')));
+    add(main, topBar(nav, h('button', { type: 'button', class: 'icon-btn', id: 'diary-search-btn', 'aria-label': t('top.search'), title: t('top.search'), on: { click: function () { S.diarySearch = true; render(); } } }, icon('search'))));
+    if (ym !== thisMonth()) add(main, h('button', { type: 'button', class: 'link today-link', text: t('month.today'), on: { click: function () { S.diaryYm = thisMonth(); render(); } } }));
+
+    var streak = DY.streak(S.diary, todayS), st = DY.monthStats(S.diary, ym);
+    add(main, h('section', { class: 'card diary-sum' },
+      h('div', { class: 'streak', id: 'diary-streak' }, h('span', { class: 'streak-ico', 'aria-hidden': 'true', text: streak ? '🔥' : '✏️' }),
+        h('strong', { text: streak ? t('diary.streak', { n: streak }) : t('diary.streak0') })),
+      h('p', { class: 'hint', id: 'diary-stats', text: t('diary.stats', { n: st.count }) + (st.avgMood ? ' · ' + t('diary.avgMood') + ' ' + moodEmoji(st.avgMood) : '') })));
+
+    var otd = DY.onThisDay(S.diary, todayS);
+    if (otd.length && ym === thisMonth()) {
+      add(main, h('section', { class: 'card otd', id: 'on-this-day' }, h('h2', { text: '📅 ' + t('diary.onThisDay') }),
+        h('ul', { class: 'tx' }, otd.slice(0, 3).map(function (e) {
+          var yrs = +todayS.slice(0, 4) - +e.date.slice(0, 4);
+          return h('li', {}, h('button', { type: 'button', class: 'tx-row', on: { click: function () { openEntry(e.id); } } },
+            h('span', { class: 'emoji', 'aria-hidden': 'true', text: moodEmoji(e.mood) || '📔' }),
+            h('span', { class: 'tx-main' }, h('span', { class: 'tx-cat', text: t('diary.yearsAgo', { n: yrs }) }), h('span', { class: 'tx-note', text: firstLine(e) }))));
+        }))));
+    }
+    if (!DY.byDate(S.diary, todayS).length && ym === thisMonth()) {
+      var q = t('diary.prompt.' + DY.promptIndex(todayS));
+      add(main, h('aside', { class: 'card notice', id: 'diary-prompt' }, h('span', { class: 'notice-ico', 'aria-hidden': 'true', text: '💭' }),
+        h('div', { class: 'notice-text' }, h('strong', { text: t('diary.prompt') }), h('p', { text: q }),
+          h('div', { class: 'notice-actions' }, h('button', { type: 'button', class: 'btn small', id: 'diary-prompt-write', text: t('diary.write'), on: { click: function () { newEntry(todayS, q); } } })))));
+    }
+    add(main, h('div', { class: 'seg', role: 'tablist' },
+      h('button', { type: 'button', role: 'tab', 'aria-selected': S.diaryView === 'list' ? 'true' : 'false', class: S.diaryView === 'list' ? 'on' : '', id: 'diary-view-list', text: t('view.list'), on: { click: function () { S.diaryView = 'list'; render(); } } }),
+      h('button', { type: 'button', role: 'tab', 'aria-selected': S.diaryView === 'calendar' ? 'true' : 'false', class: S.diaryView === 'calendar' ? 'on' : '', id: 'diary-view-cal', text: t('view.calendar'), on: { click: function () { S.diaryView = 'calendar'; render(); } } })));
+    if (S.diaryView === 'calendar') add(main, calendar(ym));
+    else {
+      var list = DY.byMonth(S.diary, ym);
+      if (!list.length) add(main, empty('📔', t('diary.empty'), t('diary.emptyHint')));
+      else {
+        var days = []; list.forEach(function (e) { var d = days[days.length - 1]; if (!d || d.date !== e.date) days.push(d = { date: e.date, items: [] }); d.items.push(e); });
+        add(main, h('div', { class: 'days', id: 'diary-list' }, days.map(function (d) {
+          return h('section', { class: 'day' }, h('h3', { class: 'day-head' }, h('span', { text: I.dayLabel(d.date) })), h('ul', { class: 'tx' }, d.items.map(entryRow)));
+        })));
+      }
+    }
+    add(main, fab(t('diary.new'), function () { newEntry(ym === thisMonth() ? todayS : ym + '-01'); }, 'new-entry'));
+  }
+  function firstLine(e) { var s = e.text.trim().split('\n')[0]; return s || (e.photos.length ? '📷' : ''); }
+  function entryRow(e) {
+    return h('li', {}, h('button', { type: 'button', class: 'tx-row entry-row', 'data-id': e.id, on: { click: function () { openEntry(e.id); } } },
+      h('span', { class: 'emoji', 'aria-hidden': 'true', text: moodEmoji(e.mood) || '📔' }),
+      h('span', { class: 'tx-main' },
+        h('span', { class: 'entry-text', text: e.text.trim().slice(0, 140) || (e.photos.length ? '📷' : '') }),
+        e.tags.length ? h('span', { class: 'entry-tags', text: e.tags.map(function (x) { return '#' + x; }).join(' ') }) : null),
+      h('span', { class: 'entry-meta' }, e.time ? h('span', { text: e.time }) : null, e.photos.length ? h('span', { text: '📷 ' + e.photos.length }) : null)));
+  }
+  function calendar(ym) {
+    var first = new Date(Date.UTC(+ym.slice(0, 4), +ym.slice(5, 7) - 1, 1)).getUTCDay(), n = B.daysInMonth(ym), moods = DY.moodByDay(S.diary, ym);
+    var counts = {}; DY.byMonth(S.diary, ym).forEach(function (e) { counts[e.date] = (counts[e.date] || 0) + 1; });
+    var fmt = new Intl.DateTimeFormat(I.locale(), { weekday: 'narrow', timeZone: 'UTC' });
+    var grid = h('div', { class: 'cal', id: 'diary-cal', role: 'grid', 'aria-label': I.monthLabel(ym) });
+    for (var w = 0; w < 7; w++) add(grid, h('span', { class: 'cal-wd', 'aria-hidden': 'true', text: fmt.format(new Date(Date.UTC(2026, 10, 1 + w))) }));   // Nov 1 2026 is a Sunday
+    for (var b = 0; b < first; b++) add(grid, h('span', { class: 'cal-empty' }));
+    for (var d = 1; d <= n; d++) (function (d) {
+      var date = ym + '-' + pad(d), c = counts[date] || 0;
+      add(grid, h('button', { type: 'button', class: 'cal-day' + (c ? ' has' : '') + (date === today() ? ' today' : ''), 'data-date': date,
+        'aria-label': I.fullDate(date) + (c ? ', ' + t('diary.dayEntries', { n: c }) : ''),
+        on: { click: function () { var list = DY.byDate(S.diary, date); if (list.length === 1) openEntry(list[0].id); else if (list.length) openDay(date); else newEntry(date); } } },
+        h('span', { class: 'cal-num', text: String(d) }), h('span', { class: 'cal-mood', 'aria-hidden': 'true', text: moods[date] ? moodEmoji(moods[date]) : (c ? '•' : '') })));
+    })(d);
+    return h('section', { class: 'card' }, grid);
+  }
+  function openDay(date) {
+    sheet(I.fullDate(date), function (body, close) {
+      add(body, h('ul', { class: 'tx' }, DY.byDate(S.diary, date).map(function (e) { var r = entryRow(e); r.firstChild.addEventListener('click', close); return r; })),
+        h('div', { class: 'row end' }, h('button', { type: 'button', class: 'btn primary', text: t('diary.new'), on: { click: function () { close(); newEntry(date); } } })));
+    });
+  }
+  function renderDiarySearch(main) {
+    var input = h('input', { type: 'search', class: 'input', id: 'diary-search-input', placeholder: t('diary.searchPh'), value: S.diaryQuery, 'aria-label': t('top.search') });
+    var results = h('div', { id: 'diary-search-results' });
+    function draw() {
+      results.textContent = '';
+      if (!S.diaryQuery.trim()) {
+        var tags = DY.allTags(S.diary).slice(0, 20);
+        if (tags.length) add(results, h('p', { class: 'hint', text: t('diary.tagsHint') }), h('div', { class: 'chips wrap' }, tags.map(function (x) {
+          return h('button', { type: 'button', class: 'chip', on: { click: function () { input.value = S.diaryQuery = '#' + x.tag; draw(); } } }, '#' + x.tag + ' · ' + x.count);
+        })));
+        return;
+      }
+      var list = DY.search(S.diary, S.diaryQuery);
+      if (!list.length) return add(results, h('p', { class: 'hint center', text: t('search.none') }));
+      add(results, h('p', { class: 'hint', text: t('search.count', { n: list.length }) }), h('ul', { class: 'tx' }, list.slice(0, 300).map(function (e) {
+        var r = entryRow(e); r.firstChild.insertBefore(h('span', { class: 'tx-date', text: I.fullDate(e.date) }), r.firstChild.querySelector('.entry-meta')); return r;
+      })));
+    }
+    input.addEventListener('input', function () { S.diaryQuery = input.value; draw(); });
+    add(main, topBar(h('div', { class: 'search-bar' }, input,
+      h('button', { type: 'button', class: 'icon-btn', 'aria-label': t('btn.close'), id: 'diary-search-close', on: { click: function () { S.diarySearch = false; S.diaryQuery = ''; render(); } } }, icon('x')))), results);
+    draw();
+    setTimeout(function () { input.focus(); }, 0);
+  }
+  function newEntry(date, prompt) {
+    var e = DY.addEntry(S.diary, { date: date, time: date === today() ? nowTime() : '', text: '' });
+    openEntry(e.id, { isNew: true, prompt: prompt });
+  }
+  var entryTimer = null, entryFlush = null;
+  function flushEntry() { if (entryFlush) { var f = entryFlush; entryFlush = null; clearTimeout(entryTimer); f(); } }
+  function openEntry(id, opts) {
+    opts = opts || {};
+    var e = S.diary.entries.find(function (x) { return x.id === id; });
+    if (!e) return;
+    var deleted = false;
+    sheet(opts.isNew ? t('diary.new') : I.fullDate(e.date), function (body, close, m) {
+      var date = h('input', { type: 'date', class: 'input', id: 'entry-date', value: e.date });
+      var time = h('input', { type: 'time', class: 'input', id: 'entry-time', value: e.time });
+      date.addEventListener('change', function () { if (B.validDate(date.value)) { DY.updateEntry(S.diary, e.id, { date: date.value }); saveDiary(); } });
+      time.addEventListener('change', function () { DY.updateEntry(S.diary, e.id, { time: time.value }); saveDiary(); });
+      var moods = h('div', { class: 'moods', role: 'radiogroup', 'aria-label': t('diary.mood') });
+      function drawMoods() {
+        moods.textContent = '';
+        MOODS.forEach(function (em, i) {
+          var v = i + 1;
+          add(moods, h('button', { type: 'button', role: 'radio', class: 'mood' + (e.mood === v ? ' on' : ''), 'aria-checked': e.mood === v ? 'true' : 'false', 'aria-label': t('mood.' + v), title: t('mood.' + v), 'data-mood': v,
+            on: { click: function () { DY.updateEntry(S.diary, e.id, { mood: e.mood === v ? null : v }); drawMoods(); saveDiary(); } } }, em));
+        });
+      }
+      drawMoods();
+      var ta = h('textarea', { class: 'input entry-edit', id: 'entry-text', rows: 10, placeholder: opts.prompt || t('diary.ph'), 'aria-label': t('diary.title'), 'data-autofocus': '1', value: e.text });
+      var tagLine = h('p', { class: 'hint entry-tagline', id: 'entry-tags' });
+      function drawTags() { var tg = DY.tagsOf(ta.value); tagLine.textContent = tg.length ? tg.map(function (x) { return '#' + x; }).join(' ') : t('diary.tagsTip'); }
+      function persist() { entryFlush = null; if (e.text !== ta.value) DY.updateEntry(S.diary, e.id, { text: ta.value }); saveDiary(); }
+      ta.addEventListener('input', function () { drawTags(); clearTimeout(entryTimer); entryFlush = persist; entryTimer = setTimeout(flushEntry, 600); });
+      drawTags();
+      var photos = h('div', { class: 'photos', id: 'entry-photos' });
+      var pmsg = msgEl();
+      var file = h('input', { type: 'file', accept: 'image/*', multiple: true, id: 'entry-photo-input', class: 'sr', 'aria-label': t('diary.addPhoto') });
+      function drawPhotos() {
+        photos.textContent = '';
+        e.photos.forEach(function (pid) {
+          var img = h('img', { alt: t('diary.photoAlt'), class: 'photo-thumb' });
+          photoUrl(pid).then(function (u) { if (u) img.src = u; }).catch(function () { img.alt = t('err.corrupt'); });
+          add(photos, h('div', { class: 'photo' },
+            h('button', { type: 'button', class: 'photo-open', 'aria-label': t('diary.photoAlt'), on: { click: function () { viewPhoto(pid); } } }, img),
+            h('button', { type: 'button', class: 'photo-x', 'aria-label': t('diary.removePhoto'), on: { click: function () {
+              DY.updateEntry(S.diary, e.id, { photos: e.photos.filter(function (x) { return x !== pid; }) }); saveDiary(); drawPhotos();
+            } } }, icon('x', 16))));
+        });
+        if (e.photos.length < DY.MAX_PHOTOS) add(photos, h('label', { for: 'entry-photo-input', class: 'photo-add', id: 'entry-photo-add' }, h('span', { 'aria-hidden': 'true', text: '📷' }), h('span', { text: t('diary.addPhoto') })));
+      }
+      file.addEventListener('change', function () {
+        var files = Array.from(file.files || []).slice(0, DY.MAX_PHOTOS - e.photos.length);
+        if ((file.files || []).length > files.length) setMsg(pmsg, t('diary.photoLimit', { n: DY.MAX_PHOTOS }));
+        else setMsg(pmsg, t('diary.processing'), true);
+        files.reduce(function (p, f) {
+          return p.then(function () {
+            return shrinkPhoto(f).then(function (bytes) {
+              var pid = 'p' + DY.uid();
+              return C.putBlob(pid, bytes, 'image/jpeg').then(function () { DY.updateEntry(S.diary, e.id, { photos: e.photos.concat([pid]) }); drawPhotos(); return saveDiary(); });
+            });
+          });
+        }, Promise.resolve()).then(function () { if (pmsg.classList.contains('ok')) setMsg(pmsg, ''); }, function () { setMsg(pmsg, t('diary.photoErr')); });
+        file.value = '';
+      });
+      drawPhotos();
+      var del = h('button', { type: 'button', class: 'btn danger', id: 'entry-delete' }, icon('trash', 18), ' ', t('btn.delete'));
+      del.addEventListener('click', function () {
+        deleted = true; entryFlush = null; clearTimeout(entryTimer);
+        if (e.text !== ta.value) DY.updateEntry(S.diary, e.id, { text: ta.value });
+        var removed = DY.deleteEntry(S.diary, e.id); saveDiary(); close(); render();
+        toast(t('diary.deleted'), { label: t('btn.undo'), fn: function () { S.diary.entries.push(removed); saveDiary(); render(); } });
+      });
+      add(body, h('div', { class: 'two' }, field(t('add.date'), date), field(t('diary.time'), time)),
+        h('p', { class: 'field-label', text: t('diary.mood') }), moods, ta, tagLine, photos, file, pmsg, h('div', { class: 'row end' }, del));
+      m.onClose = function () {
+        if (deleted) return;
+        flushEntry();
+        if (e.text !== ta.value) DY.updateEntry(S.diary, e.id, { text: ta.value });
+        if (!e.text.trim() && !e.photos.length && !e.mood) S.diary.entries = S.diary.entries.filter(function (x) { return x !== e; });
+        saveDiary(); render();
+      };
+    }, { wide: true });
+  }
+  function viewPhoto(pid) {
+    sheet(t('diary.photoAlt'), function (body) {
+      var img = h('img', { alt: t('diary.photoAlt'), class: 'photo-full', id: 'photo-full' });
+      photoUrl(pid).then(function (u) { if (u) img.src = u; });
+      add(body, img);
+    }, { wide: true });
+  }
+  function openDiaryExport() {
+    sheet(t('diary.exportTitle'), function (body) {
+      add(body, h('p', { class: 'msg', text: t('diary.exportWarn') }),
+        h('button', { type: 'button', class: 'btn primary block', id: 'diary-export-go', text: t('diary.exportGo'), on: { click: function () {
+          download('﻿' + DY.toText(S.diary, { mood: function (m) { return moodEmoji(m) + ' ' + t('mood.' + m); }, photos: function (n) { return t('diary.photoCount', { n: n }); } }),
+            'poppopmake-diary-' + today() + '.txt', 'text/plain;charset=utf-8');
+        } } }));
+    });
+  }
+
   // ----- Settings tab -----
   function row(label, value, fn, id, danger) {
     return h('li', {}, h('button', { type: 'button', class: 'set-row' + (danger ? ' danger' : ''), id: id, on: { click: fn } },
@@ -855,6 +1101,7 @@
         row(t('set.newCode'), null, openNewCode, 'set-code'),
         h('li', { class: 'set-ctrl' }, h('button', { type: 'button', class: 'set-row', on: { click: function () { C.persist().then(function (p) { storage.textContent = p ? t('set.storageOn') : t('set.storageOff'); }); } } },
           h('span', { class: 'set-label', text: t('set.storage') }), storage))]),
+      group(t('set.diary'), [row(t('diary.exportTitle'), String(S.diary.entries.length), openDiaryExport, 'set-diary-export')]),
       group(t('set.data'), [
         row(t('set.backup'), S.settings.lastBackup ? t('set.lastBackup', { when: I.ago(S.settings.lastBackup) }) : t('set.neverBackup'), openBackup, 'set-backup'),
         row(t('set.restore'), null, openRestore, 'set-restore'),
@@ -1113,7 +1360,7 @@
       go.addEventListener('click', function () {
         go.disabled = true;
         C.wipe().then(function () {
-          clearFails(); closeAllModals(); S.budget = S.notes = S.settings = null; S.phase = 'welcome'; render(); toast(t('erase.done'));
+          clearFails(); closeAllModals(); S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls(); S.phase = 'welcome'; render(); toast(t('erase.done'));
         }).catch(function (e) { go.disabled = false; toast(errText(e)); });
       });
       add(body, h('p', { class: 'msg', text: t('erase.body') }), field(t('erase.type', { word: word }), inp), go);
@@ -1140,7 +1387,7 @@
     });
   }
   function openTour() {
-    var i = 0, N = 5, EMO = ['💸', '📊', '📝', '🔒', '💾'];
+    var i = 0, N = 6, EMO = ['💸', '📊', '📝', '📔', '🔒', '💾'];
     sheet(t('set.tour'), function (body, close) {
       function draw() {
         body.textContent = '';
@@ -1148,7 +1395,7 @@
           h('div', { class: 'tour-ico', 'aria-hidden': 'true', text: EMO[i] }),
           h('h3', { class: 'tour-title', text: t('tour.' + (i + 1) + 't') }),
           h('p', { text: t('tour.' + (i + 1) + 'b') }),
-          h('div', { class: 'dots', 'aria-hidden': 'true' }, [0, 1, 2, 3, 4].map(function (k) { return h('span', { class: k === i ? 'on' : '' }); })),
+          h('div', { class: 'dots', 'aria-hidden': 'true' }, [0, 1, 2, 3, 4, 5].map(function (k) { return h('span', { class: k === i ? 'on' : '' }); })),
           h('p', { class: 'sr', text: (i + 1) + ' / ' + N })),
           h('div', { class: 'row end' },
             i > 0 ? h('button', { type: 'button', class: 'btn', id: 'tour-back', text: t('btn.back'), on: { click: function () { i--; draw(); } } })
@@ -1179,16 +1426,20 @@
   // ---------- start ----------
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); S.installEvt = e; });
   window.addEventListener('appinstalled', function () { S.installEvt = null; });
-  window.addEventListener('pagehide', function () { flushNote(); });
+  window.addEventListener('pagehide', function () { flushNote(); flushEntry(); });
 
-  I.set(I.detect());
+  var qlang = (location.search.match(/[?&]lang=(ko|ja|en)\b/) || [])[1];   // the Korean / Japanese introduction pages open the app in their language
+  I.set(qlang ? I.set(qlang, true) : I.detect());
+  if (qlang && history.replaceState) {                // apply once, then drop it from the address so a later choice in Settings sticks
+    try { history.replaceState(null, '', location.pathname + location.search.replace(/([?&])lang=(ko|ja|en)(&|$)/, function (m, a, l, b) { return b ? a : ''; }) + location.hash); } catch (e) {}
+  }
   applyTheme();
   if (!window.crypto || !window.crypto.subtle || !window.TextEncoder) { S.phase = 'nocrypto'; render(); return; }
   if (!window.indexedDB) { S.phase = 'nostorage'; render(); return; }
   render();
   C.status().then(function (st) {
     S.phase = st === 'empty' ? 'welcome' : 'locked';
-    if (/[?&#]start=notes\b/.test(location.search + location.hash)) S.tab = 'notes';
+    var sm = (location.search + location.hash).match(/[?&#]start=(notes|diary)\b/); if (sm) S.tab = sm[1];
     render();
   }).catch(function () { S.phase = 'nostorage'; render(); });
 
@@ -1202,7 +1453,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-i18n.js', '/vault-app.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-app.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
         .forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }

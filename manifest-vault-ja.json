@@ -1,7 +1,7 @@
 {
-  "name": "家計簿・メモ – PopPopMake",
-  "short_name": "家計簿・メモ",
-  "description": "この端末だけに暗号化して保存する、自分専用の家計簿と付せんメモ。登録不要。",
+  "name": "家計簿・メモ・日記 – PopPopMake",
+  "short_name": "家計簿・メモ・日記",
+  "description": "この端末だけに暗号化して保存する、自分専用の家計簿・付せんメモ・日記。登録不要。",
   "lang": "ja",
   "id": "/vault",
   "start_url": "/vault?source=pwa",
@@ -34,6 +34,10 @@
     {
       "name": "メモ",
       "url": "/vault?start=notes"
+    },
+    {
+      "name": "日記",
+      "url": "/vault?start=diary"
     }
   ]
 }

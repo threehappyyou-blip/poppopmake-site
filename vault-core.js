@@ -1,4 +1,4 @@
-/* PopPopMake Vault — the shared, private foundation under Budget & Notes.
+/* PopPopMake Vault — the shared, private foundation under Budget, Notes & Diary.
  *
  * Everything is stored ONLY on this device (IndexedDB, database "ppm-vault").
  * Nothing in this file ever talks to a server.
@@ -15,6 +15,7 @@
  *         shown to the user once.
  *  - The passcode and the recovery code are never stored anywhere. Forget
  *    both and the data cannot be opened by anyone, including PopPopMake.
+ *  - Diary photos are stored the same way, each one encrypted on its own and bound to its id and type.
  *  - A backup file contains exactly what is stored on the device: encrypted
  *    documents plus the wrapped keys. It is unreadable without the passcode
  *    (as it was when the backup was made) or the recovery code.
@@ -23,7 +24,7 @@
   'use strict';
 
   var DB_NAME = 'ppm-vault';
-  var DB_VERSION = 1;
+  var DB_VERSION = 2;                             // v2 adds the 'blobs' store (diary photos)
   var FORMAT = 1;
   var PASS_ITER = 600000;
   var REC_ITER = 100000;        // the recovery code already carries 140 random bits
@@ -31,6 +32,8 @@
   var B32 = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';   // Crockford base32: no I, L, O, U
   var REC_LEN = 28;                               // 28 symbols x 5 bits = 140 bits
   var MODULE_RE = /^[a-z]{1,20}$/;
+  var BLOB_RE = /^[a-z0-9]{1,40}$/;
+  var TYPE_RE = /^image\/(jpeg|png|webp|gif)$/;
 
   var subtle = root.crypto && root.crypto.subtle;
   var te = new TextEncoder();
@@ -122,6 +125,7 @@
         var d = req.result;
         if (!d.objectStoreNames.contains('meta')) d.createObjectStore('meta');
         if (!d.objectStoreNames.contains('docs')) d.createObjectStore('docs');
+        if (!d.objectStoreNames.contains('blobs')) d.createObjectStore('blobs');
       };
       req.onsuccess = function () {
         var d = req.result;
@@ -285,21 +289,64 @@
       });
     },
 
+    // Pictures (diary photos): each one encrypted on its own, bound to its id and type.
+    putBlob: function (id, bytes, type) {
+      return Promise.resolve().then(function () {
+        needOpen();
+        if (!BLOB_RE.test(id)) throw fail('bad-id');
+        if (!TYPE_RE.test(type)) throw fail('bad-type');
+        var s = session;
+        return seal(s.key, bytes, aadFor(s.meta, 'blob|' + id + '|' + type)).then(function (box) {
+          box.type = type;
+          return tx(['blobs'], 'readwrite', function (t) { return req(t.objectStore('blobs').put(box, id)); });
+        });
+      });
+    },
+    getBlob: function (id) {
+      return Promise.resolve().then(function () {
+        needOpen();
+        if (!BLOB_RE.test(id)) throw fail('bad-id');
+        var s = session;
+        return tx(['blobs'], 'readonly', function (t) { return req(t.objectStore('blobs').get(id)); }).then(function (rec) {
+          if (!rec) return null;
+          return open(s.key, rec, aadFor(s.meta, 'blob|' + id + '|' + rec.type))
+            .catch(function () { throw fail('corrupt', 'This picture is damaged or was changed outside the app.'); })
+            .then(function (bytes) { return { bytes: bytes, type: rec.type }; });
+        });
+      });
+    },
+    deleteBlob: function (id) {
+      return Promise.resolve().then(function () {
+        needOpen();
+        if (!BLOB_RE.test(id)) throw fail('bad-id');
+        return tx(['blobs'], 'readwrite', function (t) { return req(t.objectStore('blobs').delete(id)); });
+      });
+    },
+    blobIds: function () {
+      return Promise.resolve().then(function () {
+        needOpen();
+        return tx(['blobs'], 'readonly', function (t) { return req(t.objectStore('blobs').getAllKeys()); });
+      });
+    },
+
     // The backup file: exactly what is stored, which is already encrypted.
     exportBackup: function () {
       return Promise.resolve().then(function () {
         needOpen();
-        return tx(['meta', 'docs'], 'readonly', function (t) {
-          var docs = {}, st = t.objectStore('docs');
+        return tx(['meta', 'docs', 'blobs'], 'readonly', function (t) {
+          var docs = {}, blobs = {}, st = t.objectStore('docs'), bs = t.objectStore('blobs');
           return req(t.objectStore('meta').get('main')).then(function (meta) {
             return req(st.getAllKeys()).then(function (keys) {
-              return Promise.all(keys.map(function (k) { return req(st.get(k)).then(function (v) { docs[k] = { iv: v.iv, ct: v.ct, updated: v.updated }; }); }))
-                .then(function () { return { meta: meta, docs: docs }; });
-            });
+              return Promise.all(keys.map(function (k) { return req(st.get(k)).then(function (v) { docs[k] = { iv: v.iv, ct: v.ct, updated: v.updated }; }); }));
+            }).then(function () { return req(bs.getAllKeys()); }).then(function (keys) {
+              return Promise.all(keys.map(function (k) { return req(bs.get(k)).then(function (v) { blobs[k] = { iv: v.iv, ct: v.ct, type: v.type }; }); }));
+            }).then(function () { return { meta: meta, docs: docs, blobs: blobs }; });
           });
         });
       }).then(function (all) {
-        return JSON.stringify({ app: 'poppopmake-vault', format: FORMAT, exported: new Date().toISOString(), meta: all.meta, docs: all.docs });
+        var out = { app: 'poppopmake-vault', format: FORMAT, exported: new Date().toISOString(), meta: all.meta, docs: all.docs };
+        if (Object.keys(all.blobs).length) out.blobs = all.blobs;
+        return JSON.stringify(out);
       });
     },
 
@@ -319,6 +366,13 @@
           var d = file.docs[k];
           if (!MODULE_RE.test(k) || !d || typeof d.iv !== 'string' || typeof d.ct !== 'string') ok = false;
         });
+        if (ok && file.blobs !== undefined) {
+          if (!file.blobs || typeof file.blobs !== 'object') ok = false;
+          else Object.keys(file.blobs).forEach(function (k) {
+            var d = file.blobs[k];
+            if (!BLOB_RE.test(k) || !d || typeof d.iv !== 'string' || typeof d.ct !== 'string' || !TYPE_RE.test(d.type)) ok = false;
+          });
+        }
         if (!ok) throw fail('bad-file', 'This is not a PopPopMake backup file.');
         var s = String(secret || '').normalize('NFC');
         return rawFromPass(meta, s).catch(function () {
@@ -328,17 +382,21 @@
       }).then(function (raw) {
         return importDataKey(raw).then(function (key) {
           raw.fill(0);
-          var names = Object.keys(file.docs);
-          return Promise.all(names.map(function (k) { return open(key, file.docs[k], aadFor(meta, 'doc|' + k)); }))
+          var names = Object.keys(file.docs), blobs = file.blobs || {}, bnames = Object.keys(blobs);
+          return Promise.all(names.map(function (k) { return open(key, file.docs[k], aadFor(meta, 'doc|' + k)); }).concat(
+              bnames.map(function (k) { return open(key, blobs[k], aadFor(meta, 'blob|' + k + '|' + blobs[k].type)); })))
             .catch(function () { throw fail('bad-file', 'This backup file is damaged.'); })
             .then(function () {
-              return tx(['meta', 'docs'], 'readwrite', function (t) {
-                var st = t.objectStore('docs');
-                return req(st.clear()).then(function () {
+              return tx(['meta', 'docs', 'blobs'], 'readwrite', function (t) {
+                var st = t.objectStore('docs'), bs = t.objectStore('blobs');
+                return req(st.clear()).then(function () { return req(bs.clear()); }).then(function () {
                   return Promise.all(names.map(function (k) {
                     var d = file.docs[k];
                     return req(st.put({ iv: d.iv, ct: d.ct, updated: d.updated || Date.now() }, k));
-                  }));
+                  }).concat(bnames.map(function (k) {
+                    var d = blobs[k];
+                    return req(bs.put({ iv: d.iv, ct: d.ct, type: d.type }, k));
+                  })));
                 }).then(function () { return req(t.objectStore('meta').put(meta, 'main')); });
               });
             })

@@ -8,8 +8,13 @@
 <meta name="description" content="Free sticky notes for shopping lists, ideas and reminders: six colors, pin and search, locked with your passcode and stored only on your device. Works offline.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PopPopMake">
+<meta property="og:locale" content="en_US">
 <meta property="og:url" content="https://poppopmake.com/sticky-notes">
 <link rel="canonical" href="https://poppopmake.com/sticky-notes">
+<link rel="alternate" hreflang="en" href="https://poppopmake.com/sticky-notes">
+<link rel="alternate" hreflang="ko" href="https://poppopmake.com/ko/sticky-notes">
+<link rel="alternate" hreflang="ja" href="https://poppopmake.com/ja/sticky-notes">
+<link rel="alternate" hreflang="x-default" href="https://poppopmake.com/sticky-notes">
 <meta property="og:title" content="Private Sticky Notes (Free) — Encrypted, On Your Device — PopPopMake">
 <meta property="og:description" content="Free sticky notes for shopping lists, ideas and reminders: six colors, pin and search, locked with your passcode and stored only on your device. Works offline.">
 <meta name="twitter:card" content="summary">
@@ -20,7 +25,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/vault-landing.css">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "SoftwareApplication", "name": "Budget & Notes by PopPopMake", "applicationCategory": "FinanceApplication", "operatingSystem": "Any (web browser: iPhone, Android, Windows, Mac)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "url": "https://poppopmake.com/vault", "inLanguage": ["en", "ko", "ja"], "description": "Free sticky notes for shopping lists, ideas and reminders: six colors, pin and search, locked with your passcode and stored only on your device. Works offline."}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Are the sticky notes free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. No sign-up, subscription or paid tier."}}, {"@type": "Question", "name": "Where are my notes saved?", "acceptedAnswer": {"@type": "Answer", "text": "Only in your browser on your device, encrypted. They save automatically while you type and are never uploaded."}}, {"@type": "Question", "name": "Can I keep a password or private note here?", "acceptedAnswer": {"@type": "Answer", "text": "The notes are encrypted and locked with your passcode, which protects them from someone picking up your phone. For important passwords, a dedicated password manager with its own recovery options is still the safer choice."}}, {"@type": "Question", "name": "Will my notes be on my other devices?", "acceptedAnswer": {"@type": "Answer", "text": "Not automatically. Make a backup file on one device and restore it on the other to copy everything over."}}, {"@type": "Question", "name": "What if I delete a note by mistake?", "acceptedAnswer": {"@type": "Answer", "text": "Tap Undo in the message that appears right after deleting. After that, only a backup file made earlier can bring it back."}}]}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "SoftwareApplication", "name": "Budget, Notes & Diary by PopPopMake", "applicationCategory": "LifestyleApplication", "operatingSystem": "Web browser (iPhone, Android, Windows, Mac)", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "url": "https://poppopmake.com/vault", "inLanguage": ["en", "ko", "ja"], "description": "Free sticky notes for shopping lists, ideas and reminders: six colors, pin and search, locked with your passcode and stored only on your device. Works offline."}, {"@type": "FAQPage", "inLanguage": "en", "mainEntity": [{"@type": "Question", "name": "Are the sticky notes free?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. No sign-up, subscription or paid tier."}}, {"@type": "Question", "name": "Where are my notes saved?", "acceptedAnswer": {"@type": "Answer", "text": "Only in your browser on your device, encrypted. They save automatically while you type and are never uploaded."}}, {"@type": "Question", "name": "Can I keep a password or private note here?", "acceptedAnswer": {"@type": "Answer", "text": "The notes are encrypted and locked with your passcode, which protects them from someone picking up your phone. For important passwords, a dedicated password manager with its own recovery options is still the safer choice."}}, {"@type": "Question", "name": "Will my notes be on my other devices?", "acceptedAnswer": {"@type": "Answer", "text": "Not automatically. Make a backup file on one device and restore it on the other to copy everything over."}}, {"@type": "Question", "name": "What if I delete a note by mistake?", "acceptedAnswer": {"@type": "Answer", "text": "Tap Undo in the message that appears right after deleting. After that, only a backup file made earlier can bring it back."}}]}]}</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -28,10 +33,11 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav><a href="/all-tools">All tools</a><a href="/vault">Open the app</a></nav>
+    <nav><a href="/all-tools">All tools</a><a href="/vault?start=notes">Open the app</a></nav>
   </div>
 </header>
 <main class="wrap" id="main-content">
+  <nav class="lang-switch" aria-label="Language"><a href="/sticky-notes" hreflang="en" lang="en" aria-current="page">English</a><a href="/ko/sticky-notes" hreflang="ko" lang="ko">한국어</a><a href="/ja/sticky-notes" hreflang="ja" lang="ja">日本語</a></nav>
   <div class="hero">
     <div>
       <span class="eyebrow">Everyday &middot; App</span>
@@ -40,7 +46,7 @@
       <div class="cta-row"><a class="cta primary" href="/vault?start=notes">Open Notes &mdash; free</a><a class="cta secondary" href="#features">See how it works</a></div>
       <ul class="facts"><li>🎨 6 colors</li><li>📌 Pin to top</li><li>🔍 Search</li><li>🔒 Encrypted &amp; locked</li></ul>
     </div>
-    <div class="hero-art"><img src="/icons/tool-vault-512.png" alt="Budget &amp; Notes app icon" width="180" height="180"></div>
+    <div class="hero-art"><img src="/icons/tool-vault-512.png" alt="" width="180" height="180"></div>
   </div>
 
   <section class="block keyfacts" aria-label="Key facts">
@@ -49,15 +55,17 @@
       <li>Notes save as you type and stay on your device, encrypted with your passcode.</li>
       <li>Six colors, pin the important ones, search across every note.</li>
       <li>Installs on your home screen and works offline.</li>
-      <li>Lives in the same app as the <a href="/budget-tracker">budget tracker</a>, under one lock and one backup file.</li>
+      <li>Lives in the same app as the budget tracker and the diary, under one lock and one backup file.</li>
     </ul>
   </section>
+
   <section class="block" id="features" data-demo-root>
-    <h2>Tap a feature to see how it works</h2>
-    <p class="sub">Notes are one tab of the Budget &amp; Notes app. Here is what else is under the same lock.</p>
+    <h2>Handy features &mdash; tap one to see how it works</h2>
+    <p class="sub">Notes are one tab of the app. Here is what else is under the same lock.</p>
     <div class="demo">
       <div class="feature-grid">
-        <button type="button" class="fcard" data-demo="notes" aria-pressed="false"><span class="fc-ico" aria-hidden="true">🗒️</span><span><span class="fc-title">Sticky notes<span class="fc-new">NEW</span></span><span class="fc-desc">Shopping lists, ideas, reminders — colored and pinnable.</span></span></button>
+        <button type="button" class="fcard" data-demo="notes" aria-pressed="false"><span class="fc-ico" aria-hidden="true">🗒️</span><span><span class="fc-title">Sticky notes</span><span class="fc-desc">Shopping lists, ideas, reminders — colored and pinnable.</span></span></button>
+        <button type="button" class="fcard" data-demo="diary" aria-pressed="false"><span class="fc-ico" aria-hidden="true">📔</span><span><span class="fc-title">Private diary<span class="fc-new">NEW</span></span><span class="fc-desc">Moods, photos, a mood calendar and “on this day”.</span></span></button>
         <button type="button" class="fcard" data-demo="lock" aria-pressed="false"><span class="fc-ico" aria-hidden="true">🔒</span><span><span class="fc-title">Passcode lock &amp; encryption</span><span class="fc-desc">Locks itself when you leave. Unreadable without you.</span></span></button>
         <button type="button" class="fcard" data-demo="install" aria-pressed="false"><span class="fc-ico" aria-hidden="true">📱</span><span><span class="fc-title">Install like an app</span><span class="fc-desc">Home-screen icon, opens offline.</span></span></button>
         <button type="button" class="fcard" data-demo="backup" aria-pressed="false"><span class="fc-ico" aria-hidden="true">💾</span><span><span class="fc-title">Backup &amp; restore</span><span class="fc-desc">One encrypted file moves everything to a new phone.</span></span></button>
@@ -68,18 +76,20 @@
         <div class="demo-phone" aria-hidden="true"></div>
         <p class="demo-caption" aria-hidden="true"></p>
         <p class="demo-ctrl"><button type="button" class="demo-next">Next step &rarr;</button></p>
-        <p class="sr demo-live" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);"></p>
+        <p class="demo-live" aria-live="polite" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);"></p>
       </div>
     </div>
   </section>
+
   <section class="block">
     <h2>How your data is protected &mdash; exactly</h2>
     <div class="cols">
-      <div class="box"><h3>On your device only</h3><p>Entries and notes are stored in your browser on your phone or computer. The app has no server and no account. Its page is set up with a security policy that blocks its scripts from connecting to any other website, and it loads no analytics or ad scripts.</p></div>
-      <div class="box"><h3>Encrypted before saving</h3><p>Everything is encrypted with AES-256-GCM. The key is protected by your passcode (PBKDF2-SHA-256, 600,000 rounds) and separately by a recovery code shown to you once.</p></div>
-      <div class="box"><h3>What it can&rsquo;t do</h3><p>We can&rsquo;t reset your passcode or recover your data. It can&rsquo;t protect against someone who knows your passcode or malware on your device. A short number passcode is weaker &mdash; use a longer one for strong protection.</p></div>
+      <div class="box"><h3>On your device only</h3><p>Everything you write is stored in your browser on your phone or computer. The app has no server and no account. Its page is set up with a security policy that blocks its scripts from connecting to any other website, and it loads no analytics or ad scripts.</p></div>
+      <div class="box"><h3>Encrypted before saving</h3><p>Entries, notes, diary pages and photos are encrypted with AES-256-GCM. The key is protected by your passcode (PBKDF2-SHA-256, 600,000 rounds) and separately by a recovery code shown to you once.</p></div>
+      <div class="box"><h3>What it can’t do</h3><p>We can’t reset your passcode or recover your data. It can’t protect against someone who knows your passcode or malware on your device. A short number passcode is weaker — use a longer one for strong protection.</p></div>
     </div>
   </section>
+
   <section class="block" id="install">
     <h2>Put it on your home screen</h2>
     <p class="sub">Installed, it opens in one tap like a normal app, works without internet, and your phone is much less likely to clear its data.</p>
@@ -89,6 +99,12 @@
       <div class="box"><h3>Windows &amp; Mac</h3><p>In Chrome or Edge, click the install icon at the right end of the address bar.</p></div>
     </div>
   </section>
+
+  <section class="block">
+    <h2>Also inside the same app</h2>
+    <p class="sub">One passcode and one backup file cover all three: the <a href="/budget-tracker">budget tracker</a>, <a href="/sticky-notes">sticky notes</a> and the <a href="/private-diary">private diary</a>.</p>
+  </section>
+
   <section class="block" id="faq">
     <h2>Questions people ask</h2>
       <div class="faq-item"><p class="faq-q">Are the sticky notes free?</p><p class="faq-a">Yes. No sign-up, subscription or paid tier.</p></div>
@@ -97,7 +113,7 @@
       <div class="faq-item"><p class="faq-q">Will my notes be on my other devices?</p><p class="faq-a">Not automatically. Make a backup file on one device and restore it on the other to copy everything over.</p></div>
       <div class="faq-item"><p class="faq-q">What if I delete a note by mistake?</p><p class="faq-a">Tap Undo in the message that appears right after deleting. After that, only a backup file made earlier can bring it back.</p></div>
   </section>
-  <div class="disclaimer"><strong>Good to know:</strong> Budget &amp; Notes is a record-keeping tool, not financial, tax or legal advice. Your data lives only on your device, so keep a backup file &mdash; we cannot recover data for you. See the <a href="/privacy#budget-notes">Privacy Policy</a>, <a href="/terms#budget-notes">Terms</a> and the <a href="/manual-vault">user manual</a>.</div>
+  <div class="disclaimer"><strong>Good to know:</strong> Budget, Notes &amp; Diary is a record-keeping app, not financial, tax, legal or medical advice. Your data lives only on your device, so keep a backup file &mdash; we cannot recover data for you. See the <a href="/privacy#budget-notes">Privacy Policy</a>, <a href="/terms#budget-notes">Terms</a> and the <a href="/manual-vault">user manual</a>.</div>
 </main>
 <footer>
   <div class="inner">

@@ -211,6 +211,41 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://poppopmake.com/private-diary</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/ko/budget-tracker</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/ko/sticky-notes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/ko/private-diary</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/ja/budget-tracker</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/ja/sticky-notes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/ja/private-diary</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://poppopmake.com/manual-vault</loc>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>

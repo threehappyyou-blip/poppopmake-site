@@ -1,7 +1,7 @@
 {
-  "name": "Budget & Notes – PopPopMake",
-  "short_name": "Budget & Notes",
-  "description": "A private budget tracker and sticky notes, encrypted and kept only on your device. No sign-up.",
+  "name": "Budget, Notes & Diary – PopPopMake",
+  "short_name": "PopPop Vault",
+  "description": "A private budget tracker, sticky notes and diary, encrypted and kept only on your device. No sign-up.",
   "lang": "en",
   "id": "/vault",
   "start_url": "/vault?source=pwa",
@@ -34,6 +34,10 @@
     {
       "name": "Notes",
       "url": "/vault?start=notes"
+    },
+    {
+      "name": "Diary",
+      "url": "/vault?start=diary"
     }
   ]
 }
