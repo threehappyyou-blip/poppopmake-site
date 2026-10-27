@@ -16,6 +16,10 @@ PopPopMake is a solo-built, ad-supported utility site with no user accounts. Eve
 - [Capital Gains Calculator](https://poppopmake.com/capital-gains-calculator): Short and long-term capital gains tax on stocks and crypto, including the Net Investment Income Tax.
 - [Debt Payoff Calculator](https://poppopmake.com/debt-payoff-calculator): Compares the debt snowball and debt avalanche payoff strategies side by side for any set of debts.
 
+## Apps (private, on your device)
+- [Budget Tracker](https://poppopmake.com/budget-tracker): A budget and expense tracker app (at /vault) with no account and no bank connection. Entries are encrypted with AES-256-GCM and stored only in the browser on the user's device, unlocked by a passcode (PBKDF2-SHA-256, 600,000 rounds) or a recovery code; PopPopMake cannot read or recover them. Three-tap entry, one-tap frequent entries, monthly and per-category budgets, monthly repeating entries, charts, search, CSV import of bank statements and CSV export, encrypted backup file for moving to a new device, auto-lock, offline use when installed. Interface in English, Korean and Japanese; 24 currencies. No automatic sync between devices.
+- [Sticky Notes](https://poppopmake.com/sticky-notes): Colored sticky notes (pin, search, six colors) inside the same encrypted, passcode-locked app; saved as you type, never uploaded.
+
 ## Health
 - [BMI Calculator](https://poppopmake.com/bmi-calculator): Body mass index and category using the WHO's standard classification, with an optional Asian-specific threshold setting (WHO Expert Consultation, 2004). Metric or imperial units.
 - [Calorie Calculator](https://poppopmake.com/calorie-calculator): BMR and TDEE via the Mifflin-St Jeor equation, with calorie targets for losing, maintaining, or gaining weight and a built-in safety floor that flags targets below general low-calorie guidance thresholds.

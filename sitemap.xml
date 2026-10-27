@@ -201,6 +201,21 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://poppopmake.com/budget-tracker</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/sticky-notes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/manual-vault</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://poppopmake.com/screenshot-markup</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

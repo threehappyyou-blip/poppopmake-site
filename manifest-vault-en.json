@@ -1,0 +1,39 @@
+{
+  "name": "Budget & Notes – PopPopMake",
+  "short_name": "Budget & Notes",
+  "description": "A private budget tracker and sticky notes, encrypted and kept only on your device. No sign-up.",
+  "lang": "en",
+  "id": "/vault",
+  "start_url": "/vault?source=pwa",
+  "scope": "/vault",
+  "display": "standalone",
+  "background_color": "#EEF1EF",
+  "theme_color": "#EEF1EF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/tool-vault-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-vault-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-vault-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Notes",
+      "url": "/vault?start=notes"
+    }
+  ]
+}

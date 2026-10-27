@@ -49,6 +49,7 @@
   .jump-nav a{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px;text-decoration:none;color:var(--ink-soft);}
   .jump-nav a:hover{border-color:var(--teal);color:var(--ink);}
   .cat-section{margin-bottom:36px;}
+  .new-badge{font-size:.62rem;font-weight:800;background:#C14324;color:#fff;border-radius:6px;padding:1px 6px;vertical-align:2px;margin-left:4px;}
   .cat-header{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;padding-top:8px;}
   .cat-header h2{font-family:'Space Grotesk',sans-serif;font-size:1.3rem;margin:0;}
   .cat-header a{font-size:0.85rem;color:var(--ink-soft);}
@@ -100,8 +101,16 @@
   <p class="help-callout">Can&rsquo;t find what you need? <a href="/help-me">Describe it in your own words</a> and we&rsquo;ll point you to the right tool &mdash; or take your request if we haven&rsquo;t built it yet.</p>
 
   <div class="jump-nav">
-    <a href="#documents">Documents</a><a href="#money">Money &amp; Tax</a><a href="#health">Health</a><a href="#career">Career</a>
+    <a href="#apps">Apps</a><a href="#documents">Documents</a><a href="#money">Money &amp; Tax</a><a href="#health">Health</a><a href="#career">Career</a>
     <a href="#business">Business</a><a href="#writing">Writing</a><a href="#everyday">Everyday</a><a href="#developer">Developer</a>
+  </div>
+
+  <div class="cat-section" id="apps">
+    <div class="cat-header"><h2>Apps &mdash; private, on your device</h2><a href="/vault">Open the app →</a></div>
+    <div class="tool-grid">
+      <a class="tool-card" href="/budget-tracker" style="--accent:#C14324;"><div class="tname">Budget Tracker <span class="new-badge">NEW</span></div><div class="tdesc">Log spending in 3 taps, budgets and charts. Encrypted, locked with your passcode, never uploaded.</div></a>
+      <a class="tool-card" href="/sticky-notes" style="--accent:#C14324;"><div class="tname">Sticky Notes <span class="new-badge">NEW</span></div><div class="tdesc">Colored notes you can pin and search, in the same locked app. Works offline.</div></a>
+    </div>
   </div>
 
   <div class="cat-section" id="documents">

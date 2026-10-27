@@ -403,6 +403,18 @@
     .shelf{padding:48px 0 64px;}
     h1{max-width:none;}
   }
+  /* "Handy every day": the things people use most, including ones they may not know are here */
+  .handy{padding:44px 0 36px;}
+  .handy-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+  .handy-card{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;text-decoration:none;color:var(--ink);transition:transform .12s ease,box-shadow .12s ease;}
+  .handy-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(14,27,46,.08);}
+  .handy-card:focus-visible{outline:3px solid var(--ink);outline-offset:3px;}
+  .handy-ico{font-size:1.8rem;line-height:1;flex-shrink:0;}
+  .handy-card b{display:block;font-size:1.02rem;}
+  .handy-card span.d{display:block;font-size:.88rem;color:var(--ink-soft);margin-top:3px;}
+  .handy-new{display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:.04em;background:var(--red);color:#fff;border-radius:6px;padding:2px 6px;margin-left:6px;vertical-align:2px;}
+  @media (max-width:900px){.handy-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+  @media (max-width:560px){.handy-grid{grid-template-columns:1fr;}}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
 <script type="application/ld+json">
@@ -463,6 +475,7 @@
         <h4>More</h4>
         <a href="/all-tools">All Tools</a>
         <a href="/help-me">Help me find a tool</a>
+        <a href="/budget-tracker">Budget &amp; Notes app</a>
         <a href="/guides">Guides</a>
         <a href="/about">About</a>
         <a href="/changelog">Changelog</a>
@@ -509,6 +522,23 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M15 9.8c0-1.5-1.3-2.3-3-2.3s-3 .9-3 2.3 1.3 2 3 2.5 3 1 3 2.4-1.3 2.3-3 2.3-3-.8-3-2.3"/></svg>
         <span>No daily limits, file-size walls, or watermarks waiting to upsell you — <a href="/how-it-works#no-limits">why</a>.</span>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="handy" id="handy" aria-labelledby="handy-title">
+  <div class="wrap">
+    <div class="shelf-head">
+      <h2 id="handy-title">Handy every day</h2>
+      <p>What people reach for most &mdash; including a few they don&rsquo;t know are here.</p>
+    </div>
+    <div class="handy-grid">
+      <a class="handy-card" href="/sticky-notes"><span class="handy-ico" aria-hidden="true">🗒️</span><span><b>Sticky Notes<span class="handy-new">NEW</span></b><span class="d">Shopping lists, Wi-Fi passwords, ideas &mdash; locked with your passcode, kept on your phone.</span></span></a>
+      <a class="handy-card" href="/budget-tracker"><span class="handy-ico" aria-hidden="true">💸</span><span><b>Budget Tracker<span class="handy-new">NEW</span></b><span class="d">Log spending in 3 taps and see where the month went. No sign-up, no bank login.</span></span></a>
+      <a class="handy-card" href="/screenshot-markup"><span class="handy-ico" aria-hidden="true">📸</span><span><b>Screenshot Markup</b><span class="d">Paste a screenshot with Ctrl+V or capture a window, then add arrows, blur and crop.</span></span></a>
+      <a class="handy-card" href="/document-tools#convert"><span class="handy-ico" aria-hidden="true">🔁</span><span><b>Convert Files</b><span class="d">iPhone HEIC to JPG, PDF pages to pictures, images to PDF &mdash; drop and download.</span></span></a>
+      <a class="handy-card" href="/everyday-tools#pwd"><span class="handy-ico" aria-hidden="true">🔑</span><span><b>Password Generator</b><span class="d">A strong random password in one tap, made on your device.</span></span></a>
+      <a class="handy-card" href="/everyday-tools#tip"><span class="handy-ico" aria-hidden="true">🧾</span><span><b>Tip &amp; Split</b><span class="d">The tip and everyone&rsquo;s share of the bill, before the waiter comes back.</span></span></a>
     </div>
   </div>
 </section>

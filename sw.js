@@ -114,7 +114,11 @@ self.addEventListener('fetch', function (event) {
           return response;
         })
         .catch(function () {
+          // An installed app opens its start page with a ?source=... address, so also accept
+          // the cached copy of the same page without the query before falling back to home.
           return caches.match(request).then(function (cached) {
+            return cached || caches.match(request, { ignoreSearch: true });
+          }).then(function (cached) {
             return cached || caches.match('/index.html');
           });
         })

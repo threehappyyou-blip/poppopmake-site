@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>How to Use Budget &amp; Notes — Step-by-Step — PopPopMake</title>
+<meta name="description" content="Step-by-step instructions for the Budget &amp; Notes app: setting up the passcode lock, adding spending, budgets, repeating entries, charts, sticky notes, backup and restore.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/manual-vault">
+<link rel="canonical" href="https://poppopmake.com/manual-vault">
+<meta property="og:title" content="How to Use Budget &amp; Notes — Step-by-Step — PopPopMake">
+<meta property="og:description" content="How to use the Budget Tracker and Sticky Notes in the Budget &amp; Notes app.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="How to Use Budget &amp; Notes — Step-by-Step — PopPopMake">
+<meta name="twitter:description" content="How to use the Budget Tracker and Sticky Notes in the Budget &amp; Notes app.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:760px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.7rem,4vw,2.3rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.25rem;margin:0 0 4px;padding-top:8px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 24px;}
+  .toc{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin-bottom:32px;}
+  .toc-title{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--ink-soft);margin-bottom:10px;}
+  .toc ol{margin:0;padding-left:20px;columns:2;column-gap:20px;}
+  .toc li{margin-bottom:6px;font-size:0.9rem;break-inside:avoid;}
+  .tool-section{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:24px 26px;margin-bottom:20px;scroll-margin-top:20px;}
+  .tool-tag{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--teal);}
+  .what-for{color:var(--ink-soft);font-size:0.95rem;margin:4px 0 16px;}
+  .tool-section ol{margin:0 0 12px;padding-left:22px;}
+  .tool-section ol li{margin-bottom:10px;}
+  .tool-section ol li strong{color:var(--ink);}
+  .tip-box{background:var(--paper);border-left:3px solid var(--yellow);border-radius:6px;padding:12px 14px;margin-top:14px;font-size:0.87rem;color:var(--ink-soft);}
+  .tip-box strong{color:var(--ink);}
+  .back-top{font-size:0.82rem;text-align:right;display:block;margin-top:8px;}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/manual">All manual sections</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">User Manual</span>
+  <h1>Budget &amp; Notes (app)</h1>
+  <p class="lede">The <a href="/budget-tracker">Budget Tracker</a> and <a href="/sticky-notes">Sticky Notes</a> are two tabs of one app at <a href="/vault">poppopmake.com/vault</a>, kept only on your device and locked with your passcode. The app screens are in English, Korean or Japanese.</p>
+
+  <div class="toc">
+    <div class="toc-title">Jump to a section</div>
+    <ol>
+      <li><a href="#budget">Budget Tracker</a></li>
+      <li><a href="#notes">Sticky Notes</a></li>
+    </ol>
+  </div>
+
+  <section class="tool-section" id="budget">
+    <span class="tool-tag">Tab 1 · Budget</span>
+    <h2>Budget Tracker</h2>
+    <p class="what-for">Records what you spend and earn, shows how much of your monthly budget is left and where the money went, and keeps everything encrypted on your device &mdash; no account and no bank connection.</p>
+    <ol>
+      <li><strong>Open the app.</strong> Go to poppopmake.com/vault, or tap "Open the app" on the Budget Tracker page. It starts in your phone's language (English, Korean or Japanese); the Language menu changes it.</li>
+      <li><strong>Set up the lock (first time only).</strong> Tap "Get started", type a passcode of at least 6 characters twice, check the currency, tick the box and tap "Continue".</li>
+      <li><strong>Save your recovery code.</strong> Copy it or tap "Save as a file" and keep it somewhere other than this phone. Tick "I&rsquo;ve saved my recovery code somewhere safe" and tap "Done". A short feature tour follows; tap "Next" or "Skip".</li>
+      <li><strong>Add spending in three taps.</strong> Tap the orange +, type the amount and tap a category &mdash; the entry is saved at once. Type a note or change the date first if you want; for money coming in, tap "Income" first.</li>
+      <li><strong>Use your frequent entries.</strong> Anything you have logged at least twice in the last 90 days with the same amount, category and note appears as a button at the top of the add screen; one tap adds it for today.</li>
+      <li><strong>Fix or delete an entry.</strong> Tap it in the list, change it and tap "Save", or tap "Delete". "Undo" in the message at the bottom brings back an entry you just added or deleted.</li>
+      <li><strong>Set budgets.</strong> On the Budget tab tap "Set a monthly budget", or use Settings &rarr; Monthly budget. Settings &rarr; Category budgets sets a limit for single categories.</li>
+      <li><strong>Repeat rent or subscriptions.</strong> Tick "Repeat every month on this day" while adding the entry. It is then added automatically each month on that day; Settings &rarr; Repeating entries pauses or deletes it.</li>
+      <li><strong>See where the money went.</strong> Tap "Charts" for spending by category, category budgets and the last six months. The arrows beside the month switch months, and the magnifier searches notes and categories in every month.</li>
+      <li><strong>Lock it.</strong> Tap the padlock at the top. The app also locks itself after the time set in Settings &rarr; Lock automatically after (5 minutes unless you change it), including when you switch away from the app.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> Your data is stored only in this browser on this device, so make a backup: Settings &rarr; Back up to a file. On a new phone, open the app and tap "I have a backup file" (or "Restore from a backup file" on the lock screen), then enter the passcode used when the backup was made, or your recovery code. Forgot your passcode? Tap "Forgot your passcode?" and enter your recovery code; without it nobody, including PopPopMake, can open the data. Settings &rarr; Import a bank statement (CSV) reads your bank's file on your device and skips entries you already have; Export to a spreadsheet (CSV) creates a file that is not encrypted. Changing the currency does not convert entries you already have. The app keeps records; it does not give financial advice.</div>
+  </section>
+
+  <section class="tool-section" id="notes">
+    <span class="tool-tag">Tab 2 · Notes</span>
+    <h2>Sticky Notes</h2>
+    <p class="what-for">Keeps colored sticky notes &mdash; shopping lists, ideas, reminders &mdash; under the same passcode lock as the budget.</p>
+    <ol>
+      <li><strong>Open Notes.</strong> In the app, tap "Notes" at the bottom, or open poppopmake.com/vault?start=notes.</li>
+      <li><strong>Write a note.</strong> Tap the orange + and type. The note saves as you type; close it with the &times; button or the Esc key.</li>
+      <li><strong>Pick a color.</strong> Tap one of the six color dots under the note.</li>
+      <li><strong>Pin what matters.</strong> Tap "Pin to top" so the note stays first; "Unpin" releases it.</li>
+      <li><strong>Find a note.</strong> Type in "Search notes" above your notes.</li>
+      <li><strong>Delete a note.</strong> Open it and tap "Delete". Tap "Undo" straight away if it was a mistake.</li>
+    </ol>
+    <div class="tip-box"><strong>Good to know:</strong> A note left empty is not kept. Notes are encrypted together with your budget and travel in the same backup file. For important passwords, a dedicated password manager with its own recovery options is still the safer choice.</div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/manual">All manual sections</a><a href="/all-tools">All Tools</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

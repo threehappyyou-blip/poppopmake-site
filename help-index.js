@@ -171,6 +171,12 @@
     ['debt payoff', 'pay off debt', 'debt snowball', 'debt avalanche', 'snowball vs avalanche', 'credit card payoff', 'pay off credit cards', 'how long to pay off my debt', 'get out of debt', 'several debts at once', 'pay off loans faster', 'extra payment on debt', 'debt free date', 'debt payoff plan', 'which debt to pay first'],
     ['debt', 'debts', 'snowball', 'avalanche', 'payoff', 'credit card', 'owe', 'minimum payment']);
 
+  T('budget-tracker', 'Budget Tracker', 'Money & Tax', '/budget-tracker',
+    'Log spending in three taps, set monthly and category budgets, see charts — kept only on your device, encrypted and locked with a passcode.',
+    ['budget tracker', 'budget app', 'budgeting app', 'expense tracker', 'track expenses', 'track spending', 'spending tracker', 'money tracker', 'monthly budget planner', 'make a budget', 'monthly budget', 'household budget', 'family budget', 'personal budget', 'daily expenses', 'record expenses', 'log spending', 'where the money goes', 'where did my money go', 'spending limit', 'monthly spending limit', 'subscription tracker', 'bill tracker', 'private budget app', 'budget app without sign up', 'kakeibo', 'expense diary', 'import transactions from a csv', 'categorize spending', '50 30 20 budget'],
+    ['budget', 'budgeting', 'expense', 'expenses', 'spending', 'spent', 'household', 'ledger', 'kakeibo'],
+    { prior: 0.2 });
+
   /* ------------------------------------------------------------------ HEALTH */
   T('bmi', 'BMI Calculator', 'Health', '/bmi-calculator',
     'Body mass index and WHO category from height and weight, with optional Asian thresholds.',
@@ -251,6 +257,11 @@
     'Make a random password (6–64 characters) in your browser — nothing is sent anywhere.',
     ['password generator', 'generate a password', 'random password', 'strong password', 'secure password', 'create a password', 'make me a password', 'new password'],
     ['password', 'passwords']);
+
+  T('sticky-notes', 'Sticky Notes', 'Everyday', '/sticky-notes',
+    'Colored sticky notes for lists, ideas and reminders — pin, search, saved as you type, encrypted on your device.',
+    ['sticky notes', 'sticky note app', 'online sticky notes', 'post it notes', 'post-it notes', 'notepad', 'online notepad', 'notes app', 'take notes', 'note taking', 'quick notes', 'write a note', 'shopping list', 'grocery list', 'private notes', 'secret notes', 'locked notes', 'notes with a password', 'memo pad', 'jot something down'],
+    ['notes', 'note', 'sticky', 'notepad', 'memo', 'memos', 'postit']);
 
   T('unit-convert', 'Unit Converter', 'Everyday', '/everyday-tools#unit',
     'Height, weight, temperature, distance and volume between metric and US units.',
@@ -552,9 +563,12 @@
     { rx: [/\b(compound interest|simple interest|interest calculator|savings calculator|savings goal|roi|return on investment|cagr|apy|investment calculator|dividend|dividends|inflation calculator|roth|ira|index fund|fire calculator|retire early|coast fi|annuity|cd rates?|bonds?|stock return|dca|dollar cost|rebalanc\w*)\b/],
       not: [['mortgage', 'loan']] },      // "home loan interest calculator" is a loan question, not a savings one
     'Compound-interest, savings, Roth/IRA and investing calculators aren’t available. The 401(k) calculator projects a workplace retirement balance.', ['retirement-401k', 'capital-gains'], true);
-  G('budget', 'Budgeting, expenses or net worth',
-    { rx: [/\b(budget|budgeting|expense tracker|expenses|spending tracker|net worth|savings plan|50 30 20|zero based|bill tracker|subscription tracker|allowance|rent split|split rent|roommate)\b/] },
-    'We don’t have budgeting or expense tools yet. Tip & Split Calculator divides a restaurant bill.', ['tip-split']);
+  G('budget', 'Net worth or splitting rent',
+    { rx: [/\b(net worth|rent split|split rent|roommates?|split (the )?(utilities|bills) with)\b/] },
+    'We don’t have a net-worth or rent-splitting tool. The Budget Tracker records income and spending; Tip & Split divides a restaurant bill.', ['budget-tracker', 'tip-split'], true);
+  G('journal', 'A diary or journal',
+    { rx: [/\b(diary|diaries|journal|journaling|journalling|dear diary|daily log|gratitude log)\b/], not: [['expense', 'spending', 'budget']] },
+    'There is no diary yet. Notes in the Budget & Notes app are private and encrypted, and work for short entries.', ['sticky-notes'], true);
   G('currency', 'Currency conversion or exchange rates',
     { rx: [/\b(usd|eur|gbp|krw|jpy|cad|aud|inr|cny|mxn|chf|nzd|sgd|hkd|brl|try|zar|dollars?|euros?|pounds?|won|yen|yuan|rupees?|pesos?)\s*(to|in|into|2|vs)\s*(usd|eur|gbp|krw|jpy|cad|aud|inr|cny|mxn|chf|nzd|sgd|hkd|brl|try|zar|dollars?|euros?|pounds?|won|yen|yuan|rupees?|pesos?)\b/, /\b(currency|exchange rate|forex|fx rate|convert (usd|eur|gbp|krw|jpy|cad|aud|dollars?|euros?)|currency converter)\b/] },
     'We don’t convert currencies (live exchange rates would need a data feed).');
@@ -592,9 +606,9 @@
     { rx: [/\b(random number|random picker|name picker|dice|coin flip|flip a coin|lottery|raffle|spin the wheel|wheel of names|draw lots|magic 8|quiz|trivia|crossword|sudoku|wordle|game|games|fortune|horoscope|tarot|compatibility)\b/] },
     'We don’t have random pickers, games or quizzes.');
   G('productivity', 'Timers, to-do lists, notes or reminders',
-    { rx: [/\b(timer|stopwatch|alarm|pomodoro|reminder|to ?do list|todo|note taking|notepad|sticky notes?|notebook|take notes|notes app|checklist|habit tracker|planner|schedule maker|calendar|gantt|kanban|meeting scheduler)\b/],
-      not: [['screenshot', 'capture']] },
-    'We don’t have timers, to-do lists or planners.');
+    { rx: [/\b(timer|stopwatch|alarm|pomodoro|reminder app|reminders app|to ?do list app|todo app|habit tracker|planner|schedule maker|calendar|gantt|kanban|meeting scheduler)\b/],
+      not: [['screenshot', 'capture'], ['budget', 'budgeting', 'expense', 'expenses', 'spending']] },
+    'We don’t have timers, to-do apps or planners.');
   G('math-other', 'Math, grades, GPA or science calculators',
     { rx: [/\b(fractions?|scientific calculator|algebra|equations?|quadratic|standard deviation|square root|exponent|gcd|lcm|prime numbers?|pythagorean|triangle area|gpa|grade calculator|final grade|test score|weighted average|probability|permutation|combinations?|statistics|matrix|derivative|integral|logarithm|sine|cosine|median|mean and median)\b/] },
     'We don’t have a general math or grades calculator. The Percentage Calculator handles percent-of, percent change and discounts.', ['percentage'], true);
@@ -667,6 +681,7 @@
     shrink: 'compress', reduce: 'compress', downsize: 'compress', squeeze: 'compress', minimize: 'compress', optimize: 'compress', optimise: 'compress', smaller: 'compress', lighter: 'compress',
     picture: 'image', pic: 'image', img: 'image', photo: 'image', photograph: 'image', selfie: 'image', snapshot: 'image', jpeg: 'jpg',
     screencap: 'screenshot', screengrab: 'screenshot', snip: 'screenshot',
+    note: 'memo', notepad: 'memo', jot: 'memo', allowance: 'budget',      // "note" stems to "not" (a filler word), so it is matched as "memo"
     erase: 'remove', delete: 'remove', eliminate: 'remove', discard: 'remove', wipe: 'remove', rid: 'remove',
     conceal: 'hide', obscure: 'hide',
     censor: 'redact', blackout: 'redact', blacken: 'redact', mask: 'redact',
@@ -752,7 +767,7 @@
     ['오류', 'bug'], ['버그', 'bug'], ['고장', 'bug'], ['문의', 'contact'], ['연락', 'contact'], ['제안', 'feedback'], ['건의', 'feedback'],
     ['사용법', 'manual'], ['설명서', 'manual'], ['매뉴얼', 'manual'],
     ['계산', 'calculator'], ['계산기', 'calculator'], ['비교', 'compare'], ['이사', 'relocate'], ['이직', 'job offer compare'],
-    ['서명', 'sign signature'], ['사인', 'sign signature'], ['전자서명', 'esign signature'], ['주가', 'stock price'], ['가계부', 'budget expense'], ['예산', 'budget'], ['지출', 'expense'],
+    ['서명', 'sign signature'], ['사인', 'sign signature'], ['전자서명', 'esign signature'], ['주가', 'stock price'], ['가계부', 'budget expense'], ['예산', 'budget'], ['지출', 'expense'], ['메모', 'notes memo'], ['메모장', 'notepad notes'], ['포스트잇', 'sticky notes'], ['스티커메모', 'sticky notes'], ['일기', 'diary'], ['다이어리', 'diary'], ['장보기', 'shopping list'], ['용돈', 'budget'], ['소비', 'spending'], ['기록', 'record'],
     ['암호화', 'encrypt password'], ['해제', 'unlock remove'], ['잠금', 'locked'], ['회전', 'rotate'], ['워터마크', 'watermark'], ['쪽번호', 'page numbers'], ['페이지번호', 'page numbers'],
     ['편집', 'edit'], ['수정', 'edit'], ['자막', 'subtitles'], ['양식', 'template'], ['파일', 'file'], ['한글', 'korean hangul'], ['한컴', 'hancom'],
     ['아이폰', 'iphone'], ['헤이크', 'heic'], ['파비콘', 'favicon'], ['웹피', 'webp'], ['제이피지', 'jpg'], ['피엔지', 'png'], ['피디에프', 'pdf']
