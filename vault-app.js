@@ -4,7 +4,8 @@
 (function () {
   'use strict';
 
-  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, t = I.t;
+  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, t = I.t;
+  var NOTE_FONTS = ['base', 'hand', 'pen'], NOTE_SIZES = ['s', 'm', 'l'];
   var app = document.getElementById('app');
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray'];
   var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.deco', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv', 'tip.desk'];
@@ -114,8 +115,27 @@
     var list = raw && Array.isArray(raw.notes) ? raw.notes : [];
     return { v: 1, notes: list.filter(function (n) { return n && typeof n.id === 'string' && typeof n.text === 'string'; }).map(function (n) {
       return { id: n.id, text: n.text, color: NOTE_COLORS.indexOf(n.color) >= 0 ? n.color : 'yellow', pinned: !!n.pinned,
+        font: NOTE_FONTS.indexOf(n.font) >= 0 ? n.font : 'base', size: NOTE_SIZES.indexOf(n.size) >= 0 ? n.size : 'm', locked: n.locked === true,
         created: +n.created || Date.now(), updated: +n.updated || Date.now() };
     }) };
+  }
+  function noteLook(n) { return 'nc-' + n.color + ' font-' + n.font + ' nsz-' + n.size; }
+  var noteShown = {};               // locked notes opened with the passcode in this window (forgotten on lock)
+  // A locked note shows its text only after the passcode is typed again (same slow-down after wrong tries as the lock screen).
+  function notePassForm(onOk) {
+    var p = passField(t('lock.pass'), true, 'current-password'), msg = msgEl();
+    var go = h('button', { type: 'submit', class: 'btn primary block', id: 'note-show', text: t('notes.show') });
+    var form = h('form', { class: 'stack note-pass', novalidate: true }, h('p', { class: 'hint', text: t('notes.lockedAsk') }), p.el, msg, go);
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var w = waitSeconds(); if (w > 0) return setMsg(msg, t('lock.wait', { s: w }));
+      go.disabled = true;
+      C.checkPasscode(p.input.value).then(function () { clearFails(); onOk(); }).catch(function () {
+        go.disabled = false; noteFail(); setMsg(msg, t('lock.wrong')); p.input.select();
+      });
+    });
+    setTimeout(function () { p.input.focus(); }, 30);
+    return form;
   }
   function validateSettings(raw) {
     var s = { autoLock: 5, lastBackup: null, lastChange: null, tourDone: false, codeSaved: true };
@@ -226,7 +246,7 @@
     return Promise.resolve(pending).catch(function () {}).then(function () { return saving; }).then(function () {
       return C.lock();
     }).then(function () {
-      S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls();
+      S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls(); noteShown = {};
       closeAllModals(); hideToast(); var tb = document.getElementById('toast'); if (tb) tb.textContent = '';
       S.searchOpen = false; S.query = ''; S.notesQuery = ''; S.diarySearch = false; S.diaryQuery = '';
       S.phase = 'locked';
@@ -254,6 +274,7 @@
     if (msg.type === 'lock-all' && S.phase === 'app') { lockNow(false, true); return; }
     if (msg.type === 'desk-ping' && DESK && S.notes) { C.notify({ type: 'desk-here', id: DESK }); return; }
     if (msg.type === 'desk-here') { deskHere[msg.id] = 1; return; }
+    if (msg.type === 'desk-arrange') { deskArrange(); return; }
     if (msg.type === 'saved' && S.phase === 'app' && msg.module === 'notes') { reloadNotes(); return; }
     if (msg.type === 'saved' && S.phase === 'app' && DESK) {
       if (msg.module === 'settings') C.load('settings').then(function (d) { S.settings = validateSettings(d); }).catch(function () {});
@@ -843,14 +864,14 @@
       var draw = function () {
         grid.textContent = '';
         var q = S.notesQuery.trim().toLowerCase();
-        var shown = q ? list.filter(function (n) { return n.text.toLowerCase().indexOf(q) >= 0; }) : list;
+        var shown = q ? list.filter(function (n) { return !n.locked && n.text.toLowerCase().indexOf(q) >= 0; }) : list;
         if (!shown.length) return add(grid, h('p', { class: 'hint center', text: t('notes.none') }));
         shown.forEach(function (n) {
-          var first = n.text.trim().split('\n')[0] || t('notes.ph');
-          add(grid, h('button', { type: 'button', class: 'note-card nc-' + n.color, 'data-id': n.id, 'aria-label': first.slice(0, 60), on: { click: function () { openNote(n.id); } } },
+          var first = n.locked ? t('notes.lockedCard') : (n.text.trim().split('\n')[0] || t('notes.ph'));
+          add(grid, h('button', { type: 'button', class: 'note-card ' + noteLook(n) + (n.locked ? ' locked' : ''), 'data-id': n.id, 'aria-label': first.slice(0, 60), on: { click: function () { openNote(n.id); } } },
             n.pinned ? h('span', { class: 'pin-badge', title: t('notes.pinned') }, icon('pin', 14)) : null,
             deskHas(n.id) ? h('span', { class: 'desk-badge', title: t('desk.on') }, icon('desk', 14)) : null,
-            h('span', { class: 'note-text', text: n.text || t('notes.ph') }),
+            n.locked ? h('span', { class: 'note-text note-locked' }, icon('lock', 18), ' ', t('notes.lockedCard')) : h('span', { class: 'note-text', text: n.text || t('notes.ph') }),
             h('span', { class: 'note-time', text: I.ago(n.updated) })));
         });
       };
@@ -858,7 +879,10 @@
       var onDesk = deskIds();
       if (deskCapable() && onDesk.length) add(main, h('div', { class: 'desk-bar-main card' },
         h('span', { class: 'hint', text: t('desk.howto') }),
-        h('button', { type: 'button', class: 'btn', id: 'desk-open-all', on: { click: function () { deskReopen(true); } } }, icon('desk', 18), ' ', t('desk.openAll', { n: onDesk.length }))));
+        h('div', { class: 'row' },
+          h('button', { type: 'button', class: 'btn', id: 'desk-open-all', on: { click: function () { deskReopen(true); } } }, icon('desk', 18), ' ', t('desk.openAll', { n: onDesk.length })),
+          h('button', { type: 'button', class: 'btn', id: 'desk-tidy', on: { click: function () { C.notify({ type: 'desk-arrange' }); toast(t('desk.tidied')); } } }, '🧲 ', t('desk.tidy'))),
+        h('label', { class: 'check' }, h('input', { type: 'checkbox', id: 'desk-snap', checked: snapOn(), on: { change: function (e) { lsSet(SNAP_KEY, e.target.checked ? null : 'off'); } } }), h('span', { text: t('desk.snap') }))));
       add(main, h('div', { class: 'notes-search' }, input), grid);
       draw();
     } else add(main, empty('🗒️', t('notes.empty'), t('notes.emptyHint')));
@@ -871,9 +895,15 @@
   function openNote(id, isNew) {
     var n = S.notes.notes.find(function (x) { return x.id === id; });
     if (!n) return;
+    if (n.locked && !noteShown[n.id]) {
+      sheet(t('notes.lockedCard'), function (body, close) {
+        add(body, notePassForm(function () { noteShown[n.id] = 1; close(); openNote(id); }));
+      });
+      return;
+    }
     var deleted = false;
     sheet(isNew ? t('notes.new') : t('notes.title'), function (body, close, m) {
-      var ta = h('textarea', { class: 'input note-edit nc-' + n.color, id: 'note-text', rows: 10, placeholder: t('notes.ph'), 'aria-label': t('notes.title'), 'data-autofocus': '1', value: n.text });
+      var ta = h('textarea', { class: 'input note-edit ' + noteLook(n), id: 'note-text', rows: 10, placeholder: t('notes.ph'), 'aria-label': t('notes.title'), 'data-autofocus': '1', value: n.text });
       function persist() {
         noteFlush = null;
         if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
@@ -889,7 +919,7 @@
         colors.textContent = '';
         NOTE_COLORS.forEach(function (c) {
           add(colors, h('button', { type: 'button', role: 'radio', class: 'swatch nc-' + c, 'aria-checked': n.color === c ? 'true' : 'false', 'aria-label': t('color.' + c), title: t('color.' + c), 'data-color': c,
-            on: { click: function () { n.color = c; n.updated = Date.now(); markNote(n); ta.className = 'input note-edit nc-' + c; drawColors(); saveNotes(); } } }));
+            on: { click: function () { n.color = c; n.updated = Date.now(); markNote(n); ta.className = 'input note-edit ' + noteLook(n); drawColors(); saveNotes(); } } }));
         });
       }
       drawColors();
@@ -907,7 +937,24 @@
         saveNotes(); close(); render();
         toast(t('notes.deleted'), { label: t('btn.undo'), fn: function () { S.notes.notes.push(copy); markNote(copy); saveNotes(); render(); } });
       });
-      add(body, ta, h('div', { class: 'note-tools' }, colors), h('div', { class: 'row' }, pin, del),
+      function pickRow(label, list, cur, labelOf, onPick, idp) {
+        var g = h('div', { class: 'chips', role: 'radiogroup', 'aria-label': label });
+        list.forEach(function (v) {
+          add(g, h('button', { type: 'button', role: 'radio', class: 'chip small' + (idp === 'font' ? ' font-' + v : ''), id: idp + '-' + v, 'aria-checked': cur() === v ? 'true' : 'false', text: labelOf(v),
+            on: { click: function () { onPick(v); g.querySelectorAll('[role=radio]').forEach(function (b) { b.setAttribute('aria-checked', b.id === idp + '-' + v ? 'true' : 'false'); }); ta.className = 'input note-edit ' + noteLook(n); markNote(n); saveNotes(); } } }));
+        });
+        return h('div', { class: 'note-pick' }, h('span', { class: 'field-label', text: label }), g);
+      }
+      var lockBtn = h('button', { type: 'button', class: 'btn', id: 'note-lock', 'aria-pressed': n.locked ? 'true' : 'false' }, icon('lock', 18), ' ', n.locked ? t('notes.unlockNote') : t('notes.lock'));
+      lockBtn.addEventListener('click', function () {
+        n.locked = !n.locked; if (n.locked) noteShown[n.id] = 1; markNote(n); saveNotes();
+        lockBtn.setAttribute('aria-pressed', n.locked ? 'true' : 'false'); lockBtn.lastChild.textContent = n.locked ? t('notes.unlockNote') : t('notes.lock');
+        toast(n.locked ? t('notes.lockedNow') : t('notes.unlockedNow'));
+      });
+      add(body, ta, h('div', { class: 'note-tools' }, colors),
+        pickRow(t('deco.font'), NOTE_FONTS, function () { return n.font; }, function (v) { return t('font.' + v); }, function (v) { n.font = v; }, 'font'),
+        pickRow(t('notes.size'), NOTE_SIZES, function () { return n.size; }, function (v) { return t('size.' + v); }, function (v) { n.size = v; }, 'size'),
+        h('div', { class: 'row' }, pin, lockBtn, del),
         deskCapable() ? h('div', { class: 'row desk-actions' },
           h('button', { type: 'button', class: 'btn', id: 'note-desk', on: { click: function () {
             flushNote(); if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
@@ -919,6 +966,7 @@
             pinOnTop(n.id); close();
           } } }, icon('pin', 18), ' ', t('desk.pin')) : null) : null);
       m.onClose = function () {
+        if (n.locked) delete noteShown[n.id];             // a locked note asks again next time
         if (deleted) return;
         flushNote();
         if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
@@ -947,9 +995,12 @@
   var kids = [];                 // windows this page opened (desktop notes)
   var deskHere = {};             // note ids whose window answered "I'm open"
   function liveKids() { kids = kids.filter(function (w) { try { return w && !w.closed; } catch (e) { return false; } }); return kids; }
+  var showGrant = {};            // locked notes just opened with the passcode here and put on the desktop: their new window may show them once
   function sendKey(w) {
     var s = C.shareSession(); if (!s || !w) return;
-    try { w.postMessage({ type: 'ppm-key', key: s.key, metaId: s.metaId }, location.origin); } catch (e) {}
+    var id = null; try { id = (w.name || '').replace(/^ppm-note-/, ''); } catch (e) {}
+    var shown = id && showGrant[id] ? [id] : []; if (id) delete showGrant[id];
+    try { w.postMessage({ type: 'ppm-key', key: s.key, metaId: s.metaId, shown: shown }, location.origin); } catch (e) {}
   }
   function openerIsApp() {       // only ever hand the session back to this app's own page
     try { return !!(window.opener && !window.opener.closed && window.opener.location.origin === location.origin && /^\/vault(\.html)?$/.test(window.opener.location.pathname)); } catch (e) { return false; }
@@ -959,7 +1010,7 @@
     var d = e.data, fromKid = kids.indexOf(e.source) >= 0, fromOpener = !!e.source && e.source === window.opener && openerIsApp();
     if (d.type === 'ppm-hello') { if (fromKid && S.phase === 'app') sendKey(e.source); return; }
     if (d.type === 'ppm-key' && (fromKid || fromOpener) && (S.phase === 'locked' || S.phase === 'forgot')) {
-      C.adoptSession(d.key, d.metaId).then(function () { clearFails(); return loadAll(); })
+      C.adoptSession(d.key, d.metaId).then(function () { clearFails(); if (DESK && Array.isArray(d.shown) && d.shown.indexOf(DESK) >= 0) noteShown[DESK] = 1; return loadAll(); })
         .then(function () { S.phase = 'app'; touch(); render(); afterUnlock(true); }).catch(function () {});
     }
   });
@@ -987,6 +1038,8 @@
     try { w = window.open('/vault?w=note&id=' + encodeURIComponent(id), 'ppm-note-' + id, deskFeatures(g)); } catch (e) { w = null; }
     if (!w) { toast(t('desk.blocked', { btn: t('desk.openAll', { n: deskIds().length || 1 }) })); return false; }
     if (kids.indexOf(w) < 0) kids.push(w);
+    var nn = S.notes && S.notes.notes.find(function (x) { return x.id === id; });
+    if (nn && nn.locked && noteShown[id]) showGrant[id] = 1;
     if (!m[id]) { m[id] = g; deskSet(m); }
     if (S.tab === 'notes' && !modalOpen()) render();
     if (S.settings && S.settings.autoLock) toast(t('desk.never'));
@@ -1007,13 +1060,49 @@
   var deskTa = null, deskTimer = null, deskPending = null, deskGeo = null, pipWin = null, pipId = null, pipTa = null;
   function deskNote() { return S.notes && S.notes.notes.find(function (x) { return x.id === DESK; }); }
   function deskFlush() { if (deskPending) { var f = deskPending; deskPending = null; clearTimeout(deskTimer); f(); } }
+  // Saved per note window: [x, y, inner width, inner height, outer width, outer height, last seen]. No note text.
   function deskSaveGeo() {
-    if (!DESK || S.phase !== 'app') return;
-    var g = [window.screenX, window.screenY, window.innerWidth, window.innerHeight];
-    if (deskGeo && g.join() === deskGeo.join()) return;
-    deskGeo = g; var m = deskMap(); m[DESK] = g; deskSet(m);
+    if (!DESK || S.phase !== 'app' || deskShrunk) return;
+    var g = [window.screenX, window.screenY, window.innerWidth, window.innerHeight, window.outerWidth, window.outerHeight];
+    var m = deskMap(); if (!m[DESK]) return;            // taken off the desktop (here or in another window): don't put it back
+    m[DESK] = g.concat([Date.now()]); deskSet(m); deskGeo = g;
   }
   if (DESK) setInterval(deskSaveGeo, 2000);
+  var SNAP_KEY = 'ppm-vault-desk-snap';
+  function snapOn() { return lsGet(SNAP_KEY) !== 'off'; }
+  function screenArea() { return { x: screen.availLeft || 0, y: screen.availTop || 0, w: screen.availWidth || 1280, h: screen.availHeight || 800 }; }
+  function otherWindows() {              // the other desktop notes that are open right now (seen in the last few seconds)
+    var m = deskMap(), now = Date.now();
+    return Object.keys(m).filter(function (id) { return id !== DESK && Array.isArray(m[id]) && m[id].length >= 7 && now - m[id][6] < 6000; })
+      .map(function (id) { var g = m[id]; return { x: g[0], y: g[1], w: g[4], h: g[5] }; });
+  }
+  // When a note window is dropped near another one or near a screen edge, it sticks to it.
+  var lastPos = null, stillSince = 0, movedOnce = false;
+  function snapCheck() {
+    if (!DESK || S.phase !== 'app' || deskShrunk || !SN) return;
+    var pos = [window.screenX, window.screenY].join();
+    if (pos !== lastPos) { if (lastPos !== null) movedOnce = true; lastPos = pos; stillSince = Date.now(); return; }
+    if (!movedOnce || Date.now() - stillSince < 450) return;
+    movedOnce = false;
+    if (!snapOn()) return;
+    var me = { x: window.screenX, y: window.screenY, w: window.outerWidth, h: window.outerHeight };
+    var to = SN.snap(me, otherWindows(), screenArea(), 20);
+    if (to.x !== me.x || to.y !== me.y) { try { window.moveTo(to.x, to.y); } catch (e) {} lastPos = [to.x, to.y].join(); }
+    deskSaveGeo();
+  }
+  if (DESK) setInterval(snapCheck, 150);
+  // "Tidy desktop notes": every open note window moves itself to its place in a neat column on the right.
+  function deskArrange() {
+    if (!DESK || S.phase !== 'app' || deskShrunk || !SN) return;
+    var m = deskMap(), now = Date.now();
+    var open = Object.keys(m).filter(function (id) { return id === DESK || (Array.isArray(m[id]) && m[id].length >= 7 && now - m[id][6] < 6000); });
+    var i = open.indexOf(DESK); if (i < 0) return;
+    var slot = SN.arrange(open.length, screenArea(), { w: 300, h: 300 }, 8)[i];
+    try { window.resizeTo(300, 300); window.moveTo(slot.x, slot.y); } catch (e) {}
+    lastPos = [slot.x, slot.y].join(); movedOnce = false;
+    setTimeout(deskSaveGeo, 200);
+  }
+  var deskShrunk = null;                 // while one note is kept on top, its own window shrinks to a small bar
   function noteEditor(n, ta, onChange) {   // typing → saved half a second later (shared by note windows and the on-top window)
     ta.addEventListener('input', function () {
       clearTimeout(deskTimer);
@@ -1021,6 +1110,8 @@
       deskTimer = setTimeout(deskFlush, 500);
     });
   }
+  var deskSig = '';
+  function noteSig(n) { return [n.color, n.font, n.size, n.locked].join('|'); }
   function renderDesk() {
     app.textContent = '';
     var n = deskNote();
@@ -1032,14 +1123,23 @@
       return;
     }
     document.documentElement.classList.add('nc-' + n.color);
-    function setTitle() { document.title = (n.text.trim().split('\n')[0] || t('notes.ph')).slice(0, 60); }
+    deskSig = noteSig(n);
+    if (lastPos === null) lastPos = [window.screenX, window.screenY].join();   // where the window starts; snapping waits for a real move
+    function setTitle() { document.title = n.locked && !noteShown[n.id] ? '🔒 ' + t('notes.lockedCard') : (n.text.trim().split('\n')[0] || t('notes.ph')).slice(0, 60); }
     setTitle();
     if (pipId === n.id && pipWin) {
-      add(app, h('div', { class: 'desk-gone' }, h('p', { text: t('desk.pinned') }),
-        h('button', { type: 'button', class: 'btn', id: 'desk-unpin', on: { click: function () { pipClose(); render(); } } }, t('desk.unpin'))));
+      add(app, h('div', { class: 'desk-pinned' }, h('span', { text: '📌 ' + t('desk.pinnedBar') }),
+        h('button', { type: 'button', class: 'btn small', id: 'desk-unpin', on: { click: function () { pipClose(); render(); } } }, t('desk.unpin'))));
       return;
     }
-    deskTa = h('textarea', { class: 'desk-text', id: 'desk-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text });
+    if (n.locked && !noteShown[n.id]) {
+      deskTa = null;
+      add(app, h('div', { class: 'desk' }, h('div', { class: 'desk-bar' }, h('span', { class: 'desk-sp' }),
+        h('button', { type: 'button', class: 'icon-btn sm', id: 'desk-lock', title: t('desk.lock'), 'aria-label': t('desk.lock'), on: { click: function () { lockNow(false); } } }, icon('lock', 18))),
+        h('div', { class: 'desk-gate' }, notePassForm(function () { noteShown[n.id] = 1; render(); }))));
+      return;
+    }
+    deskTa = h('textarea', { class: 'desk-text font-' + n.font + ' nsz-' + n.size, id: 'desk-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text });
     noteEditor(n, deskTa, setTitle);
     var dots = h('div', { class: 'desk-dots', role: 'radiogroup', 'aria-label': t('notes.color') });
     NOTE_COLORS.forEach(function (c) {
@@ -1059,6 +1159,7 @@
         if (!n.text.trim()) { S.notes.notes = S.notes.notes.filter(function (x) { return x !== n; }); goneNote(n); }
         saveNotes().then(function () { window.close(); });
       } } }, icon('list', 18)),
+      n.locked ? h('button', { type: 'button', class: 'icon-btn sm', id: 'desk-hide', title: t('notes.hide'), 'aria-label': t('notes.hide'), on: { click: function () { deskFlush(); delete noteShown[n.id]; render(); } } }, '🙈') : null,
       h('button', { type: 'button', class: 'icon-btn sm', id: 'desk-lock', title: t('desk.lock'), 'aria-label': t('desk.lock'), on: { click: function () { lockNow(false); } } }, icon('lock', 18)));
     add(app, h('div', { class: 'desk' }, bar, deskTa));
     if (!n.text) deskTa.focus();
@@ -1066,7 +1167,7 @@
   function deskRefresh() {         // another window changed the notes
     if (!DESK || S.phase !== 'app') return;
     var n = deskNote();
-    if (!n || !deskTa || !document.contains(deskTa) || !document.documentElement.classList.contains('nc-' + n.color)) { deskFlush(); render(); return; }
+    if (!n || noteSig(n) !== deskSig || !deskTa || !document.contains(deskTa)) { deskFlush(); render(); return; }
     if (!deskPending && deskTa.value !== n.text) deskTa.value = n.text;
     pipRefresh();
   }
@@ -1084,11 +1185,19 @@
       var th = document.documentElement.getAttribute('data-theme'); if (th) d.documentElement.setAttribute('data-theme', th);
       d.documentElement.className = 'desk-mode nc-' + n.color;
       d.title = (n.text.trim().split('\n')[0] || t('notes.ph')).slice(0, 60);
-      pipTa = h('textarea', { class: 'desk-text', id: 'pip-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text });
+      pipTa = h('textarea', { class: 'desk-text font-' + n.font + ' nsz-' + n.size, id: 'pip-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text });
       noteEditor(n, pipTa);
-      d.body.appendChild(h('div', { class: 'desk' }, pipTa));
-      pw.addEventListener('pagehide', function () { deskFlush(); if (pipWin === pw) { pipWin = null; pipId = null; pipTa = null; if (DESK && S.phase === 'app') render(); } });
-      if (DESK) render(); else toast(t('desk.pinned'));
+      d.body.appendChild(h('div', { class: 'desk' },
+        h('div', { class: 'desk-bar pip-bar' }, h('span', { class: 'desk-sp' }),
+          h('button', { type: 'button', class: 'icon-btn sm', id: 'pip-unpin', title: t('desk.unpin'), 'aria-label': t('desk.unpin'), on: { click: function () { pipClose(); if (DESK && S.phase === 'app') render(); } } }, '📌')),
+        pipTa));
+      pw.addEventListener('pagehide', function () { deskFlush(); if (pipWin === pw) { pipWin = null; pipId = null; pipTa = null; deskRestore(); if (DESK && S.phase === 'app') render(); } });
+      if (DESK) {
+        deskSaveGeo();
+        deskShrunk = [window.outerWidth, window.outerHeight];
+        try { window.resizeTo(Math.min(window.outerWidth, 300), 96); } catch (e) {}
+        render();
+      } else toast(t('desk.pinned'));
     }).catch(function () {});
   }
   function pipRefresh() {
@@ -1098,7 +1207,8 @@
     if (!deskPending && pipTa.value !== n.text) pipTa.value = n.text;
     pipWin.document.documentElement.className = 'desk-mode nc-' + n.color;
   }
-  function pipClose() { if (pipWin) { deskFlush(); try { pipWin.close(); } catch (e) {} pipWin = null; pipId = null; pipTa = null; } }
+  function pipClose() { if (pipWin) { deskFlush(); try { pipWin.close(); } catch (e) {} pipWin = null; pipId = null; pipTa = null; deskRestore(); } }
+  function deskRestore() { if (deskShrunk) { var s = deskShrunk; deskShrunk = null; try { window.resizeTo(s[0], s[1]); } catch (e) {} } }
 
   // ----- Diary tab -----
   var MOODS = ['😞', '😕', '😐', '🙂', '😄'];
@@ -1770,7 +1880,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-app.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-app.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
         .forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }

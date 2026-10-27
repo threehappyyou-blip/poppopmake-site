@@ -3,21 +3,21 @@
   --paper: #EEF1EF; --paper-2: #E4E9E6; --card: #FFFFFF; --ink: #1C2321; --ink-soft: #4B534F; --line: rgba(28,35,33,.12);
   --orange: #C14324; --teal: #0D7A7C; --teal-soft: rgba(13,122,124,.1); --danger: #B3261E; --warn: #9A6700;
   --radius: 16px; --tab-h: 64px;
-  --n-yellow: #FFF0A6; --n-pink: #FFD9E2; --n-green: #D6F2D0; --n-blue: #D5E7FF; --n-purple: #E7DDFF; --n-gray: #E6E9E7;
+  --n-yellow: #FFF3B5; --n-pink: #FFDCE6; --n-green: #D5F3E3; --n-blue: #D7E9FF; --n-purple: #E9DFFF; --n-gray: #EEEAE4;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --paper: #121614; --paper-2: #1B201E; --card: #1E2422; --ink: #E9EEEB; --ink-soft: #A9B3AE; --line: rgba(233,238,235,.14);
     --orange: #F07A5A; --teal: #4FC3C5; --teal-soft: rgba(79,195,197,.14); --danger: #FF8A80; --warn: #F2C14E;
-    --n-yellow: #4A4320; --n-pink: #4A2A33; --n-green: #24402A; --n-blue: #22364F; --n-purple: #352C4F; --n-gray: #2C3230;
+    --n-yellow: #F6E7A2; --n-pink: #F5CCD8; --n-green: #C6E8D5; --n-blue: #C9DCF5; --n-purple: #DCD0F5; --n-gray: #E2DED7;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --paper: #121614; --paper-2: #1B201E; --card: #1E2422; --ink: #E9EEEB; --ink-soft: #A9B3AE; --line: rgba(233,238,235,.14);
   --orange: #F07A5A; --teal: #4FC3C5; --teal-soft: rgba(79,195,197,.14); --danger: #FF8A80; --warn: #F2C14E;
-  --n-yellow: #4A4320; --n-pink: #4A2A33; --n-green: #24402A; --n-blue: #22364F; --n-purple: #352C4F; --n-gray: #2C3230;
+  --n-yellow: #F6E7A2; --n-pink: #F5CCD8; --n-green: #C6E8D5; --n-blue: #C9DCF5; --n-purple: #DCD0F5; --n-gray: #E2DED7;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -433,3 +433,28 @@ html.desk-mode .screen.lock .lede { margin: 4px 0 10px; font-size: .9rem; }
 .st-tool { width: 36px; height: 36px; border: 0; border-radius: 50%; background: transparent; color: var(--paper); font-size: 18px; cursor: pointer; }
 .st-tool:hover, .st-tool:focus-visible { background: rgba(255,255,255,.16); }
 .draw-canvas { position: absolute; top: 0; left: 0; z-index: 4; touch-action: none; cursor: crosshair; background: transparent; outline: 2px dashed var(--teal); outline-offset: -2px; }
+
+/* ---------- notes: pastel paper with dark ink in every theme ---------- */
+.note-card, .note-edit, .desk-text { color: #23292A; }
+.note-card .note-time, .note-card .pin-badge, .note-card .desk-badge { color: #5A6461; }
+.note-edit::placeholder, .desk-text::placeholder { color: #6E7774; }
+.note-card { border: 1px solid rgba(0,0,0,.05); box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 4px 10px rgba(0,0,0,.05); }
+.swatch, .desk-dot { border: 1px solid rgba(0,0,0,.12); }
+html.desk-mode:not(#_) { --paper: #F7F8F7; --paper-2: #ECEFED; --card: #FFFFFF; --ink: #23292A; --ink-soft: #4B534F; --line: rgba(28,35,33,.13);
+  --teal: #0D7A7C; --teal-soft: rgba(13,122,124,.12); --danger: #B3261E; color-scheme: light; }
+html.desk-mode body { color: #23292A; }
+.nsz-s { font-size: 14px !important; } .nsz-m { font-size: 16px; } .nsz-l { font-size: 21px !important; line-height: 1.45; }
+.note-card.nsz-l .note-text { font-size: 1.1rem; } .note-card.nsz-s .note-text { font-size: .82rem; }
+.note-card.font-hand .note-text, .note-card.font-pen .note-text { font-size: 1.05rem; }
+.note-card.locked .note-text { display: flex; align-items: center; gap: 6px; color: #5A6461; font-weight: 600; }
+.note-pick { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin: 8px 0; }
+.note-pick .field-label { margin: 0; min-width: 72px; }
+.note-pick .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; }
+.note-pick .chip { border-color: var(--line); background: var(--card); min-height: 36px; padding: 6px 12px; }
+.note-pick .chip[aria-checked="true"] { border-color: var(--teal); color: var(--teal); background: var(--teal-soft); }
+.desk-pinned { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 10px; font-weight: 600; font-size: .9rem; }
+.desk-pinned .btn.small { min-height: 34px; padding: 4px 12px; }
+.pip-bar { border-bottom: 0; padding: 2px 4px 0; }
+.pip-bar .icon-btn { font-size: 16px; }
+.desk-gate { padding: 8px 12px; }
+.desk-gate .stack { gap: 8px; }
