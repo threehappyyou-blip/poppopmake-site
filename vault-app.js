@@ -4,11 +4,13 @@
 (function () {
   'use strict';
 
-  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, t = I.t;
+  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, t = I.t;
   var app = document.getElementById('app');
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray'];
-  var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv'];
-  var FAIL_KEY = 'ppm-vault-fails', THEME_KEY = 'ppm-vault-theme';
+  var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.deco', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv', 'tip.desk'];
+  var FAIL_KEY = 'ppm-vault-fails', THEME_KEY = 'ppm-vault-theme', DESK_KEY = 'ppm-vault-desk';
+  // A desktop note window (/vault?w=note&id=…) shows one note on its own; everything else is the full app.
+  var DESK = (location.search.match(/[?&]w=note&id=([A-Za-z0-9_-]{4,40})(?:&|$)/) || [])[1] || null;
 
   var S = {
     phase: 'loading', budget: null, notes: null, settings: null, tab: 'budget', ym: null, budgetView: 'list',
@@ -54,7 +56,8 @@
     book: ['M4 4h7a3 3 0 0 1 3 3v13a2 2 0 0 0-2-2H4z', 'M20 4h-6a3 3 0 0 0-3 3'],
     gear: ['<circle cx="12" cy="12" r="3"/>', 'M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1'],
     repeat: ['M17 2l4 4-4 4', 'M3 11V9a3 3 0 0 1 3-3h15', 'M7 22l-4-4 4-4', 'M21 13v2a3 3 0 0 1-3 3H3'],
-    chev: ['M9 18l6-6-6-6'], shield: ['M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z']
+    chev: ['M9 18l6-6-6-6'], shield: ['M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z'],
+    desk: ['<rect x="3" y="4" width="18" height="12" rx="2"/>', 'M8 20h8M12 16v4'], list: ['M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01']
   };
   function icon(name, size) {
     var NS = 'http://www.w3.org/2000/svg', svg = document.createElementNS(NS, 'svg');
@@ -117,7 +120,7 @@
   function validateSettings(raw) {
     var s = { autoLock: 5, lastBackup: null, lastChange: null, tourDone: false, codeSaved: true };
     if (raw && typeof raw === 'object') {
-      if ([1, 5, 15, 60].indexOf(raw.autoLock) >= 0) s.autoLock = raw.autoLock;
+      if ([0, 1, 5, 15, 60].indexOf(raw.autoLock) >= 0) s.autoLock = raw.autoLock;      // 0 = never (lock it yourself)
       if (raw.lastBackup > 0) s.lastBackup = raw.lastBackup;
       if (raw.lastChange > 0) s.lastChange = raw.lastChange;
       s.tourDone = !!raw.tourDone;
@@ -126,9 +129,12 @@
     return s;
   }
   function loadAll() {
+    if (DESK) return Promise.all([C.load('notes'), C.load('settings')]).then(function (r) {
+      S.notes = validateNotes(r[0]); S.settings = validateSettings(r[1]); noteDirty = {}; noteGone = {}; noteLocal = {};
+    });
     return Promise.all([C.load('budget'), C.load('notes'), C.load('settings'), C.load('diary')]).then(function (r) {
       S.budget = B.validate(r[0], I.get(), I.defaultCurrency());
-      S.notes = validateNotes(r[1]);
+      S.notes = validateNotes(r[1]); noteDirty = {}; noteGone = {}; noteLocal = {};
       S.settings = validateSettings(r[2]);
       S.diary = DY.validate(r[3]);
       S.ym = thisMonth(); S.diaryYm = thisMonth();
@@ -141,7 +147,56 @@
   var saving = Promise.resolve();
   function queue(fn) { saving = saving.then(fn, fn); return saving; }
   function saveBudget() { return save('budget', function () { return S.budget; }); }
-  function saveNotes() { return save('notes', function () { return S.notes; }); }
+  // Notes are saved by merging: only the notes changed in this window are written over what is stored, inside a lock
+  // shared by all windows of the app — so a note window and the app can edit different notes at the same moment.
+  var noteDirty = {}, noteGone = {}, noteLocal = {};     // ids changed / deleted here and not saved yet; ids created here, never stored
+  var noteSaving = {}, goneSaving = {};                  // ids whose save is on its way — a reload must not undo them meanwhile
+  function markNote(n) { noteDirty[n.id] = 1; delete noteGone[n.id]; }
+  function goneNote(n) { noteGone[n.id] = 1; delete noteDirty[n.id]; delete noteLocal[n.id]; }
+  function mergeNotes(raw, dirty, gone) {
+    var db = validateNotes(raw).notes, local = {}, out = [], seen = {};
+    S.notes.notes.forEach(function (n) { local[n.id] = n; });
+    db.forEach(function (d) {
+      if (gone[d.id]) return;
+      var l = local[d.id]; seen[d.id] = 1;
+      if (l) { if (!dirty[d.id]) Object.assign(l, d); out.push(l); }     // keep the same object so an open editor stays attached
+      else out.push(d);
+    });
+    S.notes.notes.forEach(function (n) { if (!seen[n.id] && !gone[n.id] && (dirty[n.id] || noteLocal[n.id])) out.push(n); });
+    return out;
+  }
+  function saveNotes() {
+    if (S.settings) S.settings.lastChange = Date.now();
+    return queue(function () {
+      if (!S.notes) return null;
+      var dirty = noteDirty, gone = noteGone; noteDirty = {}; noteGone = {};
+      Object.assign(noteSaving, dirty); Object.assign(goneSaving, gone);
+      var done = function () { Object.keys(dirty).forEach(function (k) { delete noteSaving[k]; }); Object.keys(gone).forEach(function (k) { delete goneSaving[k]; }); };
+      var now = Date.now();
+      return Promise.all([C.update('notes', function (raw) {
+        if (!S.notes) throw { code: 'locked' };
+        S.notes.notes = mergeNotes(raw, dirty, gone);
+        var keep = S.notes.notes.filter(function (n) { return !(noteLocal[n.id] && !n.text.trim()); });
+        keep.forEach(function (n) { delete noteLocal[n.id]; });
+        return { v: 1, notes: keep };
+      }), C.update('settings', function (raw) { var st = validateSettings(raw); st.lastChange = now; return st; })]).then(function () {
+        done();
+      }).catch(function (e) {
+        done();
+        Object.keys(dirty).forEach(function (k) { if (!noteGone[k]) noteDirty[k] = 1; });
+        Object.keys(gone).forEach(function (k) { if (!noteDirty[k]) noteGone[k] = 1; });
+        throw e;
+      });
+    }).catch(onSaveError);
+  }
+  function reloadNotes() {
+    return C.load('notes').then(function (raw) {
+      if (!S.notes || S.phase !== 'app') return;
+      S.notes.notes = mergeNotes(raw, Object.assign({}, noteSaving, noteDirty), Object.assign({}, goneSaving, noteGone));
+      if (DESK) deskRefresh();
+      else { pipRefresh(); if (!modalOpen()) render(); }
+    }).catch(function () {});
+  }
   function saveSettings() { return queue(function () { return S.settings ? C.save('settings', S.settings) : null; }).catch(onSaveError); }
   function save(mod, get) {
     if (S.settings) S.settings.lastChange = Date.now();
@@ -163,9 +218,12 @@
   function clearFails() { lsSet(FAIL_KEY, null); }
   function waitSeconds() { var f = failState(); return Math.max(0, Math.ceil((f.until - Date.now()) / 1000)); }
 
-  function lockNow(auto) {
-    flushNote(); flushEntry();
-    return saving.then(function () {
+  function lockNow(auto, remote) {
+    if (!auto && !remote) C.notify({ type: 'lock-all' });     // "Lock now" in any window locks every window of the app
+    pipClose();
+    var pending = openDeco ? openDeco.flush() : null;      // a drawing or sticker move still being saved
+    flushNote(); flushEntry(); deskFlush();
+    return Promise.resolve(pending).catch(function () {}).then(function () { return saving; }).then(function () {
       return C.lock();
     }).then(function () {
       S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls();
@@ -180,11 +238,12 @@
   ['pointerdown', 'keydown', 'touchstart', 'wheel'].forEach(function (ev) { document.addEventListener(ev, touch, { passive: true, capture: true }); });
   setInterval(function () {
     if (S.phase !== 'app' || !S.settings) return;
+    if (!S.settings.autoLock) return;
     if (document.visibilityState === 'visible' && Date.now() - S.lastActive > S.settings.autoLock * 60000) lockNow(true);
   }, 10000);
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') { S.hiddenAt = Date.now(); flushNote(); flushEntry(); return; }
-    if (S.phase === 'app' && S.settings && S.hiddenAt && Date.now() - S.hiddenAt > S.settings.autoLock * 60000) lockNow(true);
+    if (document.visibilityState === 'hidden') { S.hiddenAt = Date.now(); flushNote(); flushEntry(); if (openDeco) openDeco.flush(); return; }
+    if (S.phase === 'app' && S.settings && S.settings.autoLock && S.hiddenAt && Date.now() - S.hiddenAt > S.settings.autoLock * 60000) lockNow(true);
     S.hiddenAt = null; touch();
   });
 
@@ -192,6 +251,15 @@
   C.onChange(function (msg, remote) {
     if (!remote) return;
     if (msg.type === 'wiped') { S.phase = 'welcome'; S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls(); closeAllModals(); render(); return; }
+    if (msg.type === 'lock-all' && S.phase === 'app') { lockNow(false, true); return; }
+    if (msg.type === 'desk-ping' && DESK && S.notes) { C.notify({ type: 'desk-here', id: DESK }); return; }
+    if (msg.type === 'desk-here') { deskHere[msg.id] = 1; return; }
+    if (msg.type === 'saved' && S.phase === 'app' && msg.module === 'notes') { reloadNotes(); return; }
+    if (msg.type === 'saved' && S.phase === 'app' && DESK) {
+      if (msg.module === 'settings') C.load('settings').then(function (d) { S.settings = validateSettings(d); }).catch(function () {});
+      return;
+    }
+    if (msg.type === 'saved' && S.phase === 'app' && modalOpen()) { pendingReload[msg.module] = 1; return; }
     if (msg.type === 'saved' && S.phase === 'app' && !modalOpen()) {
       C.load(msg.module).then(function (d) {
         if (msg.module === 'budget') S.budget = B.validate(d, I.get(), S.budget.currency);
@@ -202,6 +270,22 @@
       }).catch(function () {});
     }
   });
+
+  // Changes from another window that arrived while a sheet was open: load them once the last sheet closes.
+  var pendingReload = {};
+  function applyPending() {
+    var mods = Object.keys(pendingReload); pendingReload = {};
+    mods.forEach(function (mod) {
+      if (mod === 'notes' || S.phase !== 'app') return;
+      C.load(mod).then(function (d) {
+        if (S.phase !== 'app') return;
+        if (mod === 'budget') S.budget = B.validate(d, I.get(), S.budget.currency);
+        else if (mod === 'diary') S.diary = DY.validate(d);
+        else if (mod === 'settings') S.settings = validateSettings(d);
+        if (!modalOpen()) render();
+      }).catch(function () {});
+    });
+  }
 
   // ---------- toast ----------
   var toastTimer = null;
@@ -238,6 +322,7 @@
       backdrop.remove();
       modals = modals.filter(function (x) { return x !== m; });
       if (opener && opener.focus && document.contains(opener)) opener.focus();
+      if (!modals.length) setTimeout(applyPending, 0);
     }
     backdrop.addEventListener('click', function (e) { if (e.target === backdrop) close(); });
     backdrop.appendChild(box);
@@ -429,7 +514,7 @@
         clearFails();
         return loadAll();
       }).then(function () {
-        S.phase = 'app'; touch(); render();
+        S.phase = 'app'; touch(); render(); afterUnlock();
       }).catch(function (err) {
         go.textContent = t('lock.unlock'); go.disabled = false;
         if (err && err.code === 'bad-passcode') { noteFail(); setMsg(msg, t('lock.wrong')); p.input.select(); tick(); }
@@ -437,6 +522,11 @@
         else setMsg(msg, errText(err));
       });
     });
+    if (DESK) {
+      add(s, h('div', { class: 'lock-ico', 'aria-hidden': 'true' }, icon('lock', 28)), h('p', { class: 'lede', text: t('desk.lockedBody') }), form,
+        h('p', {}, h('a', { href: '/vault?start=notes', target: '_blank', rel: 'noopener', text: t('desk.openApp') })));
+      deskHello(); tick(); return;
+    }
     add(s, brand(),
       h('div', { class: 'lock-ico', 'aria-hidden': 'true' }, icon('lock', 40)),
       h('h1', { text: t('lock.title') }), h('p', { class: 'lede', text: t('lock.body') }), form,
@@ -465,13 +555,14 @@
       if (a !== p2.input.value) return setMsg(msg, t('pass.mismatch'));
       go.disabled = true; go.textContent = t('lock.unlocking');
       C.recover(code.value, a).then(function () { clearFails(); return loadAll(); }).then(function () {
-        S.phase = 'app'; touch(); render(); toast(t('pass.changed'));
+        S.phase = 'app'; touch(); render(); afterUnlock(); toast(t('pass.changed'));
       }).catch(function (err) {
         go.disabled = false; go.textContent = t('lock.unlock');
         setMsg(msg, err && err.code === 'bad-code' ? t('forgot.bad') : errText(err));
       });
     });
-    add(s, brand(), h('h1', { text: t('forgot.title') }), h('p', { class: 'lede', text: t('forgot.body') }), form);
+    add(s, brand(), h('h1', { text: t('forgot.title') }), h('p', { class: 'lede', text: t('forgot.body') }), form,
+      h('div', { class: 'links' }, h('button', { type: 'button', class: 'link', id: 'forgot-lost', text: t('forgot.lost'), on: { click: function () { openRecHelp(true); } } })));
   }
 
   function renderCorrupt() {
@@ -758,17 +849,22 @@
           var first = n.text.trim().split('\n')[0] || t('notes.ph');
           add(grid, h('button', { type: 'button', class: 'note-card nc-' + n.color, 'data-id': n.id, 'aria-label': first.slice(0, 60), on: { click: function () { openNote(n.id); } } },
             n.pinned ? h('span', { class: 'pin-badge', title: t('notes.pinned') }, icon('pin', 14)) : null,
+            deskHas(n.id) ? h('span', { class: 'desk-badge', title: t('desk.on') }, icon('desk', 14)) : null,
             h('span', { class: 'note-text', text: n.text || t('notes.ph') }),
             h('span', { class: 'note-time', text: I.ago(n.updated) })));
         });
       };
       input.addEventListener('input', function () { S.notesQuery = input.value; draw(); });
+      var onDesk = deskIds();
+      if (deskCapable() && onDesk.length) add(main, h('div', { class: 'desk-bar-main card' },
+        h('span', { class: 'hint', text: t('desk.howto') }),
+        h('button', { type: 'button', class: 'btn', id: 'desk-open-all', on: { click: function () { deskReopen(true); } } }, icon('desk', 18), ' ', t('desk.openAll', { n: onDesk.length }))));
       add(main, h('div', { class: 'notes-search' }, input), grid);
       draw();
     } else add(main, empty('🗒️', t('notes.empty'), t('notes.emptyHint')));
     add(main, fab(t('notes.new'), function () {
       var n = { id: B.uid(), text: '', color: 'yellow', pinned: false, created: Date.now(), updated: Date.now() };
-      S.notes.notes.push(n);
+      S.notes.notes.push(n); noteLocal[n.id] = 1;
       openNote(n.id, true);
     }, 'new-note'));
   }
@@ -780,7 +876,7 @@
       var ta = h('textarea', { class: 'input note-edit nc-' + n.color, id: 'note-text', rows: 10, placeholder: t('notes.ph'), 'aria-label': t('notes.title'), 'data-autofocus': '1', value: n.text });
       function persist() {
         noteFlush = null;
-        if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); }
+        if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
         saveNotes();
       }
       ta.addEventListener('input', function () {
@@ -793,13 +889,13 @@
         colors.textContent = '';
         NOTE_COLORS.forEach(function (c) {
           add(colors, h('button', { type: 'button', role: 'radio', class: 'swatch nc-' + c, 'aria-checked': n.color === c ? 'true' : 'false', 'aria-label': t('color.' + c), title: t('color.' + c), 'data-color': c,
-            on: { click: function () { n.color = c; n.updated = Date.now(); ta.className = 'input note-edit nc-' + c; drawColors(); saveNotes(); } } }));
+            on: { click: function () { n.color = c; n.updated = Date.now(); markNote(n); ta.className = 'input note-edit nc-' + c; drawColors(); saveNotes(); } } }));
         });
       }
       drawColors();
       var pin = h('button', { type: 'button', class: 'btn', id: 'note-pin', 'aria-pressed': n.pinned ? 'true' : 'false' }, icon('pin', 18), ' ', n.pinned ? t('notes.unpin') : t('notes.pin'));
       pin.addEventListener('click', function () {
-        n.pinned = !n.pinned; saveNotes();
+        n.pinned = !n.pinned; markNote(n); saveNotes();
         pin.setAttribute('aria-pressed', n.pinned ? 'true' : 'false');
         pin.lastChild.textContent = n.pinned ? t('notes.unpin') : t('notes.pin');
       });
@@ -807,20 +903,202 @@
       del.addEventListener('click', function () {
         deleted = true; noteFlush = null; clearTimeout(noteTimer);
         var idx = S.notes.notes.indexOf(n); var copy = S.notes.notes.splice(idx, 1)[0];
-        copy.text = ta.value;
+        copy.text = ta.value; goneNote(copy); deskForget(copy.id);
         saveNotes(); close(); render();
-        toast(t('notes.deleted'), { label: t('btn.undo'), fn: function () { S.notes.notes.push(copy); saveNotes(); render(); } });
+        toast(t('notes.deleted'), { label: t('btn.undo'), fn: function () { S.notes.notes.push(copy); markNote(copy); saveNotes(); render(); } });
       });
-      add(body, ta, h('div', { class: 'note-tools' }, colors), h('div', { class: 'row' }, pin, del));
+      add(body, ta, h('div', { class: 'note-tools' }, colors), h('div', { class: 'row' }, pin, del),
+        deskCapable() ? h('div', { class: 'row desk-actions' },
+          h('button', { type: 'button', class: 'btn', id: 'note-desk', on: { click: function () {
+            flushNote(); if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
+            if (!n.text.trim()) { ta.focus(); return; }
+            saveNotes().then(function () { if (deskOpen(n.id)) close(); });
+          } } }, icon('desk', 18), ' ', t('desk.open')),
+          pipCapable() ? h('button', { type: 'button', class: 'btn', id: 'note-pip', on: { click: function () {
+            flushNote(); if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); saveNotes(); }
+            pinOnTop(n.id); close();
+          } } }, icon('pin', 18), ' ', t('desk.pin')) : null) : null);
       m.onClose = function () {
         if (deleted) return;
         flushNote();
-        if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); }
-        if (!n.text.trim()) { S.notes.notes = S.notes.notes.filter(function (x) { return x !== n; }); }
+        if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
+        if (!n.text.trim() && !deskHas(n.id)) { S.notes.notes = S.notes.notes.filter(function (x) { return x !== n; }); goneNote(n); }
         saveNotes(); render();
       };
     }, { wide: true });
   }
+
+  // ----- Desktop notes: each note in its own small window, and one note kept on top of other windows -----
+  // Only on a computer (mouse + keyboard). The open session never goes over the broadcast channel: it is handed by
+  // postMessage only to windows this page opened itself, or back to the app window that opened this one.
+  function deskCapable() {
+    try { return !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && matchMedia('(hover: hover) and (pointer: fine)').matches; } catch (e) { return false; }
+  }
+  function pipCapable() { return deskCapable() && 'documentPictureInPicture' in window; }
+  function deskMap() { try { var m = JSON.parse(lsGet(DESK_KEY)); return m && typeof m === 'object' && !Array.isArray(m) ? m : {}; } catch (e) { return {}; } }
+  function deskSet(m) { lsSet(DESK_KEY, Object.keys(m).length ? JSON.stringify(m) : null); }
+  function deskIds() {           // notes placed on the desktop that still exist
+    var m = deskMap();
+    return Object.keys(m).filter(function (id) { return S.notes && S.notes.notes.some(function (n) { return n.id === id; }); });
+  }
+  function deskHas(id) { return Object.prototype.hasOwnProperty.call(deskMap(), id); }
+  function deskForget(id) { var m = deskMap(); if (m[id]) { delete m[id]; deskSet(m); } }
+
+  var kids = [];                 // windows this page opened (desktop notes)
+  var deskHere = {};             // note ids whose window answered "I'm open"
+  function liveKids() { kids = kids.filter(function (w) { try { return w && !w.closed; } catch (e) { return false; } }); return kids; }
+  function sendKey(w) {
+    var s = C.shareSession(); if (!s || !w) return;
+    try { w.postMessage({ type: 'ppm-key', key: s.key, metaId: s.metaId }, location.origin); } catch (e) {}
+  }
+  function openerIsApp() {       // only ever hand the session back to this app's own page
+    try { return !!(window.opener && !window.opener.closed && window.opener.location.origin === location.origin && /^\/vault(\.html)?$/.test(window.opener.location.pathname)); } catch (e) { return false; }
+  }
+  window.addEventListener('message', function (e) {
+    if (e.origin !== location.origin || !e.data || typeof e.data !== 'object') return;
+    var d = e.data, fromKid = kids.indexOf(e.source) >= 0, fromOpener = !!e.source && e.source === window.opener && openerIsApp();
+    if (d.type === 'ppm-hello') { if (fromKid && S.phase === 'app') sendKey(e.source); return; }
+    if (d.type === 'ppm-key' && (fromKid || fromOpener) && (S.phase === 'locked' || S.phase === 'forgot')) {
+      C.adoptSession(d.key, d.metaId).then(function () { clearFails(); return loadAll(); })
+        .then(function () { S.phase = 'app'; touch(); render(); afterUnlock(true); }).catch(function () {});
+    }
+  });
+  function afterUnlock(adopted) {
+    liveKids().forEach(sendKey);
+    if (DESK) { if (!adopted && openerIsApp()) sendKey(window.opener); return; }
+    if (!adopted && deskCapable() && deskIds().length) setTimeout(function () { deskReopen(false); }, 0);
+  }
+  function deskHello() {         // a locked note window asks the app window that opened it for the open session
+    if (!DESK || !openerIsApp()) return;
+    try { window.opener.postMessage({ type: 'ppm-hello' }, location.origin); } catch (e) {}
+  }
+
+  function deskFeatures(g) {
+    return 'popup=yes,width=' + Math.round(g[2]) + ',height=' + Math.round(g[3]) + ',left=' + Math.round(g[0]) + ',top=' + Math.round(g[1]);
+  }
+  function deskDefaultGeo() {
+    var n = Object.keys(deskMap()).length % 8, sw = (screen.availWidth || 1280), sl = (screen.availLeft || 0), st = (screen.availTop || 0);
+    return [sl + sw - 340 - n * 28, st + 60 + n * 28, 300, 300];
+  }
+  // Opens one note window. Returns false when the browser blocked the window.
+  function deskOpen(id, geo) {
+    var m = deskMap(); var g = geo || m[id] || deskDefaultGeo();
+    var w = null;
+    try { w = window.open('/vault?w=note&id=' + encodeURIComponent(id), 'ppm-note-' + id, deskFeatures(g)); } catch (e) { w = null; }
+    if (!w) { toast(t('desk.blocked', { btn: t('desk.openAll', { n: deskIds().length || 1 }) })); return false; }
+    if (kids.indexOf(w) < 0) kids.push(w);
+    if (!m[id]) { m[id] = g; deskSet(m); }
+    if (S.tab === 'notes' && !modalOpen()) render();
+    if (S.settings && S.settings.autoLock) toast(t('desk.never'));
+    return true;
+  }
+  // Opens every desktop note that isn't open yet. Windows already open (from an earlier visit) answer the ping and are left alone.
+  function deskReopen(byHand) {
+    deskHere = {};
+    C.notify({ type: 'desk-ping' });
+    setTimeout(function () {
+      var ids = deskIds().filter(function (id) { return !deskHere[id]; });
+      for (var i = 0; i < ids.length; i++) if (!deskOpen(ids[i])) break;
+      if (byHand && !ids.length) toast(t('desk.howto'));
+    }, 250);
+  }
+
+  // ----- inside a note window -----
+  var deskTa = null, deskTimer = null, deskPending = null, deskGeo = null, pipWin = null, pipId = null, pipTa = null;
+  function deskNote() { return S.notes && S.notes.notes.find(function (x) { return x.id === DESK; }); }
+  function deskFlush() { if (deskPending) { var f = deskPending; deskPending = null; clearTimeout(deskTimer); f(); } }
+  function deskSaveGeo() {
+    if (!DESK || S.phase !== 'app') return;
+    var g = [window.screenX, window.screenY, window.innerWidth, window.innerHeight];
+    if (deskGeo && g.join() === deskGeo.join()) return;
+    deskGeo = g; var m = deskMap(); m[DESK] = g; deskSet(m);
+  }
+  if (DESK) setInterval(deskSaveGeo, 2000);
+  function noteEditor(n, ta, onChange) {   // typing → saved half a second later (shared by note windows and the on-top window)
+    ta.addEventListener('input', function () {
+      clearTimeout(deskTimer);
+      deskPending = function () { if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); saveNotes(); } if (onChange) onChange(); };
+      deskTimer = setTimeout(deskFlush, 500);
+    });
+  }
+  function renderDesk() {
+    app.textContent = '';
+    var n = deskNote();
+    document.documentElement.className = 'desk-mode';
+    if (!n) {
+      document.title = t('desk.gone');
+      add(app, h('div', { class: 'desk-gone' }, h('p', { text: t('desk.gone') }),
+        h('button', { type: 'button', class: 'btn', on: { click: function () { deskForget(DESK); window.close(); } } }, t('btn.close'))));
+      return;
+    }
+    document.documentElement.classList.add('nc-' + n.color);
+    function setTitle() { document.title = (n.text.trim().split('\n')[0] || t('notes.ph')).slice(0, 60); }
+    setTitle();
+    if (pipId === n.id && pipWin) {
+      add(app, h('div', { class: 'desk-gone' }, h('p', { text: t('desk.pinned') }),
+        h('button', { type: 'button', class: 'btn', id: 'desk-unpin', on: { click: function () { pipClose(); render(); } } }, t('desk.unpin'))));
+      return;
+    }
+    deskTa = h('textarea', { class: 'desk-text', id: 'desk-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text });
+    noteEditor(n, deskTa, setTitle);
+    var dots = h('div', { class: 'desk-dots', role: 'radiogroup', 'aria-label': t('notes.color') });
+    NOTE_COLORS.forEach(function (c) {
+      add(dots, h('button', { type: 'button', role: 'radio', class: 'desk-dot nc-' + c, 'aria-checked': n.color === c ? 'true' : 'false', 'aria-label': t('color.' + c), title: t('color.' + c), 'data-color': c,
+        on: { click: function () { deskFlush(); n.color = c; n.updated = Date.now(); markNote(n); saveNotes(); render(); } } }));
+    });
+    var bar = h('div', { class: 'desk-bar' }, dots,
+      h('span', { class: 'desk-sp' }),
+      h('button', { type: 'button', class: 'icon-btn sm', id: 'desk-new', title: t('desk.new'), 'aria-label': t('desk.new'), on: { click: function () {
+        var nn = { id: B.uid(), text: '', color: n.color, pinned: false, created: Date.now(), updated: Date.now() };
+        S.notes.notes.push(nn); markNote(nn);
+        saveNotes().then(function () { deskOpen(nn.id, [window.screenX + 30, window.screenY + 30, window.innerWidth, window.innerHeight]); });
+      } } }, icon('plus', 18)),
+      pipCapable() ? h('button', { type: 'button', class: 'icon-btn sm', id: 'desk-pip', title: t('desk.pin'), 'aria-label': t('desk.pin'), on: { click: function () { deskFlush(); pinOnTop(n.id); } } }, icon('pin', 18)) : null,
+      h('button', { type: 'button', class: 'icon-btn sm', id: 'desk-back', title: t('desk.back'), 'aria-label': t('desk.back'), on: { click: function () {
+        deskFlush(); deskForget(n.id);
+        if (!n.text.trim()) { S.notes.notes = S.notes.notes.filter(function (x) { return x !== n; }); goneNote(n); }
+        saveNotes().then(function () { window.close(); });
+      } } }, icon('list', 18)),
+      h('button', { type: 'button', class: 'icon-btn sm', id: 'desk-lock', title: t('desk.lock'), 'aria-label': t('desk.lock'), on: { click: function () { lockNow(false); } } }, icon('lock', 18)));
+    add(app, h('div', { class: 'desk' }, bar, deskTa));
+    if (!n.text) deskTa.focus();
+  }
+  function deskRefresh() {         // another window changed the notes
+    if (!DESK || S.phase !== 'app') return;
+    var n = deskNote();
+    if (!n || !deskTa || !document.contains(deskTa) || !document.documentElement.classList.contains('nc-' + n.color)) { deskFlush(); render(); return; }
+    if (!deskPending && deskTa.value !== n.text) deskTa.value = n.text;
+    pipRefresh();
+  }
+
+  // ----- keep one note on top of every other window (Document Picture-in-Picture: Chrome and Edge on a computer) -----
+  function pinOnTop(id) {
+    var n = S.notes && S.notes.notes.find(function (x) { return x.id === id; });
+    if (!n || !pipCapable()) return;
+    pipClose();
+    window.documentPictureInPicture.requestWindow({ width: 300, height: 280 }).then(function (pw) {
+      pipWin = pw; pipId = id;
+      var d = pw.document;
+      var css = d.createElement('link'); css.rel = 'stylesheet'; css.href = location.origin + '/vault.css'; d.head.appendChild(css);
+      d.documentElement.lang = I.get();
+      var th = document.documentElement.getAttribute('data-theme'); if (th) d.documentElement.setAttribute('data-theme', th);
+      d.documentElement.className = 'desk-mode nc-' + n.color;
+      d.title = (n.text.trim().split('\n')[0] || t('notes.ph')).slice(0, 60);
+      pipTa = h('textarea', { class: 'desk-text', id: 'pip-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text });
+      noteEditor(n, pipTa);
+      d.body.appendChild(h('div', { class: 'desk' }, pipTa));
+      pw.addEventListener('pagehide', function () { deskFlush(); if (pipWin === pw) { pipWin = null; pipId = null; pipTa = null; if (DESK && S.phase === 'app') render(); } });
+      if (DESK) render(); else toast(t('desk.pinned'));
+    }).catch(function () {});
+  }
+  function pipRefresh() {
+    if (!pipWin || !pipTa) return;
+    var n = S.notes && S.notes.notes.find(function (x) { return x.id === pipId; });
+    if (!n) { pipClose(); return; }
+    if (!deskPending && pipTa.value !== n.text) pipTa.value = n.text;
+    pipWin.document.documentElement.className = 'desk-mode nc-' + n.color;
+  }
+  function pipClose() { if (pipWin) { deskFlush(); try { pipWin.close(); } catch (e) {} pipWin = null; pipId = null; pipTa = null; } }
 
   // ----- Diary tab -----
   var MOODS = ['😞', '😕', '😐', '🙂', '😄'];
@@ -856,7 +1134,7 @@
   }
   function cleanupPhotos() {                 // pictures no entry points at any more (deleted entries, removed photos)
     var used = {};
-    S.diary.entries.forEach(function (e) { e.photos.forEach(function (p) { used[p] = true; }); });
+    S.diary.entries.forEach(function (e) { DY.blobsOf(e).forEach(function (p) { used[p] = true; }); });
     return C.blobIds().then(function (ids) { return Promise.all(ids.filter(function (id) { return !used[id]; }).map(function (id) { return C.deleteBlob(id); })); }).catch(function () {});
   }
   function saveDiary() { return save('diary', function () { return S.diary; }); }
@@ -911,12 +1189,12 @@
   }
   function firstLine(e) { var s = e.text.trim().split('\n')[0]; return s || (e.photos.length ? '📷' : ''); }
   function entryRow(e) {
-    return h('li', {}, h('button', { type: 'button', class: 'tx-row entry-row', 'data-id': e.id, on: { click: function () { openEntry(e.id); } } },
+    return h('li', {}, h('button', { type: 'button', class: 'tx-row entry-row' + (e.deco && e.deco.tint !== 'none' ? ' tint-' + e.deco.tint : ''), 'data-id': e.id, on: { click: function () { openEntry(e.id); } } },
       h('span', { class: 'emoji', 'aria-hidden': 'true', text: moodEmoji(e.mood) || '📔' }),
       h('span', { class: 'tx-main' },
-        h('span', { class: 'entry-text', text: e.text.trim().slice(0, 140) || (e.photos.length ? '📷' : '') }),
+        h('span', { class: 'entry-text', text: e.text.trim().slice(0, 140) || DY.tplText(e, ' · ').slice(0, 140) || (e.photos.length ? '📷' : '') }),
         e.tags.length ? h('span', { class: 'entry-tags', text: e.tags.map(function (x) { return '#' + x; }).join(' ') }) : null),
-      h('span', { class: 'entry-meta' }, e.time ? h('span', { text: e.time }) : null, e.photos.length ? h('span', { text: '📷 ' + e.photos.length }) : null)));
+      h('span', { class: 'entry-meta' }, DC.preview(e, h), e.time ? h('span', { text: e.time }) : null, e.photos.length ? h('span', { text: '📷 ' + e.photos.length }) : null)));
   }
   function calendar(ym) {
     var first = new Date(Date.UTC(+ym.slice(0, 4), +ym.slice(5, 7) - 1, 1)).getUTCDay(), n = B.daysInMonth(ym), moods = DY.moodByDay(S.diary, ym);
@@ -968,7 +1246,7 @@
     var e = DY.addEntry(S.diary, { date: date, time: date === today() ? nowTime() : '', text: '' });
     openEntry(e.id, { isNew: true, prompt: prompt });
   }
-  var entryTimer = null, entryFlush = null;
+  var entryTimer = null, entryFlush = null, openDeco = null;
   function flushEntry() { if (entryFlush) { var f = entryFlush; entryFlush = null; clearTimeout(entryTimer); f(); } }
   function openEntry(id, opts) {
     opts = opts || {};
@@ -990,7 +1268,15 @@
         });
       }
       drawMoods();
-      var ta = h('textarea', { class: 'input entry-edit', id: 'entry-text', rows: 10, placeholder: opts.prompt || t('diary.ph'), 'aria-label': t('diary.title'), 'data-autofocus': '1', value: e.text });
+      var ta = h('textarea', { class: 'entry-edit', id: 'entry-text', rows: 6, placeholder: opts.prompt || t('diary.ph'), 'aria-label': t('diary.title'), 'data-autofocus': '1', value: e.text });
+      var page = h('div', { class: 'page', id: 'entry-page' }, ta);
+      function growText() { ta.style.height = 'auto'; ta.style.height = Math.max(ta.scrollHeight + 2, 168) + 'px'; }
+      ta.addEventListener('input', growText); setTimeout(growText, 0);
+      var dmsg = msgEl();
+      var deco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: e, page: page, ta: ta,
+        commit: function (d) { if (!S.diary) return; DY.updateEntry(S.diary, e.id, { deco: d }); saveDiary(); },
+        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function (msg, err) { setMsg(dmsg, msg, !err); } });
+      openDeco = deco;
       var tagLine = h('p', { class: 'hint entry-tagline', id: 'entry-tags' });
       function drawTags() { var tg = DY.tagsOf(ta.value); tagLine.textContent = tg.length ? tg.map(function (x) { return '#' + x; }).join(' ') : t('diary.tagsTip'); }
       function persist() { entryFlush = null; if (e.text !== ta.value) DY.updateEntry(S.diary, e.id, { text: ta.value }); saveDiary(); }
@@ -1035,13 +1321,17 @@
         toast(t('diary.deleted'), { label: t('btn.undo'), fn: function () { S.diary.entries.push(removed); saveDiary(); render(); } });
       });
       add(body, h('div', { class: 'two' }, field(t('add.date'), date), field(t('diary.time'), time)),
-        h('p', { class: 'field-label', text: t('diary.mood') }), moods, ta, tagLine, photos, file, pmsg, h('div', { class: 'row end' }, del));
+        h('p', { class: 'field-label', text: t('diary.mood') }), moods, deco.bar, deco.panel, dmsg, page, tagLine, photos, file, pmsg, h('div', { class: 'row end' }, del));
       m.onClose = function () {
+        if (openDeco === deco) openDeco = null;
         if (deleted) return;
         flushEntry();
-        if (e.text !== ta.value) DY.updateEntry(S.diary, e.id, { text: ta.value });
-        if (!e.text.trim() && !e.photos.length && !e.mood) S.diary.entries = S.diary.entries.filter(function (x) { return x !== e; });
-        saveDiary(); render();
+        if (S.diary && e.text !== ta.value) DY.updateEntry(S.diary, e.id, { text: ta.value });
+        deco.flush().then(function () {
+          if (!S.diary) return;
+          if (!DY.hasContent(e)) S.diary.entries = S.diary.entries.filter(function (x) { return x !== e; });
+          saveDiary(); if (!modalOpen()) render();
+        });
       };
     }, { wide: true });
   }
@@ -1081,9 +1371,10 @@
     theme.value = lsGet(THEME_KEY) || 'auto';
     theme.addEventListener('change', function () { lsSet(THEME_KEY, theme.value === 'auto' ? null : theme.value); applyTheme(); });
     var lock = h('select', { class: 'input', id: 'set-autolock' });
-    [1, 5, 15, 60].forEach(function (m) { add(lock, h('option', { value: m, text: t('min.' + m) })); });
+    [1, 5, 15, 60, 0].forEach(function (m) { add(lock, h('option', { value: m, text: t('min.' + m) })); });
     lock.value = String(S.settings.autoLock);
-    lock.addEventListener('change', function () { S.settings.autoLock = +lock.value; saveSettings(); });
+    var lockWarn = h('p', { class: 'msg', id: 'lock-never-warn', text: t('set.lockNeverWarn'), hidden: !!S.settings.autoLock });
+    lock.addEventListener('change', function () { S.settings.autoLock = +lock.value; lockWarn.hidden = !!S.settings.autoLock; saveSettings(); });
     var lang = langSelect(render); lang.id = 'set-lang';
     var storage = h('span', { class: 'set-value', id: 'storage-state', text: '…' });
     C.persisted().then(function (p) { storage.textContent = p ? t('set.storageOn') : t('set.storageOff'); });
@@ -1096,9 +1387,10 @@
         row(t('set.categories'), null, openCategories, 'set-categories'),
         row(t('set.recurring'), String(S.budget.recurring.length), openRecurring, 'set-recurring')]),
       group(t('set.security'), [
-        ctrlRow(t('set.autolock'), lock),
+        h('li', { class: 'set-ctrl' }, h('label', { for: 'set-autolock', text: t('set.autolock') }), lock, lockWarn),
         row(t('set.changePass'), null, openChangePass, 'set-pass'),
         row(t('set.newCode'), null, openNewCode, 'set-code'),
+        row(t('set.recHelp'), null, function () { openRecHelp(false); }, 'set-rechelp'),
         h('li', { class: 'set-ctrl' }, h('button', { type: 'button', class: 'set-row', on: { click: function () { C.persist().then(function (p) { storage.textContent = p ? t('set.storageOn') : t('set.storageOff'); }); } } },
           h('span', { class: 'set-label', text: t('set.storage') }), storage))]),
       group(t('set.diary'), [row(t('diary.exportTitle'), String(S.diary.entries.length), openDiaryExport, 'set-diary-export')]),
@@ -1360,7 +1652,7 @@
       go.addEventListener('click', function () {
         go.disabled = true;
         C.wipe().then(function () {
-          clearFails(); closeAllModals(); S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls(); S.phase = 'welcome'; render(); toast(t('erase.done'));
+          clearFails(); lsSet(DESK_KEY, null); closeAllModals(); S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls(); S.phase = 'welcome'; render(); toast(t('erase.done'));
         }).catch(function (e) { go.disabled = false; toast(errText(e)); });
       });
       add(body, h('p', { class: 'msg', text: t('erase.body') }), field(t('erase.type', { word: word }), inp), go);
@@ -1381,9 +1673,31 @@
   }
   function openAbout() {
     sheet(t('about.title'), function (body) {
-      add(body, ['about.p1', 'about.p2', 'about.p3', 'about.p4', 'about.p5'].map(function (k) { return h('p', { text: t(k) }); }),
+      add(body, ['about.p1', 'about.p2', 'about.p3', 'about.p4', 'about.p5', 'deco.legal'].map(function (k) { return h('p', { text: t(k) }); }),
         h('p', { class: 'msg', text: t('about.legal') }),
         h('p', {}, h('a', { href: '/how-it-works', target: '_blank', rel: 'noopener', text: t('about.how') })));
+    });
+  }
+  // How recovery works — reachable while locked (from "Forgot your passcode?") and from Settings.
+  function openRecHelp(locked) {
+    var names = { forgot: t('lock.forgot'), unlock: t('lock.unlock'), erase: t('lock.erase') };
+    sheet(t('help.title'), function (body, close) {
+      add(body, h('div', { id: 'rec-help' },
+        h('h3', { text: t('help.h1') }),
+        ['help.s1', 'help.s2', 'help.s3'].map(function (k) { return h('p', { text: t(k, names) }); }),
+        h('h3', { text: t('help.h2') }),
+        ['help.b1', 'help.b2', 'help.b3'].map(function (k) { return h('p', { text: t(k, names) }); }),
+        h('h3', { text: t('help.h3') }),
+        h('p', { class: 'msg', id: 'rec-help-resp', text: t('help.r') }),
+        h('p', { class: 'fine', text: t('help.tip') }),
+        h('p', {}, h('a', { href: '/terms#budget-notes', target: '_blank', rel: 'noopener', text: t('setup.terms') }), ' · ',
+          h('a', { href: '/manual-vault#recovery', target: '_blank', rel: 'noopener', text: t('set.manual') }))),
+        locked ? h('div', { class: 'row end' },
+          h('button', { type: 'button', class: 'btn', id: 'rec-help-restore', text: t('lock.restore'), on: { click: function () { close(); openRestore(); } } }),
+          h('button', { type: 'button', class: 'btn danger', id: 'rec-help-erase', text: t('lock.erase'), on: { click: function () { close(); openErase(); } } }))
+          : h('div', { class: 'row end' },
+            h('button', { type: 'button', class: 'btn', text: t('set.newCode'), on: { click: function () { close(); openNewCode(); } } }),
+            h('button', { type: 'button', class: 'btn primary', text: t('set.backup'), on: { click: function () { close(); openBackup(); } } })));
     });
   }
   function openTour() {
@@ -1414,19 +1728,21 @@
     if (p === 'loading') { app.textContent = ''; add(app, h('div', { class: 'screen center' }, h('p', { class: 'hint', text: '…' }))); }
     else if (p === 'nocrypto') renderUnsupported('err.crypto');
     else if (p === 'nostorage') renderUnsupported('err.storage');
+    else if (p === 'welcome' && DESK) { var w = screen('center desk-lock'); add(w, h('p', {}, h('a', { href: '/vault', target: '_blank', rel: 'noopener', text: t('desk.openApp') }))); }
     else if (p === 'welcome') renderWelcome();
     else if (p === 'create') renderCreate();
     else if (p === 'recovery') renderRecovery();
     else if (p === 'locked') renderLocked();
     else if (p === 'forgot') renderForgot();
     else if (p === 'corrupt') renderCorrupt();
+    else if (DESK) renderDesk();
     else renderApp();
   }
 
   // ---------- start ----------
   window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); S.installEvt = e; });
   window.addEventListener('appinstalled', function () { S.installEvt = null; });
-  window.addEventListener('pagehide', function () { flushNote(); flushEntry(); });
+  window.addEventListener('pagehide', function () { flushNote(); flushEntry(); deskFlush(); deskSaveGeo(); });
 
   var qlang = (location.search.match(/[?&]lang=(ko|ja|en)\b/) || [])[1];   // the Korean / Japanese introduction pages open the app in their language
   I.set(qlang ? I.set(qlang, true) : I.detect());
@@ -1434,6 +1750,7 @@
     try { history.replaceState(null, '', location.pathname + location.search.replace(/([?&])lang=(ko|ja|en)(&|$)/, function (m, a, l, b) { return b ? a : ''; }) + location.hash); } catch (e) {}
   }
   applyTheme();
+  if (DESK) document.documentElement.classList.add('desk-mode');
   if (!window.crypto || !window.crypto.subtle || !window.TextEncoder) { S.phase = 'nocrypto'; render(); return; }
   if (!window.indexedDB) { S.phase = 'nostorage'; render(); return; }
   render();
@@ -1453,7 +1770,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-app.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-app.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
         .forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }

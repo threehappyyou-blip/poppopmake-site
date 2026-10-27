@@ -260,12 +260,12 @@
 
   T('sticky-notes', 'Sticky Notes', 'Everyday', '/sticky-notes',
     'Colored sticky notes for lists, ideas and reminders — pin, search, saved as you type, encrypted on your device.',
-    ['sticky notes', 'sticky note app', 'online sticky notes', 'post it notes', 'post-it notes', 'notepad', 'online notepad', 'notes app', 'take notes', 'note taking', 'quick notes', 'write a note', 'shopping list', 'grocery list', 'private notes', 'secret notes', 'locked notes', 'notes with a password', 'memo pad', 'jot something down'],
+    ['sticky notes', 'sticky note app', 'online sticky notes', 'post it notes', 'post-it notes', 'notepad', 'online notepad', 'notes app', 'take notes', 'note taking', 'quick notes', 'write a note', 'shopping list', 'grocery list', 'private notes', 'secret notes', 'locked notes', 'notes with a password', 'memo pad', 'jot something down', 'desktop sticky notes', 'sticky notes on my desktop', 'sticky notes for windows', 'always on top notes', 'notes that stay on top'],
     ['notes', 'note', 'sticky', 'notepad', 'memo', 'memos', 'postit']);
 
   T('private-diary', 'Private Diary', 'Everyday', '/private-diary',
     'A diary only you can open: moods, photos, #tags, a mood calendar and “on this day” — encrypted on your device, no sign-up.',
-    ['diary', 'diary app', 'online diary', 'private diary', 'secret diary', 'diary with a lock', 'journal', 'journal app', 'private journal', 'daily journal', 'gratitude journal', 'mood journal', 'mood tracker', 'photo diary', 'write about my day', 'dear diary', 'journaling', 'on this day', 'diary with password'],
+    ['diary', 'diary app', 'online diary', 'private diary', 'secret diary', 'diary with a lock', 'journal', 'journal app', 'private journal', 'daily journal', 'gratitude journal', 'mood journal', 'mood tracker', 'photo diary', 'write about my day', 'dear diary', 'journaling', 'on this day', 'diary with password', 'diary stickers', 'decorate my diary', 'diary decorating', 'bullet journal'],
     ['diary', 'diaries', 'journal', 'journaling', 'mood', 'gratitude', 'dear']);
 
   T('unit-convert', 'Unit Converter', 'Everyday', '/everyday-tools#unit',

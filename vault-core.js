@@ -263,6 +263,31 @@
 
     lock: function () { session = null; emit({ type: 'locked' }); return Promise.resolve(); },
 
+    // Hand the open session to a window this page opened itself (desktop note windows). The key stays
+    // non-extractable; it only travels by postMessage between this app's own windows, never over the broadcast channel.
+    shareSession: function () { return session ? { key: session.key, metaId: session.meta.id } : null; },
+    // Accept a session from one of this app's own windows — only after proving the key opens a record already on this device,
+    // so a wrong key can never be used to write data that would no longer open.
+    adoptSession: function (key, metaId) {
+      return readMeta().then(function (meta) {
+        if (!meta || typeof metaId !== 'string' || metaId !== meta.id) throw fail('bad-passcode', 'Not this vault.');
+        if (!key || typeof key !== 'object' || key.type !== 'secret') throw fail('bad-passcode', 'Not a key.');
+        return tx(['docs'], 'readonly', function (t) { return req(t.objectStore('docs').get('settings')); }).then(function (rec) {
+          if (!rec) throw fail('bad-passcode', 'Nothing to check the key against.');
+          return open(key, rec, aadFor(meta, 'doc|settings')).catch(function () { throw fail('bad-passcode', 'The key does not open this vault.'); });
+        }).then(function () { session = { key: key, meta: meta }; return true; });
+      });
+    },
+    // Read, change and write one record while other windows of this app wait their turn (Web Locks), so two windows
+    // editing different notes at the same moment never undo each other's changes. fn gets the stored value, returns the new one.
+    update: function (module, fn) {
+      var run = function () { return Vault.load(module).then(function (cur) { var next = fn(cur); return Vault.save(module, next).then(function () { return next; }); }); };
+      try { if (navigator.locks && navigator.locks.request) return navigator.locks.request('ppm-vault-' + module, run); } catch (e) {}
+      return run();
+    },
+    // A message for this app's other windows (for example "lock everything now"). Never carries data or keys.
+    notify: function (msg) { emit(msg); },
+
     load: function (module) {
       return Promise.resolve().then(function () {
         needOpen();

@@ -27,6 +27,8 @@
         notes: ['Sticky notes in their own tab', 'Write, pick a color, pin the important ones', 'Search finds any note'],
         diary: ['Write your day with a mood and photos', 'A calendar of your moods', 'Look back: what you wrote on this day'],
         install: ['iPhone: Share → “Add to Home Screen”', 'Android or computer: tap Install', 'It opens like an app — even offline'],
+        desk: ['On a computer: “Put on desktop”', 'Each note in its own small window, anywhere on the screen', 'One note can stay on top of every window'],
+        deco: ['Decorate: paper, colour and handwriting', 'Stickers and washi tape — drag, turn, resize', 'Week page with a habit tracker, hourly page, to-do'],
         lang: ['한국어', '日本語', 'English — and 24 currencies']
       },
       saved: 'Saved', undo: 'Undo', freqHint: 'Your frequent entries — one tap adds them for today', where: 'Where the money went', six: 'Last 6 months',
@@ -38,6 +40,8 @@
       newNote: 'New note', noteText: 'Groceries<br>– milk<br>– eggs', pin: '📌 Pin to top', find: 'milk', found: 'Groceries<br>– <mark>milk</mark><br>– eggs',
       diaryT: 'Diary', newEntry: 'New entry', entry: 'Evening walk by the river. Cool breeze. #walk', streak: '🔥 12-day streak', otd: '📅 On this day', yearAgo: '1 year ago',
       otdText: 'First day in Kyoto #travel', share: '⬆️ Share', menu: ['Copy', '➕ Add to Home Screen', 'Print'], installT: 'Install as an app', installB: 'Install', appName: 'Budget, Notes &amp; Diary',
+      deskB: '🖥 Put on desktop', deskTop: '📌 Keep on top', deskNotes: ['Call Jun<br>at 3pm', 'Wi-Fi<br>cafe-5G', 'Ideas<br>– logo'], deskApp: 'Report.docx',
+      decoBar: ['📄 Page', '🎨 Paper', '✍️ Lettering', '⭐ Stickers', '🖍️ Draw'], decoText: 'Coffee with Mina.<br>Strawberry cake!', habit: 'Water 2L', weekD: ['Mon 26', 'Tue 27'], weekT: ['Dentist 3pm', 'Gym'],
       wd: ['S', 'M', 'T', 'W', 'T', 'F', 'S']
     },
     ko: {
@@ -57,6 +61,8 @@
         notes: ['메모 탭의 포스트잇', '쓰고, 색 고르고, 중요한 건 고정', '검색으로 어떤 메모든 찾기'],
         diary: ['기분·사진과 함께 하루를 기록', '기분 달력', '지난 해 오늘 쓴 일기 돌아보기'],
         install: ['아이폰: 공유 → “홈 화면에 추가”', '안드로이드·컴퓨터: 설치 누르기', '앱처럼 열리고 인터넷 없이도 돼요'],
+        desk: ['컴퓨터에서 “바탕화면에 띄우기”', '메모마다 작은 창으로, 화면 어디에나', '메모 하나는 모든 창 위에 고정'],
+        deco: ['꾸미기: 종이, 색, 손글씨', '스티커·마스킹테이프 — 끌고, 돌리고, 크기 조절', '위클리+습관 체크, 시간표, 할 일 속지'],
         lang: ['한국어', '日本語', 'English — 통화 24종']
       },
       saved: '저장했어요', undo: '되돌리기', freqHint: '자주 쓰는 항목 — 누르면 오늘 날짜로 바로 추가', where: '어디에 썼나', six: '최근 6개월',
@@ -68,6 +74,8 @@
       newNote: '새 메모', noteText: '장보기<br>– 우유<br>– 계란', pin: '📌 맨 위에 고정', find: '우유', found: '장보기<br>– <mark>우유</mark><br>– 계란',
       diaryT: '일기', newEntry: '새 일기', entry: '퇴근길 한강 산책. 바람이 시원했다. #산책', streak: '🔥 12일 연속 작성', otd: '📅 지난 해 오늘', yearAgo: '1년 전',
       otdText: '교토 여행 첫날 #여행', share: '⬆️ 공유', menu: ['복사', '➕ 홈 화면에 추가', '프린트'], installT: '앱으로 설치하기', installB: '설치', appName: '가계부·메모·일기',
+      deskB: '🖥 바탕화면에 띄우기', deskTop: '📌 항상 위에 고정', deskNotes: ['준에게 전화<br>3시', '와이파이<br>cafe-5G', '아이디어<br>– 로고'], deskApp: '보고서.docx',
+      decoBar: ['📄 속지', '🎨 종이', '✍️ 글씨', '⭐ 스티커', '🖍️ 그리기'], decoText: '미나랑 카페.<br>딸기 케이크 최고!', habit: '물 2L', weekD: ['월 26', '화 27'], weekT: ['치과 3시', '운동'],
       wd: ['일', '월', '화', '수', '목', '금', '토']
     },
     ja: {
@@ -87,6 +95,8 @@
         notes: ['メモタブの付せん', '書いて、色を選んで、大事なものは固定', '検索でどのメモも見つかる'],
         diary: ['気分と写真と一緒に一日を記録', '気分カレンダー', '過去の今日に書いた日記を振り返る'],
         install: ['iPhone：共有 →「ホーム画面に追加」', 'Android・パソコン：インストールを押す', 'アプリのように開き、オフラインでも使えます'],
+        desk: ['パソコンで「デスクトップに出す」', 'メモごとに小さなウィンドウで、画面のどこにでも', '1枚はすべてのウィンドウの手前に表示'],
+        deco: ['デコる：紙・色・手書き文字', 'シールとマステ — ドラッグ・回転・サイズ変更', 'ウィークリー＋習慣トラッカー、時間割、やること'],
         lang: ['한국어', '日本語', 'English — 通貨24種類']
       },
       saved: '保存しました', undo: '元に戻す', freqHint: 'よく使う項目 — 押すと今日の日付ですぐ追加', where: '何に使ったか', six: '過去6か月',
@@ -98,6 +108,8 @@
       newNote: '新しいメモ', noteText: '買い物<br>– 牛乳<br>– 卵', pin: '📌 一番上に固定', find: '牛乳', found: '買い物<br>– <mark>牛乳</mark><br>– 卵',
       diaryT: '日記', newEntry: '新しい日記', entry: '帰り道に川沿いを散歩。風が気持ちよかった。#散歩', streak: '🔥 12日連続', otd: '📅 過去の今日', yearAgo: '1年前',
       otdText: '京都旅行の初日 #旅行', share: '⬆️ 共有', menu: ['コピー', '➕ ホーム画面に追加', 'プリント'], installT: 'アプリとしてインストール', installB: 'インストール', appName: '家計簿・メモ・日記',
+      deskB: '🖥 デスクトップに出す', deskTop: '📌 常に手前に表示', deskNotes: ['ジュンに電話<br>15時', 'Wi-Fi<br>cafe-5G', 'アイデア<br>– ロゴ'], deskApp: '報告書.docx',
+      decoBar: ['📄 リフィル', '🎨 紙', '✍️ 文字', '⭐ シール', '🖍️ 描く'], decoText: 'ミナとカフェ。<br>いちごのケーキ！', habit: '水 2L', weekD: ['月 26', '火 27'], weekT: ['歯医者 15時', 'ジム'],
       wd: ['日', '月', '火', '水', '木', '金', '土']
     }
   };
@@ -177,6 +189,16 @@
       [C.diary[0], bar(W.month) + sheet('<b>' + W.newEntry + '</b><div class="dp-moods"><i>😞</i><i>😕</i><i>😐</i><i class="on">🙂</i><i>😄</i></div><div class="dp-noteedit dp-diary">' + W.entry + '<i class="dp-caret"></i></div><div class="dp-photos"><i></i><i class="add">📷</i></div>')],
       [C.diary[1], bar(W.month) + '<div class="dp-card"><b>' + W.streak + '</b></div>' + cal() + tabs('diary')],
       [C.diary[2], bar(W.month) + '<div class="dp-card"><b>' + W.otd + '</b></div>' + row('😄', W.yearAgo, W.otdText, '') + row('🙂', '', W.entry, '') + fab(false) + tabs('diary')]
+    ],
+    desk: [
+      [C.desk[0], bar(W.notesT) + sheet('<div class="dp-noteedit">' + W.deskNotes[0] + '</div><div class="dp-btn hl">' + W.deskB + '</div><div class="dp-btn ghost">' + W.deskTop + '</div>')],
+      [C.desk[1], '<div class="dp-desk"><div class="dp-appwin">' + W.deskApp + '</div><div class="dp-win y" style="left:8%;top:10%">' + W.deskNotes[0] + '</div><div class="dp-win p" style="left:52%;top:16%">' + W.deskNotes[1] + '</div><div class="dp-win g" style="left:30%;top:56%">' + W.deskNotes[2] + '</div><div class="dp-taskbar"></div></div>'],
+      [C.desk[2], '<div class="dp-desk"><div class="dp-appwin front">' + W.deskApp + '</div><div class="dp-win y top" style="left:46%;top:8%">📌 ' + W.deskNotes[0] + '</div><div class="dp-taskbar"></div></div>']
+    ],
+    deco: [
+      [C.deco[0], bar(W.month) + sheet('<div class="dp-decobar">' + W.decoBar.map(function (x, k) { return '<span class="' + (k === 1 ? 'hl' : '') + '">' + x + '</span>'; }).join('') + '</div><div class="dp-page lines pink hand">' + W.decoText + '</div>')],
+      [C.deco[1], bar(W.month) + sheet('<div class="dp-decobar">' + W.decoBar.map(function (x, k) { return '<span class="' + (k === 3 ? 'hl' : '') + '">' + x + '</span>'; }).join('') + '</div><div class="dp-page lines pink hand">' + W.decoText + '<i class="dp-st" style="right:10%;top:12%">🍓</i><i class="dp-st" style="right:30%;top:48%;transform:rotate(-12deg)">☕</i><i class="dp-st sm" style="left:12%;top:60%">✨</i><i class="dp-tape" style="left:22%;top:-4%"></i></div>')],
+      [C.deco[2], bar(W.month) + sheet('<div class="dp-page dots cream"><div class="dp-week"><span><small>' + W.weekD[0] + '</small>' + W.weekT[0] + '</span><span><small>' + W.weekD[1] + '</small>' + W.weekT[1] + '</span></div><div class="dp-habit"><b>' + W.habit + '</b>' + ['on', 'on', 'on', '', 'on', '', ''].map(function (c) { return '<i class="' + c + '"></i>'; }).join('') + '</div></div>')]
     ],
     install: [
       [C.install[0], '<div class="dp-lockscreen"><div class="dp-share">' + W.share + '</div><div class="dp-menu"><span>' + W.menu[0] + '</span><span class="hl">' + W.menu[1] + '</span><span>' + W.menu[2] + '</span></div></div>'],
