@@ -4,11 +4,11 @@
 (function () {
   'use strict';
 
-  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, t = I.t;
+  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, t = I.t;
   var NOTE_FONTS = ['base', 'hand', 'pen'], NOTE_SIZES = ['s', 'm', 'l'];
   var app = document.getElementById('app');
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray'];
-  var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.deco', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv', 'tip.desk'];
+  var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.deco', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv', 'tip.desk', 'tip.goals', 'tip.calc', 'tip.list'];
   var FAIL_KEY = 'ppm-vault-fails', THEME_KEY = 'ppm-vault-theme', DESK_KEY = 'ppm-vault-desk';
   // A desktop note window (/vault?w=note&id=…) shows one note on its own; everything else is the full app.
   var DESK = (location.search.match(/[?&]w=note&id=([A-Za-z0-9_-]{4,40})(?:&|$)/) || [])[1] || null;
@@ -115,7 +115,7 @@
     var list = raw && Array.isArray(raw.notes) ? raw.notes : [];
     return { v: 1, notes: list.filter(function (n) { return n && typeof n.id === 'string' && typeof n.text === 'string'; }).map(function (n) {
       return { id: n.id, text: n.text, color: NOTE_COLORS.indexOf(n.color) >= 0 ? n.color : 'yellow', pinned: !!n.pinned,
-        font: NOTE_FONTS.indexOf(n.font) >= 0 ? n.font : 'base', size: NOTE_SIZES.indexOf(n.size) >= 0 ? n.size : 'm', locked: n.locked === true,
+        font: NOTE_FONTS.indexOf(n.font) >= 0 ? n.font : 'base', size: NOTE_SIZES.indexOf(n.size) >= 0 ? n.size : 'm', locked: n.locked === true, list: n.list === true,
         created: +n.created || Date.now(), updated: +n.updated || Date.now() };
     }) };
   }
@@ -548,9 +548,20 @@
         h('p', {}, h('a', { href: '/vault?start=notes', target: '_blank', rel: 'noopener', text: t('desk.openApp') })));
       deskHello(); tick(); return;
     }
+    var pkSlot = h('div', { class: 'pk-slot' });
+    Promise.all([C.passkeyEnrolled(), pkCheck()]).then(function (r) {
+      if (!r[0] || !r[1] || S.phase !== 'locked' || !document.contains(pkSlot)) return;
+      var b = h('button', { type: 'button', class: 'btn primary block pk-btn', id: 'pk-unlock' }, h('span', { 'aria-hidden': 'true', text: '👆 ' }), t('pk.unlock'));
+      b.addEventListener('click', function () {
+        b.disabled = true; setMsg(msg, '');
+        C.passkeyUnlock().then(function () { clearFails(); return loadAll(); }).then(function () { S.phase = 'app'; touch(); render(); afterUnlock(); })
+          .catch(function (e) { b.disabled = false; setMsg(msg, pkText(e)); });
+      });
+      add(pkSlot, b, h('p', { class: 'hint center', text: t('pk.or') }));
+    });
     add(s, brand(),
       h('div', { class: 'lock-ico', 'aria-hidden': 'true' }, icon('lock', 40)),
-      h('h1', { text: t('lock.title') }), h('p', { class: 'lede', text: t('lock.body') }), form,
+      h('h1', { text: t('lock.title') }), h('p', { class: 'lede', text: t('lock.body') }), pkSlot, form,
       h('div', { class: 'links' },
         h('button', { type: 'button', class: 'link', text: t('lock.forgot'), on: { click: function () { S.phase = 'forgot'; render(); } } }),
         h('button', { type: 'button', class: 'link', text: t('lock.restore'), on: { click: function () { openRestore(); } } }),
@@ -640,14 +651,18 @@
         h('span', { style: 'width:' + pct + '%' })),
         h('p', { class: 'budget-text', id: 'budget-text', text: sum.budget.left >= 0 ? t('budget.left', { amt: money(sum.budget.left), total: money(sum.budget.total) }) : t('budget.over', { amt: money(-sum.budget.left) }) }));
     } else add(card, h('button', { type: 'button', class: 'link', text: t('budget.set'), on: { click: openMonthlyBudget } }));
+    if (ym === thisMonth()) add(card, allowanceLine());
+    add(card, goalsChip());
     if (sum.otherCurrency) add(card, h('p', { class: 'hint', text: t('budget.other', { n: sum.otherCurrency }) }));
     add(main, card, notice());
 
     add(main, h('div', { class: 'seg', role: 'tablist' },
       h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'list' ? 'true' : 'false', class: S.budgetView === 'list' ? 'on' : '', id: 'view-list', text: t('view.list'), on: { click: function () { S.budgetView = 'list'; render(); } } }),
-      h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'charts' ? 'true' : 'false', class: S.budgetView === 'charts' ? 'on' : '', id: 'view-charts', text: t('view.charts'), on: { click: function () { S.budgetView = 'charts'; render(); } } })));
+      h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'charts' ? 'true' : 'false', class: S.budgetView === 'charts' ? 'on' : '', id: 'view-charts', text: t('view.charts'), on: { click: function () { S.budgetView = 'charts'; render(); } } }),
+      h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'goals' ? 'true' : 'false', class: S.budgetView === 'goals' ? 'on' : '', id: 'view-goals', text: t('view.goals'), on: { click: function () { S.budgetView = 'goals'; render(); } } })));
 
     if (S.budgetView === 'charts') add(main, charts(sum));
+    else if (S.budgetView === 'goals') renderGoals(main);
     else {
       var days = B.days(S.budget, ym);
       if (!days.length) add(main, empty('🧾', t('empty.month'), t('empty.monthHint')));
@@ -761,9 +776,8 @@
     var cur = existing ? existing.cur : S.budget.currency;
     var defDate = existing ? existing.date : (S.ym === thisMonth() ? today() : S.ym + '-' + pad(Math.min(new Date().getDate(), B.daysInMonth(S.ym))));
     sheet(editing ? t('edit.title') : t('add.title'), function (body, close) {
-      var amount = h('input', { class: 'input amount', id: 'amount', inputmode: 'decimal', autocomplete: 'off', placeholder: '0', 'data-autofocus': '1',
-        value: existing ? B.majorString(existing.amt, existing.cur) : '' });
-      var preview = h('p', { class: 'amount-preview', 'aria-live': 'polite' });
+      var abox = amountBox(cur, existing ? B.majorString(existing.amt, existing.cur) : '', 'amount', t('add.amount'));
+      var amount = abox.input, preview = abox.preview; amount.setAttribute('data-autofocus', '1');
       var note = h('input', { class: 'input', id: 'note', maxlength: 300, autocomplete: 'off', value: existing ? existing.note : '' });
       var date = h('input', { class: 'input', id: 'date', type: 'date', value: defDate });
       var repeat = h('input', { type: 'checkbox', id: 'repeat' });
@@ -771,8 +785,8 @@
       var typeSeg = h('div', { class: 'seg', role: 'radiogroup', 'aria-label': t('add.category') });
       var grid = h('div', { class: 'cat-grid', id: 'cat-grid' });
       var freq = h('div', { class: 'freq', id: 'frequent' });
-      function updPreview() { var v = B.parseAmount(amount.value, cur); preview.textContent = v ? money(v, cur) : ''; }
-      amount.addEventListener('input', function () { updPreview(); setMsg(msg, ''); });
+      function updPreview() { abox.upd(); }
+      amount.addEventListener('input', function () { setMsg(msg, ''); });
       function drawType() {
         typeSeg.textContent = '';
         ['expense', 'income'].forEach(function (ty) {
@@ -813,7 +827,7 @@
         });
       }
       function commit() {
-        var amt = B.parseAmount(amount.value, cur);
+        var amt = abox.value();
         if (!amt) { setMsg(msg, t('add.needAmount')); amount.focus(); grid.classList.add('shake'); setTimeout(function () { grid.classList.remove('shake'); }, 400); return; }
         if (!st.cat) { setMsg(msg, t('add.pick')); return; }
         var d = B.validDate(date.value) ? date.value : today();
@@ -831,7 +845,7 @@
       }
       drawType(); drawCats(); drawFreq(); updPreview();
       add(body, typeSeg,
-        h('div', { class: 'field' }, h('label', { for: 'amount', text: t('add.amount') + ' (' + cur + ')' }), amount, preview),
+        h('div', { class: 'field' }, h('label', { for: 'amount', text: t('add.amount') + ' (' + cur + ')' }), amount, abox.ops, preview),
         freq,
         h('div', { class: 'two' }, field(t('add.note'), note), field(t('add.date'), date)),
         editing ? null : h('div', { class: 'check' }, repeat, h('label', { for: 'repeat', text: t('add.repeat') })),
@@ -847,6 +861,252 @@
       }
       amount.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); if (editing) commit(); else note.focus(); } });
     });
+  }
+
+  // ----- amount box with a small calculator: "12000+3500", "4500×3" -----
+  function amountBox(cur, value, id, label) {
+    var input = h('input', { class: 'input amount', id: id, inputmode: 'decimal', autocomplete: 'off', placeholder: '0', value: value || '', 'aria-label': label });
+    var preview = h('p', { class: 'amount-preview', 'aria-live': 'polite' });
+    function upd() { var r = B.calcAmount(input.value, cur); preview.textContent = r.value ? (r.expr ? '= ' : '') + money(r.value, cur) : (r.expr && input.value.trim() ? t('calc.bad') : ''); }
+    input.addEventListener('input', upd);
+    var ops = h('div', { class: 'calc-ops', role: 'group', 'aria-label': t('calc.label') });
+    [['+', '+'], ['−', '-'], ['×', '×'], ['÷', '÷']].forEach(function (o) {
+      add(ops, h('button', { type: 'button', class: 'calc-op', tabindex: -1, 'aria-label': t('calc.' + { '+': 'plus', '-': 'minus', '×': 'times', '÷': 'divide' }[o[1]]), text: o[0],
+        on: { pointerdown: function (e) { e.preventDefault(); }, click: function () {
+          var a = input.selectionStart === null ? input.value.length : input.selectionStart, b = input.selectionEnd === null ? a : input.selectionEnd;
+          input.value = input.value.slice(0, a) + o[1] + input.value.slice(b); input.focus();
+          try { input.setSelectionRange(a + 1, a + 1); } catch (e) {}
+          upd(); input.dispatchEvent(new Event('input'));
+        } } }));
+    });
+    upd();
+    return { input: input, preview: preview, ops: ops, upd: upd, value: function () { return B.calcAmount(input.value, cur).value; } };
+  }
+
+  // ----- emoji picker (categories, goals) -----
+  var EMOJI_GROUPS = [
+    ['food', '🍚🍜🍣🍔🍕🍗🥗🍞🥐🍰🍩🍦☕🧋🍺🍷🥤🍎🍓🛒'],
+    ['life', '🏠🛋️💡💧🔥📱💻🧺🧴🪥💊🏥💇👕👟👜🧸🐶🐱🌱'],
+    ['move', '🚌🚇🚕🚗⛽🅿️🚲🛵✈️🚄🚢🧳🗺️🏨'],
+    ['fun', '🎬🎮🎵🎤📚🎨⚽🏋️🧘🏕️🎢🎁🎂🎉💐🎟️'],
+    ['money', '💰💵💳🏦📈📉🪙🧾💸🐷🎯🏆⭐💎'],
+    ['people', '👶🧒👨‍👩‍👧💑👪🎓💼👔🙏❤️🤝'],
+    ['other', '📌✅❗📝📦🔧🛠️🧹🚿🌸🌈☀️🌙✨🍀']
+  ];
+  function emojiList(str) { return Array.from(new Intl.Segmenter ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }).segment(str) : str).map(function (x) { return x.segment || x; }); }
+  function pickEmoji(current, onPick) {
+    sheet(t('emo.title'), function (body, close) {
+      EMOJI_GROUPS.forEach(function (g) {
+        add(body, h('p', { class: 'field-label', text: t('emo.' + g[0]) }), h('div', { class: 'emo-grid' }, emojiList(g[1]).map(function (e) {
+          return h('button', { type: 'button', class: 'emo' + (e === current ? ' on' : ''), 'data-emoji': e, 'aria-label': e, text: e, on: { click: function () { close(); onPick(e); } } });
+        })));
+      });
+      var own = h('input', { class: 'input emoji-in', id: 'emo-own', maxlength: 8, placeholder: '🙂', 'aria-label': t('emo.own') });
+      add(body, h('p', { class: 'field-label', text: t('emo.own') }), h('div', { class: 'row' }, own,
+        h('button', { type: 'button', class: 'btn', id: 'emo-own-ok', text: t('btn.ok'), on: { click: function () { var v = own.value.trim(); if (v) { close(); onPick(v); } } } })));
+    });
+  }
+  function emojiButton(value, id, onPick) {
+    var b = h('button', { type: 'button', class: 'emo-btn', id: id, 'aria-label': t('emo.title') + ': ' + value, text: value });
+    b.addEventListener('click', function () { pickEmoji(b.textContent, function (e) { b.textContent = e; b.setAttribute('aria-label', t('emo.title') + ': ' + e); onPick(e); }); });
+    return b;
+  }
+
+  // ----- money for today (on the budget card, this month only) -----
+  function allowanceLine() {
+    var a = B.dailyAllowance(S.budget, today());
+    if (!a) return null;
+    if (a.over) return h('p', { class: 'allow over', id: 'allowance', text: t('allow.over', { amt: money(a.over) }) });
+    return h('p', { class: 'allow' + (a.todayLeft < 0 ? ' over' : ''), id: 'allowance' },
+      h('span', { class: 'allow-main', text: a.todayLeft >= 0 ? t('allow.today', { amt: money(a.todayLeft) }) : t('allow.todayOver', { amt: money(-a.todayLeft) }) }),
+      h('span', { class: 'allow-sub', text: t('allow.sub', { amt: money(a.perDay), n: a.daysLeft }) }));
+  }
+
+  // ----- savings goals ("모으기"): kept apart from spending -----
+  function goalsChip() {
+    var gs = S.budget.goals || [], saved = B.goalsSavedIn(S.budget, S.ym);
+    var label = gs.length ? t('goal.chip', { n: gs.filter(function (g) { return !g.done; }).length }) + (saved ? ' · ' + t('goal.thisMonth', { amt: money(saved) }) : '') : t('goal.start');
+    return h('button', { type: 'button', class: 'goal-chip', id: 'goals-chip', on: { click: function () { S.budgetView = 'goals'; render(); } } }, h('span', { 'aria-hidden': 'true', text: '🎯 ' }), label);
+  }
+  function goalBar(p, done) {
+    return h('div', { class: 'goal-bar' + (done ? ' done' : ''), role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': p.pct }, h('span', { style: 'width:' + p.pct + '%' }));
+  }
+  function renderGoals(main) {
+    var gs = (S.budget.goals || []), active = gs.filter(function (g) { return !g.done; }), done = gs.filter(function (g) { return g.done; });
+    var box = h('div', { id: 'goals' });
+    if (!active.length && !done.length) add(box, empty('🎯', t('goal.empty'), t('goal.emptyHint')));
+    active.forEach(function (g) {
+      var p = B.goalProgress(g, today());
+      add(box, h('button', { type: 'button', class: 'card goal-card', 'data-id': g.id, on: { click: function () { openGoal(g.id); } } },
+        h('span', { class: 'goal-emoji', 'aria-hidden': 'true', text: g.emoji || '🎯' }),
+        h('span', { class: 'goal-main' },
+          h('span', { class: 'goal-name', text: g.name }),
+          goalBar(p),
+          h('span', { class: 'goal-nums', text: t('goal.nums', { saved: money(p.saved), target: money(g.target), pct: p.pct }) }),
+          p.perMonth ? h('span', { class: 'hint goal-plan', text: t('goal.perMonth', { amt: money(p.perMonth), n: p.monthsLeft }) }) : null)));
+    });
+    add(box, h('button', { type: 'button', class: 'btn primary block', id: 'goal-new', on: { click: function () { editGoal(null); } } }, '+ ', t('goal.new')));
+    if (done.length) add(box, h('h3', { class: 'shelf-head', text: '🏆 ' + t('goal.shelf') }), h('div', { class: 'shelf', id: 'goal-shelf' }, done.map(function (g) {
+      return h('button', { type: 'button', class: 'badge', 'data-id': g.id, on: { click: function () { openGoal(g.id); } } },
+        h('span', { class: 'badge-emoji', 'aria-hidden': 'true', text: g.emoji || '🏆' }), h('span', { class: 'badge-name', text: g.name }),
+        h('span', { class: 'badge-date', text: I.fullDate(new Date(g.done).toISOString().slice(0, 10)) }));
+    })));
+    add(main, box);
+  }
+  function editGoal(id) {
+    var g = id ? S.budget.goals.find(function (x) { return x.id === id; }) : null;
+    var emo = g ? g.emoji || '🎯' : '🎯';
+    sheet(g ? t('goal.edit') : t('goal.new'), function (body, close) {
+      var eb = emojiButton(emo, 'goal-emoji', function (e) { emo = e; });
+      var name = h('input', { class: 'input', id: 'goal-name', maxlength: 40, placeholder: t('goal.namePh'), value: g ? g.name : '', 'data-autofocus': '1' });
+      var amt = amountBox(S.budget.currency, g ? B.majorString(g.target, S.budget.currency) : '', 'goal-target', t('goal.target'));
+      var due = h('input', { class: 'input', id: 'goal-due', type: 'date', value: g && g.due ? g.due : '' });
+      var msg = msgEl();
+      add(body, h('div', { class: 'row' }, eb, h('div', { class: 'grow' }, field(t('goal.name'), name))),
+        h('div', { class: 'field' }, h('label', { for: 'goal-target', text: t('goal.target') + ' (' + S.budget.currency + ')' }), amt.input, amt.ops, amt.preview),
+        field(t('goal.due'), due, t('goal.dueHint')), msg,
+        h('div', { class: 'row end' },
+          g ? h('button', { type: 'button', class: 'btn danger', id: 'goal-delete', text: t('btn.delete'), on: { click: function () {
+            var removed = B.deleteGoal(S.budget, g.id); saveBudget(); closeAllModals(); render();
+            toast(t('goal.deleted'), { label: t('btn.undo'), fn: function () { S.budget.goals.push(removed); saveBudget(); render(); } });
+          } } }) : null,
+          h('button', { type: 'button', class: 'btn primary', id: 'goal-save', text: t('btn.save'), on: { click: function () {
+            var v = amt.value();
+            if (!name.value.trim()) { setMsg(msg, t('goal.needName')); name.focus(); return; }
+            if (!v) { setMsg(msg, t('goal.needTarget')); amt.input.focus(); return; }
+            if (g) B.updateGoal(S.budget, g.id, { name: name.value.trim(), emoji: emo, target: v, due: due.value || null });
+            else if (!B.addGoal(S.budget, { name: name.value.trim(), emoji: emo, target: v, due: due.value || null })) { setMsg(msg, t('goal.tooMany')); return; }
+            saveBudget(); close(); S.budgetView = 'goals'; render();
+          } } })));
+    });
+  }
+  function openGoal(id) {
+    var g = S.budget.goals.find(function (x) { return x.id === id; }); if (!g) return;
+    sheet((g.emoji ? g.emoji + ' ' : '') + g.name, function (body, close) {
+      function draw() {
+        body.textContent = '';
+        var p = B.goalProgress(g, today());
+        var amt = amountBox(S.budget.currency, '', 'goal-amount', t('goal.amount'));
+        var note = h('input', { class: 'input', id: 'goal-note', maxlength: 80, placeholder: t('goal.notePh') });
+        var msg = msgEl();
+        function move(sign) {
+          var v = amt.value(); if (!v) { setMsg(msg, t('add.needAmount')); amt.input.focus(); return; }
+          var r = B.goalMove(S.budget, g.id, sign * v, today(), note.value.trim());
+          if (!r) { setMsg(msg, t('goal.tooMuchOut')); return; }
+          saveBudget();
+          if (r.reached) { close(); render(); celebrate(g); return; }
+          draw();
+          if (r.milestone) toast(t({ 25: 'goal.milestone25', 50: 'goal.milestone50', 75: 'goal.milestone75' }[r.milestone]));
+          else toast(sign > 0 ? t('goal.added', { amt: money(v) }) : t('goal.taken', { amt: money(v) }));
+        }
+        add(body,
+          h('div', { class: 'goal-head' + (g.done ? ' done' : '') },
+            h('div', { class: 'goal-ring', 'aria-hidden': 'true' }, h('span', { text: g.done ? '🏆' : p.pct + '%' })),
+            h('div', {}, h('p', { class: 'goal-big', id: 'goal-saved', text: money(p.saved) }), h('p', { class: 'hint', text: t('goal.of', { target: money(g.target) }) }),
+              g.done ? h('p', { class: 'goal-done-text', text: t('goal.doneOn', { d: I.fullDate(new Date(g.done).toISOString().slice(0, 10)) }) })
+                : h('p', { class: 'hint', text: t('goal.left', { amt: money(p.left) }) + (p.perMonth ? ' · ' + t('goal.perMonth', { amt: money(p.perMonth), n: p.monthsLeft }) : '') }))),
+          goalBar(p, !!g.done),
+          h('div', { class: 'field' }, h('label', { for: 'goal-amount', text: t('goal.amount') + ' (' + S.budget.currency + ')' }), amt.input, amt.ops, amt.preview),
+          note, msg,
+          h('div', { class: 'row' },
+            h('button', { type: 'button', class: 'btn primary grow', id: 'goal-in', on: { click: function () { move(1); } } }, '＋ ', t('goal.in')),
+            h('button', { type: 'button', class: 'btn grow', id: 'goal-out', on: { click: function () { move(-1); } } }, '− ', t('goal.out'))),
+          g.moves.length ? h('h3', { class: 'shelf-head', text: t('goal.history') }) : null,
+          h('ul', { class: 'tx goal-moves' }, g.moves.slice(-30).reverse().map(function (mv) {
+            return h('li', { class: 'tx-row static' }, h('span', { class: 'tx-date', text: I.fullDate(mv.date) }), h('span', { class: 'tx-main', text: mv.note || '' }),
+              h('b', { class: mv.amt > 0 ? 'pos' : 'neg', text: (mv.amt > 0 ? '+' : '−') + money(Math.abs(mv.amt)) }));
+          })),
+          h('div', { class: 'row end' }, h('button', { type: 'button', class: 'btn', id: 'goal-edit', text: t('btn.edit'), on: { click: function () { editGoal(g.id); } } })));
+      }
+      draw();
+    }, { onClose: function () { if (S.budgetView === 'goals') render(); } });
+  }
+  // The goal is reached: a short celebration (no motion when the phone asks for less motion), then the trophy shelf.
+  function celebrate(g) {
+    var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var layer = h('div', { class: 'celebrate', id: 'celebrate', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'celebrate-title' });
+    if (!reduce) {
+      var colors = ['#FF8FA3', '#FFD45C', '#8FD694', '#8FC7FF', '#B39DDB', '#FFB347'];
+      for (var i = 0; i < 70; i++) {
+        var c = h('i', { class: 'confetti' });
+        c.style.left = (Math.random() * 100) + '%'; c.style.background = colors[i % colors.length];
+        c.style.animationDelay = (Math.random() * 0.8) + 's'; c.style.animationDuration = (2.2 + Math.random() * 1.6) + 's';
+        c.style.transform = 'rotate(' + Math.round(Math.random() * 360) + 'deg)';
+        add(layer, c);
+      }
+    }
+    var ok = h('button', { type: 'button', class: 'btn primary', id: 'celebrate-ok', text: t('goal.yay') });
+    add(layer, h('div', { class: 'celebrate-card' + (reduce ? '' : ' pop') },
+      h('div', { class: 'celebrate-emoji', 'aria-hidden': 'true', text: g.emoji || '🏆' }),
+      h('h2', { id: 'celebrate-title', text: t('goal.reached') }),
+      h('p', { class: 'celebrate-name', text: g.name }),
+      h('p', { class: 'celebrate-amt', text: money(B.goalSaved(g)) }),
+      h('p', { class: 'hint', text: t('goal.reachedSub') }), ok));
+    function done() { layer.remove(); S.tab = 'budget'; S.budgetView = 'goals'; render(); }
+    ok.addEventListener('click', done);
+    layer.addEventListener('keydown', function (e) { if (e.key === 'Escape') done(); });
+    document.body.appendChild(layer);
+    setTimeout(function () { ok.focus(); }, 30);
+  }
+
+  // ----- fingerprint / face unlock -----
+  var pkAvail = null;
+  function pkCheck() { if (pkAvail === null) pkAvail = C.passkeyAvailable(); return pkAvail; }
+  function pkText(err) { return err && err.code === 'pk-cancel' ? t('pk.cancel') : err && err.code === 'no-prf' ? t('pk.noPrf') : t('pk.failed'); }
+  function openPasskey() {
+    C.passkeyEnrolled().then(function (on) {
+      sheet(t('pk.title'), function (body, close) {
+        if (on) {
+          add(body, h('p', { text: t('pk.onBody') }), h('p', { class: 'hint', text: t('pk.removeHint') }),
+            h('button', { type: 'button', class: 'btn danger block', id: 'pk-remove', text: t('pk.off'), on: { click: function () {
+              C.passkeyRemove().then(function () { close(); render(); toast(t('pk.offDone')); });
+            } } }));
+          return;
+        }
+        var p = passField(t('lock.pass'), true, 'current-password'), msg = msgEl();
+        var go = h('button', { type: 'button', class: 'btn primary block', id: 'pk-enroll', text: t('pk.on') });
+        go.addEventListener('click', function () {
+          go.disabled = true; setMsg(msg, t('pk.wait'), true);
+          C.passkeyEnroll(p.input.value, t('app.name')).then(function () { close(); render(); toast(t('pk.onDone')); })
+            .catch(function (e) { go.disabled = false; setMsg(msg, e && e.code === 'bad-passcode' ? t('lock.wrong') : pkText(e)); });
+        });
+        add(body, h('p', { text: t('pk.body') }), h('p', { class: 'hint', text: t('pk.how') }), p.el, msg, go);
+      });
+    });
+  }
+
+  // ----- checklist notes: "- [ ] milk" lines shown as tick boxes -----
+  function checklistEditor(n, onChange) {
+    var box = h('div', { class: 'checklist', role: 'list' });
+    var timer = null;
+    function save(now) {
+      clearTimeout(timer);
+      var go = function () { var v = LS.serialize(items); if (v !== n.text) { n.text = v; n.updated = Date.now(); markNote(n); saveNotes(); if (onChange) onChange(); } };
+      if (now) go(); else timer = setTimeout(go, 400);
+    }
+    var items = LS.parse(n.text);
+    function draw(focusAt) {
+      box.textContent = '';
+      if (!items.length) items.push({ done: false, text: '' });
+      items.forEach(function (it, i) {
+        var cb = h('input', { type: 'checkbox', class: 'cl-cb', checked: it.done, 'aria-label': it.text || t('cl.item') });
+        var inp = h('input', { class: 'cl-in' + (it.done ? ' done' : ''), value: it.text, placeholder: t('cl.item'), 'aria-label': t('cl.item') + ' ' + (i + 1), maxlength: 300 });
+        cb.addEventListener('change', function () { it.done = cb.checked; inp.classList.toggle('done', it.done); save(true); });
+        inp.addEventListener('input', function () { it.text = inp.value; save(); });
+        inp.addEventListener('keydown', function (e) {
+          if (e.isComposing) return;
+          if (e.key === 'Enter') { e.preventDefault(); items.splice(i + 1, 0, { done: false, text: '' }); save(true); draw(i + 1); }
+          else if (e.key === 'Backspace' && !inp.value && items.length > 1) { e.preventDefault(); items.splice(i, 1); save(true); draw(Math.max(0, i - 1)); }
+        });
+        add(box, h('div', { class: 'cl-row', role: 'listitem' }, cb, inp));
+      });
+      add(box, h('button', { type: 'button', class: 'mini', id: 'cl-add', text: '+ ' + t('cl.add'), on: { click: function () { items.push({ done: false, text: '' }); save(true); draw(items.length - 1); } } }));
+      if (focusAt !== undefined) { var ins = box.querySelectorAll('.cl-in'); if (ins[focusAt]) ins[focusAt].focus(); }
+    }
+    draw();
+    box.refresh = function () { if (document.activeElement && box.contains(document.activeElement)) return; items = LS.parse(n.text); draw(); };
+    box.flush = function () { if (timer) save(true); };
+    return box;
   }
 
   // ----- Notes tab -----
@@ -871,7 +1131,8 @@
           add(grid, h('button', { type: 'button', class: 'note-card ' + noteLook(n) + (n.locked ? ' locked' : ''), 'data-id': n.id, 'aria-label': first.slice(0, 60), on: { click: function () { openNote(n.id); } } },
             n.pinned ? h('span', { class: 'pin-badge', title: t('notes.pinned') }, icon('pin', 14)) : null,
             deskHas(n.id) ? h('span', { class: 'desk-badge', title: t('desk.on') }, icon('desk', 14)) : null,
-            n.locked ? h('span', { class: 'note-text note-locked' }, icon('lock', 18), ' ', t('notes.lockedCard')) : h('span', { class: 'note-text', text: n.text || t('notes.ph') }),
+            n.locked ? h('span', { class: 'note-text note-locked' }, icon('lock', 18), ' ', t('notes.lockedCard')) : h('span', { class: 'note-text', text: (n.list ? LS.preview(n.text) : n.text) || t('notes.ph') }),
+            n.list && !n.locked && LS.count(n.text).all ? h('span', { class: 'note-count', text: LS.count(n.text).done + '/' + LS.count(n.text).all }) : null,
             h('span', { class: 'note-time', text: I.ago(n.updated) })));
         });
       };
@@ -919,7 +1180,7 @@
         colors.textContent = '';
         NOTE_COLORS.forEach(function (c) {
           add(colors, h('button', { type: 'button', role: 'radio', class: 'swatch nc-' + c, 'aria-checked': n.color === c ? 'true' : 'false', 'aria-label': t('color.' + c), title: t('color.' + c), 'data-color': c,
-            on: { click: function () { n.color = c; n.updated = Date.now(); markNote(n); ta.className = 'input note-edit ' + noteLook(n); drawColors(); saveNotes(); } } }));
+            on: { click: function () { n.color = c; n.updated = Date.now(); markNote(n); ta.className = 'input note-edit ' + noteLook(n); if (cl) cl.className = 'checklist ' + noteLook(n); drawColors(); saveNotes(); } } }));
         });
       }
       drawColors();
@@ -941,20 +1202,37 @@
         var g = h('div', { class: 'chips', role: 'radiogroup', 'aria-label': label });
         list.forEach(function (v) {
           add(g, h('button', { type: 'button', role: 'radio', class: 'chip small' + (idp === 'font' ? ' font-' + v : ''), id: idp + '-' + v, 'aria-checked': cur() === v ? 'true' : 'false', text: labelOf(v),
-            on: { click: function () { onPick(v); g.querySelectorAll('[role=radio]').forEach(function (b) { b.setAttribute('aria-checked', b.id === idp + '-' + v ? 'true' : 'false'); }); ta.className = 'input note-edit ' + noteLook(n); markNote(n); saveNotes(); } } }));
+            on: { click: function () { onPick(v); g.querySelectorAll('[role=radio]').forEach(function (b) { b.setAttribute('aria-checked', b.id === idp + '-' + v ? 'true' : 'false'); }); ta.className = 'input note-edit ' + noteLook(n); if (cl) cl.className = 'checklist ' + noteLook(n); markNote(n); saveNotes(); } } }));
         });
         return h('div', { class: 'note-pick' }, h('span', { class: 'field-label', text: label }), g);
       }
+      // checklist: the same text, shown as tick boxes ("- [ ] milk")
+      var wrap = h('div', { class: 'note-wrap' }), cl = null;
+      function drawEditor() {
+        wrap.textContent = '';
+        if (n.list) { cl = checklistEditor(n, function () { ta.value = n.text; }); cl.className = 'checklist ' + noteLook(n); cl.id = 'note-list'; add(wrap, cl); }
+        else { cl = null; add(wrap, ta); }
+      }
+      var listBtn = h('button', { type: 'button', class: 'btn', id: 'note-listmode', 'aria-pressed': n.list ? 'true' : 'false' }, '☑ ', n.list ? t('cl.off') : t('cl.on'));
+      listBtn.addEventListener('click', function () {
+        flushNote(); if (cl) cl.flush();
+        if (n.text !== ta.value && !n.list) { n.text = ta.value; }
+        n.list = !n.list;
+        if (n.list) n.text = LS.serialize(LS.parse(n.text));
+        ta.value = n.text; n.updated = Date.now(); markNote(n); saveNotes(); drawEditor();
+        listBtn.setAttribute('aria-pressed', n.list ? 'true' : 'false'); listBtn.lastChild.textContent = n.list ? t('cl.off') : t('cl.on');
+      });
       var lockBtn = h('button', { type: 'button', class: 'btn', id: 'note-lock', 'aria-pressed': n.locked ? 'true' : 'false' }, icon('lock', 18), ' ', n.locked ? t('notes.unlockNote') : t('notes.lock'));
       lockBtn.addEventListener('click', function () {
         n.locked = !n.locked; if (n.locked) noteShown[n.id] = 1; markNote(n); saveNotes();
         lockBtn.setAttribute('aria-pressed', n.locked ? 'true' : 'false'); lockBtn.lastChild.textContent = n.locked ? t('notes.unlockNote') : t('notes.lock');
         toast(n.locked ? t('notes.lockedNow') : t('notes.unlockedNow'));
       });
-      add(body, ta, h('div', { class: 'note-tools' }, colors),
+      drawEditor();
+      add(body, wrap, h('div', { class: 'note-tools' }, colors),
         pickRow(t('deco.font'), NOTE_FONTS, function () { return n.font; }, function (v) { return t('font.' + v); }, function (v) { n.font = v; }, 'font'),
         pickRow(t('notes.size'), NOTE_SIZES, function () { return n.size; }, function (v) { return t('size.' + v); }, function (v) { n.size = v; }, 'size'),
-        h('div', { class: 'row' }, pin, lockBtn, del),
+        h('div', { class: 'row' }, pin, listBtn, lockBtn, del),
         deskCapable() ? h('div', { class: 'row desk-actions' },
           h('button', { type: 'button', class: 'btn', id: 'note-desk', on: { click: function () {
             flushNote(); if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
@@ -968,6 +1246,7 @@
       m.onClose = function () {
         if (n.locked) delete noteShown[n.id];             // a locked note asks again next time
         if (deleted) return;
+        if (cl) cl.flush();
         flushNote();
         if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
         if (!n.text.trim() && !deskHas(n.id)) { S.notes.notes = S.notes.notes.filter(function (x) { return x !== n; }); goneNote(n); }
@@ -1017,6 +1296,7 @@
   function afterUnlock(adopted) {
     liveKids().forEach(sendKey);
     if (DESK) { if (!adopted && openerIsApp()) sendKey(window.opener); return; }
+    if (S.startAdd) { S.startAdd = false; S.tab = 'budget'; render(); openAdd(); }      // the "Add spending" home-screen shortcut
     if (!adopted && deskCapable() && deskIds().length) setTimeout(function () { deskReopen(false); }, 0);
   }
   function deskHello() {         // a locked note window asks the app window that opened it for the open session
@@ -1059,7 +1339,10 @@
   // ----- inside a note window -----
   var deskTa = null, deskTimer = null, deskPending = null, deskGeo = null, pipWin = null, pipId = null, pipTa = null;
   function deskNote() { return S.notes && S.notes.notes.find(function (x) { return x.id === DESK; }); }
-  function deskFlush() { if (deskPending) { var f = deskPending; deskPending = null; clearTimeout(deskTimer); f(); } }
+  function deskFlush() {
+    if (deskTa && deskTa.flush) deskTa.flush(); if (pipTa && pipTa.flush) pipTa.flush();
+    if (deskPending) { var f = deskPending; deskPending = null; clearTimeout(deskTimer); f(); }
+  }
   // Saved per note window: [x, y, inner width, inner height, outer width, outer height, last seen]. No note text.
   function deskSaveGeo() {
     if (!DESK || S.phase !== 'app' || deskShrunk) return;
@@ -1111,7 +1394,7 @@
     });
   }
   var deskSig = '';
-  function noteSig(n) { return [n.color, n.font, n.size, n.locked].join('|'); }
+  function noteSig(n) { return [n.color, n.font, n.size, n.locked, n.list].join('|'); }
   function renderDesk() {
     app.textContent = '';
     var n = deskNote();
@@ -1139,8 +1422,8 @@
         h('div', { class: 'desk-gate' }, notePassForm(function () { noteShown[n.id] = 1; render(); }))));
       return;
     }
-    deskTa = h('textarea', { class: 'desk-text font-' + n.font + ' nsz-' + n.size, id: 'desk-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text });
-    noteEditor(n, deskTa, setTitle);
+    if (n.list) { deskTa = checklistEditor(n, setTitle); deskTa.id = 'desk-text'; deskTa.className = 'checklist desk-list font-' + n.font + ' nsz-' + n.size; }
+    else { deskTa = h('textarea', { class: 'desk-text font-' + n.font + ' nsz-' + n.size, id: 'desk-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text }); noteEditor(n, deskTa, setTitle); }
     var dots = h('div', { class: 'desk-dots', role: 'radiogroup', 'aria-label': t('notes.color') });
     NOTE_COLORS.forEach(function (c) {
       add(dots, h('button', { type: 'button', role: 'radio', class: 'desk-dot nc-' + c, 'aria-checked': n.color === c ? 'true' : 'false', 'aria-label': t('color.' + c), title: t('color.' + c), 'data-color': c,
@@ -1168,7 +1451,7 @@
     if (!DESK || S.phase !== 'app') return;
     var n = deskNote();
     if (!n || noteSig(n) !== deskSig || !deskTa || !document.contains(deskTa)) { deskFlush(); render(); return; }
-    if (!deskPending && deskTa.value !== n.text) deskTa.value = n.text;
+    if (deskTa.refresh) deskTa.refresh(); else if (!deskPending && deskTa.value !== n.text) deskTa.value = n.text;
     pipRefresh();
   }
 
@@ -1185,8 +1468,8 @@
       var th = document.documentElement.getAttribute('data-theme'); if (th) d.documentElement.setAttribute('data-theme', th);
       d.documentElement.className = 'desk-mode nc-' + n.color;
       d.title = (n.text.trim().split('\n')[0] || t('notes.ph')).slice(0, 60);
-      pipTa = h('textarea', { class: 'desk-text font-' + n.font + ' nsz-' + n.size, id: 'pip-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text });
-      noteEditor(n, pipTa);
+      if (n.list) { pipTa = checklistEditor(n); pipTa.id = 'pip-text'; pipTa.className = 'checklist desk-list font-' + n.font + ' nsz-' + n.size; }
+      else { pipTa = h('textarea', { class: 'desk-text font-' + n.font + ' nsz-' + n.size, id: 'pip-text', placeholder: t('notes.ph'), 'aria-label': t('notes.title'), value: n.text }); noteEditor(n, pipTa); }
       d.body.appendChild(h('div', { class: 'desk' },
         h('div', { class: 'desk-bar pip-bar' }, h('span', { class: 'desk-sp' }),
           h('button', { type: 'button', class: 'icon-btn sm', id: 'pip-unpin', title: t('desk.unpin'), 'aria-label': t('desk.unpin'), on: { click: function () { pipClose(); if (DESK && S.phase === 'app') render(); } } }, '📌')),
@@ -1204,7 +1487,7 @@
     if (!pipWin || !pipTa) return;
     var n = S.notes && S.notes.notes.find(function (x) { return x.id === pipId; });
     if (!n) { pipClose(); return; }
-    if (!deskPending && pipTa.value !== n.text) pipTa.value = n.text;
+    if (pipTa.refresh) pipTa.refresh(); else if (!deskPending && pipTa.value !== n.text) pipTa.value = n.text;
     pipWin.document.documentElement.className = 'desk-mode nc-' + n.color;
   }
   function pipClose() { if (pipWin) { deskFlush(); try { pipWin.close(); } catch (e) {} pipWin = null; pipId = null; pipTa = null; deskRestore(); } }
@@ -1473,6 +1756,13 @@
   }
   function group(title, items) { return h('section', { class: 'set-group' }, h('h2', { text: title }), h('ul', { class: 'set-list card' }, items)); }
   function renderSettings(main) {
+    var pkRow = h('li', { id: 'pk-row-wrap', hidden: true });
+    Promise.all([pkCheck(), C.passkeyEnrolled()]).then(function (r) {
+      if (!r[0] || !document.contains(pkRow)) return;
+      pkRow.hidden = false;
+      add(pkRow, h('button', { type: 'button', class: 'set-row', id: 'set-passkey', on: { click: openPasskey } },
+        h('span', { class: 'set-label', text: t('pk.title') }), h('span', { class: 'set-value', text: r[1] ? t('pk.stateOn') : t('pk.stateOff') }), icon('chev', 18)));
+    });
     add(main, topBar(h('h1', { class: 'title', text: t('set.title') })));
     var cur = currencySelect(S.budget.currency); cur.id = 'set-currency';
     cur.addEventListener('change', function () { S.budget.currency = cur.value; saveBudget(); render(); });
@@ -1501,6 +1791,7 @@
         row(t('set.changePass'), null, openChangePass, 'set-pass'),
         row(t('set.newCode'), null, openNewCode, 'set-code'),
         row(t('set.recHelp'), null, function () { openRecHelp(false); }, 'set-rechelp'),
+        pkRow,
         h('li', { class: 'set-ctrl' }, h('button', { type: 'button', class: 'set-row', on: { click: function () { C.persist().then(function (p) { storage.textContent = p ? t('set.storageOn') : t('set.storageOff'); }); } } },
           h('span', { class: 'set-label', text: t('set.storage') }), storage))]),
       group(t('set.diary'), [row(t('diary.exportTitle'), String(S.diary.entries.length), openDiaryExport, 'set-diary-export')]),
@@ -1553,9 +1844,8 @@
         ['expense', 'income'].forEach(function (ty) {
           add(body, h('h3', { text: t('cat.' + ty) }), h('ul', { class: 'cat-list' }, S.budget.cats.filter(function (c) { return c.type === ty; }).map(function (c) {
             var name = h('input', { class: 'input', value: catName(c.id), 'aria-label': t('cat.name'), maxlength: 40 });
-            var emo = h('input', { class: 'input emoji-in', value: c.emoji, 'aria-label': t('cat.emoji'), maxlength: 8 });
+            var emo = emojiButton(c.emoji, 'cat-emoji-' + c.id, function (e) { B.updateCategory(S.budget, c.id, { emoji: e }); saveBudget(); });
             name.addEventListener('change', function () { B.updateCategory(S.budget, c.id, { name: name.value.trim() || null }); saveBudget(); });
-            emo.addEventListener('change', function () { B.updateCategory(S.budget, c.id, { emoji: emo.value.trim() }); saveBudget(); });
             return h('li', { class: c.hidden ? 'hidden-cat' : '' }, emo, name, c.hidden
               ? h('button', { type: 'button', class: 'btn small', text: t('cat.restore'), on: { click: function () { B.updateCategory(S.budget, c.id, { hidden: false }); saveBudget(); draw(); } } })
               : (c.id === 'other' || c.id === 'other_income') ? null
@@ -1565,12 +1855,12 @@
           })));
         });
         var nm = h('input', { class: 'input', id: 'new-cat-name', placeholder: t('cat.name'), maxlength: 40 });
-        var em = h('input', { class: 'input emoji-in', id: 'new-cat-emoji', placeholder: '🙂', maxlength: 8 });
+        var newEmo = '🙂', em = emojiButton(newEmo, 'new-cat-emoji', function (e) { newEmo = e; });
         var ty = h('select', { class: 'input', id: 'new-cat-type' }, h('option', { value: 'expense', text: t('cat.expense') }), h('option', { value: 'income', text: t('cat.income') }));
         add(body, h('h3', { text: t('cat.add') }), h('div', { class: 'row' }, em, nm, ty,
           h('button', { type: 'button', class: 'btn primary', id: 'new-cat-add', text: t('btn.add'), on: { click: function () {
             if (!nm.value.trim()) { nm.focus(); return; }
-            B.addCategory(S.budget, { type: ty.value, name: nm.value.trim(), emoji: em.value.trim() || '•' }); saveBudget(); draw();
+            B.addCategory(S.budget, { type: ty.value, name: nm.value.trim(), emoji: newEmo || '•' }); saveBudget(); draw();
           } } })));
       }
       draw();
@@ -1866,7 +2156,8 @@
   render();
   C.status().then(function (st) {
     S.phase = st === 'empty' ? 'welcome' : 'locked';
-    var sm = (location.search + location.hash).match(/[?&#]start=(notes|diary)\b/); if (sm) S.tab = sm[1];
+    var sm = (location.search + location.hash).match(/[?&#]start=(notes|diary|add)\b/);
+    if (sm && sm[1] === 'add') { S.tab = 'budget'; S.startAdd = true; } else if (sm) S.tab = sm[1];
     render();
   }).catch(function () { S.phase = 'nostorage'; render(); });
 
@@ -1880,7 +2171,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-app.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-app.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
         .forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }

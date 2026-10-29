@@ -101,6 +101,32 @@
     return stretch(code, salt, REC_ITER).then(function (k) { return seal(k, raw, aadFor(meta, 'rec')); })
       .then(function (box) { meta.rec = { iter: REC_ITER, salt: b64(salt), iv: box.iv, ct: box.ct }; });
   }
+  // ---------- fingerprint / face unlock (a passkey with the WebAuthn PRF extension) ----------
+  // The passkey never leaves the phone's password manager. On each unlock it returns a secret that only it can produce for
+  // this site and this salt; that secret (through HKDF) unlocks a second copy of the data key. Nothing is sent anywhere.
+  function pkKey(prfOut) {
+    return subtle.importKey('raw', prfOut, 'HKDF', false, ['deriveKey']).then(function (base) {
+      return subtle.deriveKey({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(32), info: te.encode('ppm-vault|passkey') }, base,
+        { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+    });
+  }
+  function pkErr(e) {
+    if (e && e.code) return e;
+    var n = e && e.name;
+    if (n === 'NotAllowedError' || n === 'AbortError') return fail('pk-cancel', 'Cancelled.');
+    return fail('pk-failed', String((e && e.message) || e));
+  }
+  function prfFirst(cred) {
+    var ext = cred && cred.getClientExtensionResults ? cred.getClientExtensionResults() : {};
+    var r = ext && ext.prf && ext.prf.results && ext.prf.results.first;
+    return r ? new Uint8Array(r) : null;
+  }
+  function pkGet(meta) {
+    var pk = meta.pk;
+    return navigator.credentials.get({ publicKey: { challenge: rand(32), rpId: location.hostname, timeout: 60000, userVerification: 'required',
+      allowCredentials: [{ type: 'public-key', id: unb64(pk.id) }], extensions: { prf: { eval: { first: unb64(pk.salt) } } } } })
+      .then(function (cred) { var out = prfFirst(cred); if (!out) throw fail('no-prf', 'This device did not return the passkey secret.'); return out; });
+  }
   function rawFromPass(meta, pass) {
     return stretch(pass, unb64(meta.kdf.salt), meta.kdf.iter)
       .then(function (k) { return open(k, meta.pass, aadFor(meta, 'pass')); })
@@ -259,6 +285,55 @@
       return readMeta().then(function (meta) {
         return rawFromPass(meta, String(pass || '').normalize('NFC')).then(function (raw) { raw.fill(0); return true; });
       });
+    },
+
+    // ----- fingerprint / face unlock -----
+    passkeyAvailable: function () {
+      try {
+        if (!root.PublicKeyCredential || !navigator.credentials || !PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable) return Promise.resolve(false);
+        return PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable().catch(function () { return false; });
+      } catch (e) { return Promise.resolve(false); }
+    },
+    passkeyEnrolled: function () { return readMeta().then(function (m) { return !!(m && m.pk); }); },
+    // Turn it on: proves the passcode, makes a passkey for this site and stores a copy of the data key that only it can open.
+    passkeyEnroll: function (pass, label) {
+      var meta, raw, salt = rand(32);
+      return readMeta().then(function (m) {
+        if (!m) throw fail('empty', 'There is no vault on this device yet.');
+        meta = m;
+        return rawFromPass(meta, String(pass || '').normalize('NFC'));
+      }).then(function (r) {
+        raw = r;
+        return navigator.credentials.create({ publicKey: {
+          rp: { name: 'PopPopMake', id: location.hostname }, user: { id: rand(16), name: String(label || 'PopPopMake'), displayName: String(label || 'PopPopMake') },
+          challenge: rand(32), timeout: 60000, pubKeyCredParams: [{ type: 'public-key', alg: -7 }, { type: 'public-key', alg: -257 }],
+          authenticatorSelection: { authenticatorAttachment: 'platform', residentKey: 'preferred', userVerification: 'required' },
+          extensions: { prf: { eval: { first: salt } } } } }).catch(function (e) { throw pkErr(e); });
+      }).then(function (cred) {
+        var ext = cred.getClientExtensionResults ? cred.getClientExtensionResults() : {};
+        if (!ext.prf || ext.prf.enabled === false) throw fail('no-prf', 'This device cannot unlock with a passkey yet.');
+        var first = prfFirst(cred), id = b64(cred.rawId);
+        var tmp = { id: meta.id, pk: { id: id, salt: b64(salt) } };
+        return (first ? Promise.resolve(first) : pkGet(tmp).catch(function (e) { throw pkErr(e); })).then(function (out) {   // some devices give the secret only when signing in
+          return pkKey(out);
+        }).then(function (k) { return seal(k, raw, aadFor(meta, 'pk')); }).then(function (box) {
+          raw.fill(0);
+          meta.pk = { id: id, salt: b64(salt), iv: box.iv, ct: box.ct, created: new Date().toISOString() };
+          return writeMeta(meta);
+        });
+      }).then(function () { if (session) session.meta = meta; emit({ type: 'passkey' }); return true; })
+        .catch(function (e) { if (raw) raw.fill(0); throw pkErr(e); });
+    },
+    passkeyUnlock: function () {
+      return readMeta().then(function (meta) {
+        if (!meta || !meta.pk) throw fail('no-passkey', 'Fingerprint / face unlock is not set up.');
+        return pkGet(meta).then(pkKey).then(function (k) { return open(k, { iv: meta.pk.iv, ct: meta.pk.ct }, aadFor(meta, 'pk')); })
+          .catch(function (e) { throw e && e.code ? e : (e && e.name === 'OperationError' ? fail('pk-failed', 'That passkey does not open this vault.') : pkErr(e)); })
+          .then(function (raw) { return importDataKey(raw).then(function (key) { raw.fill(0); session = { key: key, meta: meta }; }); });
+      });
+    },
+    passkeyRemove: function () {
+      return readMeta().then(function (meta) { if (!meta || !meta.pk) return; delete meta.pk; return writeMeta(meta).then(function () { if (session) session.meta = meta; emit({ type: 'passkey' }); }); });
     },
 
     lock: function () { session = null; emit({ type: 'locked' }); return Promise.resolve(); },

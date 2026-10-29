@@ -84,8 +84,112 @@
   ];
   function defaultCats() { return DEFAULT_CATS.map(function (c) { return { id: c[0], type: c[1], emoji: c[2], name: null, hidden: false }; }); }
 
+  // ---------- calculator in the amount box: "12000+3500", "4500x3", "30000/4" ----------
+  function calcAmount(input, cur) {
+    var s = String(input === null || input === undefined ? '' : input)
+      .replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFF10 + 48); })
+      .replace(/＋/g, '+').replace(/[−－–]/g, '-').replace(/[×xX＊]/g, '*').replace(/[÷／]/g, '/').replace(/\s+/g, '');
+    if (!/[+\-*\/]/.test(s.replace(/^[+\-]/, ''))) { var v = parseAmount(s, cur); return { value: v && v > 0 ? v : null, expr: false }; }
+    var parts = s.split(/([+\-*\/])/).filter(function (x) { return x !== ''; });
+    if (parts.length < 3 || /[+\-*\/]/.test(parts[0]) || /[+\-*\/]/.test(parts[parts.length - 1])) return { value: null, expr: true };
+    // numbers are amounts (in minor units) after + and −, plain counts after × and ÷
+    var terms = [], cur0 = parseAmount(parts[0], cur);
+    if (cur0 === null) return { value: null, expr: true };
+    var acc = cur0, sign = 1;
+    for (var i = 1; i < parts.length; i += 2) {
+      var op = parts[i], txt = parts[i + 1];
+      if (!txt || /[+\-*\/]/.test(txt)) return { value: null, expr: true };
+      if (op === '*' || op === '/') {
+        var n = Number(txt.replace(/,/g, ''));
+        if (!isFinite(n) || n <= 0) return { value: null, expr: true };
+        acc = op === '*' ? acc * n : acc / n;
+      } else {
+        terms.push(sign * acc);
+        var a = parseAmount(txt, cur); if (a === null) return { value: null, expr: true };
+        acc = a; sign = op === '+' ? 1 : -1;
+      }
+    }
+    terms.push(sign * acc);
+    var total = Math.round(terms.reduce(function (x, y) { return x + y; }, 0));
+    return { value: total > 0 ? total : null, expr: true };
+  }
+
+  // ---------- how much can be spent today: what is left of the monthly budget, spread over the days left ----------
+  function dailyAllowance(doc, today) {
+    var tb = doc.budgets && doc.budgets.total; if (!(tb > 0)) return null;
+    var ym = ymOf(today), spent = 0, todaySpent = 0;
+    doc.tx.forEach(function (t) {
+      if (t.type !== 'expense' || ymOf(t.date) !== ym || t.cur !== doc.currency) return;
+      spent += t.amt; if (t.date === today) todaySpent += t.amt;
+    });
+    var daysLeft = daysInMonth(ym) - (+today.slice(8, 10)) + 1, leftBefore = tb - (spent - todaySpent);
+    if (spent > tb) return { daysLeft: daysLeft, perDay: 0, todaySpent: todaySpent, todayLeft: 0, over: spent - tb };
+    var perDay = Math.floor(leftBefore / daysLeft);
+    return { daysLeft: daysLeft, perDay: perDay, todaySpent: todaySpent, todayLeft: perDay - todaySpent, over: 0 };
+  }
+
+  // ---------- savings goals: kept apart from spending ----------
+  function goalSaved(g) { return g.moves.reduce(function (s, m) { return s + m.amt; }, 0); }
+  function pctOf(saved, target) { return Math.max(0, Math.min(100, Math.floor(saved * 100 / target))); }
+  function addGoal(doc, o) {
+    doc.goals = doc.goals || [];
+    if (doc.goals.length >= 50) return null;
+    var g = { id: uid(), name: String(o.name || '').slice(0, 40), emoji: String(o.emoji || '').slice(0, 8), target: Math.round(o.target),
+      due: validDate(o.due) ? o.due : null, created: Date.now(), done: null, moves: [] };
+    if (!(g.target > 0)) return null;
+    doc.goals.push(g);
+    return g;
+  }
+  function updateGoal(doc, id, p) {
+    var g = (doc.goals || []).find(function (x) { return x.id === id; }); if (!g) return false;
+    if (p.name !== undefined) g.name = String(p.name).slice(0, 40);
+    if (p.emoji !== undefined) g.emoji = String(p.emoji).slice(0, 8);
+    if (p.target !== undefined && Math.round(p.target) > 0) g.target = Math.round(p.target);
+    if (p.due !== undefined) g.due = validDate(p.due) ? p.due : null;
+    var saved = goalSaved(g);
+    if (saved >= g.target && !g.done) g.done = Date.now(); else if (saved < g.target) g.done = null;
+    return true;
+  }
+  function deleteGoal(doc, id) {
+    var i = (doc.goals || []).findIndex(function (x) { return x.id === id; });
+    return i < 0 ? null : doc.goals.splice(i, 1)[0];
+  }
+  // Put money in (amt > 0) or take it out (amt < 0). Says which milestone (25/50/75) was just passed and whether the goal was just reached.
+  function goalMove(doc, id, amt, date, note) {
+    var g = (doc.goals || []).find(function (x) { return x.id === id; });
+    amt = Math.round(amt);
+    if (!g || !amt || !validDate(date) || g.moves.length >= 2000) return null;
+    var before = goalSaved(g);
+    if (before + amt < 0) return null;
+    g.moves.push({ id: uid(), date: date, amt: amt, note: String(note || '').slice(0, 80) });
+    var after = before + amt, pb = pctOf(before, g.target), pa = pctOf(after, g.target), ms = null;
+    [25, 50, 75].forEach(function (m) { if (pb < m && pa >= m && pa < 100) ms = m; });
+    var reached = false;
+    if (after >= g.target && !g.done) { g.done = Date.now(); reached = true; }
+    else if (after < g.target) g.done = null;
+    return { goal: g, before: pb, after: pa, milestone: ms, reached: reached };
+  }
+  function goalProgress(g, today) {
+    var saved = goalSaved(g), left = Math.max(0, g.target - saved), out = { saved: saved, pct: pctOf(saved, g.target), left: left, monthsLeft: null, perMonth: null };
+    if (g.due && left > 0) {
+      var m = (+g.due.slice(0, 4) - +today.slice(0, 4)) * 12 + (+g.due.slice(5, 7) - +today.slice(5, 7)) + 1;
+      out.monthsLeft = Math.max(1, m); out.perMonth = Math.ceil(left / out.monthsLeft);
+    }
+    return out;
+  }
+  function goalsSavedIn(doc, ym) {
+    var s = 0; (doc.goals || []).forEach(function (g) { g.moves.forEach(function (m) { if (ymOf(m.date) === ym) s += m.amt; }); }); return s;
+  }
+  function cleanGoal(g) {
+    if (!g || typeof g !== 'object' || typeof g.id !== 'string' || !(Number.isInteger(g.target) && g.target > 0)) return null;
+    var moves = (Array.isArray(g.moves) ? g.moves : []).filter(function (m) { return m && Number.isInteger(m.amt) && m.amt !== 0 && validDate(m.date); })
+      .slice(0, 2000).map(function (m) { return { id: typeof m.id === 'string' ? m.id : uid(), date: m.date, amt: m.amt, note: String(m.note || '').slice(0, 80) }; });
+    return { id: g.id, name: String(g.name || '').slice(0, 40), emoji: String(g.emoji || '').slice(0, 8), target: g.target, due: validDate(g.due) ? g.due : null,
+      created: +g.created || Date.now(), done: +g.done > 0 ? +g.done : null, moves: moves };
+  }
+
   function newDoc(lang, currency) {
-    return { v: 1, currency: currency || 'USD', cats: defaultCats(), tx: [], budgets: { total: null, cats: {} }, recurring: [] };
+    return { v: 1, currency: currency || 'USD', cats: defaultCats(), tx: [], budgets: { total: null, cats: {} }, recurring: [], goals: [] };
   }
 
   function addCategory(doc, c) {
@@ -381,6 +485,7 @@
     if (Array.isArray(raw.recurring)) d.recurring = raw.recurring.filter(function (r) {
       return r && typeof r.id === 'string' && Number.isInteger(r.amt) && r.amt > 0 && /^\d{4}-\d{2}$/.test(r.start) && typeof r.cat === 'string';
     });
+    if (Array.isArray(raw.goals)) d.goals = raw.goals.map(cleanGoal).filter(Boolean).slice(0, 50);
     return d;
   }
 
@@ -392,7 +497,9 @@
     summary: summary, days: days, trend: trend, search: search, guessCategory: guessCategory, frequent: frequent,
     addRecurring: addRecurring, updateRecurring: updateRecurring, deleteRecurring: deleteRecurring, applyRecurring: applyRecurring,
     toCSV: toCSV, parseCSV: parseCSV, parseDate: parseDate, guessColumns: guessColumns, importRows: importRows,
-    addMonths: addMonths, daysInMonth: daysInMonth, validDate: validDate, uid: uid
+    addMonths: addMonths, daysInMonth: daysInMonth, validDate: validDate, uid: uid,
+    calcAmount: calcAmount, dailyAllowance: dailyAllowance,
+    addGoal: addGoal, updateGoal: updateGoal, deleteGoal: deleteGoal, goalMove: goalMove, goalProgress: goalProgress, goalSaved: goalSaved, goalsSavedIn: goalsSavedIn
   };
   root.VaultBudget = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

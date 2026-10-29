@@ -29,6 +29,8 @@
         install: ['iPhone: Share → “Add to Home Screen”', 'Android or computer: tap Install', 'It opens like an app — even offline'],
         desk: ['On a computer: “Put on desktop”', 'Each note in its own small window, anywhere on the screen', 'One note can stay on top of every window'],
         deco: ['Decorate: paper, colour and handwriting', 'Stickers and washi tape — drag, turn, resize', 'Week page with a habit tracker, hourly page, to-do'],
+        goals: ['Set a saving goal with an emoji and a date', 'Put money in — a cheer at every quarter', 'Goal reached: a celebration and a trophy shelf'],
+        pk: ['Turn on fingerprint / face unlock once', 'Next time: one touch, no typing'],
         lang: ['한국어', '日本語', 'English — and 24 currencies']
       },
       saved: 'Saved', undo: 'Undo', freqHint: 'Your frequent entries — one tap adds them for today', where: 'Where the money went', six: 'Last 6 months',
@@ -42,6 +44,8 @@
       otdText: 'First day in Kyoto #travel', share: '⬆️ Share', menu: ['Copy', '➕ Add to Home Screen', 'Print'], installT: 'Install as an app', installB: 'Install', appName: 'Budget, Notes &amp; Diary',
       deskB: '🖥 Put on desktop', deskTop: '📌 Keep on top', deskNotes: ['Call Jun<br>at 3pm', 'Wi-Fi<br>cafe-5G', 'Ideas<br>– logo'], deskApp: 'Report.docx',
       decoBar: ['📄 Page', '🎨 Paper', '✍️ Lettering', '⭐ Stickers', '🖍️ Draw'], decoText: 'Coffee with Mina.<br>Strawberry cake!', habit: 'Water 2L', weekD: ['Mon 26', 'Tue 27'], weekT: ['Dentist 3pm', 'Gym'],
+      goalName: 'Trip to Jeju', goalNums: ['$380 of $1,000 · 38%', '$520 of $1,000 · 52%'], goalMonth: '$124 a month for 5 months', goalIn: '＋ Put in', halfway: '🎉 Halfway there!', reached: 'Goal reached!', shelf: '🏆 Goals reached', laptop: 'New laptop', yay: 'Yay!',
+      pkBtn: '👆 Unlock with fingerprint or face', pkOr: 'or type your passcode', pkOn: 'Fingerprint / face unlock is on.', pkSet: 'Unlock with fingerprint or face',
       wd: ['S', 'M', 'T', 'W', 'T', 'F', 'S']
     },
     ko: {
@@ -63,6 +67,8 @@
         install: ['아이폰: 공유 → “홈 화면에 추가”', '안드로이드·컴퓨터: 설치 누르기', '앱처럼 열리고 인터넷 없이도 돼요'],
         desk: ['컴퓨터에서 “바탕화면에 띄우기”', '메모마다 작은 창으로, 화면 어디에나', '메모 하나는 모든 창 위에 고정'],
         deco: ['꾸미기: 종이, 색, 손글씨', '스티커·마스킹테이프 — 끌고, 돌리고, 크기 조절', '위클리+습관 체크, 시간표, 할 일 속지'],
+        goals: ['이모지와 날짜로 모으기 목표 만들기', '돈을 넣을 때마다 — 25%마다 응원', '목표 달성: 축하와 트로피 진열장'],
+        pk: ['지문·얼굴로 열기를 한 번 켜두면', '다음부터는 손가락 한 번, 입력 없이'],
         lang: ['한국어', '日本語', 'English — 통화 24종']
       },
       saved: '저장했어요', undo: '되돌리기', freqHint: '자주 쓰는 항목 — 누르면 오늘 날짜로 바로 추가', where: '어디에 썼나', six: '최근 6개월',
@@ -76,6 +82,8 @@
       otdText: '교토 여행 첫날 #여행', share: '⬆️ 공유', menu: ['복사', '➕ 홈 화면에 추가', '프린트'], installT: '앱으로 설치하기', installB: '설치', appName: '가계부·메모·일기',
       deskB: '🖥 바탕화면에 띄우기', deskTop: '📌 항상 위에 고정', deskNotes: ['준에게 전화<br>3시', '와이파이<br>cafe-5G', '아이디어<br>– 로고'], deskApp: '보고서.docx',
       decoBar: ['📄 속지', '🎨 종이', '✍️ 글씨', '⭐ 스티커', '🖍️ 그리기'], decoText: '미나랑 카페.<br>딸기 케이크 최고!', habit: '물 2L', weekD: ['월 26', '화 27'], weekT: ['치과 3시', '운동'],
+      goalName: '제주도 여행', goalNums: ['₩380,000 / ₩1,000,000 · 38%', '₩520,000 / ₩1,000,000 · 52%'], goalMonth: '5개월 동안 매달 ₩124,000', goalIn: '＋ 넣기', halfway: '🎉 절반 왔어요!', reached: '목표 달성!', shelf: '🏆 달성한 목표', laptop: '새 노트북', yay: '야호!',
+      pkBtn: '👆 지문·얼굴로 열기', pkOr: '또는 비밀번호 입력', pkOn: '지문·얼굴로 열기를 켰어요.', pkSet: '지문·얼굴로 열기',
       wd: ['일', '월', '화', '수', '목', '금', '토']
     },
     ja: {
@@ -97,6 +105,8 @@
         install: ['iPhone：共有 →「ホーム画面に追加」', 'Android・パソコン：インストールを押す', 'アプリのように開き、オフラインでも使えます'],
         desk: ['パソコンで「デスクトップに出す」', 'メモごとに小さなウィンドウで、画面のどこにでも', '1枚はすべてのウィンドウの手前に表示'],
         deco: ['デコる：紙・色・手書き文字', 'シールとマステ — ドラッグ・回転・サイズ変更', 'ウィークリー＋習慣トラッカー、時間割、やること'],
+        goals: ['絵文字と期限で貯金目標をつくる', '入れるたびに — 25％ごとに応援', '目標達成：お祝いとトロフィー棚'],
+        pk: ['指紋・顔で開くを一度オンにすれば', '次からはワンタッチ、入力なし'],
         lang: ['한국어', '日本語', 'English — 通貨24種類']
       },
       saved: '保存しました', undo: '元に戻す', freqHint: 'よく使う項目 — 押すと今日の日付ですぐ追加', where: '何に使ったか', six: '過去6か月',
@@ -110,6 +120,8 @@
       otdText: '京都旅行の初日 #旅行', share: '⬆️ 共有', menu: ['コピー', '➕ ホーム画面に追加', 'プリント'], installT: 'アプリとしてインストール', installB: 'インストール', appName: '家計簿・メモ・日記',
       deskB: '🖥 デスクトップに出す', deskTop: '📌 常に手前に表示', deskNotes: ['ジュンに電話<br>15時', 'Wi-Fi<br>cafe-5G', 'アイデア<br>– ロゴ'], deskApp: '報告書.docx',
       decoBar: ['📄 リフィル', '🎨 紙', '✍️ 文字', '⭐ シール', '🖍️ 描く'], decoText: 'ミナとカフェ。<br>いちごのケーキ！', habit: '水 2L', weekD: ['月 26', '火 27'], weekT: ['歯医者 15時', 'ジム'],
+      goalName: '沖縄旅行', goalNums: ['¥38,000 / ¥100,000 · 38%', '¥52,000 / ¥100,000 · 52%'], goalMonth: '5か月、毎月¥12,400', goalIn: '＋ 入れる', halfway: '🎉 半分まで来ました！', reached: '目標達成！', shelf: '🏆 達成した目標', laptop: '新しいパソコン', yay: 'やった！',
+      pkBtn: '👆 指紋・顔で開く', pkOr: 'またはパスコードを入力', pkOn: '指紋・顔で開くをオンにしました。', pkSet: '指紋・顔で開く',
       wd: ['日', '月', '火', '水', '木', '金', '土']
     }
   };
@@ -199,6 +211,15 @@
       [C.deco[0], bar(W.month) + sheet('<div class="dp-decobar">' + W.decoBar.map(function (x, k) { return '<span class="' + (k === 1 ? 'hl' : '') + '">' + x + '</span>'; }).join('') + '</div><div class="dp-page lines pink hand">' + W.decoText + '</div>')],
       [C.deco[1], bar(W.month) + sheet('<div class="dp-decobar">' + W.decoBar.map(function (x, k) { return '<span class="' + (k === 3 ? 'hl' : '') + '">' + x + '</span>'; }).join('') + '</div><div class="dp-page lines pink hand">' + W.decoText + '<i class="dp-st" style="right:10%;top:12%">🍓</i><i class="dp-st" style="right:30%;top:48%;transform:rotate(-12deg)">☕</i><i class="dp-st sm" style="left:12%;top:60%">✨</i><i class="dp-tape" style="left:22%;top:-4%"></i></div>')],
       [C.deco[2], bar(W.month) + sheet('<div class="dp-page dots cream"><div class="dp-week"><span><small>' + W.weekD[0] + '</small>' + W.weekT[0] + '</span><span><small>' + W.weekD[1] + '</small>' + W.weekT[1] + '</span></div><div class="dp-habit"><b>' + W.habit + '</b>' + ['on', 'on', 'on', '', 'on', '', ''].map(function (c) { return '<i class="' + c + '"></i>'; }).join('') + '</div></div>')]
+    ],
+    goals: [
+      [C.goals[0], BUDGET + '<div class="dp-card dp-goal"><span class="dp-ge">✈️</span><div><b>' + W.goalName + '</b><div class="dp-bar g"><i style="width:38%"></i></div><small>' + W.goalNums[0] + '</small><small>' + W.goalMonth + '</small></div></div>' + tabs('budget')],
+      [C.goals[1], BUDGET + sheet('<b>✈️ ' + W.goalName + '</b><div class="dp-amt">140</div><div class="dp-btn">' + W.goalIn + '</div><div class="dp-bar g"><i style="width:52%"></i></div><small>' + W.goalNums[1] + '</small>') + toast(W.halfway)],
+      [C.goals[2], BUDGET + '<div class="dp-celebrate"><i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i><i class="c5"></i><div class="dp-cc"><span>✈️</span><b>' + W.reached + '</b><small>' + W.goalName + '</small><div class="dp-btn">' + W.yay + '</div></div></div><div class="dp-card"><b>' + W.shelf + '</b><div class="dp-shelf"><span>✈️<small>' + W.goalName + '</small></span><span>💻<small>' + W.laptop + '</small></span></div></div>']
+    ],
+    pk: [
+      [C.pk[0], bar(W.tabs[3]) + sheet('<b>' + W.pkSet + '</b><div class="dp-input">••••••••••</div><div class="dp-btn">' + '✓ ' + W.pkSet + '</div>') + toast(W.pkOn)],
+      [C.pk[1], '<div class="dp-lockscreen"><div class="dp-lockic">🔒</div><b>' + W.locked + '</b><div class="dp-btn">' + W.pkBtn + '</div><small>' + W.pkOr + '</small><div class="dp-finger">👆</div></div>']
     ],
     install: [
       [C.install[0], '<div class="dp-lockscreen"><div class="dp-share">' + W.share + '</div><div class="dp-menu"><span>' + W.menu[0] + '</span><span class="hl">' + W.menu[1] + '</span><span>' + W.menu[2] + '</span></div></div>'],

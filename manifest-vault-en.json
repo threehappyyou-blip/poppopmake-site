@@ -32,6 +32,10 @@
   ],
   "shortcuts": [
     {
+      "name": "Add spending",
+      "url": "/vault?start=add"
+    },
+    {
       "name": "Notes",
       "url": "/vault?start=notes"
     },

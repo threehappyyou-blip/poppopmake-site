@@ -458,3 +458,82 @@ html.desk-mode body { color: #23292A; }
 .pip-bar .icon-btn { font-size: 16px; }
 .desk-gate { padding: 8px 12px; }
 .desk-gate .stack { gap: 8px; }
+
+/* ---------- calculator row under amount boxes ---------- */
+.calc-ops { display: flex; gap: 6px; margin: 6px 0 0; }
+.calc-op { flex: 1; min-height: 40px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper-2); color: var(--ink); font-size: 1.15rem; font-weight: 700; cursor: pointer; }
+.calc-op:active { background: var(--teal-soft); }
+
+/* ---------- emoji picker ---------- */
+.emo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 4px; margin: 2px 0 10px; }
+.emo { height: 44px; border: 1px solid transparent; border-radius: 10px; background: var(--paper); font-size: 24px; cursor: pointer; }
+.emo.on, .emo:hover { border-color: var(--teal); background: var(--teal-soft); }
+.emo-btn { width: 48px; height: 48px; flex-shrink: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--card); font-size: 24px; cursor: pointer; }
+.cat-list .emo-btn { width: 44px; height: 44px; font-size: 22px; }
+.row .grow, .btn.grow { flex: 1; }
+
+/* ---------- money for today ---------- */
+.allow { display: flex; flex-direction: column; gap: 2px; margin: 10px 0 0; padding: 10px 12px; border-radius: 12px; background: var(--teal-soft); }
+.allow-main { font-weight: 700; color: var(--teal); }
+.allow-sub { font-size: .82rem; color: var(--ink-soft); }
+.allow.over { background: color-mix(in srgb, var(--danger) 12%, var(--card)); }
+.allow.over, .allow.over .allow-main { color: var(--danger); font-weight: 700; }
+
+/* ---------- saving goals ---------- */
+.goal-chip { display: inline-flex; align-items: center; gap: 2px; margin: 10px 0 0; padding: 6px 12px; min-height: 36px; border-radius: 999px; border: 1px dashed var(--teal);
+  background: transparent; color: var(--teal); font-weight: 600; font-size: .86rem; cursor: pointer; }
+.goal-card { display: flex; gap: 12px; align-items: center; width: 100%; text-align: left; cursor: pointer; color: var(--ink); }
+.goal-emoji { font-size: 34px; width: 48px; text-align: center; flex-shrink: 0; }
+.goal-main { flex: 1; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.goal-name { font-weight: 700; }
+.goal-nums { font-size: .84rem; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.goal-plan { margin: 0; }
+.goal-bar { height: 12px; border-radius: 99px; background: var(--paper-2); overflow: hidden; }
+.goal-bar span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #8FD694, #0D7A7C); transition: width .5s ease; }
+.goal-bar.done span { background: linear-gradient(90deg, #FFD45C, #F4A93B); }
+.goal-head { display: flex; gap: 16px; align-items: center; margin-bottom: 10px; }
+.goal-ring { width: 76px; height: 76px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  background: var(--teal-soft); border: 4px solid var(--teal); font-weight: 800; font-size: 1.05rem; color: var(--teal); }
+.goal-head.done .goal-ring { background: #FFF3C4; border-color: #F4A93B; font-size: 2rem; }
+.goal-big { font-size: 1.5rem; font-weight: 800; margin: 0; }
+.goal-done-text { color: #B7791F; font-weight: 700; margin: 2px 0 0; }
+.goal-moves .tx-row.static { cursor: default; display: flex; gap: 10px; align-items: center; }
+.goal-moves .tx-main { flex: 1; color: var(--ink-soft); }
+.shelf-head { margin: 22px 0 8px; font-size: 1rem; }
+.shelf { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+.badge { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 6px; border-radius: 16px; cursor: pointer; text-align: center;
+  background: linear-gradient(160deg, #FFF6D6, #FFE7A8); border: 1px solid #F4D27A; color: #5B4300; box-shadow: 0 2px 8px rgba(180,130,0,.15); }
+.badge-emoji { font-size: 30px; position: relative; }
+.badge-emoji::after { content: '✓'; position: absolute; right: -10px; bottom: -4px; width: 18px; height: 18px; border-radius: 50%; background: #0D7A7C; color: #fff; font-size: 11px; line-height: 18px; font-weight: 800; }
+.badge-name { font-weight: 700; font-size: .84rem; word-break: break-word; }
+.badge-date { font-size: .72rem; opacity: .8; }
+
+/* ---------- the celebration ---------- */
+.celebrate { position: fixed; inset: 0; z-index: 60; display: flex; align-items: center; justify-content: center; padding: 20px;
+  background: rgba(20, 24, 22, .55); overflow: hidden; }
+.celebrate-card { position: relative; z-index: 2; max-width: 340px; width: 100%; text-align: center; padding: 28px 22px 22px; border-radius: 24px;
+  background: var(--card); color: var(--ink); box-shadow: 0 20px 60px rgba(0,0,0,.35); }
+.celebrate-card.pop { animation: pop .5s cubic-bezier(.2, 1.4, .4, 1) both; }
+.celebrate-emoji { font-size: 64px; line-height: 1; margin-bottom: 8px; }
+.celebrate-card h2 { margin: 4px 0; font-size: 1.6rem; }
+.celebrate-name { font-weight: 700; margin: 4px 0; }
+.celebrate-amt { font-size: 1.3rem; font-weight: 800; color: #0D7A7C; margin: 4px 0 8px; }
+.confetti { position: absolute; top: -20px; width: 9px; height: 14px; border-radius: 2px; z-index: 1; animation-name: fall; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes fall { to { top: 110%; transform: rotate(720deg) translateX(40px); } }
+@keyframes pop { from { transform: scale(.6); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .confetti { display: none; } .celebrate-card.pop { animation: none; } .goal-bar span { transition: none; } }
+
+/* ---------- fingerprint / face unlock ---------- */
+.pk-slot .pk-btn { margin: 4px 0 2px; }
+.pk-slot .hint { margin: 6px 0 10px; }
+
+/* ---------- checklist notes ---------- */
+.checklist { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 12px; min-height: 30vh; color: #23292A; }
+.checklist.desk-list { min-height: 0; flex: 1; overflow-y: auto; border-radius: 0; background: transparent; }
+.cl-row { display: flex; align-items: center; gap: 8px; min-height: 40px; }
+.cl-cb { width: 22px; height: 22px; flex-shrink: 0; accent-color: #0D7A7C; }
+.cl-in { flex: 1; min-width: 0; border: 0; border-bottom: 1px dashed rgba(0,0,0,.15); background: transparent; color: inherit; font: inherit; font-size: inherit; padding: 6px 2px; }
+.cl-in:focus { outline: none; border-bottom: 2px solid #0D7A7C; }
+.cl-in.done { text-decoration: line-through; opacity: .55; }
+.checklist .mini { align-self: flex-start; color: #0D7A7C; }
+.note-count { font-size: .72rem; font-weight: 700; color: #0D7A7C; margin-top: 4px; }

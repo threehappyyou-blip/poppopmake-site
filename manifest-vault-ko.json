@@ -32,6 +32,10 @@
   ],
   "shortcuts": [
     {
+      "name": "지출 기록",
+      "url": "/vault?start=add"
+    },
+    {
       "name": "메모",
       "url": "/vault?start=notes"
     },

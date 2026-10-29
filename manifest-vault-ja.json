@@ -32,6 +32,10 @@
   ],
   "shortcuts": [
     {
+      "name": "支出を記録",
+      "url": "/vault?start=add"
+    },
+    {
       "name": "メモ",
       "url": "/vault?start=notes"
     },
