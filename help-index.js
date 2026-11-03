@@ -358,7 +358,7 @@
     ['secure', 'catchup', 'super']);
   A('guide', 'guide-capgains-stacking', 'Capital Gains Stacking Explained', '/capital-gains-stacking-explained',
     'Why the same $50,000 gain can be taxed at 7% or 17% depending on your other income.',
-    ['how capital gains are taxed', 'capital gains brackets', 'long term capital gains rate explained', 'why is my capital gains tax different', 'gains stack on top of income', 'niit explained', '0 percent capital gains'],
+    ['how capital gains are taxed', 'how much tax when i sell stock', 'tax on selling stock table', 'capital gains brackets', 'long term capital gains rate explained', 'why is my capital gains tax different', 'gains stack on top of income', 'niit explained', '0 percent capital gains'],
     ['stacking', 'stack', 'niit']);
   A('guide', 'guide-compare-example', 'Same Salary, Three Different Paychecks', '/compare-worked-example',
     'A worked example: the same salary number in Texas, Ontario and England.',
@@ -372,6 +372,10 @@
     'How the Low Income Tax Offset taper and Medicare levy push your real marginal rate up.',
     ['australian marginal tax rate', 'australia tax brackets explained', 'lito taper', 'medicare levy shade in', 'why is my real tax rate higher in australia'],
     ['marginal', 'taper', 'lito']);
+  A('guide', 'guide-canada-provinces', 'Canada Take-Home Pay by Province', '/canada-take-home-pay-by-province',
+    'All 13 provinces and territories compared at $50,000, $75,000, $100,000 and $150,000.',
+    ['which province has the lowest tax', 'take home pay by province', 'best province for take home pay', 'compare provinces salary after tax', 'canada provinces tax comparison'],
+    ['provinces', 'province', 'territories']);
   A('guide', 'guide-canada-mechanics', 'Ontario Surtax & Quebec Rules', '/canada-tax-mechanics',
     'How the Canada calculator handles Ontario’s surtax and Quebec’s federal abatement.',
     ['ontario surtax', 'quebec abatement', 'quebec tax explained', 'canadian payroll tax explained', 'how canada tax is calculated'],

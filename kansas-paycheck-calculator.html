@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
-<meta name="robots" content="noindex, follow">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Kansas Paycheck Calculator (2026) &mdash; PopPopMake</title>
 <meta name="description" content="Free 2026 Kansas paycheck calculator. See your take-home pay after federal tax, FICA, and Kansas state tax. No sign-up, no advisor referrals &mdash; runs entirely in your browser.">
@@ -236,6 +235,7 @@
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+<style>.st-table{width:100%;border-collapse:collapse;font-size:0.9rem;margin:12px 0;}.st-table th,.st-table td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;}.st-table th:first-child,.st-table td:first-child{text-align:left;}.st-table th{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}</style>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -336,6 +336,26 @@
   <div class="panel">
     <h2>Worked example</h2>
     <p style="margin:0;color:var(--ink-soft);">A single filer in Kansas earning <strong style="color:var(--ink);">$65,000/year</strong>, paid biweekly: federal income tax is about $5,620, FICA (Social Security + Medicare) is about $4,973, and Kansas's state tax comes to about $2,827/year in this example, on top of federal tax and FICA. That leaves roughly <strong style="color:var(--ink);">$51,580/year</strong> take-home (about $1,984 per biweekly paycheck) &mdash; an effective tax rate of about 20.6%. Change the salary above to see your own number.</p>
+  </div>
+
+  <div class="panel" id="state-facts">
+    <h2>Kansas take-home pay at common salaries (2026)</h2>
+    <p style="color:var(--ink-soft);">Yearly figures after federal income tax, Social Security, Medicare and Kansas income tax, with the standard deduction and no 401(k) or other deductions. Married figures assume one earner filing jointly.</p>
+      <div style="overflow-x:auto;"><table class="st-table">
+        <thead><tr><th>Salary</th><th>State tax (single)</th><th>State rate on gross</th><th>Take-home (single)</th><th>Take-home (married, one income)</th></tr></thead>
+        <tbody>
+        <tr><td>$30,000</td><td>$896</td><td>3.0%</td><td>$25,389</td><td>$27,526</td></tr>
+        <tr><td>$40,000</td><td>$1,432</td><td>3.6%</td><td>$32,888</td><td>$35,461</td></tr>
+        <tr><td>$50,000</td><td>$1,990</td><td>4.0%</td><td>$40,365</td><td>$43,176</td></tr>
+        <tr><td>$65,000</td><td>$2,827</td><td>4.3%</td><td>$51,580</td><td>$54,589</td></tr>
+        <tr><td>$80,000</td><td>$3,664</td><td>4.6%</td><td>$61,446</td><td>$65,833</td></tr>
+        <tr><td>$100,000</td><td>$4,780</td><td>4.8%</td><td>$74,400</td><td>$80,787</td></tr>
+        <tr><td>$150,000</td><td>$7,570</td><td>5.0%</td><td>$106,221</td><td>$116,472</td></tr>
+        </tbody>
+      </table></div>
+    <h2 style="margin-top:22px;">What changed in Kansas, and why the tax-free amount is so high</h2>
+    <p style="color:var(--ink-soft);">Kansas rewrote its income tax in 2024 (Senate Bill 1). It went from three brackets to two, cut the top rate from 5.7% to 5.58%, and raised the personal exemption from $2,250 to $9,160 for a single filer ($18,320 married filing jointly). Now the first $23,000 of Kansas taxable income ($46,000 married) is taxed at 5.2% and the rest at 5.58%. Because the $3,605 standard deduction and the $9,160 exemption stack, a single worker pays no Kansas income tax on the first $12,765 of wages, which is why Kansas tax comes to only about 5% of gross pay even at $150,000, below the 5.58% top rate. The same law fully exempted Social Security benefits from Kansas tax.</p>
+    <p style="color:var(--ink-soft);margin-bottom:0;">Sources: <a href="https://www.ksrevenue.gov/personal.html" target="_blank" rel="noopener">Kansas Department of Revenue</a>; 2024 Senate Bill 1.</p>
   </div>
 
   <div class="panel">

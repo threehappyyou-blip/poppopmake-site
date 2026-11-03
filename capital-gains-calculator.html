@@ -7,17 +7,17 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<title>Capital Gains Tax Calculator (2026) — PopPopMake</title>
-<meta name="description" content="Free capital gains tax calculator for stocks and crypto. Short-term vs long-term rates, NIIT, and how your gain stacks on top of your other income, for 2026.">
+<title>Capital Gains Tax Calculator for Stocks &amp; Crypto (2025 &amp; 2026) — PopPopMake</title>
+<meta name="description" content="Free capital gains tax calculator for selling stocks or crypto, for tax years 2025 and 2026. Short-term vs long-term rates, the 0/15/20% brackets, NIIT, and worked examples.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PopPopMake">
 <meta property="og:url" content="https://poppopmake.com/capital-gains-calculator">
 <link rel="canonical" href="https://poppopmake.com/capital-gains-calculator">
-<meta property="og:title" content="Capital Gains Tax Calculator (2026) — PopPopMake">
-<meta property="og:description" content="Free capital gains tax calculator for stocks and crypto. Short-term vs long-term rates, NIIT, and how your gain stacks on top of your other income, for 2026.">
+<meta property="og:title" content="Capital Gains Tax Calculator for Stocks &amp; Crypto (2025 &amp; 2026) — PopPopMake">
+<meta property="og:description" content="Free capital gains tax calculator for selling stocks or crypto, for tax years 2025 and 2026. Short-term vs long-term rates, the 0/15/20% brackets, NIIT, and worked examples.">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Capital Gains Tax Calculator (2026) — PopPopMake">
-<meta name="twitter:description" content="Free capital gains tax calculator for stocks and crypto. Short-term vs long-term rates, NIIT, and how your gain stacks on top of your other income, for 2026.">
+<meta name="twitter:title" content="Capital Gains Tax Calculator for Stocks &amp; Crypto (2025 &amp; 2026) — PopPopMake">
+<meta name="twitter:description" content="Free capital gains tax calculator for selling stocks or crypto, for tax years 2025 and 2026. Short-term vs long-term rates, the 0/15/20% brackets, NIIT, and worked examples.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -109,6 +109,19 @@
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
 
+  .cg-more{margin-top:40px;}
+  .cg-more h2{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;margin:32px 0 10px;}
+  .cg-more p{color:var(--ink-soft);line-height:1.6;}
+  .table-wrap{overflow-x:auto;margin:12px 0;}
+  .ex-table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:0.9rem;}
+  .ex-table th,.ex-table td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap;}
+  .ex-table th{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}
+  .hint-line{font-size:0.85rem;}
+  .faq{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:8px 20px;}
+  .faq-item{padding:14px 0;border-bottom:1px solid var(--line);}
+  .faq-item:last-child{border-bottom:none;}
+  .faq-q{font-weight:600;font-size:0.95rem;margin:0 0 6px;color:var(--ink);}
+  .faq-a{font-size:0.9rem;margin:0;}
   .verify-badge{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;}
   .verify-grid{display:flex;flex-wrap:wrap;gap:20px;margin-bottom:10px;}
   .verify-item{min-width:140px;}
@@ -141,6 +154,7 @@
   table.breakdown td:first-child{overflow-wrap:anywhere;}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "Capital Gains Tax Calculator", "url": "https://poppopmake.com/capital-gains-calculator", "description": "Free capital gains tax calculator for selling stocks or crypto, for tax years 2025 and 2026. Short-term vs long-term rates, the 0/15/20% brackets, NIIT, and worked examples.", "applicationCategory": "FinanceApplication", "operatingSystem": "Any (runs in the browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "publisher": {"@type": "Organization", "name": "PopPopMake", "url": "https://poppopmake.com/"}}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much tax do I pay when I sell stock?", "acceptedAnswer": {"@type": "Answer", "text": "Only the gain is taxed — the sale price minus what you paid. If you held the stock more than a year, the gain is taxed at 0%, 15% or 20% depending on your total taxable income; if you held it a year or less, it is taxed like wages at your ordinary rate (10% to 37%). Above $200,000 of income ($250,000 married filing jointly) an extra 3.8% Net Investment Income Tax can apply."}}, {"@type": "Question", "name": "What is the difference between short-term and long-term capital gains?", "acceptedAnswer": {"@type": "Answer", "text": "Long-term means you owned the asset for more than one year before selling; it gets the lower 0/15/20% rates. Short-term (one year or less) is added to your ordinary income. In the examples above, the same $15,000 gain costs $2,250 long-term and $3,300 short-term."}}, {"@type": "Question", "name": "Is crypto taxed the same as stocks?", "acceptedAnswer": {"@type": "Answer", "text": "For federal income tax, yes: the IRS treats crypto as property, so selling or swapping it for a gain uses the same short-term and long-term rules as stocks. Enter crypto sales the same way."}}, {"@type": "Question", "name": "Do I pay tax if I sell stock and buy different stock right away?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Selling is what makes the gain taxable; reinvesting the money does not postpone the tax. (Losses work in your favour: up to $3,000 of net loss a year — $1,500 married filing separately — lowers your other income, and the rest carries over. Buying back the same stock within 30 days of a loss sale can disallow the loss under the wash-sale rule, which this calculator does not check.)"}}, {"@type": "Question", "name": "Which tax year should I pick?", "acceptedAnswer": {"@type": "Answer", "text": "The year you sold. Sales in 2025 belong on the 2025 return (filed in 2026); sales during 2026 go on the 2026 return you file in early 2027. The 2027 figures will be added once the IRS publishes them."}}]}]}</script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -153,14 +167,14 @@
 </header>
 
 <main class="wrap" id="main-content">
-  <span class="eyebrow">Money &amp; Tax · 2026</span>
-  <h1>Capital Gains Tax Calculator</h1>
-  <p class="lede">For stocks or crypto — the IRS taxes both the same way. Add the sales you made this year to see what you'd owe, how gains and losses offset each other, and how the gain stacks on top of your other income rather than getting its own separate bucket.</p>
+  <span class="eyebrow">Money &amp; Tax · 2025 &amp; 2026</span>
+  <h1>Capital Gains Tax Calculator for Stocks</h1>
+  <p class="lede">Selling stock, ETFs or crypto? Pick the tax year (2025 or 2026), add your sales, and see the tax you&rsquo;d owe, whether it&rsquo;s taxed at the long-term 0/15/20% rates or as ordinary income, and how the gain stacks on top of your other income. The IRS taxes stocks and crypto the same way.</p>
 
   <div class="verify-badge">
     <div class="verify-grid">
-      <div class="verify-item"><span class="verify-label">Source</span><span class="verify-value"><a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" target="_blank" rel="noopener">IRS Rev. Proc. 2025-32</a></span></div>
-      <div class="verify-item"><span class="verify-label">Rates for</span><span class="verify-value">2026</span></div>
+      <div class="verify-item"><span class="verify-label">Source</span><span class="verify-value" id="yearSource"><a href="https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill" target="_blank" rel="noopener">IRS Rev. Proc. 2025-32</a></span></div>
+      <div class="verify-item"><span class="verify-label">Rates for</span><span class="verify-value" id="ratesFor">2026</span></div>
       <div class="verify-item"><span class="verify-label">Last checked</span><span class="verify-value">October 2026</span></div>
     </div>
     <p class="verify-note">If a chatbot gives you a different number, it’s worth checking against the source above &mdash; general AI assistants frequently get jurisdiction-specific rates like these wrong, especially outside a handful of major states or countries. See <a href="/how-we-verify">how we check these figures</a>, or what’s been corrected on the <a href="/changelog">changelog</a>.</p>
@@ -169,6 +183,13 @@
   <div class="layout">
     <div class="panel">
       <h3>Your income</h3>
+      <div class="field">
+        <label for="taxYear">Tax year</label>
+        <select id="taxYear">
+          <option value="2026" selected>2026 (sales this year)</option>
+          <option value="2025">2025 (sales last year)</option>
+        </select>
+      </div>
       <div class="field">
         <label for="filingStatus">Filing status</label>
         <select id="filingStatus">
@@ -232,14 +253,52 @@
       <div class="loss-note" id="lossNote" style="display:none;"></div>
 
       <div class="disclaimer">
-        <strong>This is an estimate, not tax advice.</strong> It uses 2026 federal brackets (IRS Rev. Proc. 2025-32) and the 3.8% Net Investment Income Tax. Your sales are netted the way Schedule D does it (short-term against short-term, long-term against long-term, then the two against each other), up to $3,000 of a net loss ($1,500 if married filing separately) lowers your other income, and the net gain is stacked on top of your other taxable income. MAGI for NIIT is approximated as your other income plus the net gain, which can differ from your real MAGI. It doesn't include state tax, wash-sale rules, the higher rates on collectibles or real-estate depreciation, or Section 1202/QSBS treatment. Confirm anything important with a tax professional before you sell. Your numbers never leave your device &mdash; <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
+        <strong>This is an estimate, not tax advice.</strong> It uses <span id="yearText">2026 federal brackets (IRS Rev. Proc. 2025-32)</span> and the 3.8% Net Investment Income Tax. Your sales are netted the way Schedule D does it (short-term against short-term, long-term against long-term, then the two against each other), up to $3,000 of a net loss ($1,500 if married filing separately) lowers your other income, and the net gain is stacked on top of your other taxable income. MAGI for NIIT is approximated as your other income plus the net gain, which can differ from your real MAGI. It doesn't include state tax, wash-sale rules, the higher rates on collectibles or real-estate depreciation, or Section 1202/QSBS treatment. Confirm anything important with a tax professional before you sell. Your numbers never leave your device &mdash; <a href="/how-it-works">see how to check that yourself</a>. See our <a href="/terms">Terms</a> for more.
       </div>
 
       <div class="disclaimer" style="border-left-color:var(--orange);">
-        <strong>Why can the same gain be taxed so differently?</strong> Read <a href="/capital-gains-stacking-explained">The Same $50,000 Gain Can Be Taxed at 7% or 17%</a>.
+        <strong>Why can the same gain be taxed so differently?</strong> Read <a href="/capital-gains-stacking-explained">The Same $50,000 Gain Can Be Taxed at 7% or 17%</a>, which also has <a href="/capital-gains-stacking-explained#tables">tables of the tax on a stock sale at different incomes</a>.
       </div>
     </div>
   </div>
+
+  <section class="cg-more" aria-labelledby="examplesTitle">
+    <h2 id="examplesTitle">Worked examples: tax on selling stock</h2>
+    <p>All figures come from the calculator above (federal tax only, standard deduction, no other investment income). The stock was bought for the cost basis and sold for the sale price.</p>
+    <div class="table-wrap"><table class="ex-table">
+      <thead><tr><th>Who</th><th>Sale</th><th>Held</th><th>Tax in 2025</th><th>Tax in 2026</th></tr></thead>
+      <tbody>
+        <tr><td>Single, $60,000 salary</td><td>$10,000 gain</td><td>Over 1 year</td><td>$885</td><td>$668</td></tr>
+        <tr><td>Single, $60,000 salary</td><td>$10,000 gain</td><td>1 year or less</td><td>$1,778</td><td>$1,550</td></tr>
+        <tr><td>Single, $80,000 salary</td><td>$10,000 &rarr; $25,000</td><td>Over 1 year</td><td>$2,250</td><td>$2,250</td></tr>
+        <tr><td>Single, $80,000 salary</td><td>$10,000 &rarr; $25,000</td><td>1 year or less</td><td>$3,300</td><td>$3,300</td></tr>
+        <tr><td>Married filing jointly, $70,000 income</td><td>$20,000 &rarr; $50,000</td><td>Over 1 year</td><td>$0</td><td>$0</td></tr>
+        <tr><td>Single, $250,000 salary</td><td>$50,000 &rarr; $100,000</td><td>Over 1 year</td><td>$9,400</td><td>$9,400</td></tr>
+      </tbody>
+    </table></div>
+    <p>The last row includes $1,900 of Net Investment Income Tax (3.8% on the part of the gain above $200,000 of income). In the married example the whole $30,000 gain fits inside the 0% bracket. The $60,000 rows differ between years because the 2026 brackets and standard deduction are higher.</p>
+
+    <h2>Long-term capital gains brackets, 2025 and 2026</h2>
+    <p>These apply to <strong>taxable income including the gain</strong> (after the standard deduction). Gains on assets held one year or less are taxed at ordinary income rates instead.</p>
+    <div class="table-wrap"><table class="ex-table">
+      <thead><tr><th>Rate</th><th>Single 2025</th><th>Single 2026</th><th>Married jointly 2025</th><th>Married jointly 2026</th></tr></thead>
+      <tbody>
+        <tr><td>0%</td><td>up to $48,350</td><td>up to $49,450</td><td>up to $96,700</td><td>up to $98,900</td></tr>
+        <tr><td>15%</td><td>up to $533,400</td><td>up to $545,500</td><td>up to $600,050</td><td>up to $613,700</td></tr>
+        <tr><td>20%</td><td>above $533,400</td><td>above $545,500</td><td>above $600,050</td><td>above $613,700</td></tr>
+      </tbody>
+    </table></div>
+    <p class="hint-line">Head of household: 0% up to $64,750 (2025) / $66,200 (2026), 15% up to $566,700 / $579,600. Married filing separately: 0% up to $48,350 / $49,450, 15% up to $300,000 / $306,850. Sources: IRS Rev. Proc. 2024-40 (2025) and Rev. Proc. 2025-32 (2026).</p>
+
+    <h2>Questions people ask</h2>
+    <div class="faq">
+      <div class="faq-item"><p class="faq-q">How much tax do I pay when I sell stock?</p><p class="faq-a">Only the gain is taxed &mdash; the sale price minus what you paid. If you held the stock more than a year, the gain is taxed at 0%, 15% or 20% depending on your total taxable income; if you held it a year or less, it is taxed like wages at your ordinary rate (10% to 37%). Above $200,000 of income ($250,000 married filing jointly) an extra 3.8% Net Investment Income Tax can apply.</p></div>
+      <div class="faq-item"><p class="faq-q">What is the difference between short-term and long-term capital gains?</p><p class="faq-a">Long-term means you owned the asset for more than one year before selling; it gets the lower 0/15/20% rates. Short-term (one year or less) is added to your ordinary income. In the examples above, the same $15,000 gain costs $2,250 long-term and $3,300 short-term.</p></div>
+      <div class="faq-item"><p class="faq-q">Is crypto taxed the same as stocks?</p><p class="faq-a">For federal income tax, yes: the IRS treats crypto as property, so selling or swapping it for a gain uses the same short-term and long-term rules as stocks. Enter crypto sales the same way.</p></div>
+      <div class="faq-item"><p class="faq-q">Do I pay tax if I sell stock and buy different stock right away?</p><p class="faq-a">Yes. Selling is what makes the gain taxable; reinvesting the money does not postpone the tax. (Losses work in your favour: up to $3,000 of net loss a year &mdash; $1,500 married filing separately &mdash; lowers your other income, and the rest carries over. Buying back the same stock within 30 days of a loss sale can disallow the loss under the wash-sale rule, which this calculator does not check.)</p></div>
+      <div class="faq-item"><p class="faq-q">Which tax year should I pick?</p><p class="faq-a">The year you sold. Sales in 2025 belong on the 2025 return (filed in 2026); sales during 2026 go on the 2026 return you file in early 2027. The 2027 figures will be added once the IRS publishes them.</p></div>
+    </div>
+  </section>
 </main>
 
 <footer>
@@ -264,22 +323,47 @@ if ('serviceWorker' in navigator) {
 (function(){
   'use strict';
 
-  // ---- 2026 federal figures (IRS Rev. Proc. 2025-32; NIIT: IRC 1411), re-checked October 2026 ----
-  var STD_DEDUCTION = { single: 16100, mfj: 32200, hoh: 24150, mfs: 16100 };
-
-  var ORDINARY_BRACKETS = {
-    single: [[0,12400,0.10],[12400,50400,0.12],[50400,105700,0.22],[105700,201775,0.24],[201775,256225,0.32],[256225,640600,0.35],[640600,Infinity,0.37]],
-    mfj:    [[0,24800,0.10],[24800,100800,0.12],[100800,211400,0.22],[211400,403550,0.24],[403550,512450,0.32],[512450,768700,0.35],[768700,Infinity,0.37]],
-    hoh:    [[0,17700,0.10],[17700,67450,0.12],[67450,105700,0.22],[105700,201750,0.24],[201750,256200,0.32],[256200,640600,0.35],[640600,Infinity,0.37]],
-    mfs:    [[0,12400,0.10],[12400,50400,0.12],[50400,105700,0.22],[105700,201775,0.24],[201775,256225,0.32],[256225,384350,0.35],[384350,Infinity,0.37]]
+  // ---- Federal figures by tax year (NIIT thresholds and the $3,000 loss limit are not indexed) ----
+  // 2026: IRS Rev. Proc. 2025-32. 2025: Rev. Proc. 2024-40 brackets, standard deduction as raised by the One Big Beautiful Bill Act.
+  // Both re-checked against the sources in YEAR_SOURCES, October 2026.
+  var YEARS = {
+    2026: {
+      std: { single: 16100, mfj: 32200, hoh: 24150, mfs: 16100 },
+      ord: {
+        single: [[0,12400,0.10],[12400,50400,0.12],[50400,105700,0.22],[105700,201775,0.24],[201775,256225,0.32],[256225,640600,0.35],[640600,Infinity,0.37]],
+        mfj:    [[0,24800,0.10],[24800,100800,0.12],[100800,211400,0.22],[211400,403550,0.24],[403550,512450,0.32],[512450,768700,0.35],[768700,Infinity,0.37]],
+        hoh:    [[0,17700,0.10],[17700,67450,0.12],[67450,105700,0.22],[105700,201750,0.24],[201750,256200,0.32],[256200,640600,0.35],[640600,Infinity,0.37]],
+        mfs:    [[0,12400,0.10],[12400,50400,0.12],[50400,105700,0.22],[105700,201775,0.24],[201775,256225,0.32],[256225,384350,0.35],[384350,Infinity,0.37]]
+      },
+      lt: {
+        single: [[0,49450,0],[49450,545500,0.15],[545500,Infinity,0.20]],
+        mfj:    [[0,98900,0],[98900,613700,0.15],[613700,Infinity,0.20]],
+        hoh:    [[0,66200,0],[66200,579600,0.15],[579600,Infinity,0.20]],
+        mfs:    [[0,49450,0],[49450,306850,0.15],[306850,Infinity,0.20]]
+      }
+    },
+    2025: {
+      std: { single: 15750, mfj: 31500, hoh: 23625, mfs: 15750 },
+      ord: {
+        single: [[0,11925,0.10],[11925,48475,0.12],[48475,103350,0.22],[103350,197300,0.24],[197300,250525,0.32],[250525,626350,0.35],[626350,Infinity,0.37]],
+        mfj:    [[0,23850,0.10],[23850,96950,0.12],[96950,206700,0.22],[206700,394600,0.24],[394600,501050,0.32],[501050,751600,0.35],[751600,Infinity,0.37]],
+        hoh:    [[0,17000,0.10],[17000,64850,0.12],[64850,103350,0.22],[103350,197300,0.24],[197300,250500,0.32],[250500,626350,0.35],[626350,Infinity,0.37]],
+        mfs:    [[0,11925,0.10],[11925,48475,0.12],[48475,103350,0.22],[103350,197300,0.24],[197300,250525,0.32],[250525,375800,0.35],[375800,Infinity,0.37]]
+      },
+      lt: {
+        single: [[0,48350,0],[48350,533400,0.15],[533400,Infinity,0.20]],
+        mfj:    [[0,96700,0],[96700,600050,0.15],[600050,Infinity,0.20]],
+        hoh:    [[0,64750,0],[64750,566700,0.15],[566700,Infinity,0.20]],
+        mfs:    [[0,48350,0],[48350,300000,0.15],[300000,Infinity,0.20]]
+      }
+    }
   };
-
-  var LTCG_BRACKETS = {
-    single: [[0,49450,0],[49450,545500,0.15],[545500,Infinity,0.20]],
-    mfj:    [[0,98900,0],[98900,613700,0.15],[613700,Infinity,0.20]],
-    hoh:    [[0,66200,0],[66200,579600,0.15],[579600,Infinity,0.20]],
-    mfs:    [[0,49450,0],[49450,306850,0.15],[306850,Infinity,0.20]]
-  };
+  var STD_DEDUCTION, ORDINARY_BRACKETS, LTCG_BRACKETS, TAX_YEAR;
+  function setYear(y){
+    TAX_YEAR = YEARS[y] ? +y : 2026;
+    STD_DEDUCTION = YEARS[TAX_YEAR].std; ORDINARY_BRACKETS = YEARS[TAX_YEAR].ord; LTCG_BRACKETS = YEARS[TAX_YEAR].lt;
+  }
+  setYear((location.search.match(/[?&]year=(\d{4})/) || [])[1] || 2026);
 
   var NIIT_THRESHOLD = { single: 200000, mfj: 250000, hoh: 200000, mfs: 125000 };
   var NIIT_RATE = 0.038;
@@ -424,6 +508,7 @@ if ('serviceWorker' in navigator) {
       if (n > MAX_AMOUNT) { notes.big = 'Amounts above ' + fmt(MAX_AMOUNT) + ' are the largest this calculator accepts, so they were capped there.'; return MAX_AMOUNT; }
       return n;
     }
+    setYear(el('taxYear').value);
     var status = el('filingStatus').value;
     if (!STD_DEDUCTION.hasOwnProperty(status)) status = 'single';
     var sales = [];
@@ -456,8 +541,22 @@ if ('serviceWorker' in navigator) {
     });
   }
 
+  var YEAR_SOURCES = {
+    2026: [['IRS Rev. Proc. 2025-32', 'https://www.irs.gov/newsroom/irs-releases-tax-inflation-adjustments-for-tax-year-2026-including-amendments-from-the-one-big-beautiful-bill']],
+    2025: [['IRS Rev. Proc. 2024-40', 'https://content.govdelivery.com/accounts/USIRS/bulletins/3bd9a61'], ['One Big Beautiful Bill Act (standard deduction)', 'https://www.irs.gov/node/154921']]
+  };
+  function showYear(){
+    el('ratesFor').textContent = String(TAX_YEAR);
+    var box = el('yearSource'); box.textContent = '';
+    YEAR_SOURCES[TAX_YEAR].forEach(function(src, i){
+      if (i) box.appendChild(document.createTextNode(' · '));
+      var a = document.createElement('a'); a.href = src[1]; a.target = '_blank'; a.rel = 'noopener'; a.textContent = src[0]; box.appendChild(a);
+    });
+    el('yearText').textContent = TAX_YEAR === 2025 ? '2025 federal brackets (IRS Rev. Proc. 2024-40, with the standard deduction raised by the One Big Beautiful Bill Act)' : '2026 federal brackets (IRS Rev. Proc. 2025-32)';
+  }
   function calc(){
     var inp = readInputs(), o = inp.o;
+    showYear();
     var noteKeys = Object.keys(inp.notes);
     var noteBox = el('inputNote');
     noteBox.textContent = noteKeys.map(function(k){ return inp.notes[k]; }).join(' ');
@@ -559,7 +658,8 @@ if ('serviceWorker' in navigator) {
 
   function onChange(){ calc(); if (window.ppmMaybeShowThanks) window.ppmMaybeShowThanks(); }
 
-  ['filingStatus', 'grossOrdinaryIncome', 'itemized', 'carryST', 'carryLT'].forEach(function(id){
+  el('taxYear').value = String(TAX_YEAR);
+  ['taxYear', 'filingStatus', 'grossOrdinaryIncome', 'itemized', 'carryST', 'carryLT'].forEach(function(id){
     el(id).addEventListener('input', onChange);
     el(id).addEventListener('change', onChange);
   });
@@ -585,6 +685,8 @@ if ('serviceWorker' in navigator) {
 
   addRow({ basis: 10000, proceeds: 25000 });
   calc();
+  // for the worked examples and tests: the same engine, any year
+  window.__cgTax = function (year, status, gross, sales) { setYear(year); var a = analyze({ status: status, gross: gross, itemized: 0, carryST: 0, carryLT: 0, sales: sales }); setYear(el('taxYear').value); return a; };
 })();
 </script>
 </body>

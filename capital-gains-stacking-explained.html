@@ -7,17 +7,17 @@
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-<title>The Same $50,000 Gain Can Be Taxed at 7% or 17% — Here's Why — PopPopMake</title>
-<meta name="description" content="Capital gains don't get their own tax bracket — they stack on top of your ordinary income. The same gain can land almost entirely in the 0% bracket or push well into NIIT territory, depending on what else you earned that year.">
+<title>Tax on Selling Stock (2026): Tables by Income and Gain Size — PopPopMake</title>
+<meta name="description" content="How much federal tax you owe when you sell stock in 2026, by salary and gain size: long-term vs short-term, single and married filing jointly, with the 3.8% NIIT. Plus why the same $50,000 gain can be taxed at 7% or 17%.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="PopPopMake">
 <meta property="og:url" content="https://poppopmake.com/capital-gains-stacking-explained">
 <link rel="canonical" href="https://poppopmake.com/capital-gains-stacking-explained">
-<meta property="og:title" content="The Same $50,000 Gain Can Be Taxed at 7% or 17% — Here's Why — PopPopMake">
-<meta property="og:description" content="Capital gains don't get their own tax bracket — they stack on top of your ordinary income. The same gain can land almost entirely in the 0% bracket or push well into NIIT territory, depending on what else you earned that year.">
+<meta property="og:title" content="Tax on Selling Stock (2026): Tables by Income and Gain Size — PopPopMake">
+<meta property="og:description" content="How much federal tax you owe when you sell stock in 2026, by salary and gain size: long-term vs short-term, single and married filing jointly, with the 3.8% NIIT. Plus why the same $50,000 gain can be taxed at 7% or 17%.">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="The Same $50,000 Gain Can Be Taxed at 7% or 17% — Here's Why — PopPopMake">
-<meta name="twitter:description" content="Capital gains don't get their own tax bracket — they stack on top of your ordinary income. The same gain can land almost entirely in the 0% bracket or push well into NIIT territory, depending on what else you earned that year.">
+<meta name="twitter:title" content="Tax on Selling Stock (2026): Tables by Income and Gain Size — PopPopMake">
+<meta name="twitter:description" content="How much federal tax you owe when you sell stock in 2026, by salary and gain size: long-term vs short-term, single and married filing jointly, with the 3.8% NIIT. Plus why the same $50,000 gain can be taxed at 7% or 17%.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
@@ -39,126 +39,6 @@
   .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
   .logo-mark{flex-shrink:0;display:block;}
   nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
-  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
-  .nav-link{
-    font-size:0.95rem;
-    font-weight:500;
-    text-decoration:none;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
-
-  .nav-dropdown{position:relative;}
-  .nav-dropdown summary{
-    list-style:none;
-    cursor:pointer;
-    font-size:0.95rem;
-    font-weight:500;
-    color:var(--ink-soft);
-    padding:10px 14px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    gap:6px;
-    transition:color .15s ease, background .15s ease;
-  }
-  .nav-dropdown summary::-webkit-details-marker{display:none;}
-  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
-  .nav-dropdown summary svg{transition:transform .15s ease;}
-  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
-
-  .mega{
-    position:absolute;
-    top:calc(100% + 8px);
-    left:0;
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
-    padding:10px;
-    width:420px;
-    z-index:300;
-  }
-  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
-  .mega-grid a{
-    display:flex;
-    align-items:baseline;
-    justify-content:space-between;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:8px;
-    text-decoration:none;
-    color:var(--ink);
-    font-size:0.92rem;
-    font-weight:500;
-  }
-  .mega-grid a:hover{background:var(--paper-2);}
-  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
-  .mega-all{
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:6px;
-    margin-top:8px;
-    padding:11px 12px;
-    border-top:1px solid var(--line);
-    text-decoration:none;
-    color:var(--teal);
-    font-weight:600;
-    font-size:0.9rem;
-    border-radius:8px;
-  }
-  .mega-all:hover{background:var(--paper-2);}
-
-  .menu-toggle-wrap{display:none;}
-  .mobile-panel{display:none;}
-  @media (max-width:760px){
-    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
-    nav{margin-left:0;}
-    .menu-toggle-wrap{display:block;position:relative;}
-    .menu-toggle-wrap summary{
-      list-style:none;
-      cursor:pointer;
-      width:44px;height:44px;
-      display:flex;align-items:center;justify-content:center;
-      border-radius:10px;
-      border:1px solid var(--line);
-      background:var(--card);
-    }
-    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
-    .menu-toggle-wrap .icon-close{display:none;}
-    .menu-toggle-wrap[open] .icon-open{display:none;}
-    .menu-toggle-wrap[open] .icon-close{display:block;}
-    .mobile-panel{
-      display:block;
-      position:fixed;
-      inset:0;
-      top:89px;
-      background:var(--paper);
-      padding:20px 24px 40px;
-      overflow-y:auto;
-      z-index:250;
-    }
-    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
-    .mobile-panel a{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:13px 4px;
-      font-size:1rem;
-      font-weight:500;
-      text-decoration:none;
-      color:var(--ink);
-      border-bottom:1px solid var(--line);
-      min-height:44px;
-    }
-    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
-  }
-
   main{padding:48px 0 80px;}
   .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
   h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.6rem,4vw,2.2rem);letter-spacing:-0.02em;margin:10px 0 8px;}
@@ -179,7 +59,21 @@
   footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
   footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  .updated{color:var(--ink-soft);font-size:0.9rem;margin:0 0 12px;}
+  h3{font-family:'Space Grotesk',sans-serif;font-size:1.05rem;margin:26px 0 8px;}
+  .tablewrap{overflow-x:auto;margin:14px 0;border-radius:var(--radius);}
+  table.grid{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);font-size:0.88rem;}
+  table.grid caption{caption-side:bottom;text-align:left;font-size:0.8rem;color:var(--ink-soft);padding:8px 2px 0;}
+  table.grid th,table.grid td{padding:9px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;}
+  table.grid th:first-child{text-align:left;}
+  table.grid thead th{font-family:'IBM Plex Mono',monospace;font-size:0.66rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--ink-soft);background:var(--paper-2);}
+  table.grid sup{color:var(--orange);}
+  .figcap{font-size:0.85rem;color:var(--ink-soft);margin:10px 0 16px;}
+  .faq details{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:10px 0;}
+  .faq summary{font-weight:600;cursor:pointer;} .faq details p{margin:10px 0 0;}
+  @media (max-width:560px){ table.grid th, table.grid td{padding:8px 6px;font-size:0.78rem;} }
 </style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "Article", "headline": "Tax on Selling Stock: The Same $50,000 Gain Can Be Taxed at 7% or 17%", "dateModified": "2026-10-29", "author": {"@type": "Organization", "name": "PopPopMake"}, "publisher": {"@type": "Organization", "name": "PopPopMake"}, "mainEntityOfPage": "https://poppopmake.com/capital-gains-stacking-explained"}, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How much tax do I pay if I sell stock?", "acceptedAnswer": {"@type": "Answer", "text": "It depends on how long you held it and on your other income. Long-term gains (held more than a year) are taxed at 0%, 15% or 20%, stacked on top of your other income; short-term gains are taxed at your ordinary rate of 10% to 37%. For example, a single filer with $75,000 of income pays $3,750 on a $25,000 long-term gain in 2026, or $5,500 if it was short-term."}}, {"@type": "Question", "name": "Do I pay tax on stock gains if I make less than $50,000?", "acceptedAnswer": {"@type": "Answer", "text": "Often not on long-term gains. In 2026 a single filer pays 0% on long-term gains while taxable income (after the $16,100 standard deduction) stays at or below $49,450, so someone with $50,000 of wages can take about $15,550 of long-term gains federal-tax-free."}}, {"@type": "Question", "name": "Do I pay tax on the whole sale price or only the gain?", "acceptedAnswer": {"@type": "Answer", "text": "Only on the gain: the sale price minus what you paid (your cost basis, including fees). Selling $30,000 of stock you bought for $20,000 is a $10,000 gain."}}, {"@type": "Question", "name": "What is the 3.8% NIIT?", "acceptedAnswer": {"@type": "Answer", "text": "The Net Investment Income Tax adds 3.8% on investment income, including stock gains, to the extent your modified AGI is above $200,000 (single) or $250,000 (married filing jointly). These thresholds are not adjusted for inflation."}}, {"@type": "Question", "name": "Can stock losses reduce the tax?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Losses first offset gains, and up to $3,000 of net loss a year ($1,500 if married filing separately) can offset other income; the rest carries forward. The calculator lets you enter losses and carryovers."}}]}]}</script>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -187,56 +81,14 @@
 <header>
   <div class="inner">
     <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
-    <nav aria-label="Primary">
-      <details class="nav-dropdown" id="toolsDetails">
-        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
-        <div class="mega">
-          <div class="mega-grid">
-            <a href="/document-tools">Documents <span>12</span></a>
-            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-            <a href="/bmi-calculator">Health <span>2</span></a>
-            <a href="/career-tools">Career <span>4</span></a>
-            <a href="/business-tools">Business <span>2</span></a>
-            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-            <a href="/everyday-tools">Everyday <span>6</span></a>
-            <a href="/devtools">Developer <span>6</span></a>
-          </div>
-          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
-        </div>
-      </details>
-      <a class="nav-link" href="/guides">Guides</a>
-      <a class="nav-link" href="/about">About</a>
-      <a class="nav-link" href="/all-tools">All Tools</a>
-    </nav>
-    <details class="menu-toggle-wrap">
-      <summary aria-label="Open menu">
-        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
-        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
-      </summary>
-      <div class="mobile-panel">
-        <h4>Browse</h4>
-        <a href="/document-tools">Documents <span>12</span></a>
-        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
-        <a href="/bmi-calculator">Health <span>2</span></a>
-        <a href="/career-tools">Career <span>4</span></a>
-        <a href="/business-tools">Business <span>2</span></a>
-        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
-        <a href="/everyday-tools">Everyday <span>6</span></a>
-        <a href="/devtools">Developer <span>6</span></a>
-        <h4>More</h4>
-        <a href="/all-tools">All Tools</a>
-        <a href="/guides">Guides</a>
-        <a href="/about">About</a>
-        <a href="/changelog">Changelog</a>
-        <a href="/feedback">Feedback</a>
-      </div>
-    </details>
+    <nav><a href="/">Back to home</a></nav>
   </div>
 </header>
 
 <main class="wrap" id="main-content">
   <span class="eyebrow">Guide · Money &amp; Tax</span>
-  <h1>The Same $50,000 Gain Can Be Taxed at 7% or 17%</h1>
+  <h1>Tax on Selling Stock: The Same $50,000 Gain Can Be Taxed at 7% or 17%</h1>
+  <p class="updated">2026 tax year (with 2025 for comparison) · recalculated October 2026</p>
   <p class="lede">Long-term capital gains don't get their own separate tax bracket. They stack on top of whatever ordinary income you already have &mdash; which means the exact same gain can land in a completely different place depending on what kind of year you had.</p>
 
   <h2>"Stacking" in one sentence</h2>
@@ -266,6 +118,74 @@
 
   <p>Same $50,000. Same holding period. More than double the effective rate, purely because of where it started stacking &mdash; the first scenario's gain sits mostly in the 0% and 15% long-term brackets, while the second's sits solidly in the 15% bracket and crosses into Net Investment Income Tax territory (3.8% on top, once modified AGI passes $200,000 for a single filer).</p>
 
+  <h2 id="tables">How much tax on a stock sale in 2026: the tables</h2>
+  <p>Each cell is the <strong>extra federal tax</strong> the sale adds to your bill: your tax with the gain minus your tax without it. "Income" is your other income for the year (wages and the like) before the standard deduction. A <sup>*</sup> means the amount includes the 3.8% Net Investment Income Tax.</p>
+  <h3>Long-term gains (held more than a year), single filer</h3>
+  <div class="tablewrap"><table class="grid" id="t-2026-single-long">
+    <caption>Extra federal tax from a long-term stock gain, single filer, 2026</caption>
+    <thead><tr><th scope="col">Income</th><th scope="col">$5,000 gain</th><th scope="col">$10,000 gain</th><th scope="col">$25,000 gain</th><th scope="col">$50,000 gain</th><th scope="col">$100,000 gain</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">$30,000</th><td>$0</td><td>$0</td><td>$0</td><td>$2,168</td><td>$9,668</td></tr>
+      <tr><th scope="row">$50,000</th><td>$0</td><td>$0</td><td>$1,418</td><td>$5,168</td><td>$12,668</td></tr>
+      <tr><th scope="row">$75,000</th><td>$750</td><td>$1,500</td><td>$3,750</td><td>$7,500</td><td>$15,000</td></tr>
+      <tr><th scope="row">$100,000</th><td>$750</td><td>$1,500</td><td>$3,750</td><td>$7,500</td><td>$15,000</td></tr>
+      <tr><th scope="row">$150,000</th><td>$750</td><td>$1,500</td><td>$3,750</td><td>$7,500</td><td>$16,900<sup>*</sup></td></tr>
+      <tr><th scope="row">$250,000</th><td>$940<sup>*</sup></td><td>$1,880<sup>*</sup></td><td>$4,700<sup>*</sup></td><td>$9,400<sup>*</sup></td><td>$18,800<sup>*</sup></td></tr>
+    </tbody>
+  </table></div>
+  <p>Notice the first two rows: at $30,000 or $50,000 of other income, a gain of up to $10,000 adds nothing at all, because it fits inside the 0% bracket (taxable income up to $49,450 for a single filer in 2026). From about $75,000 of income, every long-term dollar is taxed at a flat 15% until the gain pushes you past $200,000 of modified AGI, where NIIT adds 3.8%.</p>
+  <h3>Short-term gains (held a year or less), single filer</h3>
+  <div class="tablewrap"><table class="grid" id="t-2026-single-short">
+    <caption>Extra federal tax from a short-term stock gain, single filer, 2026</caption>
+    <thead><tr><th scope="col">Income</th><th scope="col">$5,000 gain</th><th scope="col">$10,000 gain</th><th scope="col">$25,000 gain</th><th scope="col">$50,000 gain</th><th scope="col">$100,000 gain</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">$30,000</th><td>$600</td><td>$1,200</td><td>$3,000</td><td>$7,350</td><td>$18,514</td></tr>
+      <tr><th scope="row">$50,000</th><td>$600</td><td>$1,200</td><td>$3,850</td><td>$9,350</td><td>$20,914</td></tr>
+      <tr><th scope="row">$75,000</th><td>$1,100</td><td>$2,200</td><td>$5,500</td><td>$11,064</td><td>$23,064</td></tr>
+      <tr><th scope="row">$100,000</th><td>$1,100</td><td>$2,200</td><td>$5,564</td><td>$11,564</td><td>$23,564</td></tr>
+      <tr><th scope="row">$150,000</th><td>$1,200</td><td>$2,400</td><td>$6,000</td><td>$12,000</td><td>$28,470<sup>*</sup></td></tr>
+      <tr><th scope="row">$250,000</th><td>$1,790<sup>*</sup></td><td>$3,580<sup>*</sup></td><td>$9,030<sup>*</sup></td><td>$18,730<sup>*</sup></td><td>$38,130<sup>*</sup></td></tr>
+    </tbody>
+  </table></div>
+  <p>Short-term gains are taxed like wages, at your ordinary bracket rate. Holding the same $25,000 gain past the one-year mark saves between $1,750 and $4,330 here, depending on income.</p>
+  <h3>Long-term gains, married filing jointly</h3>
+  <div class="tablewrap"><table class="grid" id="t-2026-mfj-long">
+    <caption>Extra federal tax from a long-term stock gain, married filing jointly, 2026</caption>
+    <thead><tr><th scope="col">Income</th><th scope="col">$5,000 gain</th><th scope="col">$10,000 gain</th><th scope="col">$25,000 gain</th><th scope="col">$50,000 gain</th><th scope="col">$100,000 gain</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">$60,000</th><td>$0</td><td>$0</td><td>$0</td><td>$0</td><td>$4,335</td></tr>
+      <tr><th scope="row">$100,000</th><td>$0</td><td>$0</td><td>$0</td><td>$2,835</td><td>$10,335</td></tr>
+      <tr><th scope="row">$150,000</th><td>$750</td><td>$1,500</td><td>$3,750</td><td>$7,500</td><td>$15,000</td></tr>
+      <tr><th scope="row">$250,000</th><td>$940<sup>*</sup></td><td>$1,880<sup>*</sup></td><td>$4,700<sup>*</sup></td><td>$9,400<sup>*</sup></td><td>$18,800<sup>*</sup></td></tr>
+      <tr><th scope="row">$400,000</th><td>$940<sup>*</sup></td><td>$1,880<sup>*</sup></td><td>$4,700<sup>*</sup></td><td>$9,400<sup>*</sup></td><td>$18,800<sup>*</sup></td></tr>
+    </tbody>
+  </table></div>
+  <p>Married couples get twice the 0% room (taxable income up to $98,900 in 2026), so a household with $100,000 of income can take $25,000 of long-term gains completely free of federal tax. NIIT starts at $250,000 of modified AGI for joint filers.</p>
+  <h3>2025 for comparison (long-term, single)</h3>
+  <div class="tablewrap"><table class="grid" id="t-2025-single-long">
+    <caption>Extra federal tax from a long-term stock gain, single filer, 2025</caption>
+    <thead><tr><th scope="col">Income</th><th scope="col">$5,000 gain</th><th scope="col">$10,000 gain</th><th scope="col">$25,000 gain</th><th scope="col">$50,000 gain</th><th scope="col">$100,000 gain</th></tr></thead>
+    <tbody>
+      <tr><th scope="row">$30,000</th><td>$0</td><td>$0</td><td>$0</td><td>$2,385</td><td>$9,885</td></tr>
+      <tr><th scope="row">$50,000</th><td>$0</td><td>$0</td><td>$1,635</td><td>$5,385</td><td>$12,885</td></tr>
+      <tr><th scope="row">$75,000</th><td>$750</td><td>$1,500</td><td>$3,750</td><td>$7,500</td><td>$15,000</td></tr>
+      <tr><th scope="row">$100,000</th><td>$750</td><td>$1,500</td><td>$3,750</td><td>$7,500</td><td>$15,000</td></tr>
+      <tr><th scope="row">$150,000</th><td>$750</td><td>$1,500</td><td>$3,750</td><td>$7,500</td><td>$16,900<sup>*</sup></td></tr>
+      <tr><th scope="row">$250,000</th><td>$940<sup>*</sup></td><td>$1,880<sup>*</sup></td><td>$4,700<sup>*</sup></td><td>$9,400<sup>*</sup></td><td>$18,800<sup>*</sup></td></tr>
+    </tbody>
+  </table></div>
+  <p>The 2025 numbers differ only near the bracket edges, because the 0% bracket was a little smaller (up to $48,350 of taxable income) and the standard deduction was $15,750 instead of $16,100. The NIIT thresholds aren't indexed for inflation, so they're the same in both years.</p>
+  <p class="figcap">Federal income tax only, computed with the same engine as our <a href="/capital-gains-calculator">Capital Gains Calculator</a>, using the standard deduction and no other deductions or credits. 2026 brackets: IRS Rev. Proc. 2025-32. 2025 brackets: IRS 2025 inflation adjustments, with the standard deduction as changed by the One Big Beautiful Bill Act. State tax is not included.</p>
+
+  <h2>Common questions</h2>
+  <div class="faq">
+    <details><summary>How much tax do I pay if I sell stock?</summary><p>It depends on how long you held it and on your other income. Long-term gains (held more than a year) are taxed at 0%, 15% or 20%, stacked on top of your other income; short-term gains are taxed at your ordinary rate of 10% to 37%. For example, a single filer with $75,000 of income pays $3,750 on a $25,000 long-term gain in 2026, or $5,500 if it was short-term.</p></details>
+    <details><summary>Do I pay tax on stock gains if I make less than $50,000?</summary><p>Often not on long-term gains. In 2026 a single filer pays 0% on long-term gains while taxable income (after the $16,100 standard deduction) stays at or below $49,450, so someone with $50,000 of wages can take about $15,550 of long-term gains federal-tax-free.</p></details>
+    <details><summary>Do I pay tax on the whole sale price or only the gain?</summary><p>Only on the gain: the sale price minus what you paid (your cost basis, including fees). Selling $30,000 of stock you bought for $20,000 is a $10,000 gain.</p></details>
+    <details><summary>What is the 3.8% NIIT?</summary><p>The Net Investment Income Tax adds 3.8% on investment income, including stock gains, to the extent your modified AGI is above $200,000 (single) or $250,000 (married filing jointly). These thresholds are not adjusted for inflation.</p></details>
+    <details><summary>Can stock losses reduce the tax?</summary><p>Yes. Losses first offset gains, and up to $3,000 of net loss a year ($1,500 if married filing separately) can offset other income; the rest carries forward. The calculator lets you enter losses and carryovers.</p></details>
+  </div>
+
   <h2>What this means in practice</h2>
   <p>The size of the gain isn't the only thing that determines the tax. Timing matters: realizing the same gain in a lower-income year (between jobs, a sabbatical, early retirement before other income kicks in) can genuinely mean a lower rate on the exact same sale &mdash; not a loophole, just how a stacked, bracket-based system works.</p>
 
@@ -284,30 +204,6 @@
 
 <script src="/cookie-consent.js"></script>
 <script src="/command-palette.js"></script>
-<script>
-(function(){
-  // Close the desktop Tools dropdown on outside click / Escape.
-  var toolsDetails = document.getElementById('toolsDetails');
-  if (toolsDetails) {
-    document.addEventListener('click', function(e){
-      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
-    });
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') toolsDetails.open = false;
-    });
-  }
-  // Close the mobile menu on Escape, and when a link inside it is clicked.
-  var mobileWrap = document.querySelector('.menu-toggle-wrap');
-  if (mobileWrap) {
-    document.addEventListener('keydown', function(e){
-      if (e.key === 'Escape') mobileWrap.open = false;
-    });
-    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
-      a.addEventListener('click', function(){ mobileWrap.open = false; });
-    });
-  }
-})();
-</script>
 <script src="/thanks-card.js"></script>
 <script>
 if ('serviceWorker' in navigator) {

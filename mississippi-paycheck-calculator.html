@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
-<meta name="robots" content="noindex, follow">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Mississippi Paycheck Calculator (2026) &mdash; PopPopMake</title>
 <meta name="description" content="Free 2026 Mississippi paycheck calculator. See your take-home pay after federal tax, FICA, and Mississippi state tax. No sign-up, no advisor referrals &mdash; runs entirely in your browser.">
@@ -236,6 +235,7 @@
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+<style>.st-table{width:100%;border-collapse:collapse;font-size:0.9rem;margin:12px 0;}.st-table th,.st-table td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;}.st-table th:first-child,.st-table td:first-child{text-align:left;}.st-table th{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}</style>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -336,6 +336,26 @@
   <div class="panel">
     <h2>Worked example</h2>
     <p style="margin:0;color:var(--ink-soft);">A single filer in Mississippi earning <strong style="color:var(--ink);">$65,000/year</strong>, paid biweekly: federal income tax is about $5,620, FICA (Social Security + Medicare) is about $4,973, and Mississippi's state tax comes to about $1,868/year in this example, on top of federal tax and FICA. That leaves roughly <strong style="color:var(--ink);">$52,539/year</strong> take-home (about $2,021 per biweekly paycheck) &mdash; an effective tax rate of about 19.2%. Change the salary above to see your own number.</p>
+  </div>
+
+  <div class="panel" id="state-facts">
+    <h2>Mississippi take-home pay at common salaries (2026)</h2>
+    <p style="color:var(--ink-soft);">Yearly figures after federal income tax, Social Security, Medicare and Mississippi income tax, with the standard deduction and no 401(k) or other deductions. Married figures assume one earner filing jointly.</p>
+      <div style="overflow-x:auto;"><table class="st-table">
+        <thead><tr><th>Salary</th><th>State tax (single)</th><th>State rate on gross</th><th>Take-home (single)</th><th>Take-home (married, one income)</th></tr></thead>
+        <tbody>
+        <tr><td>$30,000</td><td>$468</td><td>1.6%</td><td>$25,817</td><td>$27,569</td></tr>
+        <tr><td>$40,000</td><td>$868</td><td>2.2%</td><td>$33,452</td><td>$35,624</td></tr>
+        <tr><td>$50,000</td><td>$1,268</td><td>2.5%</td><td>$41,087</td><td>$43,459</td></tr>
+        <tr><td>$65,000</td><td>$1,868</td><td>2.9%</td><td>$52,540</td><td>$55,052</td></tr>
+        <tr><td>$80,000</td><td>$2,468</td><td>3.1%</td><td>$62,642</td><td>$66,504</td></tr>
+        <tr><td>$100,000</td><td>$3,268</td><td>3.3%</td><td>$75,912</td><td>$81,774</td></tr>
+        <tr><td>$150,000</td><td>$5,268</td><td>3.5%</td><td>$108,523</td><td>$118,249</td></tr>
+        </tbody>
+      </table></div>
+    <h2 style="margin-top:22px;">Mississippi's rate is falling every year</h2>
+    <p style="color:var(--ink-soft);">Mississippi's 2025 tax law (House Bill 1) cuts the flat rate from 4.4% in 2025 to <strong style="color:var(--ink);">4% for 2026</strong>, then 3.75% in 2027, 3.5% in 2028, 3.25% in 2029 and 3% in 2030. After that, further cuts toward zero happen only if state revenue targets are met. The first $10,000 of taxable income stays untaxed, on top of the $2,300 standard deduction and $6,000 personal exemption for a single filer, so a single worker pays no Mississippi income tax on the first $18,300 of wages.</p>
+    <p style="color:var(--ink-soft);margin-bottom:0;">Sources: <a href="https://www.dor.ms.gov/individual" target="_blank" rel="noopener">Mississippi Department of Revenue</a>; 2025 House Bill 1.</p>
   </div>
 
   <div class="panel">

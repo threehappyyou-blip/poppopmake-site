@@ -121,6 +121,31 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://poppopmake.com/canada-take-home-pay-by-province</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/kansas-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/mississippi-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/paycheck-guide</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/tax-brackets-2026</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://poppopmake.com/terms</loc>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
