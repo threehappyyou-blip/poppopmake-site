@@ -173,7 +173,7 @@
 
   T('budget-tracker', 'Budget Tracker', 'Money & Tax', '/budget-tracker',
     'Log spending in three taps, set monthly and category budgets, see charts — kept only on your device, encrypted and locked with a passcode.',
-    ['budget tracker', 'budget app', 'budgeting app', 'expense tracker', 'track expenses', 'track spending', 'spending tracker', 'money tracker', 'monthly budget planner', 'make a budget', 'monthly budget', 'household budget', 'family budget', 'personal budget', 'daily expenses', 'record expenses', 'log spending', 'where the money goes', 'where did my money go', 'spending limit', 'monthly spending limit', 'subscription tracker', 'bill tracker', 'private budget app', 'budget app without sign up', 'kakeibo', 'expense diary', 'import transactions from a csv', 'categorize spending', '50 30 20 budget'],
+    ['budget tracker', 'budget app', 'budgeting app', 'expense tracker', 'track expenses', 'track spending', 'spending tracker', 'money tracker', 'monthly budget planner', 'make a budget', 'monthly budget', 'household budget', 'family budget', 'personal budget', 'daily expenses', 'record expenses', 'log spending', 'where the money goes', 'where did my money go', 'spending limit', 'monthly spending limit', 'subscription tracker', 'bill tracker', 'private budget app', 'budget app without sign up', 'kakeibo', 'expense diary', 'import transactions from a csv', 'categorize spending', '50 30 20 budget', 'move my budget app to a new phone', 'transfer budget data with a qr code'],
     ['budget', 'budgeting', 'expense', 'expenses', 'spending', 'spent', 'household', 'ledger', 'kakeibo'],
     { prior: 0.2 });
 

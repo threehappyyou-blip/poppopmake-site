@@ -10,13 +10,15 @@
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray'];
   var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.deco', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv', 'tip.desk', 'tip.goals', 'tip.calc', 'tip.list'];
   var FAIL_KEY = 'ppm-vault-fails', THEME_KEY = 'ppm-vault-theme', DESK_KEY = 'ppm-vault-desk';
+  var TAB_KEY = 'ppm-vault-tab', INSTALL_KEY = 'ppm-vault-install-later', PK_AUTO_KEY = 'ppm-vault-pk-auto';   // only the tab name and two on/off choices, never content
   // A desktop note window (/vault?w=note&id=…) shows one note on its own; everything else is the full app.
   var DESK = (location.search.match(/[?&]w=note&id=([A-Za-z0-9_-]{4,40})(?:&|$)/) || [])[1] || null;
 
   var S = {
     phase: 'loading', budget: null, notes: null, settings: null, tab: 'budget', ym: null, budgetView: 'list',
     searchOpen: false, query: '', notesQuery: '', diary: null, diaryYm: null, diaryView: 'list', diarySearch: false, diaryQuery: '', tip: Math.floor(Math.random() * TIPS.length), tipHidden: false,
-    installEvt: null, pendingCode: null, lastActive: Date.now(), hiddenAt: null
+    installEvt: null, pendingCode: null, lastActive: Date.now(), hiddenAt: null,
+    pkArm: true, pkBtn: null, shared: null
   };
 
   // ---------- tiny DOM helpers ----------
@@ -243,6 +245,7 @@
     pipClose();
     var pending = openDeco ? openDeco.flush() : null;      // a drawing or sticker move still being saved
     flushNote(); flushEntry(); deskFlush();
+    if (!auto) S.pkArm = false;        // locked on purpose: don't pop the fingerprint prompt straight back up
     return Promise.resolve(pending).catch(function () {}).then(function () { return saving; }).then(function () {
       return C.lock();
     }).then(function () {
@@ -440,7 +443,8 @@
         h('div', { class: 'peek' }, h('span', { 'aria-hidden': 'true', text: '📝' }), h('b', { text: t('tour.3t') })),
         h('div', { class: 'peek' }, h('span', { 'aria-hidden': 'true', text: '📔' }), h('b', { text: t('tour.4t') }))),
       h('button', { type: 'button', class: 'btn primary block', id: 'start-btn', text: t('setup.start'), on: { click: function () { S.phase = 'create'; render(); } } }),
-      h('button', { type: 'button', class: 'btn ghost block', text: t('setup.restore'), on: { click: function () { openRestore(); } } })
+      h('button', { type: 'button', class: 'btn ghost block', text: t('setup.restore'), on: { click: function () { openRestore(); } } }),
+      h('button', { type: 'button', class: 'btn ghost block', id: 'welcome-qr', text: '📷 ' + t('qr.receiveFrom'), on: { click: function () { openReceive(); } } })
     );
   }
 
@@ -558,17 +562,35 @@
           .catch(function (e) { b.disabled = false; setMsg(msg, pkText(e)); });
       });
       add(pkSlot, b, h('p', { class: 'hint center', text: t('pk.or') }));
+      pkAutoTry(b, msg);
     });
     add(s, brand(),
       h('div', { class: 'lock-ico', 'aria-hidden': 'true' }, icon('lock', 40)),
-      h('h1', { text: t('lock.title') }), h('p', { class: 'lede', text: t('lock.body') }), pkSlot, form,
+      h('h1', { text: t('lock.title') }), h('p', { class: 'lede', text: t('lock.body') }), pkSlot, form, installCard(true),
       h('div', { class: 'links' },
         h('button', { type: 'button', class: 'link', text: t('lock.forgot'), on: { click: function () { S.phase = 'forgot'; render(); } } }),
         h('button', { type: 'button', class: 'link', text: t('lock.restore'), on: { click: function () { openRestore(); } } }),
+        h('button', { type: 'button', class: 'link', id: 'lock-qr', text: t('qr.receiveFrom'), on: { click: function () { openReceive(); } } }),
         h('button', { type: 'button', class: 'link danger', text: t('lock.erase'), on: { click: function () { openErase(); } } })),
       h('div', { class: 'lang-bottom' }, field(t('lang.label'), langSelect(render))));
     tick();
   }
+
+  // Opening the app, or coming back to it while it is locked, shows the fingerprint / face prompt straight away.
+  // Not right after "Lock now" (you just locked it on purpose) and not while the screen is out of sight.
+  // If the browser wants a tap first, or the person cancels, nothing is said: the button is right there.
+  function pkAutoTry(btn, msg) {
+    S.pkBtn = [btn, msg];
+    if (!S.pkArm || lsGet(PK_AUTO_KEY) === 'off' || waitSeconds() > 0 || document.visibilityState !== 'visible') return;
+    S.pkArm = false;
+    btn.disabled = true;
+    C.passkeyUnlock().then(function () { clearFails(); return loadAll(); }).then(function () { S.phase = 'app'; touch(); render(); afterUnlock(); })
+      .catch(function () { btn.disabled = false; if (msg) setMsg(msg, ''); });
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') { if (S.phase === 'locked' || S.phase === 'app') S.pkArm = true; return; }
+    if (S.phase === 'locked' && S.pkBtn && document.contains(S.pkBtn[0]) && !modals.length) pkAutoTry(S.pkBtn[0], S.pkBtn[1]);
+  });
 
   function renderForgot() {
     var s = screen('forgot center');
@@ -616,7 +638,7 @@
     var tabs = h('nav', { class: 'tabbar', 'aria-label': t('app.name') });
     [['budget', 'wallet'], ['notes', 'note'], ['diary', 'book'], ['settings', 'gear']].forEach(function (x) {
       add(tabs, h('button', { type: 'button', class: 'tab' + (S.tab === x[0] ? ' on' : ''), 'aria-current': S.tab === x[0] ? 'page' : null, 'data-tab': x[0],
-        on: { click: function () { if (S.tab !== x[0]) { flushNote(); flushEntry(); hideToast(); S.tab = x[0]; S.searchOpen = false; render(); window.scrollTo(0, 0); } } } },
+        on: { click: function () { if (S.tab !== x[0]) { flushNote(); flushEntry(); hideToast(); S.tab = x[0]; lsSet(TAB_KEY, x[0]); S.searchOpen = false; render(); window.scrollTo(0, 0); } } } },
         icon(x[1]), h('span', { text: t('tab.' + x[0]) })));
     });
     add(shell, main, tabs);
@@ -696,12 +718,22 @@
     var hasData = S.budget.tx.length + S.notes.notes.length + S.diary.entries.length >= 5;
     var stale = st.lastBackup ? (nowTs - st.lastBackup > 30 * 864e5 && st.lastChange > st.lastBackup) : hasData;
     if (stale) return noticeCard('💾', t('set.backup'), st.lastBackup ? t('backup.remindOld', { d: Math.floor((nowTs - st.lastBackup) / 864e5) }) : t('backup.remindNever'), t('backup.now'), openBackup, 'notice-backup');
+    var ic = installCard(false);
+    if (ic) return ic;
     if (S.tipHidden) return null;
-    var key = !isStandalone() && S.tip % 3 === 0 ? 'tip.install' : TIPS[S.tip % TIPS.length];
-    var card = noticeCard('💡', t('tip.label'), t(key), key === 'tip.install' ? t('install.title') : t('btn.next'), function () {
-      if (key === 'tip.install') openInstall(); else { S.tip++; render(); }
-    }, 'notice-tip');
+    var key = TIPS[S.tip % TIPS.length];
+    var card = noticeCard('💡', t('tip.label'), t(key), t('btn.next'), function () { S.tip++; render(); }, 'notice-tip');
     add(card.querySelector('.notice-actions'), h('button', { type: 'button', class: 'link', text: t('btn.close'), on: { click: function () { S.tipHidden = true; render(); } } }));
+    return card;
+  }
+  // "Install as an app" stays in view (lock screen and the top of the app) until it is installed or put off.
+  function installCard(onLock) {
+    if (DESK || isStandalone() || lsGet(INSTALL_KEY)) return null;
+    var card = noticeCard('📲', t('install.cardTitle'), t('install.cardBody'), t('install.title'), openInstall, onLock ? 'install-card-lock' : 'notice-install');
+    card.classList.add('install-card');
+    add(card.querySelector('.notice-actions'), h('button', { type: 'button', class: 'link', id: onLock ? 'install-later-lock' : 'install-later', text: t('install.later'), on: { click: function () {
+      lsSet(INSTALL_KEY, String(Date.now())); card.remove(); toast(t('install.laterToast'));
+    } } }));
     return card;
   }
   function noticeCard(emoji, title, body, action, fn, id) {
@@ -1294,11 +1326,44 @@
     }
   });
   function afterUnlock(adopted) {
+    S.pkArm = false;
     liveKids().forEach(sendKey);
     if (DESK) { if (!adopted && openerIsApp()) sendKey(window.opener); return; }
     if (S.startAdd) { S.startAdd = false; S.tab = 'budget'; render(); openAdd(); }      // the "Add spending" home-screen shortcut
+    if (S.shared) saveShared();
     if (!adopted && deskCapable() && deskIds().length) setTimeout(function () { deskReopen(false); }, 0);
   }
+  // Android "Share" -> this app: the service worker keeps the shared text for a moment (it never goes to the server),
+  // the app picks it up and deletes it at once, and saves it as a new note when unlocked.
+  var SHARE_CACHE = 'ppm-share', SHARE_URL = '/__ppm-share';
+  function takeShared() {
+    S.tab = 'notes';
+    if (history.replaceState) { try { history.replaceState(null, '', location.pathname); } catch (e) {} }
+    if (!window.caches) return;
+    caches.open(SHARE_CACHE).then(function (c) {
+      return c.match(SHARE_URL).then(function (r) { return r ? r.json() : null; }).then(function (d) {
+        return c.delete(SHARE_URL).then(function () { return d; });
+      });
+    }).then(function (d) {
+      if (!d || Date.now() - (d.at || 0) > 10 * 60000) return;
+      var parts = [];
+      [d.title, d.text, d.url].forEach(function (x) {
+        x = String(x || '').trim();
+        if (x && parts.every(function (p) { return p.indexOf(x) < 0; })) parts.push(x);
+      });
+      if (!parts.length) return;
+      S.shared = parts.join('\n').slice(0, 20000);
+      if (S.phase === 'app') saveShared(); else if (S.phase === 'locked') toast(t('share.locked'));
+    }).catch(function () {});
+  }
+  function saveShared() {
+    var text = S.shared; S.shared = null;
+    if (!text || !S.notes) return;
+    var n = { id: B.uid(), text: text, color: 'yellow', pinned: false, created: Date.now(), updated: Date.now() };
+    S.notes.notes.push(n); noteLocal[n.id] = 1; markNote(n); saveNotes();
+    S.tab = 'notes'; render(); toast(t('share.done'));
+  }
+
   function deskHello() {         // a locked note window asks the app window that opened it for the open session
     if (!DESK || !openerIsApp()) return;
     try { window.opener.postMessage({ type: 'ppm-hello' }, location.origin); } catch (e) {}
@@ -1762,6 +1827,8 @@
       pkRow.hidden = false;
       add(pkRow, h('button', { type: 'button', class: 'set-row', id: 'set-passkey', on: { click: openPasskey } },
         h('span', { class: 'set-label', text: t('pk.title') }), h('span', { class: 'set-value', text: r[1] ? t('pk.stateOn') : t('pk.stateOff') }), icon('chev', 18)));
+      if (r[1]) add(pkRow, h('label', { class: 'check set-sub' }, h('input', { type: 'checkbox', id: 'set-pk-auto', checked: lsGet(PK_AUTO_KEY) !== 'off',
+        on: { change: function (e) { lsSet(PK_AUTO_KEY, e.target.checked ? null : 'off'); } } }), h('span', { text: t('pk.auto') })));
     });
     add(main, topBar(h('h1', { class: 'title', text: t('set.title') })));
     var cur = currencySelect(S.budget.currency); cur.id = 'set-currency';
@@ -1798,12 +1865,14 @@
       group(t('set.data'), [
         row(t('set.backup'), S.settings.lastBackup ? t('set.lastBackup', { when: I.ago(S.settings.lastBackup) }) : t('set.neverBackup'), openBackup, 'set-backup'),
         row(t('set.restore'), null, openRestore, 'set-restore'),
+        row(t('qr.title'), null, function () { openTransfer(true); }, 'set-qr'),
         row(t('set.export'), null, openExport, 'set-export'),
         row(t('set.import'), null, openImport, 'set-import'),
         row(t('set.erase'), null, openErase, 'set-erase', true)]),
       group(t('set.help'), [
         row(t('set.tour'), null, openTour, 'set-tour'),
         row(t('set.install'), isStandalone() ? t('install.done') : null, openInstall, 'set-install'),
+        isPhone() ? null : row(t('set.autostart'), null, openAutoStart, 'set-autostart'),
         row(t('set.about'), null, openAbout, 'set-about'),
         h('li', {}, h('a', { class: 'set-row', href: '/manual-vault', target: '_blank', rel: 'noopener' }, h('span', { class: 'set-label', text: t('set.manual') }), icon('chev', 18)))]),
       h('p', { class: 'fine center' }, h('a', { href: '/privacy', target: '_blank', rel: 'noopener', text: t('setup.privacy') }), ' · ',
@@ -1951,6 +2020,120 @@
   }
   function flushAll() { flushNote(); return saving; }
 
+  // ---------- moving everything to another device with QR codes (vault-qr.js) ----------
+  var loaded = {};
+  function loadScript(src) {
+    if (!loaded[src]) loaded[src] = new Promise(function (res, rej) {
+      var el = document.createElement('script'); el.src = src; el.onload = res; el.onerror = function () { delete loaded[src]; rej(new Error('load')); };
+      document.head.appendChild(el);
+    });
+    return loaded[src];
+  }
+  function openTransfer(unlocked) {
+    sheet(t('qr.title'), function (body, close) {
+      add(body, h('p', { text: t('qr.body') }),
+        unlocked ? h('button', { type: 'button', class: 'btn primary block', id: 'qr-send', text: '📤 ' + t('qr.send'), on: { click: function () { close(); openSend(); } } }) : null,
+        h('button', { type: 'button', class: 'btn block', id: 'qr-receive', text: '📷 ' + t('qr.receive'), on: { click: function () { close(); openReceive(); } } }),
+        h('p', { class: 'hint', text: t('qr.tip') }));
+    });
+  }
+  function drawQR(canvas, text) {
+    var q = window.qrcode(0, 'L'); q.addData(text, 'Byte'); q.make();
+    var n = q.getModuleCount(), quiet = 4, size = canvas.width, cell = Math.floor(size / (n + quiet * 2)), off = Math.floor((size - cell * (n + quiet * 2)) / 2);
+    var g = canvas.getContext('2d');
+    g.fillStyle = '#fff'; g.fillRect(0, 0, size, size); g.fillStyle = '#000';
+    for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) g.fillRect(off + (c + quiet) * cell, off + (r + quiet) * cell, cell, cell);
+  }
+  function openSend() {
+    var timer = null, wake = null;
+    sheet(t('qr.send'), function (body) {
+      var msg = msgEl(), info = h('p', { class: 'hint center', id: 'qr-info' }), count = h('p', { class: 'center qr-count', id: 'qr-count', 'aria-live': 'off' });
+      var px = Math.min(560, Math.max(260, Math.floor(Math.min(window.innerWidth, window.innerHeight) - 80)));
+      var canvas = h('canvas', { class: 'qr-canvas', id: 'qr-canvas', width: px, height: px, role: 'img', 'aria-label': t('qr.title') });
+      var fps = 5, frames = [], i = 0;
+      function tick() { if (!frames.length) return; drawQR(canvas, frames[i]); count.textContent = t('qr.frame', { i: i + 1, n: frames.length }); i = (i + 1) % frames.length; touch(); }
+      function start() { clearInterval(timer); timer = setInterval(tick, Math.round(1000 / fps)); }
+      add(body, h('p', { text: t('qr.sendBody') }), h('p', { class: 'msg', id: 'qr-secret-note', text: t('qr.secretNote') }), info, canvas, count,
+        h('div', { class: 'row center' },
+          h('button', { type: 'button', class: 'btn small', id: 'qr-slower', text: t('qr.slower'), on: { click: function () { fps = Math.max(2, fps - 1); start(); } } }),
+          h('button', { type: 'button', class: 'btn small', id: 'qr-faster', text: t('qr.faster'), on: { click: function () { fps = Math.min(10, fps + 1); start(); } } })), msg);
+      Promise.all([loadScript('/qrcode-generator.min.js'), flushAll()]).then(function () { return C.exportBackup(); }).then(function (text) {
+        return window.VaultQR.encode(text, px < 400 ? 450 : 800);
+      }).then(function (r) {
+        frames = r.frames;
+        var secs = Math.ceil(r.count / fps * 1.3);
+        info.textContent = secs < 120 ? t('qr.size', { n: r.count, s: secs }) : t('qr.sizeLong', { n: r.count, m: Math.ceil(secs / 60) });
+        tick(); start();
+        try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (w) { wake = w; }, function () {}); } catch (e) {}
+      }).catch(function (e) { setMsg(msg, e && e.code === 'too-big' ? t('qr.tooBig') : errText(e)); });
+    }, { onClose: function () { clearInterval(timer); try { if (wake) wake.release(); } catch (e) {} } });
+  }
+  function openReceive() {
+    var stream = null, loop = null, stopped = false;
+    function stop() { stopped = true; clearTimeout(loop); if (stream) stream.getTracks().forEach(function (tr) { tr.stop(); }); stream = null; }
+    sheet(t('qr.receive'), function (body, close) {
+      var msg = msgEl(); msg.id = 'qr-msg';
+      var status = h('p', { class: 'center', id: 'qr-status', 'aria-live': 'polite', text: t('qr.loading') });
+      var bar = h('progress', { class: 'qr-progress', id: 'qr-progress', max: 1, value: 0 });
+      var video = h('video', { class: 'qr-video', id: 'qr-video', playsinline: '', muted: '', autoplay: '' });
+      var grab = document.createElement('canvas'), gctx = grab.getContext('2d', { willReadFrequently: true });
+      var rx = new window.VaultQR.Receiver(), detector = null, warnedOther = false;
+      var warn = h('p', { class: 'msg', id: 'qr-replace', hidden: true, text: t('qr.replaceWarn') });
+      C.status().then(function (st) { if (st !== 'empty') warn.hidden = false; }).catch(function () {});
+      add(body, h('p', { text: t('qr.recvBody') }), warn, video, bar, status, msg);
+      function seen(text) {
+        var r = rx.add(text);
+        if (r.state === 'other' && !warnedOther) { warnedOther = true; setMsg(msg, t('qr.other')); }
+        if (r.count) { bar.max = r.count; bar.value = r.have; status.textContent = t('qr.got', { have: r.have, n: r.count }); }
+        return rx.done();
+      }
+      function scan() {
+        if (stopped) return;
+        var w = video.videoWidth, hh = video.videoHeight;
+        var p = Promise.resolve([]);
+        if (w && hh) {
+          var k = Math.min(1, 900 / Math.max(w, hh)); grab.width = Math.round(w * k); grab.height = Math.round(hh * k);
+          gctx.drawImage(video, 0, 0, grab.width, grab.height);
+          p = detector ? detector.detect(grab).then(function (codes) { return codes.map(function (c) { return c.rawValue; }); })
+            : Promise.resolve().then(function () { var c = window.jsQR(gctx.getImageData(0, 0, grab.width, grab.height).data, grab.width, grab.height, { inversionAttempts: 'dontInvert' }); return c ? [c.data] : []; });
+        }
+        p.then(function (texts) {
+          var done = texts.some(seen);
+          if (done) { stop(); finish(); } else loop = setTimeout(scan, 60);
+        }).catch(function () { loop = setTimeout(scan, 200); });
+      }
+      function finish() {
+        video.remove(); bar.value = bar.max;
+        rx.text().then(function (text) {
+          status.textContent = t('qr.allIn');
+          var secret = passInput(false, 'off'); secret.input.id = 'qr-secret';
+          var go = h('button', { type: 'submit', class: 'btn primary block', id: 'qr-go', text: t('qr.go') });
+          var form = h('form', { class: 'stack', novalidate: true }, h('div', { class: 'field' }, h('label', { for: 'qr-secret', text: t('restore.secret') }), secret.wrap), go);
+          form.addEventListener('submit', function (e) {
+            e.preventDefault(); go.disabled = true; go.textContent = t('restore.working'); setMsg(msg, '');
+            C.importBackup(text, secret.input.value).then(function () { clearFails(); return loadAll(); }).then(function () {
+              close(); closeAllModals(); S.phase = 'app'; touch(); render(); toast(t('qr.done'));
+            }).catch(function (err) {
+              go.disabled = false; go.textContent = t('qr.go');
+              setMsg(msg, err && err.code === 'bad-passcode' ? t('qr.badSecret') : err && err.code === 'bad-file' ? t('qr.damaged') : errText(err));
+            });
+          });
+          add(body, form); secret.input.focus();
+        }).catch(function (e) { setMsg(msg, e && e.code === 'no-gzip' ? t('qr.noGzip') : t('qr.damaged')); });
+      }
+      var want = ('BarcodeDetector' in window) ? window.BarcodeDetector.getSupportedFormats().then(function (f) {
+        if (f.indexOf('qr_code') >= 0) detector = new window.BarcodeDetector({ formats: ['qr_code'] }); else return loadScript('/jsqr.min.js');
+      }).catch(function () { return loadScript('/jsqr.min.js'); }) : loadScript('/jsqr.min.js');
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { status.textContent = ''; return setMsg(msg, t('qr.noCamera')); }
+      Promise.all([want, navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false })]).then(function (r) {
+        stream = r[1];
+        if (stopped) return stop();
+        video.srcObject = stream; video.muted = true;
+        return video.play().catch(function () {}).then(function () { status.textContent = t('qr.waiting'); scan(); });
+      }).catch(function () { status.textContent = ''; setMsg(msg, t('qr.noCamera')); });
+    }, { onClose: stop });
+  }
+
   // Works before unlocking (new phone) and after (replace current data).
   function openRestore() {
     sheet(t('restore.title'), function (body, close) {
@@ -2058,17 +2241,28 @@
       add(body, h('p', { class: 'msg', text: t('erase.body') }), field(t('erase.type', { word: word }), inp), go);
     });
   }
+  function isPhone() { return isIOS() || /Android/i.test(navigator.userAgent); }
+  function autoStartSteps() {
+    var mac = /Macintosh/.test(navigator.userAgent) && !isIOS();
+    return h('div', { class: 'autostart', id: 'autostart' }, h('h3', { text: t('install.auto') }),
+      h('ul', { class: 'install-steps' },
+        h('li', { text: t('install.autoChrome') }), h('li', { text: t('install.autoEdge') }),
+        h('li', { class: mac ? '' : 'here', text: t('install.autoWin') }), h('li', { class: mac ? 'here' : '', text: t('install.autoMac') })),
+      h('p', { class: 'hint', text: t('install.autoNote') }));
+  }
+  function openAutoStart() { sheet(t('set.autostart'), function (body) { add(body, autoStartSteps()); }); }
   function openInstall() {
     sheet(t('install.title'), function (body) {
       add(body, h('p', { class: 'hint', text: t('install.why') }));
-      if (isStandalone()) return add(body, h('p', { class: 'msg ok', text: t('install.done') }));
+      if (isStandalone()) { add(body, h('p', { class: 'msg ok', text: t('install.done') })); if (!isPhone()) add(body, autoStartSteps()); return; }
       if (S.installEvt) add(body, h('button', { type: 'button', class: 'btn primary block', id: 'install-go', text: t('install.button'), on: { click: function () {
         var ev = S.installEvt; S.installEvt = null; ev.prompt(); ev.userChoice.then(function () { render(); }, function () {});
       } } }));
       add(body, h('ul', { class: 'install-steps' },
         h('li', { class: isIOS() ? 'here' : '', text: t('install.ios') }),
         h('li', { class: !isIOS() && /Android/i.test(navigator.userAgent) ? 'here' : '', text: t('install.android') }),
-        h('li', { text: t('install.desktop') })));
+        h('li', { class: !isPhone() ? 'here' : '', text: t('install.desktop') })));
+      if (!isPhone()) add(body, autoStartSteps());
     });
   }
   function openAbout() {
@@ -2156,8 +2350,10 @@
   render();
   C.status().then(function (st) {
     S.phase = st === 'empty' ? 'welcome' : 'locked';
-    var sm = (location.search + location.hash).match(/[?&#]start=(notes|diary|add)\b/);
-    if (sm && sm[1] === 'add') { S.tab = 'budget'; S.startAdd = true; } else if (sm) S.tab = sm[1];
+    var sm = (location.search + location.hash).match(/[?&#]start=(notes|diary|add|share)\b/);
+    var lastTab = lsGet(TAB_KEY);
+    if (!sm && /^(budget|notes|diary)$/.test(lastTab || '')) S.tab = lastTab;        // reopen where you left off
+    if (sm && sm[1] === 'add') { S.tab = 'budget'; S.startAdd = true; } else if (sm && sm[1] === 'share') takeShared(); else if (sm) S.tab = sm[1];
     render();
   }).catch(function () { S.phase = 'nostorage'; render(); });
 
@@ -2171,7 +2367,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-app.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
         .forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }

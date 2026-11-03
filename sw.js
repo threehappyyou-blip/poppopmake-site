@@ -79,7 +79,19 @@ self.addEventListener('activate', function (event) {
 self.addEventListener('fetch', function (event) {
   var request = event.request;
 
-  // Never touch non-GET requests (e.g. the Feedback form's POST to Web3Forms).
+  // Budget, Notes & Diary: text shared to the installed app from another app (Android "Share"). It is kept on this
+  // device for a moment in a separate cache and the app is opened; the app reads it, deletes it and saves it as a
+  // note once unlocked. The shared text is never sent to the server.
+  if (request.method === 'POST' && new URL(request.url).origin === self.location.origin && new URL(request.url).pathname === '/vault-share') {
+    event.respondWith(request.formData().then(function (form) {
+      var pick = function (k) { var v = form.get(k); return typeof v === 'string' ? v.slice(0, 20000) : ''; };
+      var data = JSON.stringify({ title: pick('title'), text: pick('text'), url: pick('url'), at: Date.now() });
+      return caches.open('ppm-share').then(function (c) { return c.put('/__ppm-share', new Response(data, { headers: { 'Content-Type': 'application/json' } })); });
+    }).catch(function () {}).then(function () { return Response.redirect('/vault?start=share', 303); }));
+    return;
+  }
+
+  // Never touch other non-GET requests (e.g. the Feedback form's POST to Web3Forms).
   if (request.method !== 'GET') return;
 
   var url = new URL(request.url);

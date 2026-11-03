@@ -537,3 +537,15 @@ html.desk-mode body { color: #23292A; }
 .cl-in.done { text-decoration: line-through; opacity: .55; }
 .checklist .mini { align-self: flex-start; color: #0D7A7C; }
 .note-count { font-size: .72rem; font-weight: 700; color: #0D7A7C; margin-top: 4px; }
+
+/* ---- round 5: install card, PC auto-start, QR transfer ---- */
+.install-card { border-left: 4px solid var(--teal); }
+.screen .install-card { text-align: left; margin-top: 18px; }
+.autostart { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 14px; }
+.autostart h3 { font-size: 1rem; margin: 0 0 8px; }
+.set-sub { padding: 4px 16px 12px; font-size: .9rem; }
+.qr-canvas { display: block; margin: 12px auto; width: min(100%, 560px); height: auto; aspect-ratio: 1; background: #fff; border-radius: 8px; image-rendering: pixelated; }
+.qr-count { font-variant-numeric: tabular-nums; margin: 4px 0 10px; }
+.qr-video { display: block; width: 100%; max-height: 52vh; object-fit: cover; background: #000; border-radius: 10px; margin: 10px 0; }
+.qr-progress { display: block; width: 100%; height: 10px; margin: 8px 0; accent-color: var(--teal); }
+.row.center { justify-content: center; }
