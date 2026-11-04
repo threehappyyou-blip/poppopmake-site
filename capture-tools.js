@@ -7,6 +7,10 @@
  *   Paste     Ctrl+V anywhere on the page (only while the Markup tab is open on the hub), plus a Paste button.
  *   Capture   Screen / window / browser tab through the browser's own screen-share picker. A window or tab is taken at once;
  *             a whole screen waits 3, 5 or 10 seconds first, because the picture would otherwise show this page.
+ *   Shortcut  A key combination (Ctrl+Q unless changed) starts a capture while this page is the active window. A web page
+ *             never sees keys pressed in other programs, so the tip points to the system's own screenshot keys for that.
+ *   Save      "Save picture" / "Copy" for the picture just taken, an option to save every capture as a file at once, and
+ *             Ctrl+S (⌘S) to download the marked-up picture from the editor.
  */
 (function () {
   'use strict';
@@ -62,6 +66,88 @@
   var active = null;              // set while a capture runs: stops the shared stream
 
   var nextId = 0;
+  var latest = null;              // the picture taken or pasted last (for Save / Copy)
+
+  // ---------------------------------------------------------------------------------------------- shortcuts
+  // Each action can have any key the browser lets a page see. Combinations a browser or computer never hands to a page
+  // are refused with the reason; ones that only replace a browser function on this page are allowed with a note.
+  var KEYS_STORE = 'ppm-shot-keys', AUTO_STORE = 'ppm-shot-autosave';
+  var MOD = isMac ? 'Meta' : 'Ctrl';
+  var ACTIONS = [
+    { id: 'screen', label: 'Capture the whole screen', def: 'Ctrl+Q' },
+    { id: 'window', label: 'Capture a window', def: '' },
+    { id: 'tab', label: 'Capture a browser tab', def: '' },
+    { id: 'save', label: 'Save the picture', def: MOD + '+S' },
+    { id: 'copy', label: 'Copy the picture', def: MOD + '+Shift+C' }
+  ];
+  var NEVER = { // never reach a web page (the browser or the computer acts first)
+    'Ctrl+W': 'closes the tab', 'Ctrl+Shift+W': 'closes the window', 'Ctrl+T': 'opens a new tab', 'Ctrl+Shift+T': 'reopens a closed tab',
+    'Ctrl+N': 'opens a new window', 'Ctrl+Shift+N': 'opens a private window', 'Ctrl+Tab': 'switches tabs', 'Ctrl+Shift+Tab': 'switches tabs',
+    'Ctrl+PageUp': 'switches tabs', 'Ctrl+PageDown': 'switches tabs', 'Ctrl+Shift+Q': 'quits the browser', 'Alt+F4': 'closes the window',
+    'Alt+Tab': 'switches programs', 'Ctrl+Alt+Delete': 'belongs to Windows', 'Ctrl+Shift+Escape': 'opens Task Manager', 'F11': 'switches to full screen',
+    'Meta+Q': 'quits the app', 'Meta+W': 'closes the tab', 'Meta+T': 'opens a new tab', 'Meta+N': 'opens a new window', 'Meta+H': 'hides the app',
+    'Meta+M': 'minimises the window', 'Meta+Tab': 'switches apps', 'Meta+Space': 'opens Spotlight', 'Meta+Shift+3': 'is the Mac’s own screenshot key',
+    'Meta+Shift+4': 'is the Mac’s own screenshot key', 'Meta+Shift+5': 'is the Mac’s own screenshot key', 'Meta+Backquote': 'switches windows',
+    'Ctrl+V': 'pastes a picture into this tool', 'Meta+V': 'pastes a picture into this tool', 'Ctrl+K': 'opens this site’s search', 'Meta+K': 'opens this site’s search'
+  };
+  var OVERRIDES = { // a browser function that this page will replace while it is open
+    'S': 'saves the web page', 'P': 'prints', 'F': 'finds on the page', 'D': 'bookmarks the page', 'L': 'goes to the address bar', 'R': 'reloads the page',
+    'H': 'shows history', 'J': 'shows downloads', 'O': 'opens a file', 'U': 'shows the page source', 'G': 'finds the next match', 'E': 'searches the web',
+    'A': 'selects everything', 'C': 'copies', 'X': 'cuts', 'Z': 'undoes', 'Y': 'redoes', '1': 'switches to a tab', '2': 'switches to a tab', '3': 'switches to a tab',
+    '4': 'switches to a tab', '5': 'switches to a tab', '6': 'switches to a tab', '7': 'switches to a tab', '8': 'switches to a tab', '9': 'switches to a tab', '0': 'resets the zoom',
+    '=': 'zooms in', '-': 'zooms out'
+  };
+  function store(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) { /* private window: keep for this visit only */ } }
+  function stored(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  var memo = {};
+  function getPref(k, dflt) { var v = memo[k] !== undefined ? memo[k] : stored(k); return v === null || v === undefined ? dflt : v; }
+  function setPref(k, v) { memo[k] = v; store(k, v); }
+  var keymap = null;
+  function defaults() { var m = {}; ACTIONS.forEach(function (a) { m[a.id] = a.def; }); return m; }
+  function loadKeys() {
+    var m = defaults(), raw = null;
+    try { raw = JSON.parse(getPref(KEYS_STORE, 'null')); } catch (e) { raw = null; }
+    if (raw && typeof raw === 'object') ACTIONS.forEach(function (a) { if (typeof raw[a.id] === 'string') m[a.id] = raw[a.id]; });
+    else {                                             // the single shortcut of the first version
+      var old = stored('ppm-shot-key'), kind = stored('ppm-shot-kind');
+      if (old) { var id = kind === 'window' ? 'window' : kind === 'browser' ? 'tab' : 'screen'; m.screen = id === 'screen' ? old : (m.screen === old ? '' : m.screen); m[id] = old; }
+    }
+    return m;
+  }
+  function saveKeys() { setPref(KEYS_STORE, JSON.stringify(keymap)); }
+  var KEYNAMES = { Backquote: '`', Minus: '-', Equal: '=', BracketLeft: '[', BracketRight: ']', Backslash: '\\', Semicolon: ';', Quote: "'", Comma: ',',
+    Period: '.', Slash: '/', Space: 'Space', ArrowLeft: '←', ArrowRight: '→', ArrowUp: '↑', ArrowDown: '↓', Insert: 'Insert', Delete: 'Delete', Home: 'Home',
+    End: 'End', PageUp: 'PageUp', PageDown: 'PageDown', Pause: 'Pause', ScrollLock: 'ScrollLock', Enter: 'Enter', Backspace: 'Backspace', Tab: 'Tab',
+    PrintScreen: 'PrintScreen', ContextMenu: 'Menu', NumpadAdd: 'Num+', NumpadSubtract: 'Num-', NumpadMultiply: 'Num*', NumpadDivide: 'Num/', NumpadDecimal: 'Num.', NumpadEnter: 'NumEnter' };
+  // The key by its position (e.code), so a Korean or Japanese keyboard layout gives the same combination.
+  function keyName(e) {
+    var c = e.code || '';
+    if (/^Key[A-Z]$/.test(c)) return c.slice(3);
+    if (/^Digit\d$/.test(c)) return c.slice(5);
+    if (/^Numpad\d$/.test(c)) return 'Num' + c.slice(6);
+    if (/^F([1-9]|1\d|2[0-4])$/.test(c)) return c;
+    if (c === 'Escape' && (e.ctrlKey || e.altKey || e.metaKey)) return 'Escape';
+    return KEYNAMES[c] || null;
+  }
+  function comboOf(e) {
+    var k = keyName(e);
+    if (!k) return null;
+    return (e.ctrlKey ? 'Ctrl+' : '') + (e.altKey ? 'Alt+' : '') + (e.shiftKey ? 'Shift+' : '') + (e.metaKey ? 'Meta+' : '') + k;
+  }
+  // '' = fine; {no: reason} = can't be used; {note: text} = allowed, with something to know
+  function judge(c) {
+    if (!c) return { no: 'That key can’t be used. Try a letter, a number or an F key, alone or with Ctrl, Alt or Shift.' };
+    if (NEVER[c]) return { no: comboLabel(c) + ' can’t be used: your ' + (/^Meta\+(Q|H|M|Tab|Space|Shift\+[345])$|^Alt\+Tab|^Ctrl\+Alt|Escape$/.test(c) ? 'computer' : 'browser') + ' ' + NEVER[c] + ' before a page ever sees it.' };
+    if (/PrintScreen$/.test(c)) return { no: 'Print Screen goes to your computer first (on Windows it opens the screenshot tool), so a page never sees it. That works well too: press it, then ' + KEY + ' here.' };
+    if (!isMac && /Meta\+/.test(c)) return { no: 'Windows-key shortcuts belong to Windows; a page never sees them. Use Ctrl, Alt, Shift or an F key.' };
+    if (/^(Shift\+)?(Tab|Enter|Space|Backspace)$/.test(c)) return { no: comboLabel(c) + ' is needed to move around and type. Add Ctrl or Alt to it.' };
+    var m = c.match(/^(Ctrl|Meta)\+(Shift\+)?([^+]+)$/);
+    if (m && OVERRIDES[m[3]] && !m[2]) return { note: 'On this page ' + comboLabel(c) + ' will do this instead of what it usually does (' + OVERRIDES[m[3]] + '). Some browsers may still do their own thing; if so, pick another.' };
+    if (/^F5$|^(Ctrl\+)?R$/.test(c)) return { note: 'On this page ' + comboLabel(c) + ' will do this instead of reloading the page.' };
+    if (/^(Shift\+)?[^+]$/.test(c) || /^Num/.test(c)) return { note: 'Pressing just ' + comboLabel(c) + ' anywhere on this page (outside a text box) will do this. If that happens by accident, add Ctrl or Alt.' };
+    return '';
+  }
+  function comboLabel(c) { return isMac ? c.replace(/Meta\+/g, '⌘').replace(/Ctrl\+/g, '⌃').replace(/Alt\+/g, '⌥').replace(/Shift\+/g, '⇧') : c; }
 
   var CSS = '' +
     '.ppmcap{margin-top:12px;color:var(--ink,#1C2321);font-size:.9rem}' +
@@ -91,8 +177,25 @@
     '.ppmcap-thumb:hover{border-color:var(--teal,#0D7A7C)}' +
     '.ppmcap-thumb:focus-visible{outline:3px solid var(--teal,#0D7A7C);outline-offset:2px}' +
     '.ppmcap-thumb img{display:block;max-width:96px;max-height:54px;border-radius:4px}' +
-    '.ppmcap-tip{margin:10px 0 0;font-size:.8rem;color:var(--ink-soft,#4B534F)}' +
-    '@media (pointer:coarse){.ppmcap-btn,.ppmcap-select{min-height:44px}.ppmcap-key,.ppmcap-tip{display:none}}';
+    '.ppmcap-tip{margin:10px 0 0;font-size:.8rem;color:var(--ink-soft,#4B534F)}.ppmcap-tip[hidden]{display:none}' +
+    '.ppmcap-prefs{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin-top:10px;font-size:.84rem;color:var(--ink-soft,#4B534F)}' +
+    '.ppmcap-prefs label{display:inline-flex;align-items:center;gap:6px}' +
+    '.ppmcap-prefs[hidden],.ppmcap-actions[hidden]{display:none}' +
+    '.ppmcap-kbd{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:.82rem;font-weight:600;color:var(--ink,#1C2321);padding:3px 8px;border:1px solid var(--line,rgba(28,35,33,.2));border-bottom-width:2px;border-radius:6px;background:#fff}' +
+    '.ppmcap-kbd.ppmcap-rec{border-color:var(--teal,#0D7A7C);color:var(--teal,#0D7A7C)}' +
+    '.ppmcap-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}' +
+    '.ppmcap-keypanel{margin-top:10px;padding:12px 14px;border:1px solid var(--line,rgba(28,35,33,.12));border-radius:10px;background:#fff}' +
+    '.ppmcap-keypanel[hidden]{display:none}' +
+    '.ppmcap-kp-head{margin:0 0 8px;font-size:.84rem;color:var(--ink-soft,#4B534F)}' +
+    '.ppmcap-kp-list{list-style:none;margin:0 0 10px;padding:0}' +
+    '.ppmcap-kp-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line,rgba(28,35,33,.08))}' +
+    '.ppmcap-kp-name{flex:1 1 180px;font-weight:600}' +
+    '.ppmcap-kp-row .ppmcap-kbd{min-width:112px;text-align:center}' +
+    '@media (max-width:480px){.ppmcap-kp-name{flex-basis:100%}.ppmcap-kp-row .ppmcap-kbd{min-width:0}.ppmcap-kp-row .ppmcap-btn{padding:6px 10px}.ppmcap-kp-row .ppmcap-btn[aria-hidden=true]{display:none}}' +
+    '.ppmcap-anywhere{margin-top:10px;font-size:.84rem;color:var(--ink-soft,#4B534F)}' +
+    '.ppmcap-anywhere summary{cursor:pointer;font-weight:600;color:var(--ink,#1C2321)}' +
+    '.ppmcap-anywhere ol{margin:6px 0 0;padding-left:20px}' +
+    '@media (pointer:coarse){.ppmcap-btn,.ppmcap-select{min-height:44px}.ppmcap-key,.ppmcap-tip,.ppmcap-hot{display:none}}';
 
   function mount() {
     var drop = $('markup-drop'), input = $('markup-input');
@@ -116,12 +219,30 @@
         '<span class="ppmcap-delay" id="ppmcap-delay-wrap"><label for="ppmcap-delay">Screen capture waits</label>' +
           '<select class="ppmcap-select" id="ppmcap-delay"><option value="3">3 seconds</option><option value="5" selected>5 seconds</option><option value="10">10 seconds</option></select></span>' +
       '</div>' +
-      '<p class="ppmcap-tip">Tip: press Win+Shift+S (Windows) or ⌘+Ctrl+Shift+4 (Mac) to pick any area of your screen, then press ' + KEY + ' here. Nothing is uploaded; pictures stay on your device.</p>' +
+      '<div class="ppmcap-prefs" id="ppmcap-prefs">' +
+        '<span class="ppmcap-hot" id="ppmcap-hot"><span id="ppmcap-summary"></span> <button type="button" class="ppmcap-btn" id="ppmcap-keys" aria-expanded="false" aria-controls="ppmcap-keypanel">Set shortcuts</button></span>' +
+        '<label><input type="checkbox" id="ppmcap-auto"> Save each capture as a file right away</label>' +
+      '</div>' +
+      '<div class="ppmcap-keypanel" id="ppmcap-keypanel" hidden>' +
+        '<p class="ppmcap-kp-head">Choose any keys you like for each action. Click <b>Change</b>, then press the keys.</p>' +
+        '<ul class="ppmcap-kp-list" id="ppmcap-kp-list"></ul>' +
+        '<div class="ppmcap-row"><button type="button" class="ppmcap-btn" id="ppmcap-kp-reset">Back to the original keys</button><button type="button" class="ppmcap-btn" id="ppmcap-kp-close">Done</button></div>' +
+        '<details class="ppmcap-anywhere" id="ppmcap-anywhere"><summary>Open this tool from any program with your own key</summary>' +
+          '<ol><li>Install this page as an app: the install icon at the right end of Chrome’s or Edge’s address bar.</li>' +
+          '<li>Windows: in the Start menu, right-click the app → More → Open file location; right-click the shortcut → Properties → click “Shortcut key” and press a letter (for example S makes Ctrl+Alt+S) → OK. Mac: in the Shortcuts app, make a shortcut that opens the app and add a keyboard shortcut to it.</li>' +
+          '<li>Now that key brings this tool up from anywhere; then press your capture shortcut, or ' + KEY + ' to paste a picture taken with the Print Screen key or Win+Shift+S.</li></ol></details>' +
+      '</div>' +
+      '<p class="ppmcap-tip" id="ppmcap-hot-tip">Shortcuts work while this page is the window you are using. In another program, press your computer’s own screenshot key (Print Screen or Win+Shift+S on Windows, ⌘+Ctrl+Shift+4 on a Mac), then ' + KEY + ' here — or give this tool its own key to open it from anywhere (Set shortcuts).</p>' +
+      '<p class="ppmcap-tip" id="ppmcap-tip">Tip: press Win+Shift+S (Windows) or ⌘+Ctrl+Shift+4 (Mac) to pick any area of your screen, then press ' + KEY + ' here. Nothing is uploaded; pictures stay on your device.</p>' +
       '<div class="ppmcap-count" id="ppmcap-count" hidden>' +
         '<span aria-hidden="true">Capturing the screen in <strong id="ppmcap-count-num">5</strong> … switch to what you want in the picture.</span>' +
         '<button type="button" class="ppmcap-btn" id="ppmcap-cancel">Cancel</button>' +
       '</div>' +
       '<div class="ppmcap-msg" id="ppmcap-msg" role="status" aria-live="polite"></div>' +
+      '<div class="ppmcap-actions" id="ppmcap-actions" hidden>' +
+        '<button type="button" class="ppmcap-btn ppmcap-primary" id="ppmcap-save">Save picture</button>' +
+        '<button type="button" class="ppmcap-btn" id="ppmcap-copy">Copy</button>' +
+      '</div>' +
       '<p class="ppmcap-note" id="ppmcap-note" hidden></p>' +
       '<div class="ppmcap-recent" id="ppmcap-recent" hidden>' +
         '<div class="ppmcap-recent-head"><span>Recent pictures (kept only while this page stays open)</span><button type="button" class="ppmcap-btn" id="ppmcap-clear">Clear</button></div>' +
@@ -129,7 +250,8 @@
       '</div>';
     drop.parentNode.insertBefore(box, drop.nextSibling);
 
-    ['paste', 'screen', 'window', 'tab', 'delay', 'delay-wrap', 'count', 'count-num', 'cancel', 'msg', 'note', 'recent', 'list', 'clear'].forEach(function (k) { els[k] = $('ppmcap-' + k); });
+    ['paste', 'screen', 'window', 'tab', 'delay', 'delay-wrap', 'count', 'count-num', 'cancel', 'msg', 'note', 'recent', 'list', 'clear',
+      'prefs', 'hot', 'summary', 'keys', 'keypanel', 'kp-list', 'kp-reset', 'kp-close', 'auto', 'hot-tip', 'actions', 'save', 'copy'].forEach(function (k) { els[k] = $('ppmcap-' + k); });
     els.delay.setAttribute('aria-label', 'Seconds to wait before a whole-screen capture');
 
     if (!hasCapture || policyBlocked) {
@@ -137,7 +259,12 @@
       els['delay-wrap'].hidden = true;
       els.note.hidden = false;
       els.note.textContent = policyBlocked && hasCapture ? TEXT.noteBlocked : TEXT.noteNoCapture;
+      els['hot-tip'].hidden = true; els.auto.parentNode.hidden = true;
     }
+    else $('ppmcap-tip').hidden = true;             // the shortcut tip below says the same and more
+    keymap = loadKeys();
+    showKeys();
+    els.auto.checked = getPref(AUTO_STORE, '') === 'on';
 
     els.paste.addEventListener('click', pasteFromButton);
     els.screen.addEventListener('click', function () { startCapture('monitor'); });
@@ -151,6 +278,20 @@
       for (var i = 0; i < recent.length; i++) if (String(recent[i].id) === b.getAttribute('data-id')) { reopen(recent[i]); break; }
     });
     document.addEventListener('paste', onPaste);
+    els.auto.addEventListener('change', function () { setPref(AUTO_STORE, els.auto.checked ? 'on' : null); });
+    els.keys.addEventListener('click', function () { togglePanel(els.keypanel.hidden); });
+    els['kp-close'].addEventListener('click', function () { togglePanel(false); });
+    els['kp-reset'].addEventListener('click', function () { stopRecording(); keymap = defaults(); saveKeys(); showKeys(); say('ok', 'Shortcuts are back to the original keys.'); });
+    els['kp-list'].addEventListener('click', function (e) {
+      var b = e.target.closest ? e.target.closest('button[data-act]') : null;
+      if (!b) return;
+      var id = b.getAttribute('data-for');
+      if (b.getAttribute('data-act') === 'change') startRecording(id);
+      else { stopRecording(); keymap[id] = ''; saveKeys(); showKeys(); say('info', actionLabel(id) + ': no shortcut.'); }
+    });
+    els.save.addEventListener('click', saveCurrent);
+    els.copy.addEventListener('click', copyLatest);
+    document.addEventListener('keydown', onKeyDown);
     window.addEventListener('pagehide', function () { if (active) active(); });
   }
 
@@ -226,8 +367,16 @@
     var now = new Date();
     var type = blob.type && /^image\//.test(blob.type) ? blob.type : 'image/png';
     var file = new File([blob], (source === 'capture' ? 'capture-' : 'pasted-') + stamp(now) + '.' + (EXT[type] || 'png'), { type: type });
-    remember({ id: ++nextId, file: file, w: w, h: h, thumb: thumb, time: now });
-    return openInEditor(file, w, h, source === 'capture' ? 'Captured' : 'Pasted', extra);
+    var entry = { id: ++nextId, file: file, w: w, h: h, thumb: thumb, time: now };
+    remember(entry);
+    latest = entry;
+    els.actions.hidden = false;                       // Save / Copy are offered as soon as the picture exists
+    var ok = await openInEditor(file, w, h, source === 'capture' ? 'Captured' : 'Pasted', extra);
+    if (source === 'capture' && els.auto.checked) {
+      saveFile(file);
+      say('ok', 'Captured ' + w + ' × ' + h + ' px and saved it as ' + file.name + '. It is open below to mark up; press Download for the marked-up copy.');
+    }
+    return ok;
   }
 
   async function openInEditor(file, w, h, verb, extra) {
@@ -238,11 +387,11 @@
     var ws = $('markup-workspace');
     if (ws && ws.scrollIntoView) { try { ws.scrollIntoView({ block: 'nearest' }); } catch (e) { /* ignore */ } }
     if (extra.black) say('error', verb + ' ' + w + ' × ' + h + ' px, but the picture is completely black. Some windows (video players, protected content) cannot be captured this way. Try capturing the whole screen instead.');
-    else say('ok', verb + ' ' + w + ' × ' + h + ' px. It is open below: mark it up, then press Download.');
+    else say('ok', verb + ' ' + w + ' × ' + h + ' px. Save it now with “Save picture”, or mark it up below and press Download.');
     return true;
   }
 
-  function reopen(entry) { openInEditor(entry.file, entry.w, entry.h, 'Opened', null); }
+  function reopen(entry) { latest = entry; els.actions.hidden = false; openInEditor(entry.file, entry.w, entry.h, 'Opened', null); }
 
   // ---------------------------------------------------------------------------------------------- recent pictures
   function remember(entry) {
@@ -261,7 +410,103 @@
     });
     els.recent.hidden = recent.length === 0;
   }
-  function clearRecent() { recent = []; renderRecent(); }
+  function clearRecent() { recent = []; latest = null; els.actions.hidden = true; renderRecent(); }
+
+  // ---------------------------------------------------------------------------------------------- save, copy, shortcut
+  function saveFile(file) {
+    var url = URL.createObjectURL(file), a = document.createElement('a');
+    a.href = url; a.download = file.name; a.style.display = 'none';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+    say('ok', 'Saved ' + file.name + ' to your downloads.');
+  }
+  async function copyLatest() {
+    var pic = await currentPicture();
+    if (!pic) { say('info', 'There is no picture yet. Capture or paste one first.'); return; }
+    try {
+      if (!navigator.clipboard || typeof window.ClipboardItem !== 'function') throw new Error('no');
+      var png = pic.type === 'image/png' ? pic : await toPng(await toCanvas(pic));
+      await navigator.clipboard.write([new window.ClipboardItem({ 'image/png': png })]);
+      say('ok', 'Copied. Paste it into a chat, an email or a document.');
+    } catch (e) { say('error', 'This browser did not let the page copy the picture. Use “Save picture” instead.'); }
+  }
+  async function toCanvas(blob) {
+    var img = await decode(blob), c = document.createElement('canvas');
+    c.width = img.width; c.height = img.height; c.getContext('2d').drawImage(img, 0, 0);
+    if (img.close) img.close();
+    return c;
+  }
+  function actionLabel(id) { for (var i = 0; i < ACTIONS.length; i++) if (ACTIONS[i].id === id) return ACTIONS[i].label; return id; }
+  function usable(a) { return (a.id !== 'screen' && a.id !== 'window' && a.id !== 'tab') || (hasCapture && !policyBlocked); }
+  function showKeys() {
+    var parts = [];
+    ACTIONS.forEach(function (a) { if (keymap[a.id] && usable(a)) parts.push(comboLabel(keymap[a.id]) + ' ' + a.label.replace(/^Capture (the |a )?/, '').replace(/^(Save|Copy) the picture$/, function (x, v) { return v.toLowerCase(); })); });
+    els.summary.textContent = parts.length ? 'Shortcuts: ' + parts.join(' · ') : 'No shortcuts set';
+    els['kp-list'].innerHTML = '';
+    ACTIONS.forEach(function (a) {
+      if (!usable(a)) return;
+      var li = document.createElement('li'); li.className = 'ppmcap-kp-row';
+      var name = document.createElement('span'); name.className = 'ppmcap-kp-name'; name.textContent = a.label;
+      var k = document.createElement('kbd'); k.className = 'ppmcap-kbd' + (recording === a.id ? ' ppmcap-rec' : ''); k.id = 'ppmcap-key-' + a.id;
+      k.textContent = recording === a.id ? 'press keys…' : keymap[a.id] ? comboLabel(keymap[a.id]) : 'not set';
+      var ch = document.createElement('button'); ch.type = 'button'; ch.className = 'ppmcap-btn'; ch.setAttribute('data-act', 'change'); ch.setAttribute('data-for', a.id);
+      ch.id = 'ppmcap-change-' + a.id; ch.textContent = recording === a.id ? 'Press keys (Esc: cancel)' : 'Change';
+      ch.setAttribute('aria-label', 'Change the shortcut for: ' + a.label);
+      var rm = document.createElement('button'); rm.type = 'button'; rm.className = 'ppmcap-btn'; rm.setAttribute('data-act', 'clear'); rm.setAttribute('data-for', a.id);
+      rm.id = 'ppmcap-clear-' + a.id; rm.textContent = 'Remove'; if (!keymap[a.id]) { rm.style.visibility = 'hidden'; rm.tabIndex = -1; rm.setAttribute('aria-hidden', 'true'); } rm.setAttribute('aria-label', 'Remove the shortcut for: ' + a.label);
+      li.appendChild(name); li.appendChild(k); li.appendChild(ch); li.appendChild(rm); els['kp-list'].appendChild(li);
+    });
+  }
+  function togglePanel(open) {
+    if (!open) stopRecording();
+    els.keypanel.hidden = !open; els.keys.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  var recording = null;
+  function onRec(e) {
+    if (!recording) return;
+    if (/^(Control|Alt|Shift|Meta|OS|AltGraph|Process|Unidentified)$/.test(e.key) || e.isComposing) return;    // wait for the actual key
+    e.preventDefault(); e.stopPropagation();
+    if (e.key === 'Escape' && !e.ctrlKey && !e.altKey && !e.metaKey) { var was = recording; stopRecording(); say('info', actionLabel(was) + ': shortcut unchanged.'); return; }
+    var c = comboOf(e), v = judge(c);
+    if (v && v.no) { say('error', v.no); return; }
+    var id = recording, moved = null;
+    ACTIONS.forEach(function (a) { if (a.id !== id && keymap[a.id] === c) { keymap[a.id] = ''; moved = a.label; } });
+    keymap[id] = c; saveKeys(); stopRecording();
+    say(v && v.note ? 'info' : 'ok', actionLabel(id) + ': ' + comboLabel(c) + '.' + (moved ? ' (Taken from “' + moved + '”, which now has no shortcut.)' : '') + (v && v.note ? ' ' + v.note : ''));
+  }
+  function startRecording(id) {
+    if (recording === id) { stopRecording(); return; }
+    recording = id; showKeys();
+    document.addEventListener('keydown', onRec, true);
+    say('info', 'Press the keys for “' + actionLabel(id) + '”: a letter, number or F key, alone or with Ctrl, Alt or Shift. Esc cancels.');
+    var b = $('ppmcap-change-' + id); if (b) b.focus();
+  }
+  function stopRecording() {
+    if (!recording) return;
+    recording = null; document.removeEventListener('keydown', onRec, true); showKeys();
+  }
+  function editorOpen() { var ws = $('markup-workspace'); return !!ws && ws.style.display !== 'none' && ws.offsetParent !== null; }
+  // The picture as it is now: with the marks drawn in the editor, or the one taken last.
+  function currentPicture() {
+    var c = $('markup-base-canvas');
+    if (editorOpen() && c && c.width) return toPng(c).then(function (b) { return new File([b], 'screenshot-' + stamp(new Date()) + '.png', { type: 'image/png' }); });
+    return Promise.resolve(latest ? latest.file : null);
+  }
+  function saveCurrent() { currentPicture().then(function (f) { if (f) saveFile(f); else say('info', 'There is no picture yet. Capture or paste one first.'); }); }
+  function onKeyDown(e) {
+    if (recording || e.defaultPrevented || !markupIsOpen() || e.repeat) return;
+    if (isEditable(e.target)) return;                  // typing in a box never triggers a shortcut
+    var c = comboOf(e);
+    if (!c) return;
+    var act = null;
+    ACTIONS.forEach(function (a) { if (!act && keymap[a.id] === c && usable(a)) act = a.id; });
+    if (!act) return;
+    e.preventDefault();
+    if (act === 'save') return saveCurrent();
+    if (act === 'copy') return copyLatest();
+    if (busy) { say('info', 'A capture is already running.'); return; }
+    startCapture(act === 'screen' ? 'monitor' : act === 'window' ? 'window' : 'browser');   // a key press counts as the click the browser asks for
+  }
 
   // ---------------------------------------------------------------------------------------------- paste
   function firstImage(cd) {

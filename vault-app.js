@@ -2784,7 +2784,11 @@
   function isPhone() { return isIOS() || /Android/i.test(navigator.userAgent); }
   function autoStartSteps() {
     var mac = /Macintosh/.test(navigator.userAgent) && !isIOS();
-    return h('div', { class: 'autostart', id: 'autostart' }, h('h3', { text: t('install.auto') }),
+    return h('div', { class: 'autostart', id: 'autostart' },
+      h('h3', { text: t('hk.title') }),
+      h('ol', { class: 'install-steps hk-steps', id: 'hk-steps' }, (mac ? ['hk.mac1', 'hk.mac2', 'hk.mac3'] : ['hk.win1', 'hk.win2', 'hk.win3']).map(function (k) { return h('li', { text: t(k) }); })),
+      h('p', { class: 'hint', text: t(mac ? 'hk.macNote' : 'hk.winNote') }),
+      h('h3', { text: t('install.auto') }),
       h('ul', { class: 'install-steps' },
         h('li', { text: t('install.autoChrome') }), h('li', { text: t('install.autoEdge') }),
         h('li', { class: mac ? '' : 'here', text: t('install.autoWin') }), h('li', { class: mac ? 'here' : '', text: t('install.autoMac') })),
