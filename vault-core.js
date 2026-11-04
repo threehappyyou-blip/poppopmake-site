@@ -483,6 +483,9 @@
         return importDataKey(raw).then(function (key) {
           raw.fill(0);
           var names = Object.keys(file.docs), blobs = file.blobs || {}, bnames = Object.keys(blobs);
+          // Fingerprint / face unlock belongs to the device where it was set up: its passkey usually isn't on this
+          // one, so it is left out here and can be turned on again in Settings.
+          var kept = {}; Object.keys(meta).forEach(function (k) { if (k !== 'pk') kept[k] = meta[k]; });
           return Promise.all(names.map(function (k) { return open(key, file.docs[k], aadFor(meta, 'doc|' + k)); }).concat(
               bnames.map(function (k) { return open(key, blobs[k], aadFor(meta, 'blob|' + k + '|' + blobs[k].type)); })))
             .catch(function () { throw fail('bad-file', 'This backup file is damaged.'); })
@@ -497,10 +500,10 @@
                     var d = blobs[k];
                     return req(bs.put({ iv: d.iv, ct: d.ct, type: d.type }, k));
                   })));
-                }).then(function () { return req(t.objectStore('meta').put(meta, 'main')); });
+                }).then(function () { return req(t.objectStore('meta').put(kept, 'main')); });
               });
             })
-            .then(function () { session = { key: key, meta: meta }; emit({ type: 'restored' }); });
+            .then(function () { session = { key: key, meta: kept }; emit({ type: 'restored' }); });
         });
       });
     },

@@ -245,8 +245,12 @@
     pipClose();
     var pending = openDeco ? openDeco.flush() : null;      // a drawing or sticker move still being saved
     flushNote(); flushEntry(); deskFlush();
-    if (!auto) S.pkArm = false;        // locked on purpose: don't pop the fingerprint prompt straight back up
+    // Prompt again only if it locked itself while you were away from the app. Not after "Lock now", and not after an
+    // idle lock while the screen stayed in view (the prompt would pop up on an unattended computer).
+    S.pkArm = !!auto && S.hiddenAt !== null;
     return Promise.resolve(pending).catch(function () {}).then(function () { return saving; }).then(function () {
+      return Promise.race([abRun(false), new Promise(function (r) { setTimeout(r, 4000); })]).catch(function () {});
+    }).then(function () {
       return C.lock();
     }).then(function () {
       S.budget = S.notes = S.settings = S.diary = null; dropPhotoUrls(); noteShown = {};
@@ -515,7 +519,7 @@
     var s = screen('recovery');
     add(s, brand(), h('h1', { text: t('rec.title') }), recoveryBlock(S.pendingCode, function () {
       S.pendingCode = null; S.settings.codeSaved = true; saveSettings();
-      S.phase = 'app'; render(); openTour();
+      S.phase = 'app'; render(); if (S.shared) saveShared(); openTour();
     }));
   }
 
@@ -588,7 +592,7 @@
       .catch(function () { btn.disabled = false; if (msg) setMsg(msg, ''); });
   }
   document.addEventListener('visibilitychange', function () {
-    if (document.visibilityState === 'hidden') { if (S.phase === 'locked' || S.phase === 'app') S.pkArm = true; return; }
+    if (document.visibilityState === 'hidden') { if (S.phase === 'locked') S.pkArm = true; return; }
     if (S.phase === 'locked' && S.pkBtn && document.contains(S.pkBtn[0]) && !modals.length) pkAutoTry(S.pkBtn[0], S.pkBtn[1]);
   });
 
@@ -718,6 +722,12 @@
     var hasData = S.budget.tx.length + S.notes.notes.length + S.diary.entries.length >= 5;
     var stale = st.lastBackup ? (nowTs - st.lastBackup > 30 * 864e5 && st.lastChange > st.lastBackup) : hasData;
     if (stale) return noticeCard('💾', t('set.backup'), st.lastBackup ? t('backup.remindOld', { d: Math.floor((nowTs - st.lastBackup) / 864e5) }) : t('backup.remindNever'), t('backup.now'), openBackup, 'notice-backup');
+    if (AB.need || AB.failed) {
+      var abCard = noticeCard('💾', t('ab.title'), AB.failed ? t('ab.failed') : t('ab.again'), AB.failed ? t('ab.change') : t('ab.allow'), function () {
+        if (AB.failed) abPick(); else abAllow();
+      }, 'notice-autobackup');
+      return abCard;
+    }
     var ic = installCard(false);
     if (ic) return ic;
     if (S.tipHidden) return null;
@@ -1327,6 +1337,7 @@
   });
   function afterUnlock(adopted) {
     S.pkArm = false;
+    if (!DESK) abInit();
     liveKids().forEach(sendKey);
     if (DESK) { if (!adopted && openerIsApp()) sendKey(window.opener); return; }
     if (S.startAdd) { S.startAdd = false; S.tab = 'budget'; render(); openAdd(); }      // the "Add spending" home-screen shortcut
@@ -1866,6 +1877,7 @@
         row(t('set.backup'), S.settings.lastBackup ? t('set.lastBackup', { when: I.ago(S.settings.lastBackup) }) : t('set.neverBackup'), openBackup, 'set-backup'),
         row(t('set.restore'), null, openRestore, 'set-restore'),
         row(t('qr.title'), null, function () { openTransfer(true); }, 'set-qr'),
+        abCapable() ? row(t('ab.title'), AB.handle ? t('ab.stateOn') : t('ab.stateOff'), openAutoBackup, 'set-autobackup') : null,
         row(t('set.export'), null, openExport, 'set-export'),
         row(t('set.import'), null, openImport, 'set-import'),
         row(t('set.erase'), null, openErase, 'set-erase', true)]),
@@ -1873,6 +1885,8 @@
         row(t('set.tour'), null, openTour, 'set-tour'),
         row(t('set.install'), isStandalone() ? t('install.done') : null, openInstall, 'set-install'),
         isPhone() ? null : row(t('set.autostart'), null, openAutoStart, 'set-autostart'),
+        row(t('rm.title'), null, openReminder, 'set-reminder'),
+        isPhone() ? null : row(t('kb.title'), null, openShortcuts, 'set-shortcuts'),
         row(t('set.about'), null, openAbout, 'set-about'),
         h('li', {}, h('a', { class: 'set-row', href: '/manual-vault', target: '_blank', rel: 'noopener' }, h('span', { class: 'set-label', text: t('set.manual') }), icon('chev', 18)))]),
       h('p', { class: 'fine center' }, h('a', { href: '/privacy', target: '_blank', rel: 'noopener', text: t('setup.privacy') }), ' · ',
@@ -2020,6 +2034,185 @@
   }
   function flushAll() { flushNote(); return saving; }
 
+  // ---------- automatic backup to a folder (Chrome / Edge on a computer) ----------
+  // The folder handle is kept in its own small database (it holds only the folder's name and the browser's permission,
+  // never content). The file written is the same encrypted backup as "Back up to a file".
+  var AB = { handle: null, need: false, failed: false, busy: false, last: +(lsGet('ppm-vault-ab-last') || 0) };
+  var AB_FILE = 'poppopmake-vault-backup-latest.json', AB_DAY = /^poppopmake-vault-backup-(\d{4}-\d{2}-\d{2})\.json$/;
+  function abCapable() { return !DESK && !isPhone() && typeof window.showDirectoryPicker === 'function'; }
+  function abDb(mode, fn) {
+    return new Promise(function (res, rej) {
+      var r = indexedDB.open('ppm-vault-autobackup', 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore('kv'); };
+      r.onerror = function () { rej(r.error); };
+      r.onsuccess = function () {
+        var db = r.result, tx = db.transaction('kv', mode), st = tx.objectStore('kv'), out = fn(st);
+        tx.oncomplete = function () { db.close(); res(out && out.result !== undefined ? out.result : undefined); };
+        tx.onerror = function () { db.close(); rej(tx.error); };
+      };
+    });
+  }
+  function abInit() {
+    if (!abCapable()) return Promise.resolve();
+    return abDb('readonly', function (st) { return st.get('dir'); }).then(function (h) {
+      if (!h) { AB.handle = null; return; }
+      AB.handle = h;
+      return h.queryPermission({ mode: 'readwrite' }).then(function (p) {
+        AB.need = p !== 'granted';
+        if (AB.need) render(); else abRun(false);
+      });
+    }).catch(function () {});
+  }
+  function abAllow() {
+    if (!AB.handle) return;
+    AB.handle.requestPermission({ mode: 'readwrite' }).then(function (p) {
+      AB.need = p !== 'granted'; render();
+      if (!AB.need) abRun(true);
+    }).catch(function () {});
+  }
+  function abPick() {
+    return window.showDirectoryPicker({ id: 'ppm-vault-backup', mode: 'readwrite', startIn: 'documents' }).then(function (h) {
+      return abDb('readwrite', function (st) { st.put(h, 'dir'); }).then(function () {
+        AB.handle = h; AB.need = false; AB.failed = false; return abRun(true);
+      }).then(function (ok) { render(); if (ok) toast(t('ab.done', { name: h.name })); return ok; });
+    }).catch(function () { return false; });       // the person closed the folder picker
+  }
+  function abOff() {
+    return abDb('readwrite', function (st) { st.delete('dir'); }).then(function () {
+      AB.handle = null; AB.need = false; AB.failed = false; render(); toast(t('ab.offDone'));
+    });
+  }
+  function abWrite(dir, name, text) {
+    return dir.getFileHandle(name, { create: true }).then(function (fh) { return fh.createWritable(); }).then(function (w) {
+      return w.write(text).then(function () { return w.close(); });
+    });
+  }
+  // Saves when something changed since the last automatic backup (or always, when forced). Resolves true when saved.
+  function abRun(force) {
+    if (!AB.handle || AB.need || AB.busy || S.phase !== 'app' || !C.shareSession()) return Promise.resolve(false);
+    AB.busy = true;
+    var dir = AB.handle;
+    return C.load('settings').then(function (st) {
+      var changed = (st && st.lastChange) || 0;
+      if (!force && AB.last && changed <= AB.last) return false;
+      return C.exportBackup().then(function (text) {
+        var now = Date.now();
+        return abWrite(dir, AB_FILE, text).then(function () { return abWrite(dir, 'poppopmake-vault-backup-' + today() + '.json', text); }).then(function () {
+          AB.last = now; AB.failed = false; lsSet('ppm-vault-ab-last', String(now));
+          if (S.settings) { S.settings.lastBackup = now; saveSettings(); }
+          return abPrune(dir).then(function () { return true; });
+        });
+      });
+    }).catch(function () { AB.failed = true; if (S.phase === 'app' && !modalOpen()) render(); return false; })
+      .then(function (ok) { AB.busy = false; return ok; });
+  }
+  function abPrune(dir) {
+    if (!dir.entries) return Promise.resolve();
+    var cut = new Date(Date.now() - 30 * 864e5), cutS = cut.getFullYear() + '-' + pad(cut.getMonth() + 1) + '-' + pad(cut.getDate()), old = [];
+    var it = dir.entries();
+    function next() {
+      return it.next().then(function (r) {
+        if (r.done) return;
+        var m = r.value[0].match(AB_DAY);
+        if (m && m[1] < cutS && r.value[1].kind === 'file') old.push(r.value[0]);
+        return next();
+      });
+    }
+    return next().then(function () { return Promise.all(old.map(function (n) { return dir.removeEntry(n).catch(function () {}); })); }).catch(function () {});
+  }
+  setInterval(function () { if (AB.handle && S.phase === 'app') abRun(false); }, 30000);
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden' && AB.handle && S.phase === 'app') abRun(false); });
+  function openAutoBackup() {
+    sheet(t('ab.title'), function (body, close) {
+      add(body, h('p', { text: t('ab.body') }));
+      if (AB.handle) {
+        add(body, h('p', { class: 'msg ok', id: 'ab-folder', text: t('ab.folder', { name: AB.handle.name }) }),
+          h('p', { class: 'hint', id: 'ab-last', text: AB.last ? t('ab.last', { when: I.ago(AB.last) }) : t('ab.never') }),
+          AB.need ? h('button', { type: 'button', class: 'btn primary block', id: 'ab-allow', text: t('ab.allow'), on: { click: function () { close(); abAllow(); } } }) : null,
+          h('button', { type: 'button', class: 'btn primary block', id: 'ab-now', text: t('ab.now'), on: { click: function () {
+            abRun(true).then(function (ok) { close(); toast(ok ? t('ab.done', { name: AB.handle.name }) : t('ab.failed')); });
+          } } }),
+          h('button', { type: 'button', class: 'btn block', id: 'ab-change', text: t('ab.change'), on: { click: function () { close(); abPick(); } } }),
+          h('button', { type: 'button', class: 'btn ghost block', id: 'ab-off', text: t('ab.off'), on: { click: function () { close(); abOff(); } } }));
+      } else add(body, h('button', { type: 'button', class: 'btn primary block', id: 'ab-pick', text: t('ab.pick'), on: { click: function () { close(); abPick(); } } }));
+      add(body, h('p', { class: 'hint', text: t('ab.keep') }));
+    });
+  }
+
+  // ---------- a daily reminder in the calendar the person already uses (no server, no notifications permission) ----------
+  function icsText(s0) { return String(s0).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
+  function reminderParts(time, what) {
+    var url = location.origin + '/vault' + (what === 'diary' ? '?start=diary' : what === 'budget' ? '?start=add' : '');
+    var title = t(what === 'diary' ? 'rm.evDiary' : what === 'budget' ? 'rm.evBudget' : 'rm.evBoth');
+    var hm = /^(\d{2}):(\d{2})$/.exec(time) || [0, '21', '00'];
+    var d = new Date(); d.setHours(+hm[1], +hm[2], 0, 0);
+    if (d.getTime() < Date.now()) d.setDate(d.getDate() + 1);       // first reminder: today if the time is still ahead, else tomorrow
+    var stamp = function (x) { return x.getFullYear() + pad(x.getMonth() + 1) + pad(x.getDate()) + 'T' + pad(x.getHours()) + pad(x.getMinutes()) + '00'; };
+    var end = new Date(d.getTime() + 5 * 60000);
+    return { url: url, title: title, start: stamp(d), end: stamp(end), desc: t('rm.evDesc') + ' ' + url };
+  }
+  function reminderIcs(p) {
+    var u = new Uint8Array(8); crypto.getRandomValues(u);
+    var uid = Array.prototype.map.call(u, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('') + '@poppopmake.com';
+    var now = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z');
+    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//PopPopMake//Budget Notes Diary//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+      'BEGIN:VEVENT', 'UID:' + uid, 'DTSTAMP:' + now, 'DTSTART:' + p.start, 'DTEND:' + p.end, 'RRULE:FREQ=DAILY',
+      'SUMMARY:' + icsText(p.title), 'DESCRIPTION:' + icsText(p.desc), 'URL:' + p.url,
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText(p.title), 'TRIGGER:PT0M', 'END:VALARM',
+      'END:VEVENT', 'END:VCALENDAR', ''].join('\r\n');
+  }
+  function openReminder() {
+    sheet(t('rm.title'), function (body) {
+      var time = h('input', { type: 'time', class: 'input', id: 'rm-time', value: '21:00' });
+      var what = h('select', { class: 'input', id: 'rm-what' });
+      [['diary', 'rm.diary'], ['budget', 'rm.budget'], ['both', 'rm.both']].forEach(function (x) { add(what, h('option', { value: x[0], text: t(x[1]) })); });
+      var g = h('a', { class: 'btn block', id: 'rm-google', target: '_blank', rel: 'noopener noreferrer', href: '#' }, t('rm.google'));
+      function link() {
+        var p = reminderParts(time.value, what.value), tz = '';
+        try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+        g.href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(p.title) + '&details=' + encodeURIComponent(p.desc) +
+          '&dates=' + p.start + '/' + p.end + '&recur=' + encodeURIComponent('RRULE:FREQ=DAILY') + (tz ? '&ctz=' + encodeURIComponent(tz) : '');
+      }
+      time.addEventListener('input', link); what.addEventListener('change', link); link();
+      add(body, h('p', { text: t('rm.body') }),
+        field(t('rm.time'), time), field(t('rm.what'), what),
+        h('button', { type: 'button', class: 'btn primary block', id: 'rm-file', text: t('rm.file'), on: { click: function () {
+          download(reminderIcs(reminderParts(time.value, what.value)), 'poppopmake-daily-reminder.ics', 'text/calendar;charset=utf-8');
+        } } }),
+        h('p', { class: 'hint', text: t('rm.fileHint') }), g, h('p', { class: 'hint', text: t('rm.googleHint') }));
+    });
+  }
+
+  // ---------- keyboard shortcuts on a computer (by key position, so Korean / Japanese input mode doesn't matter) ----------
+  var KB = [['N', 'kb.n'], ['A', 'kb.a'], ['D', 'kb.d'], ['/', 'kb.search'], ['1 2 3 4', 'kb.tabs'], ['L', 'kb.lock'], ['?', 'kb.help']];
+  function openShortcuts() {
+    sheet(t('kb.title'), function (body) {
+      add(body, h('ul', { class: 'kb-list', id: 'kb-list' }, KB.map(function (k) {
+        return h('li', {}, h('span', { class: 'kb-keys' }, k[0].split(' ').map(function (x) { return h('kbd', { text: x }); })), h('span', { text: t(k[1]) }));
+      })), h('p', { class: 'hint', text: t('kb.hint') }));
+    });
+  }
+  function goTab(tab) { if (S.tab !== tab) { flushNote(); flushEntry(); hideToast(); S.tab = tab; if (tab !== 'settings') lsSet(TAB_KEY, tab); S.searchOpen = false; render(); window.scrollTo(0, 0); } }
+  document.addEventListener('keydown', function (e) {
+    if (S.phase !== 'app' || DESK || modalOpen() || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+    var el = e.target, tag = el && el.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (el && el.isContentEditable)) return;
+    var c = e.code, act = null;
+    if (c === 'KeyN') act = function () { goTab('notes'); var b = document.getElementById('new-note'); if (b) b.click(); };
+    else if (c === 'KeyA') act = function () { goTab('budget'); openAdd(); };
+    else if (c === 'KeyD') act = function () { goTab('diary'); newEntry(today()); };
+    else if (c === 'Slash' && e.shiftKey) act = openShortcuts;
+    else if (c === 'Slash') act = function () {
+      if (S.tab === 'budget') { S.searchOpen = true; render(); }
+      else if (S.tab === 'diary') { S.diarySearch = true; render(); }
+      else { goTab('notes'); var i = document.getElementById('notes-search'); if (i) i.focus(); }
+    };
+    else if (/^Digit[1-4]$/.test(c)) act = function () { goTab(['budget', 'notes', 'diary', 'settings'][+c.slice(5) - 1]); };
+    else if (c === 'KeyL') act = function () { lockNow(false); };
+    if (!act) return;
+    e.preventDefault(); act();
+  });
+
   // ---------- moving everything to another device with QR codes (vault-qr.js) ----------
   var loaded = {};
   function loadScript(src) {
@@ -2037,8 +2230,15 @@
         h('p', { class: 'hint', text: t('qr.tip') }));
     });
   }
-  function drawQR(canvas, text) {
+  // One QR size (version) for every code of a send, so the reader never meets a different geometry halfway through;
+  // versions 23 and 26 are skipped because the fallback reader (jsQR) often can't read them.
+  function qrVersion(text) {
     var q = window.qrcode(0, 'L'); q.addData(text, 'Byte'); q.make();
+    var v = (q.getModuleCount() - 17) / 4;
+    return v === 23 || v === 26 ? v + 1 : v;
+  }
+  function drawQR(canvas, text, ver) {
+    var q = window.qrcode(ver || 0, 'L'); q.addData(text, 'Byte'); q.make();
     var n = q.getModuleCount(), quiet = 4, size = canvas.width, cell = Math.floor(size / (n + quiet * 2)), off = Math.floor((size - cell * (n + quiet * 2)) / 2);
     var g = canvas.getContext('2d');
     g.fillStyle = '#fff'; g.fillRect(0, 0, size, size); g.fillStyle = '#000';
@@ -2048,21 +2248,22 @@
     var timer = null, wake = null;
     sheet(t('qr.send'), function (body) {
       var msg = msgEl(), info = h('p', { class: 'hint center', id: 'qr-info' }), count = h('p', { class: 'center qr-count', id: 'qr-count', 'aria-live': 'off' });
-      var px = Math.min(560, Math.max(260, Math.floor(Math.min(window.innerWidth, window.innerHeight) - 80)));
+      var px = Math.min(720, Math.max(260, Math.floor(Math.min(window.innerWidth, window.innerHeight) - 80)));
+      var big = px >= 640;                          // a computer screen: denser codes, a phone camera reads them easily
       var canvas = h('canvas', { class: 'qr-canvas', id: 'qr-canvas', width: px, height: px, role: 'img', 'aria-label': t('qr.title') });
-      var fps = 5, frames = [], i = 0;
-      function tick() { if (!frames.length) return; drawQR(canvas, frames[i]); count.textContent = t('qr.frame', { i: i + 1, n: frames.length }); i = (i + 1) % frames.length; touch(); }
+      var fps = big ? 6 : 5, frames = [], i = 0, ver = 0;
+      function tick() { if (!frames.length) return; drawQR(canvas, frames[i], ver); count.textContent = t('qr.frame', { i: i + 1, n: frames.length }); i = (i + 1) % frames.length; touch(); }
       function start() { clearInterval(timer); timer = setInterval(tick, Math.round(1000 / fps)); }
       add(body, h('p', { text: t('qr.sendBody') }), h('p', { class: 'msg', id: 'qr-secret-note', text: t('qr.secretNote') }), info, canvas, count,
         h('div', { class: 'row center' },
           h('button', { type: 'button', class: 'btn small', id: 'qr-slower', text: t('qr.slower'), on: { click: function () { fps = Math.max(2, fps - 1); start(); } } }),
           h('button', { type: 'button', class: 'btn small', id: 'qr-faster', text: t('qr.faster'), on: { click: function () { fps = Math.min(10, fps + 1); start(); } } })), msg);
       Promise.all([loadScript('/qrcode-generator.min.js'), flushAll()]).then(function () { return C.exportBackup(); }).then(function (text) {
-        return window.VaultQR.encode(text, px < 400 ? 450 : 800);
+        return window.VaultQR.encode(text, big ? 1150 : px < 400 ? 450 : 800);
       }).then(function (r) {
-        frames = r.frames;
+        frames = r.frames; ver = qrVersion(frames[0]);
         var secs = Math.ceil(r.count / fps * 1.3);
-        info.textContent = secs < 120 ? t('qr.size', { n: r.count, s: secs }) : t('qr.sizeLong', { n: r.count, m: Math.ceil(secs / 60) });
+        info.textContent = (secs < 120 ? t('qr.size', { n: r.count, s: secs }) : t('qr.sizeLong', { n: r.count, m: Math.ceil(secs / 60) })) + (big ? ' · ' + t('qr.fast') : '');
         tick(); start();
         try { if (navigator.wakeLock) navigator.wakeLock.request('screen').then(function (w) { wake = w; }, function () {}); } catch (e) {}
       }).catch(function (e) { setMsg(msg, e && e.code === 'too-big' ? t('qr.tooBig') : errText(e)); });
@@ -2077,6 +2278,7 @@
       var bar = h('progress', { class: 'qr-progress', id: 'qr-progress', max: 1, value: 0 });
       var video = h('video', { class: 'qr-video', id: 'qr-video', playsinline: '', muted: '', autoplay: '' });
       var grab = document.createElement('canvas'), gctx = grab.getContext('2d', { willReadFrequently: true });
+      var small = document.createElement('canvas'), sctx = small.getContext('2d', { willReadFrequently: true });
       var rx = new window.VaultQR.Receiver(), detector = null, warnedOther = false;
       var warn = h('p', { class: 'msg', id: 'qr-replace', hidden: true, text: t('qr.replaceWarn') });
       C.status().then(function (st) { if (st !== 'empty') warn.hidden = false; }).catch(function () {});
@@ -2085,6 +2287,7 @@
         var r = rx.add(text);
         if (r.state === 'other' && !warnedOther) { warnedOther = true; setMsg(msg, t('qr.other')); }
         if (r.count) { bar.max = r.count; bar.value = r.have; status.textContent = t('qr.got', { have: r.have, n: r.count }); }
+        if (r.state === 'new') touch();              // a long transfer must not trip the automatic lock
         return rx.done();
       }
       function scan() {
@@ -2092,10 +2295,18 @@
         var w = video.videoWidth, hh = video.videoHeight;
         var p = Promise.resolve([]);
         if (w && hh) {
-          var k = Math.min(1, 900 / Math.max(w, hh)); grab.width = Math.round(w * k); grab.height = Math.round(hh * k);
+          var k = Math.min(1, 1100 / Math.max(w, hh)); grab.width = Math.round(w * k); grab.height = Math.round(hh * k);
           gctx.drawImage(video, 0, 0, grab.width, grab.height);
           p = detector ? detector.detect(grab).then(function (codes) { return codes.map(function (c) { return c.rawValue; }); })
-            : Promise.resolve().then(function () { var c = window.jsQR(gctx.getImageData(0, 0, grab.width, grab.height).data, grab.width, grab.height, { inversionAttempts: 'dontInvert' }); return c ? [c.data] : []; });
+            : Promise.resolve().then(function () {
+              var c = window.jsQR(gctx.getImageData(0, 0, grab.width, grab.height).data, grab.width, grab.height, { inversionAttempts: 'dontInvert' });
+              for (var a = 0; !c && a < 2; a++) {                // the same picture a little smaller often reads when full size doesn't
+                var f = a ? 0.65 : 0.8, ww = Math.round(grab.width * f), hh2 = Math.round(grab.height * f);
+                small.width = ww; small.height = hh2; sctx.drawImage(grab, 0, 0, ww, hh2);
+                c = window.jsQR(sctx.getImageData(0, 0, ww, hh2).data, ww, hh2, { inversionAttempts: 'dontInvert' });
+              }
+              return c ? [c.data] : [];
+            });
         }
         p.then(function (texts) {
           var done = texts.some(seen);
