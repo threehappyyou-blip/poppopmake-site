@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Advertise — PopPopMake</title>
+<meta name="description" content="Put your banner in front of people using PopPopMake's free document, money and career tools — on the website and in the installed app. One clearly labelled banner per page, no tracking.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/advertise">
+<link rel="canonical" href="https://poppopmake.com/advertise">
+<meta property="og:title" content="Advertise — PopPopMake">
+<meta property="og:description" content="Put your banner in front of people using PopPopMake's free document, money and career tools — on the website and in the installed app. One clearly labelled banner per page, no tracking.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Advertise — PopPopMake">
+<meta name="twitter:description" content="Put your banner in front of people using PopPopMake's free document, money and career tools — on the website and in the installed app. One clearly labelled banner per page, no tracking.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.65;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  nav{display:flex;align-items:center;gap:4px;margin-left:auto;}
+  .nav-link{
+    font-size:0.95rem;
+    font-weight:500;
+    text-decoration:none;
+    color:var(--ink-soft);
+    padding:10px 14px;
+    border-radius:8px;
+    transition:color .15s ease, background .15s ease;
+  }
+  .nav-link:hover{color:var(--ink);background:var(--paper-2);}
+
+  .nav-dropdown{position:relative;}
+  .nav-dropdown summary{
+    list-style:none;
+    cursor:pointer;
+    font-size:0.95rem;
+    font-weight:500;
+    color:var(--ink-soft);
+    padding:10px 14px;
+    border-radius:8px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+    transition:color .15s ease, background .15s ease;
+  }
+  .nav-dropdown summary::-webkit-details-marker{display:none;}
+  .nav-dropdown summary:hover{color:var(--ink);background:var(--paper-2);}
+  .nav-dropdown[open] summary{color:var(--ink);background:var(--paper-2);}
+  .nav-dropdown summary svg{transition:transform .15s ease;}
+  .nav-dropdown[open] summary svg{transform:rotate(180deg);}
+
+  .mega{
+    position:absolute;
+    top:calc(100% + 8px);
+    left:0;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:0 18px 40px -18px rgba(28,35,33,0.35);
+    padding:10px;
+    width:420px;
+    z-index:300;
+  }
+  .mega-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+  .mega-grid a{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:8px;
+    text-decoration:none;
+    color:var(--ink);
+    font-size:0.92rem;
+    font-weight:500;
+  }
+  .mega-grid a:hover{background:var(--paper-2);}
+  .mega-grid a span{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);font-weight:500;}
+  .mega-all{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    margin-top:8px;
+    padding:11px 12px;
+    border-top:1px solid var(--line);
+    text-decoration:none;
+    color:var(--teal);
+    font-weight:600;
+    font-size:0.9rem;
+    border-radius:8px;
+  }
+  .mega-all:hover{background:var(--paper-2);}
+
+  .menu-toggle-wrap{display:none;}
+  .mobile-panel{display:none;}
+  @media (max-width:760px){
+    nav > .nav-link, nav > .nav-dropdown, nav .ppm-cmdk-trigger{display:none;}
+    nav{margin-left:0;}
+    .menu-toggle-wrap{display:block;position:relative;}
+    .menu-toggle-wrap summary{
+      list-style:none;
+      cursor:pointer;
+      width:44px;height:44px;
+      display:flex;align-items:center;justify-content:center;
+      border-radius:10px;
+      border:1px solid var(--line);
+      background:var(--card);
+    }
+    .menu-toggle-wrap summary::-webkit-details-marker{display:none;}
+    .menu-toggle-wrap .icon-close{display:none;}
+    .menu-toggle-wrap[open] .icon-open{display:none;}
+    .menu-toggle-wrap[open] .icon-close{display:block;}
+    .mobile-panel{
+      display:block;
+      position:fixed;
+      inset:0;
+      top:89px;
+      background:var(--paper);
+      padding:20px 24px 40px;
+      overflow-y:auto;
+      z-index:250;
+    }
+    .mobile-panel h4{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);margin:20px 0 8px;font-weight:500;}
+    .mobile-panel a{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:13px 4px;
+      font-size:1rem;
+      font-weight:500;
+      text-decoration:none;
+      color:var(--ink);
+      border-bottom:1px solid var(--line);
+      min-height:44px;
+    }
+    .mobile-panel a span{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;color:var(--ink-soft);font-weight:500;}
+  }
+
+  main{padding:48px 0 80px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,4vw,2.4rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.2rem;margin:32px 0 12px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 8px;font-size:1.05rem;}
+  p{margin:0 0 16px;}
+  ul{margin:0 0 16px;padding-left:22px;}
+  li{margin-bottom:6px;}
+  .principle-box{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px 20px;margin:16px 0;}
+  .principle-box strong{color:var(--ink);}
+  .link-row{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0;}
+  .link-row a{font-family:'IBM Plex Mono',monospace;font-size:0.8rem;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 14px;text-decoration:none;color:var(--ink-soft);}
+  .link-row a:hover{border-color:var(--teal);color:var(--ink);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:40px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  .spec{width:100%;border-collapse:collapse;margin:8px 0 20px;font-size:.95rem}
+  .spec th,.spec td{border-bottom:1px solid var(--line);padding:9px 8px;text-align:left;vertical-align:top}
+  .spec th{font-weight:600;width:34%}
+  .cta{display:inline-block;background:var(--ink);color:#fff;text-decoration:none;font-weight:600;border-radius:999px;padding:11px 20px;margin:6px 0 18px}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav aria-label="Primary">
+      <details class="nav-dropdown" id="toolsDetails">
+        <summary>Tools <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></summary>
+        <div class="mega">
+          <div class="mega-grid">
+            <a href="/document-tools">Documents <span>12</span></a>
+            <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
+            <a href="/bmi-calculator">Health <span>2</span></a>
+            <a href="/career-tools">Career <span>4</span></a>
+            <a href="/business-tools">Business <span>2</span></a>
+            <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
+            <a href="/everyday-tools">Everyday <span>6</span></a>
+            <a href="/devtools">Developer <span>6</span></a>
+          </div>
+          <a class="mega-all" href="/all-tools">Browse all 45 tools</a>
+        </div>
+      </details>
+      <a class="nav-link" href="/guides">Guides</a>
+      <a class="nav-link" href="/about">About</a>
+      <a class="nav-link" href="/all-tools">All Tools</a>
+    </nav>
+    <details class="menu-toggle-wrap">
+      <summary aria-label="Open menu">
+        <svg class="icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
+      </summary>
+      <div class="mobile-panel">
+        <h4>Browse</h4>
+        <a href="/document-tools">Documents <span>12</span></a>
+        <a href="/paycheck-calculator">Money &amp; Tax <span>10</span></a>
+        <a href="/bmi-calculator">Health <span>2</span></a>
+        <a href="/career-tools">Career <span>4</span></a>
+        <a href="/business-tools">Business <span>2</span></a>
+        <a href="/writing-tools">Writing &amp; AI <span>3</span></a>
+        <a href="/everyday-tools">Everyday <span>6</span></a>
+        <a href="/devtools">Developer <span>6</span></a>
+        <h4>More</h4>
+        <a href="/all-tools">All Tools</a>
+        <a href="/guides">Guides</a>
+        <a href="/about">About</a>
+        <a href="/changelog">Changelog</a>
+        <a href="/feedback">Feedback</a>
+      </div>
+    </details>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Advertise</span>
+  <h1>Advertise on PopPopMake</h1>
+  <p class="lede">Put your banner in front of people who are in the middle of getting something done: converting a document, checking a paycheck, planning a mortgage, writing a résumé.</p>
+
+  <h2>What you get</h2>
+  <ul>
+    <li>One banner on each page you choose, shown below the tool, on the website and in the installed PopPopMake app (also while offline, once the app has saved it).</li>
+    <li>Optionally, a banner on the settings screen of the Budget, Notes &amp; Diary app.</li>
+    <li>A clear “Sponsored” label with your name. Your banner is the only ad in that space for as long as it runs.</li>
+    <li>No tracking scripts. Your picture is stored on this site and links straight to your page. We add <code>utm_source=poppopmake</code> to the link, so you can count visits in your own analytics.</li>
+  </ul>
+
+  <h2>Banner size</h2>
+  <table class="spec">
+    <tr><th>Computer and tablet</th><td>728 × 90 pixels, PNG, JPG, WebP or SVG, under 150 KB</td></tr>
+    <tr><th>Phone (optional)</th><td>320 × 100 pixels; without it, the wide banner is scaled down</td></tr>
+    <tr><th>Link</th><td>One https:// address</td></tr>
+    <tr><th>Text for screen readers</th><td>A short description of the banner</td></tr>
+    <tr><th>Run</th><td>A start and end date; weekly or monthly</td></tr>
+  </table>
+
+  <h2>What we don’t accept</h2>
+  <p>Gambling, adult content, weapons, “get rich quick” or guaranteed-return investments, unlicensed financial or medical claims, downloads that install software, pop-ups, auto-playing sound or video, and anything that looks like part of a tool or a system warning.</p>
+
+  <h2>Ask about a banner</h2>
+  <p>Tell us your company, the pages or topics you are interested in, and the dates. Prices are per week or per month and depend on the pages.</p>
+  <a class="cta" href="/feedback?type=advertising">Ask about advertising</a>
+  <p>Or email <a href="mailto:hello@poppopmake.com?subject=Advertising%20on%20PopPopMake">hello@poppopmake.com</a>.</p>
+
+  <div class="link-row">
+    <a href="/about">About</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/all-tools">All tools</a>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span><a href="/all-tools" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">All Tools</a><a href="/terms" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Terms</a><a href="/privacy" style="margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script>
+(function(){
+  // Close the desktop Tools dropdown on outside click / Escape.
+  var toolsDetails = document.getElementById('toolsDetails');
+  if (toolsDetails) {
+    document.addEventListener('click', function(e){
+      if (toolsDetails.open && !toolsDetails.contains(e.target)) toolsDetails.open = false;
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') toolsDetails.open = false;
+    });
+  }
+  // Close the mobile menu on Escape, and when a link inside it is clicked.
+  var mobileWrap = document.querySelector('.menu-toggle-wrap');
+  if (mobileWrap) {
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') mobileWrap.open = false;
+    });
+    mobileWrap.querySelectorAll('.mobile-panel a').forEach(function(a){
+      a.addEventListener('click', function(){ mobileWrap.open = false; });
+    });
+  }
+})();
+</script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>

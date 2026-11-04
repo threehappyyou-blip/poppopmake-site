@@ -2161,7 +2161,21 @@
         row(t('set.about'), null, openAbout, 'set-about'),
         h('li', {}, h('a', { class: 'set-row', href: '/manual-vault', target: '_blank', rel: 'noopener' }, h('span', { class: 'set-label', text: t('set.manual') }), icon('chev', 18)))]),
       h('p', { class: 'fine center' }, h('a', { href: '/privacy', target: '_blank', rel: 'noopener', text: t('setup.privacy') }), ' · ',
-        h('a', { href: '/terms', target: '_blank', rel: 'noopener', text: t('setup.terms') }), ' · PopPopMake'));
+        h('a', { href: '/terms', target: '_blank', rel: 'noopener', text: t('setup.terms') }), ' · PopPopMake'),
+      sponsorBox());
+  }
+  // A sponsor's banner at the bottom of Settings, when one is booked for this app in /ads.json: a picture stored on
+  // this site and a plain link (no ad network, nothing counted). Read once per visit.
+  var adsCfg = null;
+  function sponsorBox() {
+    var box = h('aside', { class: 'vault-ad', id: 'vault-ad', 'aria-label': t('ad.label'), hidden: true });
+    if (!window.PPMBanner || !window.fetch) return box;
+    (adsCfg || (adsCfg = fetch('/ads.json', { cache: 'no-store', credentials: 'omit' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; })))
+      .then(function (cfg) {
+        var b = cfg && window.PPMBanner.pick(cfg, '/vault', new Date(), undefined, 'vault');
+        if (b && box.isConnected) window.PPMBanner.render(box, b, { where: 'vault', sponsored: t('ad.sponsored'), advertiseHref: '/advertise', advertiseText: t('ad.advertise'), newTab: true });
+      });
+    return box;
   }
 
   function amountSheet(title, bodyText, current, onSave) {

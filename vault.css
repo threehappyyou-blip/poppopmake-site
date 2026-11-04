@@ -600,3 +600,11 @@ a.btn { text-decoration: none; display: flex; align-items: center; justify-conte
 #print-root .sticker svg { width: 100%; height: 100%; }
 #print-root .pr-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6pt; margin-top: 6pt; width: 640px; }
 #print-root .pr-photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
+
+/* sponsor banner at the bottom of Settings (see ppm-banner.js) */
+.vault-ad{margin:18px auto 8px;max-width:728px;text-align:center}
+.vault-ad[hidden]{display:none}
+.vault-ad .ppm-ad-label{margin:0 0 4px;font-size:.72rem;opacity:.7;text-align:left}
+.vault-ad .ppm-ad-label a{color:inherit}
+.vault-ad .ppm-ad-link{display:block;line-height:0}
+.vault-ad .ppm-ad-img{display:block;width:100%;height:auto;border-radius:8px}

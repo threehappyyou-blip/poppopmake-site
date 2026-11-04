@@ -1,0 +1,9 @@
+{
+  "_help": "Sponsor banners and the AdSense ad space. Add a banner: put its picture in /ads/ (728x90, optional 320x100 for phones) and add an entry to banners. AdSense: after approval, create a display ad unit and put its number in adsense.slot. See the owner guide.",
+  "adsense": {
+    "client": "ca-pub-4993996708537660",
+    "slot": ""
+  },
+  "noAdsOn": ["/privacy", "/terms", "/accessibility", "/corrections", "/feedback", "/help-me", "/vault", "/embed*"],
+  "banners": []
+}

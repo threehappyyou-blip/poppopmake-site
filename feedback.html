@@ -103,6 +103,7 @@
           <select id="fb-type" name="type">
             <option value="Bug report">Something's broken</option>
             <option value="Feature request">A tool or feature I'd like</option>
+            <option value="Advertising">Advertising on PopPopMake</option>
             <option value="Something else">Something else</option>
           </select>
         </div>
@@ -166,6 +167,7 @@ if ('serviceWorker' in navigator) {
 
   function setStatus(kind, msg){ statusEl.className = 'status show ' + kind; statusEl.textContent = msg; }
 
+  if (/(?:^|[?&])type=advertising(?:&|$)/.test(location.search)) document.getElementById('fb-type').value = 'Advertising';   // from the Advertise page
   form.addEventListener('submit', function(e){
     e.preventDefault();
 

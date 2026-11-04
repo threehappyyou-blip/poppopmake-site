@@ -304,3 +304,14 @@
     init();
   }
 })();
+
+// Shared app features (the Install button, saving every tool for offline use in the installed app, recently used
+// tools on the home page, the offline notice and the one ad space per page) live in their own files and are loaded
+// here because this script is already on every regular page.
+(function () {
+  if (window.__ppmAppLoader) return;
+  window.__ppmAppLoader = true;
+  ['/ppm-banner.js', '/ppm-app.js'].forEach(function (src) {
+    var s = document.createElement('script'); s.src = src; s.async = false; document.head.appendChild(s);
+  });
+})();
