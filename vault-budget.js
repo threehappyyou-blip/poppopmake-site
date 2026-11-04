@@ -15,6 +15,7 @@
     return Array.from(a, function (b) { return (b % 36).toString(36); }).join('');
   }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
+  var PHOTO_RE = /^[a-z0-9]{1,40}$/;
   function ymOf(date) { return date.slice(0, 7); }
   function daysInMonth(ym) { var y = +ym.slice(0, 4), m = +ym.slice(5, 7); return new Date(Date.UTC(y, m, 0)).getUTCDate(); }
   function addMonths(ym, n) {
@@ -57,7 +58,7 @@
       var dec = -1;
       if (lastDot >= 0 && lastComma >= 0) dec = Math.max(lastDot, lastComma);
       else if (lastComma >= 0) { var after = s.length - lastComma - 1; if (s.split(',').length === 2 && after >= 1 && after <= 2) dec = lastComma; }
-      else if (lastDot >= 0) { if (s.split('.').length === 2) dec = lastDot; }
+      else if (lastDot >= 0) { if (s.split('.').length === 2 && s.length - lastDot - 1 !== 3) dec = lastDot; }   // "1.234" is a thousand
       if (dec >= 0) { intPart = s.slice(0, dec).replace(/[.,]/g, ''); frac = s.slice(dec + 1).replace(/[.,]/g, ''); }
       else intPart = s.replace(/[.,]/g, '');
     }
@@ -122,11 +123,87 @@
       if (t.type !== 'expense' || ymOf(t.date) !== ym || t.cur !== doc.currency) return;
       spent += t.amt; if (t.date === today) todaySpent += t.amt;
     });
-    var daysLeft = daysInMonth(ym) - (+today.slice(8, 10)) + 1, leftBefore = tb - (spent - todaySpent);
-    if (spent > tb) return { daysLeft: daysLeft, perDay: 0, todaySpent: todaySpent, todayLeft: 0, over: spent - tb };
+    var reserved = upcomingFixed(doc, today).total;       // rent, subscriptions … still to be added this month
+    var daysLeft = daysInMonth(ym) - (+today.slice(8, 10)) + 1, leftBefore = tb - (spent - todaySpent) - reserved;
+    if (spent > tb) return { daysLeft: daysLeft, perDay: 0, todaySpent: todaySpent, todayLeft: 0, over: spent - tb, reserved: reserved, short: 0 };
+    if (leftBefore <= 0) return { daysLeft: daysLeft, perDay: 0, todaySpent: todaySpent, todayLeft: -todaySpent, over: 0, reserved: reserved, short: -leftBefore };
     var perDay = Math.floor(leftBefore / daysLeft);
-    return { daysLeft: daysLeft, perDay: perDay, todaySpent: todaySpent, todayLeft: perDay - todaySpent, over: 0 };
+    return { daysLeft: daysLeft, perDay: perDay, todaySpent: todaySpent, todayLeft: perDay - todaySpent, over: 0, reserved: reserved, short: 0 };
   }
+
+  // Repeating expenses that will still be added later this month (not yet added, active, already started).
+  function upcomingFixed(doc, today) {
+    var ym = ymOf(today), day = +today.slice(8, 10), dim = daysInMonth(ym), items = [], total = 0;
+    (doc.recurring || []).forEach(function (r) {
+      if (!r.active || r.type !== 'expense' || (r.cur || doc.currency) !== doc.currency || r.start > ym || (r.last && r.last >= ym)) return;
+      var due = Math.min(r.day, dim);
+      if (due <= day) return;          // due today or earlier: applyRecurring adds it, so it is already in "spent"
+      items.push({ id: r.id, note: r.note, cat: r.cat, amt: r.amt, day: due }); total += r.amt;
+    });
+    items.sort(function (a, b) { return a.day - b.day; });
+    return { total: total, items: items };
+  }
+
+  // ---------- a year at a glance ----------
+  function yearSummary(doc, year, today) {
+    var months = [], byCat = {}, income = 0, expense = 0;
+    for (var m = 1; m <= 12; m++) months.push({ ym: year + '-' + pad(m), income: 0, expense: 0 });
+    doc.tx.forEach(function (t) {
+      if (t.date.slice(0, 4) !== year || t.cur !== doc.currency) return;
+      var mo = months[+t.date.slice(5, 7) - 1];
+      if (t.type === 'income') { mo.income += t.amt; income += t.amt; }
+      else { mo.expense += t.amt; expense += t.amt; byCat[t.cat] = (byCat[t.cat] || 0) + t.amt; }
+    });
+    var thisYear = today && today.slice(0, 4) === year, monthsSoFar = thisYear ? +today.slice(5, 7) : 12;
+    var cats = Object.keys(byCat).map(function (k) { return { cat: k, amt: byCat[k] }; }).sort(function (a, b) { return b.amt - a.amt; });
+    var top = months.reduce(function (best, mo) { return mo.expense > (best ? best.expense : 0) ? mo : best; }, null);
+    return { year: year, months: months, byCat: cats, income: income, expense: expense, net: income - expense,
+      avgExpense: Math.round(expense / monthsSoFar), topMonth: top ? top.ym : null };
+  }
+  function yearsWithData(doc) {
+    var ys = {}; doc.tx.forEach(function (t) { ys[t.date.slice(0, 4)] = true; });
+    return Object.keys(ys).sort().reverse();
+  }
+
+  // ---------- payment methods (optional: cash, cards, accounts) ----------
+  var METHOD_KINDS = ['cash', 'card', 'bank', 'other'];
+  function cleanMethod(m) {
+    if (!m || typeof m.id !== 'string' || !/^[a-z0-9]{1,40}$/.test(m.id) || typeof m.name !== 'string' || !m.name.trim()) return null;
+    return { id: m.id, name: m.name.trim().slice(0, 30), emoji: typeof m.emoji === 'string' ? Array.from(m.emoji).slice(0, 4).join('') : '',
+      kind: METHOD_KINDS.indexOf(m.kind) >= 0 ? m.kind : 'other' };
+  }
+  function addMethod(doc, m) {
+    if (!doc.methods) doc.methods = [];
+    if (doc.methods.length >= 30) return null;
+    var x = cleanMethod({ id: uid(), name: m.name, emoji: m.emoji, kind: m.kind });
+    if (x) doc.methods.push(x);
+    return x;
+  }
+  function updateMethod(doc, id, patch) {
+    var m = (doc.methods || []).find(function (x) { return x.id === id; });
+    if (!m) return false;
+    var x = cleanMethod({ id: id, name: patch.name !== undefined ? patch.name : m.name, emoji: patch.emoji !== undefined ? patch.emoji : m.emoji, kind: patch.kind !== undefined ? patch.kind : m.kind });
+    if (!x) return false;
+    m.name = x.name; m.emoji = x.emoji; m.kind = x.kind;
+    return true;
+  }
+  function removeMethod(doc, id) {
+    doc.methods = (doc.methods || []).filter(function (m) { return m.id !== id; });
+    doc.tx.forEach(function (t) { if (t.pm === id) delete t.pm; });
+    (doc.recurring || []).forEach(function (r) { if (r.pm === id) delete r.pm; });
+  }
+  // Spending this month per method, in the order of the methods; entries without a method last (id null).
+  function methodTotals(doc, ym) {
+    var by = {}, none = 0;
+    doc.tx.forEach(function (t) {
+      if (t.type !== 'expense' || ymOf(t.date) !== ym || t.cur !== doc.currency) return;
+      if (t.pm && (doc.methods || []).some(function (m) { return m.id === t.pm; })) by[t.pm] = (by[t.pm] || 0) + t.amt; else none += t.amt;
+    });
+    var out = (doc.methods || []).filter(function (m) { return by[m.id]; }).map(function (m) { return { id: m.id, amt: by[m.id] }; });
+    if (none) out.push({ id: null, amt: none });
+    return out;
+  }
+  function photosOf(doc) { return doc.tx.filter(function (t) { return t.photo; }).map(function (t) { return t.photo; }); }
 
   // ---------- savings goals: kept apart from spending ----------
   function goalSaved(g) { return g.moves.reduce(function (s, m) { return s + m.amt; }, 0); }
@@ -189,7 +266,7 @@
   }
 
   function newDoc(lang, currency) {
-    return { v: 1, currency: currency || 'USD', cats: defaultCats(), tx: [], budgets: { total: null, cats: {} }, recurring: [], goals: [] };
+    return { v: 1, currency: currency || 'USD', cats: defaultCats(), tx: [], budgets: { total: null, cats: {} }, recurring: [], goals: [], methods: [] };
   }
 
   function addCategory(doc, c) {
@@ -219,6 +296,8 @@
     var tx = { id: uid(), type: t.type === 'income' ? 'income' : 'expense', amt: Math.round(t.amt), cur: t.cur || doc.currency,
       cat: t.cat, date: t.date, note: String(t.note || '').slice(0, 300) };
     if (t.rid) tx.rid = t.rid;
+    if (t.pm && typeof t.pm === 'string') tx.pm = t.pm;
+    if (t.photo && PHOTO_RE.test(t.photo)) tx.photo = t.photo;
     doc.tx.push(tx);
     return tx;
   }
@@ -227,6 +306,10 @@
     if (!t) return false;
     ['type', 'amt', 'cur', 'cat', 'date', 'note'].forEach(function (k) { if (patch[k] !== undefined) t[k] = patch[k]; });
     if (patch.note !== undefined) t.note = String(patch.note).slice(0, 300);
+    ['pm', 'photo'].forEach(function (k) {                       // null removes it
+      if (patch[k] === null || patch[k] === '') delete t[k];
+      else if (typeof patch[k] === 'string' && (k !== 'photo' || PHOTO_RE.test(patch[k]))) t[k] = patch[k];
+    });
     return true;
   }
   function deleteTx(doc, id) {
@@ -310,6 +393,7 @@
   function addRecurring(doc, r) {
     var rec = { id: uid(), type: r.type === 'income' ? 'income' : 'expense', amt: Math.round(r.amt), cur: r.cur || doc.currency, cat: r.cat,
       note: String(r.note || '').slice(0, 300), day: Math.min(31, Math.max(1, r.day | 0)), start: r.start, last: null, active: true };
+    if (r.pm && typeof r.pm === 'string') rec.pm = r.pm;
     doc.recurring.push(rec);
     return rec;
   }
@@ -330,7 +414,7 @@
       while (m <= nowYm && guard++ < 600) {
         var day = Math.min(r.day, daysInMonth(m));
         if (m === nowYm && day > nowDay) break;
-        addTx(doc, { type: r.type, amt: r.amt, cur: r.cur, cat: r.cat, date: m + '-' + pad(day), note: r.note, rid: r.id });
+        addTx(doc, { type: r.type, amt: r.amt, cur: r.cur, cat: r.cat, date: m + '-' + pad(day), note: r.note, rid: r.id, pm: r.pm });
         r.last = m; added++;
         m = addMonths(m, 1);
       }
@@ -346,9 +430,10 @@
     return s;
   }
   function toCSV(doc, catName) {
-    var rows = [['date', 'type', 'category', 'amount', 'currency', 'note']];
+    var rows = [['date', 'type', 'category', 'amount', 'currency', 'note', 'payment']];
+    var mname = {}; (doc.methods || []).forEach(function (m) { mname[m.id] = m.name; });
     doc.tx.slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; }).forEach(function (t) {
-      rows.push([t.date, t.type, catName ? catName(t.cat) : t.cat, majorString(t.amt, t.cur), t.cur, t.note]);
+      rows.push([t.date, t.type, catName ? catName(t.cat) : t.cat, majorString(t.amt, t.cur), t.cur, t.note, t.pm ? mname[t.pm] || '' : '']);
     });
     return '﻿' + rows.map(function (r) { return r.map(cell).join(','); }).join('\r\n') + '\r\n';
   }
@@ -378,15 +463,21 @@
     if (row.some(function (x) { return x.trim() !== ''; })) rows.push(row);
     return rows;
   }
-  function parseDate(s) {
+  var MONTHS = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12 };
+  function year4(y) { return y < 100 ? 2000 + y : y; }
+  // order: 'dmy' or 'mdy' for dates like 03/04/2026 where either reading is possible (decided once per file).
+  function parseDate(s, order) {
     s = String(s || '').trim();
     var m, y, mo, d;
     if ((m = s.match(/^(\d{4})\s*[-\/.년年]\s*(\d{1,2})\s*[-\/.월月]\s*(\d{1,2})/))) { y = +m[1]; mo = +m[2]; d = +m[3]; }
     else if ((m = s.match(/^(\d{4})(\d{2})(\d{2})(?!\d)/))) { y = +m[1]; mo = +m[2]; d = +m[3]; }
-    else if ((m = s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4})/))) {
-      var a = +m[1], b = +m[2]; y = +m[3];
-      if (a > 12) { d = a; mo = b; } else { mo = a; d = b; }
-    } else return null;
+    else if ((m = s.match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4}|\d{2})(?!\d)/))) {
+      var a = +m[1], b = +m[2]; y = year4(+m[3]);
+      if (a > 12 || (b <= 12 && order === 'dmy')) { d = a; mo = b; } else { mo = a; d = b; }
+    }
+    else if ((m = s.match(/^(\d{1,2})[\s\-.\/]*([A-Za-z]{3})[A-Za-z]*\.?[\s\-.\/,]*(\d{4}|\d{2})(?!\d)/)) && MONTHS[m[2].toLowerCase()]) { d = +m[1]; mo = MONTHS[m[2].toLowerCase()]; y = year4(+m[3]); }
+    else if ((m = s.match(/^([A-Za-z]{3})[A-Za-z]*\.?\s+(\d{1,2}),?\s+(\d{4})/)) && MONTHS[m[1].toLowerCase()]) { mo = MONTHS[m[1].toLowerCase()]; d = +m[2]; y = +m[3]; }
+    else return null;
     var out = y + '-' + pad(mo) + '-' + pad(d);
     return validDate(out) ? out : null;
   }
@@ -426,15 +517,31 @@
       }
       if (best >= 0) res.desc = best;
     }
+    res.order = dateOrder(rows.slice(res.header ? 1 : 0), res.date);
     return res;
+  }
+  // 03/04/2026: a later row such as 13/04 or 04/13 settles which number is the day for the whole file.
+  // With no such row: the order usual for the file's currency is used when the import runs (US dollars month-first).
+  function dateOrder(rows, col) {
+    if (col === null || col === undefined) return null;
+    var dmy = 0, mdy = 0;
+    rows.forEach(function (r) {
+      var m = String(r[col] || '').trim().match(/^(\d{1,2})[\/.\-](\d{1,2})[\/.\-](\d{4}|\d{2})(?!\d)/);
+      if (!m) return;
+      if (+m[1] > 12 && +m[2] <= 12) dmy++; else if (+m[2] > 12 && +m[1] <= 12) mdy++;
+    });
+    return dmy > mdy ? 'dmy' : mdy > dmy ? 'mdy' : null;
   }
   // map: {header, date, desc, amount|null, out|null, in|null, flip}
   function importRows(doc, rows, map, cur) {
     cur = cur || doc.currency;
-    var seen = {}, added = 0, skipped = 0, bad = 0;
-    doc.tx.forEach(function (t) { seen[[t.date, t.type, t.amt, t.cur, t.note.trim().toLowerCase()].join('|')] = true; });
+    // Already-imported check by counting: if the app already has two identical bus fares on a day, the first two such
+    // rows in a file are skipped and a third is added. Two identical purchases in one file are both kept.
+    var have = {}, inFile = {}, added = 0, skipped = 0, bad = 0;
+    var order = map.order || (cur === 'USD' ? 'mdy' : 'dmy');
+    doc.tx.forEach(function (t) { var k = [t.date, t.type, t.amt, t.cur, t.note.trim().toLowerCase()].join('|'); have[k] = (have[k] || 0) + 1; });
     rows.slice(map.header ? 1 : 0).forEach(function (r) {
-      var date = map.date !== null && map.date !== undefined ? parseDate(r[map.date]) : null;
+      var date = map.date !== null && map.date !== undefined ? parseDate(r[map.date], order) : null;
       var type = null, amt = null;
       if (map.out !== null && map.out !== undefined || map.in !== null && map.in !== undefined) {
         var o = map.out !== null && map.out !== undefined ? parseAmount(r[map.out], cur) : null;
@@ -450,8 +557,8 @@
       if (!date || !(amt > 0)) { bad++; return; }
       var note = map.desc !== null && map.desc !== undefined ? String(r[map.desc] || '').trim().slice(0, 300) : '';
       var key = [date, type, amt, cur, note.toLowerCase()].join('|');
-      if (seen[key]) { skipped++; return; }
-      seen[key] = true;
+      inFile[key] = (inFile[key] || 0) + 1;
+      if (inFile[key] <= (have[key] || 0)) { skipped++; return; }
       var cat = guessCategory(doc, note);
       if (!cat || !doc.cats.some(function (c) { return c.id === cat && c.type === type; })) cat = type === 'income' ? 'other_income' : 'other';
       addTx(doc, { type: type, amt: amt, cur: cur, cat: cat, date: date, note: note });
@@ -476,7 +583,10 @@
     if (Array.isArray(raw.tx)) d.tx = raw.tx.filter(function (t) {
       return t && typeof t.id === 'string' && (t.type === 'expense' || t.type === 'income') && Number.isInteger(t.amt) && t.amt > 0 &&
         typeof t.cat === 'string' && validDate(t.date);
-    }).map(function (t) { t.cur = typeof t.cur === 'string' ? t.cur : d.currency; t.note = String(t.note || ''); return t; });
+    }).map(function (t) { t.cur = typeof t.cur === 'string' ? t.cur : d.currency; t.note = String(t.note || ''); if (t.photo !== undefined && !PHOTO_RE.test(String(t.photo))) delete t.photo; return t; });
+    if (Array.isArray(raw.methods)) d.methods = raw.methods.map(cleanMethod).filter(Boolean).slice(0, 30);
+    var mids = {}; d.methods.forEach(function (m) { mids[m.id] = true; });
+    d.tx.forEach(function (t) { if (t.pm !== undefined && !mids[t.pm]) delete t.pm; });
     if (raw.budgets && typeof raw.budgets === 'object') {
       d.budgets.total = raw.budgets.total > 0 ? raw.budgets.total : null;
       var bc = raw.budgets.cats || {};
@@ -486,6 +596,7 @@
       return r && typeof r.id === 'string' && Number.isInteger(r.amt) && r.amt > 0 && /^\d{4}-\d{2}$/.test(r.start) && typeof r.cat === 'string';
     });
     if (Array.isArray(raw.goals)) d.goals = raw.goals.map(cleanGoal).filter(Boolean).slice(0, 50);
+    d.recurring.forEach(function (r) { if (r.pm !== undefined && !mids[r.pm]) delete r.pm; });
     return d;
   }
 
@@ -498,7 +609,8 @@
     addRecurring: addRecurring, updateRecurring: updateRecurring, deleteRecurring: deleteRecurring, applyRecurring: applyRecurring,
     toCSV: toCSV, parseCSV: parseCSV, parseDate: parseDate, guessColumns: guessColumns, importRows: importRows,
     addMonths: addMonths, daysInMonth: daysInMonth, validDate: validDate, uid: uid,
-    calcAmount: calcAmount, dailyAllowance: dailyAllowance,
+    calcAmount: calcAmount, dailyAllowance: dailyAllowance, upcomingFixed: upcomingFixed, yearSummary: yearSummary, yearsWithData: yearsWithData,
+    addMethod: addMethod, updateMethod: updateMethod, removeMethod: removeMethod, methodTotals: methodTotals, photosOf: photosOf,
     addGoal: addGoal, updateGoal: updateGoal, deleteGoal: deleteGoal, goalMove: goalMove, goalProgress: goalProgress, goalSaved: goalSaved, goalsSavedIn: goalsSavedIn
   };
   root.VaultBudget = api;

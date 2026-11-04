@@ -4,12 +4,13 @@
 (function () {
   'use strict';
 
-  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, t = I.t;
+  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, ST = window.VaultStickers, t = I.t;
   var NOTE_FONTS = ['base', 'hand', 'pen'], NOTE_SIZES = ['s', 'm', 'l'];
   var app = document.getElementById('app');
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray'];
   var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.deco', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv', 'tip.desk', 'tip.goals', 'tip.calc', 'tip.list'];
   var FAIL_KEY = 'ppm-vault-fails', THEME_KEY = 'ppm-vault-theme', DESK_KEY = 'ppm-vault-desk';
+  var PM_KEY = 'ppm-vault-last-pm';         // id of the payment method used last (a random id, no content)
   var TAB_KEY = 'ppm-vault-tab', INSTALL_KEY = 'ppm-vault-install-later', PK_AUTO_KEY = 'ppm-vault-pk-auto';   // only the tab name and two on/off choices, never content
   // A desktop note window (/vault?w=note&id=…) shows one note on its own; everything else is the full app.
   var DESK = (location.search.match(/[?&]w=note&id=([A-Za-z0-9_-]{4,40})(?:&|$)/) || [])[1] || null;
@@ -90,7 +91,12 @@
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
   }
-  function errText(e) { return e && e.code === 'corrupt' ? t('err.corrupt') : t('err.generic', { msg: (e && (e.message || e.code)) || String(e) }); }
+  function errText(e) {
+    if (e && e.code === 'corrupt') return t('err.corrupt');
+    var name = e && (e.name || (e.inner && e.inner.name)), m = String((e && e.message) || '');
+    if (name === 'QuotaExceededError' || /quota/i.test(m)) return t('err.quota');      // the device is full: say so in plain words
+    return t('err.generic', { msg: (e && (e.message || e.code)) || String(e) });
+  }
 
   // ---------- language, theme, manifest ----------
   function applyLang() {
@@ -118,9 +124,13 @@
     return { v: 1, notes: list.filter(function (n) { return n && typeof n.id === 'string' && typeof n.text === 'string'; }).map(function (n) {
       return { id: n.id, text: n.text, color: NOTE_COLORS.indexOf(n.color) >= 0 ? n.color : 'yellow', pinned: !!n.pinned,
         font: NOTE_FONTS.indexOf(n.font) >= 0 ? n.font : 'base', size: NOTE_SIZES.indexOf(n.size) >= 0 ? n.size : 'm', locked: n.locked === true, list: n.list === true,
+        photos: Array.isArray(n.photos) ? n.photos.filter(function (p) { return typeof p === 'string' && /^[a-z0-9]{1,40}$/.test(p); }).slice(0, NOTE_MAX_PHOTOS) : [],
+        remind: typeof n.remind === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(n.remind) ? n.remind : null,
         created: +n.created || Date.now(), updated: +n.updated || Date.now() };
     }) };
   }
+  var NOTE_MAX_PHOTOS = 6;
+  function noteEmpty(n) { return !n.text.trim() && !(n.photos && n.photos.length); }      // nothing written and no photo
   function noteLook(n) { return 'nc-' + n.color + ' font-' + n.font + ' nsz-' + n.size; }
   var noteShown = {};               // locked notes opened with the passcode in this window (forgotten on lock)
   // A locked note shows its text only after the passcode is typed again (same slow-down after wrong tries as the lock screen).
@@ -198,7 +208,7 @@
       return Promise.all([C.update('notes', function (raw) {
         if (!S.notes) throw { code: 'locked' };
         S.notes.notes = mergeNotes(raw, dirty, gone);
-        var keep = S.notes.notes.filter(function (n) { return !(noteLocal[n.id] && !n.text.trim()); });
+        var keep = S.notes.notes.filter(function (n) { return !(noteLocal[n.id] && noteEmpty(n)); });
         keep.forEach(function (n) { delete noteLocal[n.id]; });
         return { v: 1, notes: keep };
       }), C.update('settings', function (raw) { var st = validateSettings(raw); st.lastChange = now; return st; })]).then(function () {
@@ -667,10 +677,10 @@
     if (ym !== thisMonth()) add(main, h('button', { type: 'button', class: 'link today-link', text: t('month.today'), on: { click: function () { S.ym = thisMonth(); render(); } } }));
 
     var card = h('section', { class: 'card summary', 'aria-label': I.monthLabel(ym) },
-      h('div', { class: 'sum-main' }, h('span', { class: 'label', text: t('sum.spent') }), h('strong', { class: 'big', id: 'sum-spent', text: money(sum.expense) })),
+      h('div', { class: 'sum-main' }, h('span', { class: 'label', text: t('sum.spent') }), h('strong', { class: 'big' + longCls(money(sum.expense), 11), id: 'sum-spent', text: money(sum.expense) })),
       h('div', { class: 'sum-row' },
-        h('div', {}, h('span', { class: 'label', text: t('sum.income') }), h('span', { class: 'pos', id: 'sum-income', text: money(sum.income) })),
-        h('div', {}, h('span', { class: 'label', text: t('sum.net') }), h('span', { id: 'sum-net', class: sum.net < 0 ? 'neg' : '', text: money(sum.net) }))));
+        h('div', {}, h('span', { class: 'label', text: t('sum.income') }), h('span', { class: 'pos amt' + longCls(money(sum.income), 12), id: 'sum-income', text: money(sum.income) })),
+        h('div', {}, h('span', { class: 'label', text: t('sum.net') }), h('span', { id: 'sum-net', class: 'amt' + (sum.net < 0 ? ' neg' : '') + longCls(money(sum.net), 12), text: money(sum.net) }))));
     if (sum.budget) {
       var pct = Math.min(100, Math.round(sum.budget.spent / sum.budget.total * 100));
       add(card, h('div', { class: 'budget-bar' + (sum.budget.left < 0 ? ' over' : pct >= 85 ? ' warn' : ''), role: 'progressbar', 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': pct, 'aria-label': t('set.monthly') },
@@ -688,6 +698,7 @@
       h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'goals' ? 'true' : 'false', class: S.budgetView === 'goals' ? 'on' : '', id: 'view-goals', text: t('view.goals'), on: { click: function () { S.budgetView = 'goals'; render(); } } })));
 
     if (S.budgetView === 'charts') add(main, charts(sum));
+    else if (S.budgetView === 'year') { main.textContent = ''; renderYear(main); }
     else if (S.budgetView === 'goals') renderGoals(main);
     else {
       var days = B.days(S.budget, ym);
@@ -706,6 +717,8 @@
       h('span', { class: 'emoji', 'aria-hidden': 'true', text: catEmoji(tx.cat) }),
       h('span', { class: 'tx-main' }, h('span', { class: 'tx-cat', text: catName(tx.cat) }), tx.note ? h('span', { class: 'tx-note', text: tx.note }) : null),
       tx.rid ? h('span', { class: 'tx-rep', title: t('set.recurring') }, icon('repeat', 14)) : null,
+      tx.photo ? h('span', { class: 'tx-rep tx-photo', title: t('rc.has'), 'aria-label': t('rc.has'), text: '🧾' }) : null,
+      methodOf(tx.pm) ? h('span', { class: 'tx-pm', title: methodOf(tx.pm).name, text: methodOf(tx.pm).emoji || '💳' }) : null,
       h('span', { class: 'tx-amt' + (inc ? ' pos' : ''), text: (inc ? '+' : '−') + money(tx.amt, tx.cur).replace(/^[-−]/, '') })));
   }
   function empty(emoji, title, hint) {
@@ -746,6 +759,7 @@
     } } }));
     return card;
   }
+  function longCls(text, n) { return String(text).length > n ? ' long' : ''; }      // very large amounts get smaller type so they never wrap or spill
   function noticeCard(emoji, title, body, action, fn, id) {
     return h('aside', { class: 'card notice', id: id },
       h('span', { class: 'notice-ico', 'aria-hidden': 'true', text: emoji }),
@@ -785,8 +799,104 @@
             h('span', { class: 'tb inc', style: 'height:' + Math.round(m.income / top * 100) + '%', 'aria-label': t('sum.income') + ' ' + money(m.income) })),
           h('span', { class: 'trend-label', text: I.shortMonth(m.ym) }));
       })),
-      h('p', { class: 'legend' }, h('span', { class: 'key exp' }), t('sum.spent'), ' ', h('span', { class: 'key inc' }), t('sum.income'))));
+      h('p', { class: 'legend' }, h('span', { class: 'key exp' }), t('sum.spent'), ' ', h('span', { class: 'key inc' }), t('sum.income')),
+      h('button', { type: 'button', class: 'btn block', id: 'open-year', on: { click: function () { S.year = S.ym.slice(0, 4); S.budgetView = 'year'; render(); window.scrollTo(0, 0); } } }, '📅 ', t('year.open'))));
+    var mt = (S.budget.methods || []).length ? B.methodTotals(S.budget, S.ym) : [];
+    if (mt.length) {
+      var mmax = Math.max.apply(null, mt.map(function (x) { return x.amt; }));
+      add(wrap, h('section', { class: 'card', id: 'by-method' }, h('h2', { text: t('pm.byMethod') }), h('ul', { class: 'bars' }, mt.map(function (x) {
+        var m = methodOf(x.id);
+        return h('li', {}, h('span', { class: 'bar-label' }, h('span', { 'aria-hidden': 'true', text: (m ? m.emoji || '💳' : '❔') + ' ' }), m ? m.name : t('pm.none')),
+          h('span', { class: 'bar' }, h('span', { style: 'width:' + Math.max(2, Math.round(x.amt / mmax * 100)) + '%' })),
+          h('span', { class: 'bar-val', text: money(x.amt) }));
+      }))));
+    }
     return wrap;
+  }
+  function methodOf(id) { return id ? (S.budget.methods || []).find(function (m) { return m.id === id; }) || null : null; }
+
+  // ----- payment methods (optional) -----
+  var PM_EMOJI = ['💳', '💵', '🏦', '📱', '🪙', '💴', '🧾', '🎫'];
+  function openMethods() {
+    sheet(t('pm.title'), function (body, close) {
+      var list = h('ul', { class: 'set-list card', id: 'pm-list' }), msg = msgEl();
+      function draw() {
+        list.textContent = '';
+        (S.budget.methods || []).forEach(function (m) {
+          var name = h('input', { class: 'input', value: m.name, maxlength: 30, 'aria-label': t('pm.name'), 'data-pm-name': m.id });
+          name.addEventListener('change', function () { if (B.updateMethod(S.budget, m.id, { name: name.value })) saveBudget(); else name.value = m.name; });
+          var emo = h('select', { class: 'input pm-emoji', 'aria-label': t('pm.icon') });
+          PM_EMOJI.concat(PM_EMOJI.indexOf(m.emoji) < 0 && m.emoji ? [m.emoji] : []).forEach(function (e) { add(emo, h('option', { value: e, text: e })); });
+          emo.value = m.emoji || '💳';
+          emo.addEventListener('change', function () { B.updateMethod(S.budget, m.id, { emoji: emo.value }); saveBudget(); });
+          add(list, h('li', { class: 'pm-item' }, emo, name, h('button', { type: 'button', class: 'icon-btn', 'aria-label': t('btn.delete'), 'data-pm-del': m.id, on: { click: function () {
+            B.removeMethod(S.budget, m.id); saveBudget(); draw();
+          } } }, icon('trash', 18))));
+        });
+        if (!(S.budget.methods || []).length) add(list, h('li', { class: 'hint pm-empty', text: t('pm.empty') }));
+      }
+      var nm = h('input', { class: 'input', id: 'pm-new-name', maxlength: 30, placeholder: t('pm.ph') });
+      var ne = h('select', { class: 'input pm-emoji', id: 'pm-new-emoji', 'aria-label': t('pm.icon') });
+      PM_EMOJI.forEach(function (e) { add(ne, h('option', { value: e, text: e })); });
+      var addBtn = h('button', { type: 'submit', class: 'btn primary', id: 'pm-add', text: t('pm.add') });
+      var form = h('form', { class: 'pm-new', novalidate: true }, ne, nm, addBtn);
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (!nm.value.trim()) return setMsg(msg, t('pm.needName'));
+        var kind = ne.value === '💵' || ne.value === '🪙' ? 'cash' : ne.value === '🏦' ? 'bank' : ne.value === '💳' ? 'card' : 'other';
+        if (!B.addMethod(S.budget, { name: nm.value, emoji: ne.value, kind: kind })) return setMsg(msg, t('pm.tooMany'));
+        nm.value = ''; setMsg(msg, ''); saveBudget(); draw();
+      });
+      var quick = h('div', { class: 'chips', id: 'pm-quick' }, [['💵', 'pm.cash', 'cash'], ['💳', 'pm.card', 'card'], ['🏦', 'pm.bank', 'bank']].map(function (q) {
+        return h('button', { type: 'button', class: 'chip', on: { click: function () {
+          if ((S.budget.methods || []).some(function (m) { return m.name === t(q[1]); })) return;
+          B.addMethod(S.budget, { name: t(q[1]), emoji: q[0], kind: q[2] }); saveBudget(); draw();
+        } } }, q[0] + ' ' + t(q[1]));
+      }));
+      draw();
+      add(body, h('p', { text: t('pm.body') }), list, h('p', { class: 'hint', text: t('pm.quick') }), quick, form, msg, h('p', { class: 'hint', text: t('pm.removeHint') }));
+    }, { onClose: render });
+  }
+
+  // ----- the whole year -----
+  function renderYear(main) {
+    var years = B.yearsWithData(S.budget), y = S.year || thisMonth().slice(0, 4);
+    if (years.indexOf(y) < 0) years = years.concat([y]).sort().reverse();
+    var ys = B.yearSummary(S.budget, y, today()), i = years.indexOf(y);
+    var nav = h('div', { class: 'month-nav' },
+      h('button', { type: 'button', class: 'icon-btn', id: 'year-prev', 'aria-label': t('year.prev'), disabled: i >= years.length - 1, on: { click: function () { S.year = years[i + 1]; render(); } } }, icon('left')),
+      h('h1', { class: 'title', id: 'year-title', text: t('year.title', { y: y }) }),
+      h('button', { type: 'button', class: 'icon-btn', id: 'year-next', 'aria-label': t('year.next'), disabled: i <= 0, on: { click: function () { S.year = years[i - 1]; render(); } } }, icon('right')));
+    var top = Math.max.apply(null, ys.months.map(function (m) { return Math.max(m.expense, m.income); }).concat([1]));
+    add(main, nav,
+      h('button', { type: 'button', class: 'link', id: 'year-back', text: '← ' + t('year.back'), on: { click: function () { S.budgetView = 'charts'; render(); } } }),
+      h('section', { class: 'card summary', id: 'year-sum' },
+        h('div', { class: 'sum-main' }, h('span', { class: 'label', text: t('year.spent') }), h('strong', { class: 'big' + longCls(money(ys.expense), 11), id: 'year-spent', text: money(ys.expense) })),
+        h('div', { class: 'sum-row' },
+          h('div', {}, h('span', { class: 'label', text: t('sum.income') }), h('span', { class: 'pos amt' + longCls(money(ys.income), 12), id: 'year-income', text: money(ys.income) })),
+          h('div', {}, h('span', { class: 'label', text: t('sum.net') }), h('span', { class: 'amt' + (ys.net < 0 ? ' neg' : '') + longCls(money(ys.net), 12), id: 'year-net', text: money(ys.net) }))),
+        h('p', { class: 'budget-text', id: 'year-avg', text: t('year.avg', { amt: money(ys.avgExpense) }) + (ys.topMonth ? ' · ' + t('year.top', { m: I.monthLabel(ys.topMonth) }) : '') })),
+      h('section', { class: 'card' }, h('h2', { text: t('year.months') }),
+        h('div', { class: 'trend trend-12', id: 'year-trend' }, ys.months.map(function (m) {
+          return h('button', { type: 'button', class: 'trend-col', title: I.monthLabel(m.ym) + ': ' + t('sum.spent') + ' ' + money(m.expense) + ', ' + t('sum.income') + ' ' + money(m.income),
+            on: { click: function () { S.ym = m.ym; S.budgetView = 'list'; render(); window.scrollTo(0, 0); } } },
+            h('div', { class: 'trend-bars' },
+              h('span', { class: 'tb exp', style: 'height:' + Math.round(m.expense / top * 100) + '%', 'aria-label': t('sum.spent') + ' ' + money(m.expense) }),
+              h('span', { class: 'tb inc', style: 'height:' + Math.round(m.income / top * 100) + '%', 'aria-label': t('sum.income') + ' ' + money(m.income) })),
+            h('span', { class: 'trend-label', text: I.shortMonth(m.ym) }));
+        })),
+        h('p', { class: 'legend' }, h('span', { class: 'key exp' }), t('sum.spent'), ' ', h('span', { class: 'key inc' }), t('sum.income'), ' · ', t('year.tapMonth'))));
+    var box = h('section', { class: 'card', id: 'year-cats' }, h('h2', { text: t('year.cats') }));
+    if (!ys.byCat.length) add(box, h('p', { class: 'hint', text: t('charts.none') }));
+    else {
+      var max = ys.byCat[0].amt;
+      add(box, h('ul', { class: 'bars' }, ys.byCat.map(function (c) {
+        return h('li', {}, h('span', { class: 'bar-label' }, h('span', { 'aria-hidden': 'true', text: catEmoji(c.cat) + ' ' }), catName(c.cat)),
+          h('span', { class: 'bar' }, h('span', { style: 'width:' + Math.max(2, Math.round(c.amt / max * 100)) + '%' })),
+          h('span', { class: 'bar-val', text: money(c.amt) + ' · ' + Math.round(c.amt / ys.expense * 100) + '%' }));
+      })));
+    }
+    add(main, box);
   }
 
   function renderSearch(main) {
@@ -814,7 +924,9 @@
   // ----- add / edit an entry -----
   function openAdd(existing) {
     var editing = !!existing;
-    var st = { type: existing ? existing.type : 'expense', cat: existing ? existing.cat : null };
+    var lastPm = lsGet(PM_KEY), hasPm = function (id) { return !!methodOf(id); };
+    var st = { type: existing ? existing.type : 'expense', cat: existing ? existing.cat : null,
+      pm: existing ? existing.pm || null : (hasPm(lastPm) ? lastPm : null), photo: existing ? existing.photo || null : null };
     var cur = existing ? existing.cur : S.budget.currency;
     var defDate = existing ? existing.date : (S.ym === thisMonth() ? today() : S.ym + '-' + pad(Math.min(new Date().getDate(), B.daysInMonth(S.ym))));
     sheet(editing ? t('edit.title') : t('add.title'), function (body, close) {
@@ -827,6 +939,35 @@
       var typeSeg = h('div', { class: 'seg', role: 'radiogroup', 'aria-label': t('add.category') });
       var grid = h('div', { class: 'cat-grid', id: 'cat-grid' });
       var freq = h('div', { class: 'freq', id: 'frequent' });
+      var pmRow = h('div', { class: 'chips pm-row', id: 'pm-row', role: 'radiogroup', 'aria-label': t('pm.title') });
+      function drawPm() {
+        pmRow.textContent = '';
+        if (!(S.budget.methods || []).length) return;
+        S.budget.methods.forEach(function (m) {
+          add(pmRow, h('button', { type: 'button', role: 'radio', class: 'chip' + (st.pm === m.id ? ' on' : ''), 'data-pm': m.id, 'aria-checked': st.pm === m.id ? 'true' : 'false',
+            on: { click: function () { st.pm = st.pm === m.id ? null : m.id; drawPm(); } } }, h('span', { 'aria-hidden': 'true', text: (m.emoji || '💳') + ' ' }), m.name));
+        });
+      }
+      var rcBox = h('div', { class: 'receipt', id: 'receipt' }), rcMsg = msg;        // one message line for the whole sheet
+      var rcFile = h('input', { type: 'file', accept: 'image/*', id: 'receipt-input', class: 'sr', 'aria-label': t('rc.add') });
+      function drawRc() {
+        rcBox.textContent = '';
+        if (st.photo) {
+          var img = h('img', { alt: t('rc.has'), class: 'photo-thumb' });
+          photoUrl(st.photo).then(function (u) { if (u) img.src = u; }).catch(function () {});
+          var pid = st.photo;
+          add(rcBox, h('div', { class: 'photo' },
+            h('button', { type: 'button', class: 'photo-open', id: 'receipt-open', 'aria-label': t('rc.has'), on: { click: function () { viewPhoto(pid); } } }, img),
+            h('button', { type: 'button', class: 'photo-x', id: 'receipt-remove', 'aria-label': t('rc.remove'), on: { click: function () { st.photo = null; drawRc(); } } }, icon('x', 16))));
+        } else add(rcBox, h('label', { for: 'receipt-input', class: 'photo-add receipt-add', id: 'receipt-add' }, h('span', { 'aria-hidden': 'true', text: '🧾' }), h('span', { text: t('rc.add') })));
+      }
+      rcFile.addEventListener('change', function () {
+        var f = rcFile.files && rcFile.files[0]; rcFile.value = '';
+        if (!f) return;
+        setMsg(rcMsg, t('diary.processing'), true);
+        shrinkPhoto(f).then(function (bytes) { var pid = 'p' + DY.uid(); return C.putBlob(pid, bytes, 'image/jpeg').then(function () { st.photo = pid; drawRc(); setMsg(rcMsg, ''); }); })
+          .catch(function (e) { setMsg(rcMsg, e && (e.name === 'QuotaExceededError' || /quota/i.test(e.message || '')) ? t('err.quota') : t('diary.photoErr')); });
+      });
       function updPreview() { abox.upd(); }
       amount.addEventListener('input', function () { setMsg(msg, ''); });
       function drawType() {
@@ -851,7 +992,7 @@
         if (!list.length) return;
         add(freq, h('p', { class: 'hint', text: t('add.frequent') }), h('div', { class: 'chips' }, list.map(function (f) {
           return h('button', { type: 'button', class: 'chip', on: { click: function () {
-            var tx = B.addTx(S.budget, { type: f.type, amt: f.amt, cur: f.cur, cat: f.cat, date: today(), note: f.note });
+            var tx = B.addTx(S.budget, { type: f.type, amt: f.amt, cur: f.cur, cat: f.cat, date: today(), note: f.note, pm: st.pm, photo: st.photo });
             finish(tx);
           } } }, h('span', { 'aria-hidden': 'true', text: catEmoji(f.cat) + ' ' }), (f.note || catName(f.cat)) + ' ' + money(f.amt, f.cur));
         })));
@@ -874,23 +1015,25 @@
         if (!st.cat) { setMsg(msg, t('add.pick')); return; }
         var d = B.validDate(date.value) ? date.value : today();
         if (editing) {
-          B.updateTx(S.budget, existing.id, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim() });
+          B.updateTx(S.budget, existing.id, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim(), pm: st.pm || null, photo: st.photo || null });
           saveBudget(); close(); render(); toast(t('add.saved', { what: catEmoji(st.cat) + ' ' + catName(st.cat) + ' ' + money(amt, cur) }));
           return;
         }
-        var tx = B.addTx(S.budget, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim() });
+        var tx = B.addTx(S.budget, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim(), pm: st.pm, photo: st.photo });
+        lsSet(PM_KEY, st.pm || null);
         if (repeat.checked) {
-          var r = B.addRecurring(S.budget, { type: st.type, amt: amt, cat: st.cat, note: tx.note, day: +d.slice(8, 10), start: d.slice(0, 7) });
+          var r = B.addRecurring(S.budget, { type: st.type, amt: amt, cat: st.cat, note: tx.note, day: +d.slice(8, 10), start: d.slice(0, 7), pm: st.pm });
           r.last = d.slice(0, 7); tx.rid = r.id;
         }
         finish(tx);
       }
-      drawType(); drawCats(); drawFreq(); updPreview();
+      drawType(); drawCats(); drawFreq(); drawPm(); drawRc(); updPreview();
       add(body, typeSeg,
         h('div', { class: 'field' }, h('label', { for: 'amount', text: t('add.amount') + ' (' + cur + ')' }), amount, abox.ops, preview),
         freq,
         h('div', { class: 'two' }, field(t('add.note'), note), field(t('add.date'), date)),
         editing ? null : h('div', { class: 'check' }, repeat, h('label', { for: 'repeat', text: t('add.repeat') })),
+        pmRow, rcBox, rcFile,
         h('p', { class: 'hint pick-hint', text: editing ? t('add.category') : t('add.pick') }),
         grid, msg);
       if (editing) {
@@ -959,9 +1102,12 @@
     var a = B.dailyAllowance(S.budget, today());
     if (!a) return null;
     if (a.over) return h('p', { class: 'allow over', id: 'allowance', text: t('allow.over', { amt: money(a.over) }) });
+    if (a.short) return h('p', { class: 'allow over', id: 'allowance' }, h('span', { class: 'allow-main', text: t('allow.short', { amt: money(a.short) }) }),
+      h('span', { class: 'allow-sub', id: 'allow-fixed', text: t('allow.fixed', { amt: money(a.reserved) }) }));
     return h('p', { class: 'allow' + (a.todayLeft < 0 ? ' over' : ''), id: 'allowance' },
       h('span', { class: 'allow-main', text: a.todayLeft >= 0 ? t('allow.today', { amt: money(a.todayLeft) }) : t('allow.todayOver', { amt: money(-a.todayLeft) }) }),
-      h('span', { class: 'allow-sub', text: t('allow.sub', { amt: money(a.perDay), n: a.daysLeft }) }));
+      h('span', { class: 'allow-sub', text: t('allow.sub', { amt: money(a.perDay), n: a.daysLeft }) }),
+      a.reserved ? h('span', { class: 'allow-sub', id: 'allow-fixed', text: t('allow.fixed', { amt: money(a.reserved) }) }) : null);
   }
 
   // ----- savings goals ("모으기"): kept apart from spending -----
@@ -1175,6 +1321,8 @@
             deskHas(n.id) ? h('span', { class: 'desk-badge', title: t('desk.on') }, icon('desk', 14)) : null,
             n.locked ? h('span', { class: 'note-text note-locked' }, icon('lock', 18), ' ', t('notes.lockedCard')) : h('span', { class: 'note-text', text: (n.list ? LS.preview(n.text) : n.text) || t('notes.ph') }),
             n.list && !n.locked && LS.count(n.text).all ? h('span', { class: 'note-count', text: LS.count(n.text).done + '/' + LS.count(n.text).all }) : null,
+            !n.locked && n.photos && n.photos.length ? noteThumb(n) : null,
+            !n.locked && n.remind && n.remind >= nowLocal() ? h('span', { class: 'note-remind', title: t('nr.set', { when: whenText(n.remind) }), text: '⏰ ' + whenText(n.remind) }) : null,
             h('span', { class: 'note-time', text: I.ago(n.updated) })));
         });
       };
@@ -1271,10 +1419,44 @@
         toast(n.locked ? t('notes.lockedNow') : t('notes.unlockedNow'));
       });
       drawEditor();
-      add(body, wrap, h('div', { class: 'note-tools' }, colors),
+      var nphotos = h('div', { class: 'photos note-photos', id: 'note-photos' }), npmsg = msgEl();
+      var nfile = h('input', { type: 'file', accept: 'image/*', multiple: true, id: 'note-photo-input', class: 'sr', 'aria-label': t('nr.addPhoto') });
+      function drawNotePhotos() {
+        nphotos.textContent = '';
+        (n.photos || []).forEach(function (pid) {
+          var img = h('img', { alt: t('nr.photoAlt'), class: 'photo-thumb' });
+          photoUrl(pid).then(function (u) { if (u) img.src = u; }).catch(function () {});
+          add(nphotos, h('div', { class: 'photo' },
+            h('button', { type: 'button', class: 'photo-open', 'aria-label': t('nr.photoAlt'), on: { click: function () { viewPhoto(pid); } } }, img),
+            h('button', { type: 'button', class: 'photo-x', 'aria-label': t('diary.removePhoto'), on: { click: function () {
+              n.photos = n.photos.filter(function (x) { return x !== pid; }); n.updated = Date.now(); markNote(n); saveNotes(); drawNotePhotos();
+            } } }, icon('x', 16))));
+        });
+        if ((n.photos || []).length < NOTE_MAX_PHOTOS) add(nphotos, h('label', { for: 'note-photo-input', class: 'photo-add', id: 'note-photo-add' }, h('span', { 'aria-hidden': 'true', text: '📷' }), h('span', { text: t('nr.addPhoto') })));
+      }
+      nfile.addEventListener('change', function () {
+        var files = Array.from(nfile.files || []).slice(0, NOTE_MAX_PHOTOS - (n.photos || []).length); nfile.value = '';
+        setMsg(npmsg, t('diary.processing'), true);
+        files.reduce(function (p, f) {
+          return p.then(function () {
+            return shrinkPhoto(f).then(function (bytes) {
+              var pid = 'p' + DY.uid();
+              return C.putBlob(pid, bytes, 'image/jpeg').then(function () {
+                n.photos = (n.photos || []).concat([pid]); n.updated = Date.now(); markNote(n); drawNotePhotos(); return saveNotes();
+              });
+            });
+          });
+        }, Promise.resolve()).then(function () { setMsg(npmsg, ''); }, function (e) { setMsg(npmsg, e && (e.name === 'QuotaExceededError' || /quota/i.test(e.message || '')) ? t('err.quota') : t('diary.photoErr')); });
+      });
+      drawNotePhotos();
+      var remindBtn = h('button', { type: 'button', class: 'btn', id: 'note-remind', on: { click: function () {
+        flushNote(); if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); saveNotes(); }
+        openNoteReminder(n, function () { remindBtn.lastChild.textContent = n.remind ? whenText(n.remind) : t('nr.btn'); });
+      } } }, h('span', { 'aria-hidden': 'true', text: '⏰ ' }), n.remind && n.remind >= nowLocal() ? whenText(n.remind) : t('nr.btn'));
+      add(body, wrap, nphotos, nfile, npmsg, h('div', { class: 'note-tools' }, colors),
         pickRow(t('deco.font'), NOTE_FONTS, function () { return n.font; }, function (v) { return t('font.' + v); }, function (v) { n.font = v; }, 'font'),
         pickRow(t('notes.size'), NOTE_SIZES, function () { return n.size; }, function (v) { return t('size.' + v); }, function (v) { n.size = v; }, 'size'),
-        h('div', { class: 'row' }, pin, listBtn, lockBtn, del),
+        h('div', { class: 'row' }, pin, listBtn, lockBtn, remindBtn, del),
         deskCapable() ? h('div', { class: 'row desk-actions' },
           h('button', { type: 'button', class: 'btn', id: 'note-desk', on: { click: function () {
             flushNote(); if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
@@ -1291,7 +1473,7 @@
         if (cl) cl.flush();
         flushNote();
         if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
-        if (!n.text.trim() && !deskHas(n.id)) { S.notes.notes = S.notes.notes.filter(function (x) { return x !== n; }); goneNote(n); }
+        if (noteEmpty(n) && !deskHas(n.id)) { S.notes.notes = S.notes.notes.filter(function (x) { return x !== n; }); goneNote(n); }
         saveNotes(); render();
       };
     }, { wide: true });
@@ -1604,6 +1786,8 @@
   function cleanupPhotos() {                 // pictures no entry points at any more (deleted entries, removed photos)
     var used = {};
     S.diary.entries.forEach(function (e) { DY.blobsOf(e).forEach(function (p) { used[p] = true; }); });
+    S.notes.notes.forEach(function (n) { (n.photos || []).forEach(function (p) { used[p] = true; }); });
+    B.photosOf(S.budget).forEach(function (p) { used[p] = true; });
     return C.blobIds().then(function (ids) { return Promise.all(ids.filter(function (id) { return !used[id]; }).map(function (id) { return C.deleteBlob(id); })); }).catch(function () {});
   }
   function saveDiary() { return save('diary', function () { return S.diary; }); }
@@ -1654,6 +1838,7 @@
         })));
       }
     }
+    if (S.diary.entries.some(function (e) { return e.date.slice(0, 7) === ym && DY.hasContent(e); })) add(main, h('button', { type: 'button', class: 'link center-link', id: 'diary-print-link', text: '🖨️ ' + t('pr.thisMonth'), on: { click: function () { openDiaryPrint(ym); } } }));
     add(main, fab(t('diary.new'), function () { newEntry(ym === thisMonth() ? todayS : ym + '-01'); }, 'new-entry'));
   }
   function firstLine(e) { var s = e.text.trim().split('\n')[0]; return s || (e.photos.length ? '📷' : ''); }
@@ -1811,6 +1996,91 @@
       add(body, img);
     }, { wide: true });
   }
+  // ----- the diary as a printable book (the browser's print dialog also saves it as a PDF) -----
+  var PRINT_W = 640;                        // page width in CSS pixels; stickers are placed relative to it, as in the app
+  function entriesFor(range, ym) {
+    var list = S.diary.entries.filter(function (e) {
+      return range === 'all' || (range === 'year' ? e.date.slice(0, 4) === ym.slice(0, 4) : e.date.slice(0, 7) === ym);
+    }).filter(function (e) { return DY.hasContent(e); });
+    return list.sort(function (a, b) { return (a.date + (a.time || '')) < (b.date + (b.time || '')) ? -1 : 1; });
+  }
+  function buildPrint(list, photos) {
+    var old = document.getElementById('print-root'); if (old) old.remove();
+    var root = h('div', { id: 'print-root', class: 'print-root', 'aria-hidden': 'true' }), waits = [];
+    var wd = new Intl.DateTimeFormat(I.locale ? I.locale() : I.get(), { weekday: 'long', timeZone: 'UTC' });
+    var lastYm = '';
+    list.forEach(function (e) {
+      if (e.date.slice(0, 7) !== lastYm) { lastYm = e.date.slice(0, 7); add(root, h('h1', { class: 'pr-month', text: I.monthLabel(lastYm) })); }
+      var dt = new Date(Date.UTC(+e.date.slice(0, 4), +e.date.slice(5, 7) - 1, +e.date.slice(8, 10)));
+      var art = h('article', { class: 'pr-entry' },
+        h('h2', { class: 'pr-date' }, e.date + ' · ' + wd.format(dt) + (e.time ? ' · ' + e.time : '') + (e.mood ? ' ' : ''), e.mood ? h('span', { class: 'pr-mood', text: moodEmoji(e.mood) }) : null));
+      var dc = e.deco || null;
+      var page = h('div', { class: 'page pr-page ' + (dc ? 'paper-' + dc.paper + ' tint-' + dc.tint + ' font-' + dc.font : 'paper-plain tint-none font-base') });
+      page.style.width = PRINT_W + 'px';
+      if (dc && dc.drawing) {
+        var di = h('img', { class: 'draw-img', alt: '' }); add(page, di);
+        page.style.minHeight = Math.round(dc.drawing.ar * PRINT_W) + 'px';          // the page is as tall as the drawing, as in the app
+        waits.push(photoUrl(dc.drawing.id).then(function (u) { return u && loadImg(di, u); }).catch(function () {}));
+      }
+      add(page, h('div', { class: 'pr-text', text: e.text }));
+      var tp = DY.tplText(e, '\n'); if (tp) add(page, h('div', { class: 'pr-tpl', text: tp }));
+      if (dc && dc.stickers.length) {
+        var layer = h('div', { class: 'st-layer' }), need = 0;
+        dc.stickers.forEach(function (st) {
+          var el = ST.element(st.k); if (!el) return;
+          var tape = st.k.charAt(0) === 't', size = st.s * PRINT_W;
+          var box = h('div', { class: 'sticker' + (tape ? ' tape' : '') }, el);
+          box.style.width = size + 'px'; box.style.height = (tape ? size / 4 : size) + 'px';
+          box.style.left = (st.x * PRINT_W - size / 2) + 'px'; box.style.top = (st.y * PRINT_W - (tape ? size / 8 : size / 2)) + 'px';
+          box.style.transform = 'rotate(' + st.r + 'deg)';
+          if (st.k.charAt(0) === 'e') box.style.fontSize = (size * 0.82) + 'px';
+          add(layer, box); need = Math.max(need, (st.y + st.s / 2) * PRINT_W + 8);
+        });
+        add(page, layer); if (need > (parseInt(page.style.minHeight, 10) || 0)) page.style.minHeight = need + 'px';
+      }
+      add(art, page);
+      if (photos && e.photos.length) {
+        var grid = h('div', { class: 'pr-photos' });
+        e.photos.forEach(function (pid) {
+          var img = h('img', { alt: '' }); add(grid, img);
+          waits.push(photoUrl(pid).then(function (u) { return u && loadImg(img, u); }).catch(function () {}));
+        });
+        add(art, grid);
+      }
+      add(root, art);
+    });
+    document.body.appendChild(root);
+    return Promise.all(waits).then(function () { return root; });
+  }
+  function loadImg(img, url) { return new Promise(function (res) { img.onload = img.onerror = function () { res(); }; img.src = url; }); }
+  function openDiaryPrint(ymStart) {
+    sheet(t('pr.title'), function (body, close) {
+      var range = h('select', { class: 'input', id: 'pr-range' },
+        h('option', { value: 'month', text: t('pr.month') }), h('option', { value: 'year', text: t('pr.year') }), h('option', { value: 'all', text: t('pr.all') }));
+      var month = h('input', { type: 'month', class: 'input', id: 'pr-ym', value: ymStart || S.diaryYm || thisMonth() });
+      var photos = h('input', { type: 'checkbox', id: 'pr-photos', checked: true });
+      var count = h('p', { class: 'hint', id: 'pr-count' }), msg = msgEl();
+      function ym() { return /^\d{4}-\d{2}$/.test(month.value) ? month.value : thisMonth(); }
+      function upd() { month.parentNode.hidden = range.value === 'all'; count.textContent = t('pr.count', { n: entriesFor(range.value, ym()).length }); }
+      var go = h('button', { type: 'button', class: 'btn primary block', id: 'pr-go', text: t('pr.go'), on: { click: function () {
+        var list = entriesFor(range.value, ym());
+        if (!list.length) return setMsg(msg, t('pr.none'));
+        go.disabled = true; setMsg(msg, t('pr.preparing'), true);
+        buildPrint(list, photos.checked).then(function () {
+          go.disabled = false; setMsg(msg, ''); close();
+          var done = function () { window.removeEventListener('afterprint', done); var r = document.getElementById('print-root'); if (r && !window.__keepPrint) r.remove(); };
+          window.addEventListener('afterprint', done);
+          setTimeout(function () { window.print(); }, 50);
+        });
+      } } });
+      range.addEventListener('change', upd); month.addEventListener('change', upd);
+      var mf = field(t('pr.which'), month);
+      add(body, h('p', { text: t('pr.body') }), field(t('pr.range'), range), mf,
+        h('div', { class: 'check' }, photos, h('label', { for: 'pr-photos', text: t('pr.photos') })), count, go, msg, h('p', { class: 'hint', text: t('pr.hint') }));
+      upd();
+    });
+  }
+
   function openDiaryExport() {
     sheet(t('diary.exportTitle'), function (body) {
       add(body, h('p', { class: 'msg', text: t('diary.exportWarn') }),
@@ -1863,7 +2133,8 @@
         row(t('set.monthly'), S.budget.budgets.total ? money(S.budget.budgets.total) : t('set.monthlyNone'), openMonthlyBudget, 'set-monthly'),
         row(t('set.catBudgets'), null, openCatBudgets, 'set-catbudgets'),
         row(t('set.categories'), null, openCategories, 'set-categories'),
-        row(t('set.recurring'), String(S.budget.recurring.length), openRecurring, 'set-recurring')]),
+        row(t('set.recurring'), String(S.budget.recurring.length), openRecurring, 'set-recurring'),
+        row(t('pm.title'), (S.budget.methods || []).length ? String(S.budget.methods.length) : t('pm.off'), openMethods, 'set-methods')]),
       group(t('set.security'), [
         h('li', { class: 'set-ctrl' }, h('label', { for: 'set-autolock', text: t('set.autolock') }), lock, lockWarn),
         row(t('set.changePass'), null, openChangePass, 'set-pass'),
@@ -1872,7 +2143,7 @@
         pkRow,
         h('li', { class: 'set-ctrl' }, h('button', { type: 'button', class: 'set-row', on: { click: function () { C.persist().then(function (p) { storage.textContent = p ? t('set.storageOn') : t('set.storageOff'); }); } } },
           h('span', { class: 'set-label', text: t('set.storage') }), storage))]),
-      group(t('set.diary'), [row(t('diary.exportTitle'), String(S.diary.entries.length), openDiaryExport, 'set-diary-export')]),
+      group(t('set.diary'), [row(t('pr.title'), null, function () { openDiaryPrint(); }, 'set-diary-print'), row(t('diary.exportTitle'), String(S.diary.entries.length), openDiaryExport, 'set-diary-export')]),
       group(t('set.data'), [
         row(t('set.backup'), S.settings.lastBackup ? t('set.lastBackup', { when: I.ago(S.settings.lastBackup) }) : t('set.neverBackup'), openBackup, 'set-backup'),
         row(t('set.restore'), null, openRestore, 'set-restore'),
@@ -2156,10 +2427,61 @@
     var uid = Array.prototype.map.call(u, function (b) { return ('0' + b.toString(16)).slice(-2); }).join('') + '@poppopmake.com';
     var now = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z');
     return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//PopPopMake//Budget Notes Diary//EN', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
-      'BEGIN:VEVENT', 'UID:' + uid, 'DTSTAMP:' + now, 'DTSTART:' + p.start, 'DTEND:' + p.end, 'RRULE:FREQ=DAILY',
+      'BEGIN:VEVENT', 'UID:' + uid, 'DTSTAMP:' + now, 'DTSTART:' + p.start, 'DTEND:' + p.end].concat(p.rrule === false ? [] : ['RRULE:FREQ=DAILY']).concat([
       'SUMMARY:' + icsText(p.title), 'DESCRIPTION:' + icsText(p.desc), 'URL:' + p.url,
       'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText(p.title), 'TRIGGER:PT0M', 'END:VALARM',
-      'END:VEVENT', 'END:VCALENDAR', ''].join('\r\n');
+      'END:VEVENT', 'END:VCALENDAR', '']).join('\r\n');
+  }
+  function nowLocal() { var d = new Date(); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes()); }
+  function whenText(v) {
+    var d = v.slice(0, 10), tm = v.slice(11, 16), md = d.slice(5).replace('-', '/');
+    try { md = new Intl.DateTimeFormat(I.get(), { month: 'short', day: 'numeric' }).format(new Date(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10))); } catch (e) {}
+    return (d === today() ? t('nr.today') : md) + ' ' + tm;
+  }
+  function noteThumb(n) {
+    var img = h('img', { alt: '', class: 'note-thumb' });
+    photoUrl(n.photos[0]).then(function (u) { if (u) img.src = u; }).catch(function () {});
+    return h('span', { class: 'note-thumbs' }, img, n.photos.length > 1 ? h('span', { class: 'note-more', text: '+' + (n.photos.length - 1) }) : null);
+  }
+  // One reminder for one note, in the person's own calendar. A locked note never puts its text in the calendar.
+  function openNoteReminder(n, done) {
+    sheet(t('nr.title'), function (body, close) {
+      var tm = new Date(Date.now() + 864e5), defD = tm.getFullYear() + '-' + pad(tm.getMonth() + 1) + '-' + pad(tm.getDate());
+      var date = h('input', { type: 'date', class: 'input', id: 'nr-date', value: n.remind ? n.remind.slice(0, 10) : defD });
+      var time = h('input', { type: 'time', class: 'input', id: 'nr-time', value: n.remind ? n.remind.slice(11, 16) : '09:00' });
+      var hide = h('input', { type: 'checkbox', id: 'nr-hide', checked: !!n.locked, disabled: !!n.locked });
+      var msg = msgEl(); msg.id = 'nr-msg';
+      var g = h('a', { class: 'btn block', id: 'nr-google', target: '_blank', rel: 'noopener noreferrer', href: '#' }, t('rm.google'));
+      function parts() {
+        var d = B.validDate(date.value) ? date.value : defD, hm = /^\d{2}:\d{2}$/.test(time.value) ? time.value : '09:00';
+        var start = new Date(+d.slice(0, 4), +d.slice(5, 7) - 1, +d.slice(8, 10), +hm.slice(0, 2), +hm.slice(3, 5));
+        var stamp = function (x) { return x.getFullYear() + pad(x.getMonth() + 1) + pad(x.getDate()) + 'T' + pad(x.getHours()) + pad(x.getMinutes()) + '00'; };
+        var url = location.origin + '/vault?start=notes', secret = hide.checked || n.locked;
+        var first = (n.list ? LS.preview(n.text) : n.text).trim().split('\n')[0].slice(0, 80);
+        return { when: d + 'T' + hm, url: url, start: stamp(start), end: stamp(new Date(start.getTime() + 15 * 60000)), rrule: false,
+          title: secret || !first ? t('nr.generic') : '📝 ' + first,
+          desc: (secret ? '' : (n.list ? LS.preview(n.text) : n.text).slice(0, 1500) + '\n\n') + t('rm.evDesc') + ' ' + url };
+      }
+      function link() {
+        var p = parts(), tz = '';
+        try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ''; } catch (e) {}
+        g.href = 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(p.title) + '&details=' + encodeURIComponent(p.desc) + '&dates=' + p.start + '/' + p.end + (tz ? '&ctz=' + encodeURIComponent(tz) : '');
+      }
+      function remember() { var p = parts(); n.remind = p.when; n.updated = Date.now(); markNote(n); saveNotes(); if (done) done(); }
+      g.addEventListener('click', function () { remember(); });
+      [date, time, hide].forEach(function (el) { el.addEventListener('input', link); el.addEventListener('change', link); }); link();
+      add(body, h('p', { text: t('nr.body') }), h('div', { class: 'two' }, field(t('add.date'), date), field(t('rm.time'), time)),
+        h('div', { class: 'check' }, hide, h('label', { for: 'nr-hide', text: n.locked ? t('nr.hideLocked') : t('nr.hide') })),
+        h('button', { type: 'button', class: 'btn primary block', id: 'nr-file', text: t('rm.file'), on: { click: function () {
+          var p = parts();
+          if (p.when < nowLocal()) return setMsg(msg, t('nr.past'));
+          download(reminderIcs(p), 'poppopmake-note-reminder.ics', 'text/calendar;charset=utf-8'); remember(); setMsg(msg, t('nr.saved'), true);
+        } } }),
+        h('p', { class: 'hint', text: t('rm.fileHint') }), g, h('p', { class: 'hint', text: t('nr.googleHint') }), msg,
+        n.remind ? h('button', { type: 'button', class: 'btn ghost block', id: 'nr-clear', text: t('nr.clear'), on: { click: function () {
+          n.remind = null; n.updated = Date.now(); markNote(n); saveNotes(); if (done) done(); close();
+        } } }) : null);
+    });
   }
   function openReminder() {
     sheet(t('rm.title'), function (body) {
@@ -2399,6 +2721,12 @@
             sel.addEventListener('change', function () { map[key] = sel.value === '' ? null : +sel.value; drawPreview(); });
             return field(label, sel);
           }
+          // Dates like 03/04/2026: which number is the day. Asked only when the file has such dates.
+          if (!map.order) map.order = S.budget.currency === 'USD' ? 'mdy' : 'dmy';
+          var ambiguous = map.date !== null && rows.some(function (r) { return /^\s*\d{1,2}[\/.\-]\d{1,2}[\/.\-]\d{2,4}/.test(String(r[map.date] || '')); });
+          var order = h('select', { class: 'input', id: 'import-order' }, h('option', { value: 'dmy', text: t('import.dmy') }), h('option', { value: 'mdy', text: t('import.mdy') }));
+          order.value = map.order;
+          order.addEventListener('change', function () { map.order = order.value; drawPreview(); });
           var flip = h('input', { type: 'checkbox', id: 'import-flip' });
           flip.addEventListener('change', function () { map.flip = flip.checked; drawPreview(); });
           var prev = h('div', { class: 'preview' });
@@ -2416,6 +2744,7 @@
           add(area, h('p', { class: 'hint', text: t('import.cols') }),
             colSelect('date', t('import.date')), colSelect('desc', t('import.desc')), colSelect('amount', t('import.amount')),
             colSelect('out', t('import.out')), colSelect('in', t('import.in')),
+            ambiguous ? field(t('import.order'), order) : null,
             h('div', { class: 'check' }, flip, h('label', { for: 'import-flip', text: t('import.flip') })), prev,
             h('button', { type: 'button', class: 'btn primary block', id: 'import-go', text: t('import.go'), on: { click: function () {
               var r = B.importRows(S.budget, rows, map, S.budget.currency);

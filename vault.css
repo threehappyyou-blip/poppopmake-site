@@ -554,3 +554,49 @@ html.desk-mode body { color: #23292A; }
 .kb-keys { display: inline-flex; gap: 4px; width: 132px; flex-shrink: 0; }
 .kb-list kbd { font: 600 .85rem/1 ui-monospace, monospace; padding: 5px 8px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 6px; background: var(--card); }
 a.btn { text-decoration: none; display: flex; align-items: center; justify-content: center; }
+
+/* round 7: very large amounts stay on one line */
+.sum-row > div { min-width: 0; }
+.sum-row .amt { display: block; white-space: nowrap; }
+.sum-row .amt.long { font-size: .8rem; }
+.summary .big.long { font-size: 1.45rem; }
+
+/* ---- round 8: year view, payment methods, receipts, note photos & reminders, diary print ---- */
+.trend-12 .trend-col { border: 0; background: none; padding: 0; cursor: pointer; font: inherit; color: inherit; }
+.trend-12 .trend-label { font-size: .7rem; }
+.tx-pm { font-size: .95rem; margin-left: 2px; }
+.tx-photo { font-size: .85rem; }
+.pm-row { margin: 6px 0 2px; }
+.pm-row .chip.on { background: var(--teal); color: #fff; border-color: var(--teal); }
+.receipt { display: flex; gap: 8px; margin: 6px 0; }
+.receipt-add { min-height: 44px; }
+.pm-item { display: flex; gap: 8px; align-items: center; padding: 8px 12px; }
+.pm-item .input { flex: 1; min-width: 0; }
+.pm-emoji { flex: 0 0 64px !important; }
+.pm-new { display: flex; gap: 8px; margin: 10px 0; }
+.pm-new .input:not(.pm-emoji) { flex: 1; min-width: 0; }
+.note-thumbs { display: flex; align-items: center; gap: 4px; margin-top: 6px; }
+.note-thumb { width: 44px; height: 44px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(0,0,0,.08); }
+.note-more { font-size: .75rem; font-weight: 700; color: #333; }
+.note-remind { display: block; font-size: .75rem; font-weight: 700; color: #6b4b00; margin-top: 4px; }
+.note-photos { margin-top: 8px; }
+.print-root { display: none; }
+@media print {
+  body > *:not(#print-root) { display: none !important; }
+  #print-root.print-root { display: block; color: #1C2321; background: #fff; --card: #fff; --rule: rgba(60,80,120,.25); --line: rgba(0,0,0,.15); font-size: 12pt; }
+  #print-root .tint-cream { --tint: #FFF8E7; } #print-root .tint-pink { --tint: #FFE8EF; } #print-root .tint-mint { --tint: #E4F6EE; }
+  #print-root .tint-sky { --tint: #E6F1FF; } #print-root .tint-lavender { --tint: #F0E9FF; } #print-root .tint-kraft { --tint: #EAD9BE; } #print-root .tint-none { --tint: #fff; }
+  #print-root .page { --rule: rgba(60,80,120,.25); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .pr-month { font-size: 20pt; margin: 0 0 10pt; page-break-before: always; break-before: page; }
+  .pr-month:first-child { page-break-before: avoid; break-before: avoid; }
+  .pr-entry { break-inside: avoid; page-break-inside: avoid; margin: 0 0 14pt; }
+}
+#print-root .pr-date { font-size: 13pt; margin: 0 0 6pt; }
+#print-root .pr-page { max-width: none; margin: 0; padding: 16px 18px; overflow: hidden; }
+#print-root .pr-text { white-space: pre-wrap; position: relative; z-index: 2; line-height: 30px; }
+#print-root .pr-tpl { white-space: pre-wrap; font-size: .9em; margin-top: 8px; position: relative; z-index: 2; }
+#print-root .st-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+#print-root .sticker { position: absolute; }
+#print-root .sticker svg { width: 100%; height: 100%; }
+#print-root .pr-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6pt; margin-top: 6pt; width: 640px; }
+#print-root .pr-photos img { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
