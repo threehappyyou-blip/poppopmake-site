@@ -17,6 +17,8 @@
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   var PHOTO_RE = /^[a-z0-9]{1,40}$/;
   function ymOf(date) { return date.slice(0, 7); }
+  function addDays(date, n) { var d = new Date(Date.UTC(+date.slice(0, 4), +date.slice(5, 7) - 1, +date.slice(8, 10) + n)); return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()); }
+  function weekday(date) { return new Date(Date.UTC(+date.slice(0, 4), +date.slice(5, 7) - 1, +date.slice(8, 10))).getUTCDay(); }
   function daysInMonth(ym) { var y = +ym.slice(0, 4), m = +ym.slice(5, 7); return new Date(Date.UTC(y, m, 0)).getUTCDate(); }
   function addMonths(ym, n) {
     var y = +ym.slice(0, 4), m = +ym.slice(5, 7) - 1 + n;
@@ -135,6 +137,13 @@
   function upcomingFixed(doc, today) {
     var ym = ymOf(today), day = +today.slice(8, 10), dim = daysInMonth(ym), items = [], total = 0;
     (doc.recurring || []).forEach(function (r) {
+      if (r.freq === 'week') {                       // the weekly ones still to come this month
+        if (!r.active || r.type !== 'expense' || (r.cur || doc.currency) !== doc.currency) return;
+        var dt = r.lastDate ? addDays(r.lastDate, 7) : r.startDate, g = 0;
+        while (dt <= today && g++ < 3000) dt = addDays(dt, 7);
+        for (; dt.slice(0, 7) === ym && g++ < 3000; dt = addDays(dt, 7)) { items.push({ id: r.id, note: r.note, cat: r.cat, amt: r.amt, day: +dt.slice(8, 10) }); total += r.amt; }
+        return;
+      }
       if (!r.active || r.type !== 'expense' || (r.cur || doc.currency) !== doc.currency || r.start > ym || (r.last && r.last >= ym)) return;
       var due = Math.min(r.day, dim);
       if (due <= day) return;          // due today or earlier: applyRecurring adds it, so it is already in "spent"
@@ -142,6 +151,49 @@
     });
     items.sort(function (a, b) { return a.day - b.day; });
     return { total: total, items: items };
+  }
+
+  // ---------- what is coming: payment days ahead (dates and how many — nothing else) ----------
+  // Used for reminders outside the app (Android notifications), which must not carry names or amounts.
+  function nextDue(r, from) {          // first due date strictly after `from`
+    if (r.freq === 'week') { var dt = r.lastDate ? addDays(r.lastDate, 7) : r.startDate, g = 0; while (dt <= from && g++ < 3000) dt = addDays(dt, 7); return dt; }
+    for (var m = ymOf(from), k = 0; k < 600; k++, m = addMonths(m, 1)) {
+      if (m < r.start || (r.last && m <= r.last)) continue;
+      var due = m + '-' + pad(Math.min(r.day, daysInMonth(m)));
+      if (due > from) return due;
+    }
+    return null;
+  }
+  function dueSchedule(doc, today, days) {
+    var end = addDays(today, days || 35), count = {};
+    (doc.recurring || []).forEach(function (r) {
+      if (!r.active || r.type !== 'expense') return;
+      var d = nextDue(r, addDays(today, -1)), g = 0;
+      while (d && d <= end && g++ < 400) {
+        if (d >= today) count[d] = (count[d] || 0) + 1;
+        d = r.freq === 'week' ? addDays(d, 7) : nextDue(Object.assign({}, r, { last: ymOf(d) }), d);
+      }
+    });
+    return Object.keys(count).sort().map(function (d) { return { d: d, n: count[d] }; });
+  }
+  function icsText(s) { return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, ' '); }
+  // Every repeating payment as a calendar event that repeats by itself, with a reminder the evening/morning before.
+  function recurringIcs(doc, o) {
+    var BYDAY = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'], out = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//PopPopMake//Budget//EN', 'CALSCALE:GREGORIAN'];
+    var stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+    (doc.recurring || []).forEach(function (r) {
+      if (!r.active || r.type !== 'expense') return;
+      var first = nextDue(r, addDays(o.today, -1)); if (!first) return;
+      var title = o.hideAmounts ? o.label : o.title(r) + ' ' + o.money(r.amt, r.cur);
+      var next = addDays(first, 1);
+      out.push('BEGIN:VEVENT', 'UID:ppm-rec-' + r.id + '@poppopmake.com', 'DTSTAMP:' + stamp,
+        'DTSTART;VALUE=DATE:' + first.replace(/-/g, ''), 'DTEND;VALUE=DATE:' + next.replace(/-/g, ''),
+        r.freq === 'week' ? 'RRULE:FREQ=WEEKLY;BYDAY=' + BYDAY[r.wd] : 'RRULE:FREQ=MONTHLY;BYMONTHDAY=' + r.day,
+        'SUMMARY:' + icsText(title),
+        'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText(title), 'TRIGGER:-PT15H', 'END:VALARM', 'END:VEVENT');
+    });
+    out.push('END:VCALENDAR');
+    return out.join('\r\n') + '\r\n';
   }
 
   // ---------- a year at a glance ----------
@@ -298,6 +350,7 @@
     if (t.rid) tx.rid = t.rid;
     if (t.pm && typeof t.pm === 'string') tx.pm = t.pm;
     if (t.photo && PHOTO_RE.test(t.photo)) tx.photo = t.photo;
+    if (Number.isInteger(t.at) && t.at >= 0 && t.at < 1440) tx.at = t.at;      // minute of the day it was written (only when written that day)
     doc.tx.push(tx);
     return tx;
   }
@@ -370,6 +423,11 @@
     if (!k) return null;
     var best = null;
     doc.tx.forEach(function (t) { if (t.note.trim().toLowerCase() === k && (!best || t.date >= best.date)) best = t; });
+    if (best) return best.cat;
+    // a bank file writes "스타벅스 강남점", "스타벅스 역삼점": the shop's name (first word) is enough
+    var w = k.split(/\s+/)[0];
+    if (w.length < 2 || /^\d+$/.test(w)) return null;
+    doc.tx.forEach(function (t) { if (t.note.trim().toLowerCase().split(/\s+/)[0] === w && (!best || t.date >= best.date)) best = t; });
     return best ? best.cat : null;
   }
   // The entries a person keeps repeating (same category, amount and note) in the last 90 days, most used first.
@@ -389,10 +447,112 @@
       .slice(0, n || 6);
   }
 
+  // ---------- one line: "점심 9000", "택시 1만2천", "월급 +300만", "어제 커피 4500" ----------
+  // Korean money words: 억 (100,000,000), 만 (10,000), 천 (1,000), 백 (100) — "1억2천만", "3.5만", "2천5백".
+  function koWords(s) {
+    function small(x) {
+      var v = 0, m;
+      if ((m = x.match(/^([\d.]*)천(.*)$/))) { v += (m[1] ? parseFloat(m[1]) : 1) * 1000; x = m[2]; }
+      if ((m = x.match(/^([\d.]*)백(.*)$/))) { v += (m[1] ? parseFloat(m[1]) : 1) * 100; x = m[2]; }
+      if (x) { if (!/^\d+(\.\d+)?$/.test(x)) return NaN; v += parseFloat(x); }
+      return v;
+    }
+    var v = 0, m;
+    if ((m = s.match(/^(.*?)억(.*)$/))) { v += (m[1] ? small(m[1]) : 1) * 1e8; s = m[2]; }
+    if ((m = s.match(/^(.*?)만(.*)$/))) { v += (m[1] ? small(m[1]) : 1) * 1e4; s = m[2]; }
+    v += s ? small(s) : 0;
+    return isFinite(v) ? v : NaN;
+  }
+  var QUICK_AMT = /^([+＋]?)((?:\d[\d,.]*|[\d.]*(?=[억만천백]))(?:[억만천백][\d,.]*)*)(원|₩|\$|円|엔|won|krw|usd)?$/i;
+  var YESTERDAY = /^(어제|yesterday|昨日|きのう)$/i;
+  function quickParse(text, cur) {
+    var line = String(text || '').trim().replace(/([^\d\s+,.억만천백])([+]?\d[\d,.]*(?:[억만천백][\d,.]*)*(?:원|円|엔)?)$/, '$1 $2');   // "점심9000" → "점심 9000"
+    var words = line.split(/\s+/).filter(Boolean), amt = null, plus = false, day = 0, keep = [];
+    for (var i = words.length - 1; i >= 0; i--) {             // the last money-looking word is the amount
+      var m = amt === null && words[i].match(QUICK_AMT);
+      if (m && /\d/.test(m[2])) {
+        var raw = m[2].replace(/,/g, ''), minor;
+        if (/[억만천백]/.test(raw)) { var v = koWords(raw); minor = isFinite(v) && v > 0 ? Math.round(v * Math.pow(10, digits(cur))) : null; }
+        else minor = parseAmount(m[2], cur);
+        if (minor && minor > 0) { amt = minor; plus = !!m[1]; continue; }
+      }
+      keep.unshift(words[i]);
+    }
+    keep = keep.filter(function (w) { if (YESTERDAY.test(w)) { day = -1; return false; } return true; });
+    var note = keep.join(' ').slice(0, 300);
+    var type = plus || INCOME_WORDS.test(note) ? 'income' : 'expense';
+    return { amt: amt, note: note, type: type, day: day };
+  }
+  // Everyday words → category, for the first time a word is used (after that, what the person chose wins).
+  var INCOME_WORDS = /월급|급여|상여|보너스|용돈받|부업|알바비|이자|환불|salary|paycheck|bonus|refund|interest|給料|給与|ボーナス|返金/i;
+  var WORDS = [
+    ['salary', /월급|급여|salary|paycheck|給料|給与/i], ['bonus', /보너스|상여|bonus|ボーナス/i], ['side', /부업|알바|프리랜스|freelance|side|副業/i],
+    ['interest', /이자|interest|利息/i], ['refund', /환불|refund|返金/i],
+    ['subscriptions', /넷플릭스|유튜브|멜론|구독|스포티파이|디즈니|티빙|쿠팡플레이|netflix|youtube|spotify|subscription|サブスク/i],
+    ['cafe', /커피|카페|아아|라떼|아메리카노|스타벅스|스벅|이디야|메가커피|빽다방|디저트|케이크|coffee|cafe|café|latte|starbucks|コーヒー|カフェ|スタバ/i],
+    ['groceries', /마트|장보기|이마트|홈플러스|롯데마트|코스트코|쿠팡|마켓컬리|컬리|편의점|gs25|cu\b|세븐일레븐|이마트24|grocer|supermarket|costco|walmart|スーパー|コンビニ/i],
+    ['food', /점심|저녁|아침|식사|밥|배달|한식|중식|양식|일식|치킨|피자|국밥|라면|분식|김밥|떡볶이|햄버거|회식|야식|배민|요기요|restaurant|lunch|dinner|breakfast|meal|pizza|burger|ランチ|昼|夕食|朝食|ご飯|外食/i],
+    ['transport', /택시|버스|지하철|교통|주유|기름|톨게이트|하이패스|주차|기차|ktx|srt|카카오T|taxi|bus|subway|metro|uber|lyft|gas|fuel|parking|train|タクシー|電車|バス|ガソリン|駐車/i],
+    ['housing', /월세|관리비|전세|rent|家賃/i], ['utilities', /전기|가스비|수도|공과금|난방|electric|water bill|utility|utilities|光熱|電気代|水道/i],
+    ['phone', /통신|핸드폰|휴대폰|폰요금|인터넷|phone|mobile|internet|携帯|スマホ代/i],
+    ['health', /병원|약국|약값|의원|치과|한의원|안과|hospital|pharmacy|clinic|doctor|dentist|病院|薬/i],
+    ['education', /학원|강의|교재|책|수강|교육|tuition|course|class|book|塾|本|授業/i],
+    ['travel', /여행|호텔|숙소|비행기|항공|에어비앤비|travel|hotel|flight|airbnb|旅行|ホテル|航空/i],
+    ['gifts', /선물|축의금|조의금|부조|gift|present|プレゼント|ご祝儀/i], ['pets', /사료|동물병원|간식\s*펫|펫|pet|vet|ペット/i],
+    ['fun', /영화|게임|노래방|공연|전시|취미|술자리|술집|호프|movie|cinema|game|concert|映画|ゲーム|カラオケ/i],
+    ['shopping', /쇼핑|옷|신발|다이소|올리브영|무신사|화장품|shopping|clothes|shoes|amazon|買い物|服|靴/i]
+  ];
+  function guessQuick(doc, note, type) {
+    var usable = function (id) { var c = (doc.cats || []).find(function (x) { return x.id === id; }); return c && !c.hidden && c.type === type ? id : null; };
+    var past = guessCategory(doc, note);
+    if (past && usable(past)) return past;
+    for (var i = 0; i < WORDS.length; i++) if (WORDS[i][1].test(note) && usable(WORDS[i][0])) return WORDS[i][0];
+    return null;
+  }
+  // Short amounts for small spaces (the calendar): 9천, 3.5만, 1.2억 · 3.5万 · 9.5k
+  function shortAmount(minor, cur) {
+    var v = Math.abs(minor) / Math.pow(10, digits(cur)), one = function (x) { return String(Math.round(x * 10) / 10); };
+    if (cur === 'KRW') return v >= 1e8 ? one(v / 1e8) + '억' : v >= 1e4 ? one(v / 1e4) + '만' : v >= 1e3 ? one(v / 1e3) + '천' : String(Math.round(v));
+    if (cur === 'JPY' || cur === 'CNY') return v >= 1e8 ? one(v / 1e8) + '億' : v >= 1e4 ? one(v / 1e4) + '万' : String(Math.round(v));
+    return v >= 1e6 ? one(v / 1e6) + 'M' : v >= 1e3 ? one(v / 1e3) + 'k' : one(v);
+  }
+
+  // ---------- tap-to-log buttons: an emoji, then the amount ----------
+  // Each button is a category plus a label written as the note ("중식" under Food), so charts stay tidy and the
+  // label still says what it was. Their order follows use; the amounts offered are the ones used with that button.
+  var TILES = {
+    ko: [['coffee', '☕', '커피', 'cafe'], ['korean', '🍚', '한식', 'food'], ['chinese', '🥟', '중식', 'food'], ['western', '🍝', '양식', 'food'],
+      ['japanese', '🍣', '일식', 'food'], ['snack', '🍢', '분식', 'food'], ['delivery', '🛵', '배달', 'food'], ['cvs', '🏪', '편의점', 'groceries'],
+      ['grocery', '🛒', '장보기', 'groceries'], ['taxi', '🚕', '택시', 'transport'], ['transit', '🚌', '교통', 'transport'], ['drinks', '🍺', '술자리', 'fun']],
+    en: [['coffee', '☕', 'Coffee', 'cafe'], ['lunch', '🥪', 'Lunch', 'food'], ['dinner', '🍽️', 'Dinner out', 'food'], ['fastfood', '🍔', 'Fast food', 'food'],
+      ['pizza', '🍕', 'Pizza', 'food'], ['noodles', '🍜', 'Noodles', 'food'], ['delivery', '🛵', 'Delivery', 'food'], ['cvs', '🏪', 'Convenience store', 'groceries'],
+      ['grocery', '🛒', 'Groceries', 'groceries'], ['taxi', '🚕', 'Taxi', 'transport'], ['transit', '🚌', 'Transit', 'transport'], ['drinks', '🍺', 'Drinks', 'fun']],
+    ja: [['coffee', '☕', 'コーヒー', 'cafe'], ['bento', '🍱', '弁当', 'food'], ['ramen', '🍜', 'ラーメン', 'food'], ['sushi', '🍣', '寿司', 'food'],
+      ['curry', '🍛', 'カレー', 'food'], ['dineout', '🍽️', '外食', 'food'], ['delivery', '🛵', 'デリバリー', 'food'], ['cvs', '🏪', 'コンビニ', 'groceries'],
+      ['grocery', '🛒', 'スーパー', 'groceries'], ['taxi', '🚕', 'タクシー', 'transport'], ['train', '🚃', '電車', 'transport'], ['drinks', '🍺', '飲み会', 'fun']]
+  };
+  function tileMatches(t, tile) { var n = t.note.trim().toLowerCase(), l = tile.label.toLowerCase(); return t.type === 'expense' && t.cat === tile.cat && (n === l || n.indexOf(l + ' ') === 0); }
+  function tiles(doc, lang, today) {
+    var ok = function (id) { var c = (doc.cats || []).find(function (x) { return x.id === id; }); return c && !c.hidden; };
+    var list = (TILES[lang] || TILES.en).map(function (x, i) { return { key: x[0], emoji: x[1], label: x[2], cat: ok(x[3]) ? x[3] : 'other', i: i, n: 0 }; });
+    var from = today ? addDays(today, -90) : '';
+    doc.tx.forEach(function (t) { if (t.date < from) return; list.forEach(function (tl) { if (tileMatches(t, tl)) tl.n++; }); });
+    return list.sort(function (a, b) { return b.n - a.n || a.i - b.i; });
+  }
+  function tileAmounts(doc, tile, today, n) {
+    var from = today ? addDays(today, -180) : '', count = {}, last = {};
+    doc.tx.forEach(function (t) { if (t.date < from || t.cur !== doc.currency || !tileMatches(t, tile)) return; count[t.amt] = (count[t.amt] || 0) + 1; if (!last[t.amt] || t.date > last[t.amt]) last[t.amt] = t.date; });
+    return Object.keys(count).map(Number).sort(function (a, b) { return count[b] - count[a] || (last[a] < last[b] ? 1 : -1); }).slice(0, n || 4);
+  }
+
   // ---------- repeating entries ----------
   function addRecurring(doc, r) {
     var rec = { id: uid(), type: r.type === 'income' ? 'income' : 'expense', amt: Math.round(r.amt), cur: r.cur || doc.currency, cat: r.cat,
       note: String(r.note || '').slice(0, 300), day: Math.min(31, Math.max(1, r.day | 0)), start: r.start, last: null, active: true };
+    if (r.freq === 'week' && validDate(r.startDate)) {           // every week on the start date's weekday
+      rec.freq = 'week'; rec.startDate = r.startDate; rec.wd = weekday(r.startDate); rec.lastDate = null;
+      rec.start = r.startDate.slice(0, 7); rec.day = +r.startDate.slice(8, 10);
+    }
     if (r.pm && typeof r.pm === 'string') rec.pm = r.pm;
     doc.recurring.push(rec);
     return rec;
@@ -409,6 +569,15 @@
     var added = 0, nowYm = today.slice(0, 7), nowDay = +today.slice(8, 10);
     doc.recurring.forEach(function (r) {
       if (!r.active) return;
+      if (r.freq === 'week') {
+        var dt = r.lastDate ? addDays(r.lastDate, 7) : r.startDate, g = 0;
+        while (dt <= today && g++ < 3000) {
+          addTx(doc, { type: r.type, amt: r.amt, cur: r.cur, cat: r.cat, date: dt, note: r.note, rid: r.id, pm: r.pm });
+          r.lastDate = dt; r.last = dt.slice(0, 7); added++;
+          dt = addDays(dt, 7);
+        }
+        return;
+      }
       var m = r.last ? addMonths(r.last, 1) : r.start;
       var guard = 0;
       while (m <= nowYm && guard++ < 600) {
@@ -559,8 +728,7 @@
       var key = [date, type, amt, cur, note.toLowerCase()].join('|');
       inFile[key] = (inFile[key] || 0) + 1;
       if (inFile[key] <= (have[key] || 0)) { skipped++; return; }
-      var cat = guessCategory(doc, note);
-      if (!cat || !doc.cats.some(function (c) { return c.id === cat && c.type === type; })) cat = type === 'income' ? 'other_income' : 'other';
+      var cat = guessQuick(doc, note, type) || (type === 'income' ? 'other_income' : 'other');
       addTx(doc, { type: type, amt: amt, cur: cur, cat: cat, date: date, note: note });
       added++;
     });
@@ -583,7 +751,7 @@
     if (Array.isArray(raw.tx)) d.tx = raw.tx.filter(function (t) {
       return t && typeof t.id === 'string' && (t.type === 'expense' || t.type === 'income') && Number.isInteger(t.amt) && t.amt > 0 &&
         typeof t.cat === 'string' && validDate(t.date);
-    }).map(function (t) { t.cur = typeof t.cur === 'string' ? t.cur : d.currency; t.note = String(t.note || ''); if (t.photo !== undefined && !PHOTO_RE.test(String(t.photo))) delete t.photo; return t; });
+    }).map(function (t) { t.cur = typeof t.cur === 'string' ? t.cur : d.currency; t.note = String(t.note || ''); if (t.photo !== undefined && !PHOTO_RE.test(String(t.photo))) delete t.photo; if (t.at !== undefined && !(Number.isInteger(t.at) && t.at >= 0 && t.at < 1440)) delete t.at; return t; });
     if (Array.isArray(raw.methods)) d.methods = raw.methods.map(cleanMethod).filter(Boolean).slice(0, 30);
     var mids = {}; d.methods.forEach(function (m) { mids[m.id] = true; });
     d.tx.forEach(function (t) { if (t.pm !== undefined && !mids[t.pm]) delete t.pm; });
@@ -593,7 +761,8 @@
       Object.keys(bc).forEach(function (k) { if (bc[k] > 0) d.budgets.cats[k] = bc[k]; });
     }
     if (Array.isArray(raw.recurring)) d.recurring = raw.recurring.filter(function (r) {
-      return r && typeof r.id === 'string' && Number.isInteger(r.amt) && r.amt > 0 && /^\d{4}-\d{2}$/.test(r.start) && typeof r.cat === 'string';
+      return r && typeof r.id === 'string' && Number.isInteger(r.amt) && r.amt > 0 && /^\d{4}-\d{2}$/.test(r.start) && typeof r.cat === 'string' &&
+        (r.freq !== 'week' || (validDate(r.startDate) && r.wd >= 0 && r.wd <= 6 && (r.lastDate === null || r.lastDate === undefined || validDate(r.lastDate))));
     });
     if (Array.isArray(raw.goals)) d.goals = raw.goals.map(cleanGoal).filter(Boolean).slice(0, 50);
     d.recurring.forEach(function (r) { if (r.pm !== undefined && !mids[r.pm]) delete r.pm; });
@@ -609,7 +778,7 @@
     addRecurring: addRecurring, updateRecurring: updateRecurring, deleteRecurring: deleteRecurring, applyRecurring: applyRecurring,
     toCSV: toCSV, parseCSV: parseCSV, parseDate: parseDate, guessColumns: guessColumns, importRows: importRows,
     addMonths: addMonths, daysInMonth: daysInMonth, validDate: validDate, uid: uid,
-    calcAmount: calcAmount, dailyAllowance: dailyAllowance, upcomingFixed: upcomingFixed, yearSummary: yearSummary, yearsWithData: yearsWithData,
+    calcAmount: calcAmount, dueSchedule: dueSchedule, recurringIcs: recurringIcs, quickParse: quickParse, guessQuick: guessQuick, tiles: tiles, tileAmounts: tileAmounts, shortAmount: shortAmount, addDays: addDays, weekday: weekday, dailyAllowance: dailyAllowance, upcomingFixed: upcomingFixed, yearSummary: yearSummary, yearsWithData: yearsWithData,
     addMethod: addMethod, updateMethod: updateMethod, removeMethod: removeMethod, methodTotals: methodTotals, photosOf: photosOf,
     addGoal: addGoal, updateGoal: updateGoal, deleteGoal: deleteGoal, goalMove: goalMove, goalProgress: goalProgress, goalSaved: goalSaved, goalsSavedIn: goalsSavedIn
   };

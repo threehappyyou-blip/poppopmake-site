@@ -653,3 +653,60 @@ a.btn { text-decoration: none; display: flex; align-items: center; justify-conte
 
 /* open without the passcode: the trade-off, said before it is turned on */
 .dev-warn { background: var(--paper-2); border-left: 4px solid var(--danger); border-radius: 10px; padding: 12px 14px; margin: 12px 0; font-weight: 600; line-height: 1.5; }
+
+/* one-line entry: "점심 9000" + Enter */
+.quick { padding: 12px; }
+.quick-row { display: flex; gap: 8px; }
+.quick-input { flex: 1; min-width: 0; font-size: 16px; }
+.quick-go { flex-shrink: 0; min-width: 72px; }
+.quick-prev { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin-top: 8px; font-size: .9rem; min-height: 0; }
+.quick-prev:empty { margin-top: 0; }
+.quick-what { font-weight: 700; }
+.quick-what.pos { color: var(--teal); }
+.quick-cats { margin-top: 8px; }
+.quick-cats[hidden] { display: none; }
+/* the budget calendar: each day's spending in short form */
+.bcal .cal-day { min-height: 58px; gap: 1px; }
+.bcal .cal-day.sel { box-shadow: inset 0 0 0 2px var(--ink); }
+.cal-amt { font-size: .66rem; font-weight: 700; line-height: 1.15; white-space: nowrap; }
+.cal-amt.out { color: var(--danger); }
+.cal-amt.in { color: var(--teal); }
+.cal-wd.sun { color: var(--danger); } .cal-wd.sat { color: var(--teal); }
+.cal-detail h2 { font-size: 1rem; margin: 0 0 4px; }
+.cal-detail .btn { margin-top: 10px; }
+.repeat-row { flex-wrap: wrap; align-items: center; }
+.small-select { width: auto; min-height: 40px; padding: 6px 10px; margin-left: 4px; }
+.small-select[hidden] { display: none; }
+
+/* today in 30 seconds */
+.ci-step { margin: 0 0 4px; font-size: .78rem; font-weight: 700; color: var(--ink-soft); letter-spacing: .04em; }
+.ci-q { font-size: 1.15rem; margin: 0 0 10px; }
+.ci-added { list-style: none; margin: 8px 0 0; padding: 0; font-weight: 600; font-size: .92rem; color: var(--teal); }
+.ci-added li { padding: 3px 0; }
+.ci-actions { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 8px; }
+.ci-actions .btn { flex: 1 1 140px; min-height: 46px; }
+.chip.done { opacity: .55; }
+.ci-moods { display: flex; justify-content: space-between; gap: 6px; margin: 4px 0 12px; }
+.ci-mood { flex: 1; min-height: 54px; font-size: 1.7rem; border: 1px solid var(--line); border-radius: 14px; background: var(--card); cursor: pointer; }
+.ci-mood.on { border-color: var(--teal); background: var(--teal-soft); box-shadow: inset 0 0 0 2px var(--teal); }
+.ci-done { text-align: center; padding: 8px 0 4px; }
+.ci-fire { font-size: 3rem; line-height: 1.1; }
+.ci-done h3 { margin: 6px 0 4px; font-size: 1.2rem; }
+
+.ci-week { margin: 12px auto 14px; padding: 12px 14px; max-width: 360px; text-align: left; background: var(--paper-2); border-radius: 12px; }
+.ci-week-total { margin: 0 0 6px; font-weight: 700; }
+.ci-week ul { margin: 0; padding-left: 18px; font-size: .92rem; }
+.ci-week li { padding: 2px 0; }
+
+/* tap-to-log emoji buttons */
+.tiles-card { padding: 12px; }
+.tiles-hint { margin: 0 0 8px; }
+.tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (min-width: 560px) { .tiles { grid-template-columns: repeat(6, 1fr); } }
+.tile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; min-height: 64px; padding: 6px 2px; border: 1px solid var(--line); border-radius: 14px; background: var(--card); color: var(--ink); cursor: pointer; }
+.tile:active { background: var(--teal-soft); transform: scale(.97); }
+.tile-emoji { font-size: 1.6rem; line-height: 1.1; }
+.tile-label { font-size: .74rem; font-weight: 600; line-height: 1.2; text-align: center; overflow-wrap: anywhere; }
+.tile-amts .chip { font-size: 1rem; min-height: 46px; padding: 10px 16px; }
+.tile-days { margin: 10px 0; }
+.sheet-body .tiles { margin: 6px 0 4px; }

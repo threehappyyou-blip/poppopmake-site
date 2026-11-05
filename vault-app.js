@@ -150,10 +150,12 @@
     return form;
   }
   function validateSettings(raw) {
-    var s = { autoLock: 5, lastBackup: null, lastChange: null, tourDone: false, codeSaved: true, helper: { off: false, guides: true, snooze: {}, mute: {}, done: {} } };
+    var s = { autoLock: 5, lastBackup: null, lastChange: null, tourDone: false, codeSaved: true, helper: { off: false, guides: true, snooze: {}, mute: {}, done: {}, ci: true, checkin: { days: [], ns: [] } } };
     if (raw && raw.helper && typeof raw.helper === 'object') {      // the helper: what was put off today, turned off, and learned
       var hp = raw.helper, week = HP ? HP.addDays(today(), -7) : '';
-      s.helper.off = hp.off === true; s.helper.guides = hp.guides !== false;
+      s.helper.off = hp.off === true; s.helper.guides = hp.guides !== false; s.helper.ci = hp.ci !== false;
+      var ck = hp.checkin || {}, dd = function (a) { return (Array.isArray(a) ? a : []).filter(function (x) { return typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x); }).sort().slice(-120); };
+      s.helper.checkin = { days: dd(ck.days), ns: dd(ck.ns) };
       ['snooze', 'mute', 'done'].forEach(function (k) {
         var src = hp[k]; if (!src || typeof src !== 'object') return;
         Object.keys(src).slice(0, 120).forEach(function (id) {
@@ -715,14 +717,16 @@
     if (ym === thisMonth()) add(card, allowanceLine());
     add(card, goalsChip());
     if (sum.otherCurrency) add(card, h('p', { class: 'hint', text: t('budget.other', { n: sum.otherCurrency }) }));
-    add(main, card, notice(), helperCards('budget'));
+    add(main, card, quickLine(), tilesCard(), notice(), helperCards('budget'));
 
     add(main, h('div', { class: 'seg', role: 'tablist' },
       h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'list' ? 'true' : 'false', class: S.budgetView === 'list' ? 'on' : '', id: 'view-list', text: t('view.list'), on: { click: function () { S.budgetView = 'list'; render(); } } }),
+      h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'cal' ? 'true' : 'false', class: S.budgetView === 'cal' ? 'on' : '', id: 'view-cal', text: t('view.calendar'), on: { click: function () { S.budgetView = 'cal'; render(); } } }),
       h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'charts' ? 'true' : 'false', class: S.budgetView === 'charts' ? 'on' : '', id: 'view-charts', text: t('view.charts'), on: { click: function () { S.budgetView = 'charts'; render(); } } }),
       h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'goals' ? 'true' : 'false', class: S.budgetView === 'goals' ? 'on' : '', id: 'view-goals', text: t('view.goals'), on: { click: function () { S.budgetView = 'goals'; render(); } } })));
 
-    if (S.budgetView === 'charts') add(main, charts(sum));
+    if (S.budgetView === 'cal') add(main, budgetCalendar(ym));
+    else if (S.budgetView === 'charts') add(main, charts(sum));
     else if (S.budgetView === 'year') { main.textContent = ''; renderYear(main); }
     else if (S.budgetView === 'goals') renderGoals(main);
     else {
@@ -735,6 +739,254 @@
       })));
     }
     add(main, fab(t('add.title'), function () { openAdd(); }, 'add-btn'));
+  }
+  // ----- one line: "점심 9000" + Enter. The category is guessed (what you chose before, then everyday words);
+  // when it can't be guessed, the category buttons appear right there and one tap saves.
+  function quickLine() {
+    if (S.ym !== thisMonth() || S.budgetView === 'goals') return null;
+    return quickBox();
+  }
+  function quickBox(onSaved) {
+    var cur = S.budget.currency, st = { cat: null, picked: false };
+    var px = onSaved ? 'ci-' : '';
+    var input = h('input', { class: 'input quick-input', id: px + 'quick-input', type: 'text', enterkeyhint: 'done', autocomplete: 'off', placeholder: t('q.ph'), 'aria-label': t('q.label'), value: onSaved ? '' : S.quickDraft || '' });
+    var go = h('button', { type: 'button', class: 'btn primary quick-go', id: px + 'quick-go', text: t('q.go'), disabled: true });
+    var prev = h('div', { class: 'quick-prev', id: px + 'quick-preview', 'aria-live': 'polite' });
+    var cats = h('div', { class: 'chips wrap quick-cats', id: px + 'quick-cats', hidden: true });
+    function parsed() { return B.quickParse(input.value, cur); }
+    function draw() {
+      var p = parsed(); if (!onSaved) S.quickDraft = input.value;
+      if (!st.picked) st.cat = p.amt ? B.guessQuick(S.budget, p.note, p.type) : null;
+      if (st.cat && catOf(st.cat) && catOf(st.cat).type !== p.type) { st.cat = null; st.picked = false; }
+      prev.textContent = ''; cats.textContent = '';
+      go.disabled = !p.amt || !st.cat;
+      if (!input.value.trim()) { cats.hidden = true; return; }
+      if (!p.amt) { add(prev, h('span', { class: 'hint', text: t('q.needAmt') })); cats.hidden = true; return; }
+      var dateTxt = p.day ? I.dayLabel(B.addDays(today(), p.day)) + ' · ' : '';
+      add(prev, h('span', { class: 'quick-what' + (p.type === 'income' ? ' pos' : '') },
+        st.cat ? catEmoji(st.cat) + ' ' + catName(st.cat) + ' · ' : '', dateTxt + (p.note ? p.note + ' · ' : '') + (p.type === 'income' ? '+' : '−') + money(p.amt, cur).replace(/^[-−]/, '')));
+      if (st.cat) add(prev, h('button', { type: 'button', class: 'link small', id: px + 'quick-change', text: t('q.change'), on: { click: function () { st.picked = true; st.cat = null; draw(); } } }));
+      else add(prev, h('span', { class: 'hint', text: ' ' + t('q.pickCat') }));
+      cats.hidden = !!st.cat;
+      if (!st.cat) S.budget.cats.filter(function (c) { return c.type === p.type && !c.hidden; }).forEach(function (c) {
+        add(cats, h('button', { type: 'button', class: 'chip', 'data-cat': c.id, on: { click: function () { st.cat = c.id; st.picked = true; save(); } } },
+          h('span', { 'aria-hidden': 'true', text: c.emoji + ' ' }), catName(c.id)));
+      });
+    }
+    function save() {
+      var p = parsed();
+      if (!p.amt) { input.focus(); return; }
+      if (!st.cat) { draw(); var b = cats.querySelector('.chip'); if (b) b.focus(); return; }
+      var tx = B.addTx(S.budget, { type: p.type, amt: p.amt, cat: st.cat, date: B.addDays(today(), p.day), note: p.note, at: p.day ? undefined : nowMin() });
+      helperDone('add', tx.id); saveBudget();
+      if (onSaved) { input.value = ''; st.picked = false; st.cat = null; draw(); input.focus(); onSaved(tx); return; }
+      S.quickDraft = ''; S.quickFocus = true; render();
+      toast(t('add.saved', { what: catEmoji(tx.cat) + ' ' + catName(tx.cat) + ' ' + money(tx.amt, tx.cur) }), { label: t('btn.undo'), fn: function () { B.deleteTx(S.budget, tx.id); saveBudget(); render(); } });
+    }
+    input.addEventListener('input', function () { st.picked = false; draw(); });
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); save(); } });
+    go.addEventListener('click', save);
+    draw();
+    if (!onSaved && S.quickFocus) { S.quickFocus = false; setTimeout(function () { if (document.contains(input)) input.focus(); }, 0); }
+    return h('section', { class: 'card quick', id: px + 'quick', 'aria-label': t('q.label') }, h('div', { class: 'quick-row' }, input, go), prev, cats);
+  }
+
+  // ----- "today in 30 seconds": the app asks, the person answers with a few taps -----
+  // 1. money spent today (frequent entries as buttons, one line, or "nothing today")  2. how the day was (a mood tap,
+  // a line if they like → diary)  3. anything not to forget tomorrow (a line → a pinned note). Then the run of days.
+  function ciState() { return S.settings.helper.checkin; }
+  function ciStreak(upTo) {
+    var days = {}, n = 0; ciState().days.forEach(function (d) { days[d] = 1; });
+    var d = upTo; while (days[d] && n < 400) { n++; d = B.addDays(d, -1); }
+    return n;
+  }
+  function ciDone() { var c = ciState(); if (c.days.indexOf(today()) < 0) { c.days.push(today()); c.days = c.days.slice(-120); } saveSettings(); ntWrite(); }
+  function openCheckin() {
+    goTab(S.tab === 'settings' ? 'budget' : S.tab);
+    var steps = ['money', 'day', 'tomorrow'], i = 0, did = [];
+    sheet(t('ci.title'), function (body, close) {
+      function step() {
+        body.textContent = '';
+        if (i >= steps.length) return finish();
+        add(body, h('p', { class: 'ci-step', id: 'ci-step', text: (i + 1) + ' / ' + steps.length }));
+        ({ money: money1, day: day2, tomorrow: tomorrow3 })[steps[i]]();
+      }
+      function next() { i++; step(); }
+      function btnRow() { return h('div', { class: 'ci-actions' }, Array.prototype.slice.call(arguments)); }
+      function money1() {
+        var todays = function () { return S.budget.tx.filter(function (x) { return x.date === today() && x.type === 'expense'; }); };
+        var list = h('ul', { class: 'ci-added', id: 'ci-added' });
+        function drawList() {
+          list.textContent = '';
+          todays().forEach(function (x) { add(list, h('li', { text: '✓ ' + catEmoji(x.cat) + ' ' + (x.note || catName(x.cat)) + ' ' + money(x.amt, x.cur) })); });
+          none.hidden = todays().length > 0; none.style.display = none.hidden ? 'none' : '';
+        }
+        var freq = B.frequent(S.budget, today(), 8).filter(function (f) { return f.type === 'expense'; }).slice(0, 6);
+        var chips = h('div', { class: 'chips wrap', id: 'ci-freq' }, freq.map(function (f) {
+          var b = h('button', { type: 'button', class: 'chip', on: { click: function () {
+            var tx = B.addTx(S.budget, { type: 'expense', amt: f.amt, cur: f.cur, cat: f.cat, date: today(), note: f.note, at: nowMin() });
+            helperDone('add', tx.id); saveBudget(); b.classList.add('done'); drawList(); did.push('money');
+          } } }, h('span', { 'aria-hidden': 'true', text: catEmoji(f.cat) + ' ' }), (f.note || catName(f.cat)) + ' ' + money(f.amt, f.cur));
+          return b;
+        }));
+        var none = h('button', { type: 'button', class: 'btn block', id: 'ci-none', text: t('ci.none'), on: { click: function () {
+          var c = ciState(); if (c.ns.indexOf(today()) < 0) { c.ns.push(today()); c.ns = c.ns.slice(-120); } saveSettings(); did.push('none'); next();
+        } } });
+        add(body, h('h3', { class: 'ci-q', text: t('ci.q1') }),
+          freq.length ? h('p', { class: 'hint', text: t('ci.q1hint') }) : null, freq.length ? chips : null,
+          h('p', { class: 'hint', text: t('tile.hint') }), tileGrid(function () { drawList(); did.push('money'); }, 'ci-tiles'),
+          quickBox(function () { drawList(); did.push('money'); }), list,
+          btnRow(h('button', { type: 'button', class: 'btn primary', id: 'ci-next', text: t('ci.next'), on: { click: next } })), none);
+        drawList();
+      }
+      function day2() {
+        var mood = null, line = h('input', { class: 'input', id: 'ci-day-text', type: 'text', maxlength: 500, autocomplete: 'off', placeholder: t('ci.q2ph') });
+        var save = h('button', { type: 'button', class: 'btn primary', id: 'ci-day-save', text: t('ci.save'), disabled: true });
+        var moods = h('div', { class: 'ci-moods', role: 'radiogroup', 'aria-label': t('ci.q2') });
+        MOODS.forEach(function (e, k) {
+          add(moods, h('button', { type: 'button', class: 'ci-mood', role: 'radio', 'aria-checked': 'false', 'data-mood': k + 1, text: e, on: { click: function (ev) {
+            mood = k + 1; moods.querySelectorAll('.ci-mood').forEach(function (b) { b.setAttribute('aria-checked', b === ev.currentTarget ? 'true' : 'false'); b.classList.toggle('on', b === ev.currentTarget); });
+            save.disabled = false;
+          } } }));
+        });
+        line.addEventListener('input', function () { save.disabled = !mood && !line.value.trim(); });
+        save.addEventListener('click', function () {
+          DY.addEntry(S.diary, { date: today(), time: nowTime(), text: line.value.trim(), mood: mood }); saveDiary(); did.push('day'); next();
+        });
+        line.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing && !save.disabled) { e.preventDefault(); save.click(); } });
+        add(body, h('h3', { class: 'ci-q', text: t('ci.q2') }), moods, line,
+          btnRow(save, h('button', { type: 'button', class: 'btn ghost', id: 'ci-skip', text: t('ci.skip'), on: { click: next } })));
+      }
+      function tomorrow3() {
+        var line = h('input', { class: 'input', id: 'ci-note-text', type: 'text', maxlength: 300, autocomplete: 'off', placeholder: t('ci.q3ph') });
+        var save = h('button', { type: 'button', class: 'btn primary', id: 'ci-note-save', text: t('ci.noteSave'), disabled: true });
+        line.addEventListener('input', function () { save.disabled = !line.value.trim(); });
+        save.addEventListener('click', function () {
+          var n = { id: B.uid(), text: line.value.trim(), color: 'yellow', pinned: true, created: Date.now(), updated: Date.now() };
+          S.notes.notes.push(n); noteLocal[n.id] = 1; markNote(n); saveNotes(); did.push('note'); next();
+        });
+        line.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing && !save.disabled) { e.preventDefault(); save.click(); } });
+        add(body, h('h3', { class: 'ci-q', text: t('ci.q3') }), line,
+          btnRow(save, h('button', { type: 'button', class: 'btn ghost', id: 'ci-nothing', text: t('ci.nothing'), on: { click: next } })));
+      }
+      function finish() {
+        ciDone();
+        var n = ciStreak(today());
+        add(body, h('div', { class: 'ci-done', id: 'ci-done' },
+          h('div', { class: 'ci-fire', 'aria-hidden': 'true', text: n >= 2 ? '🔥' : '✅' }),
+          h('h3', { text: t('ci.doneT') }),
+          h('p', { id: 'ci-streak', text: n >= 2 ? t('ci.streak', { n: n }) : t('ci.first') }),
+          weekSoFar(),
+          h('button', { type: 'button', class: 'btn primary block', id: 'ci-close', text: t('btn.close'), on: { click: close } })));
+      }
+      step();
+    }, { onClose: render });
+  }
+  // This week so far (Monday to today): the total and the three categories it went to most.
+  function weekSoFar() {
+    var cur = S.budget.currency, mon = B.addDays(today(), -((B.weekday(today()) + 6) % 7)), by = {}, total = 0;
+    S.budget.tx.forEach(function (x) {
+      if (x.type !== 'expense' || x.cur !== cur || x.date < mon || x.date > today()) return;
+      var g = by[x.cat] || (by[x.cat] = { cat: x.cat, n: 0, amt: 0 }); g.n++; g.amt += x.amt; total += x.amt;
+    });
+    var top = Object.keys(by).map(function (k) { return by[k]; }).sort(function (a, b) { return b.amt - a.amt; }).slice(0, 3);
+    var box = h('div', { class: 'ci-week', id: 'ci-week' });
+    if (!total) { add(box, h('p', { class: 'hint', text: t('ci.weekNone') })); return box; }
+    add(box, h('p', { class: 'ci-week-total', text: t('ci.week', { amt: money(total, cur) }) }),
+      h('ul', {}, top.map(function (g) { return h('li', { text: t('ci.weekLine', { emoji: catEmoji(g.cat), cat: catName(g.cat), n: g.n, amt: money(g.amt, cur) }) }); })));
+    return box;
+  }
+  // Asking first: in the evening, the first time the app is opened, a small note offers the check-in (once a day).
+  function ciAsk() {
+    var hs = S.settings && S.settings.helper;
+    if (DESK || !GUIDE || !hs || hs.off || hs.ci === false || hs.mute.checkin || new Date().getHours() < 18) return;
+    if (hs.checkin.days.indexOf(today()) >= 0 || hs.snooze['ci-ask'] === today() || GUIDE.running() || modals.length) return;
+    hs.snooze['ci-ask'] = today(); saveSettings();
+    var n = ciStreak(B.addDays(today(), -1));
+    GUIDE.say(n >= 1 ? t('ci.askStreak', { n: n }) : t('ci.ask'), [{ id: 'ci-ask-go', label: t('ci.start'), primary: true, fn: function () { openCheckin(); } }, { id: 'ci-ask-later', label: t('ci.later') }], 0);
+  }
+
+  // ----- tap an emoji, give the amount: done. The amounts used before with that button are offered as buttons too,
+  // so the usual coffee is two taps and no typing.
+  function tileGrid(onSaved, id) {
+    return h('div', { class: 'tiles', id: id || 'tiles' }, B.tiles(S.budget, I.get(), today()).map(function (tl) {
+      return h('button', { type: 'button', class: 'tile', 'data-tile': tl.key, 'aria-label': tl.label, on: { click: function () { openTile(tl, onSaved); } } },
+        h('span', { class: 'tile-emoji', 'aria-hidden': 'true', text: tl.emoji }), h('span', { class: 'tile-label', text: tl.label }));
+    }));
+  }
+  function tilesCard() {
+    if (S.ym !== thisMonth() || S.budgetView === 'goals') return null;
+    return h('section', { class: 'card tiles-card', 'aria-label': t('tile.title') }, h('p', { class: 'hint tiles-hint', text: t('tile.hint') }), tileGrid());
+  }
+  function openTile(tl, onSaved) {
+    var cur = S.budget.currency, day = 0;
+    sheet(tl.emoji + ' ' + tl.label, function (body, close) {
+      var abox = amountBox(cur, '', 'tile-amount', t('add.amount')); abox.input.setAttribute('data-autofocus', '1');
+      var memo = h('input', { class: 'input', id: 'tile-memo', maxlength: 200, autocomplete: 'off', placeholder: t('tile.memo') });
+      var msg = msgEl();
+      function save(amt) {
+        amt = amt || abox.value();
+        if (!amt) { setMsg(msg, t('add.needAmount')); abox.input.focus(); return; }
+        var d = B.addDays(today(), day), m = memo.value.trim();
+        var tx = B.addTx(S.budget, { type: 'expense', amt: amt, cat: tl.cat, date: d, note: tl.label + (m ? ' ' + m : ''), at: day ? undefined : nowMin() });
+        helperDone('add', tx.id); saveBudget(); close();
+        if (onSaved) { onSaved(tx); return; }
+        if (tx.date.slice(0, 7) !== S.ym) S.ym = tx.date.slice(0, 7);
+        render();
+        toast(t('add.saved', { what: tl.emoji + ' ' + tl.label + ' ' + money(tx.amt, tx.cur) }), { label: t('btn.undo'), fn: function () { B.deleteTx(S.budget, tx.id); saveBudget(); render(); } });
+      }
+      var amts = B.tileAmounts(S.budget, tl, today(), 4);
+      var days = h('div', { class: 'seg tile-days', role: 'radiogroup', 'aria-label': t('add.date') });
+      function drawDays() {
+        days.textContent = '';
+        [[0, t('tile.today')], [-1, t('tile.yday')]].forEach(function (x) {
+          add(days, h('button', { type: 'button', role: 'radio', id: x[0] ? 'tile-yday' : 'tile-today', class: day === x[0] ? 'on' : '', 'aria-checked': day === x[0] ? 'true' : 'false', text: x[1], on: { click: function () { day = x[0]; drawDays(); } } }));
+        });
+      }
+      drawDays();
+      abox.input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); save(); } });
+      add(body,
+        amts.length ? h('p', { class: 'hint', text: t('tile.usual') }) : null,
+        amts.length ? h('div', { class: 'chips wrap tile-amts', id: 'tile-amts' }, amts.map(function (a) {
+          return h('button', { type: 'button', class: 'chip tile-amt', 'data-amt': a, text: money(a, cur), on: { click: function () { save(a); } } });
+        })) : null,
+        h('div', { class: 'field' }, h('label', { for: 'tile-amount', text: t('add.amount') + ' (' + cur + ')' }), abox.input, abox.ops, abox.preview),
+        days, memo, msg,
+        h('button', { type: 'button', class: 'btn primary block', id: 'tile-save', text: t('q.go'), on: { click: function () { save(); } } }));
+    });
+  }
+
+  // ----- the month as a calendar: what went out (and came in) each day; tap a day for its entries -----
+  function budgetCalendar(ym) {
+    var first = new Date(Date.UTC(+ym.slice(0, 4), +ym.slice(5, 7) - 1, 1)).getUTCDay(), n = B.daysInMonth(ym), cur = S.budget.currency;
+    var byDay = {}; B.days(S.budget, ym).forEach(function (d) { byDay[d.date] = d; });
+    if (!S.calDay || S.calDay.slice(0, 7) !== ym) S.calDay = ym === thisMonth() ? today() : null;
+    var fmt = new Intl.DateTimeFormat(I.locale(), { weekday: 'narrow', timeZone: 'UTC' });
+    var grid = h('div', { class: 'cal bcal', id: 'budget-cal', role: 'grid', 'aria-label': I.monthLabel(ym) });
+    for (var w = 0; w < 7; w++) add(grid, h('span', { class: 'cal-wd' + (w === 0 ? ' sun' : w === 6 ? ' sat' : ''), 'aria-hidden': 'true', text: fmt.format(new Date(Date.UTC(2026, 10, 1 + w))) }));
+    for (var b = 0; b < first; b++) add(grid, h('span', { class: 'cal-empty' }));
+    for (var d = 1; d <= n; d++) (function (d) {
+      var date = ym + '-' + pad(d), x = byDay[date], inc = 0, exp = 0;
+      if (x) x.items.forEach(function (tx) { if (tx.cur !== cur) return; if (tx.type === 'income') inc += tx.amt; else exp += tx.amt; });
+      add(grid, h('button', { type: 'button', class: 'cal-day' + (x ? ' has' : '') + (date === today() ? ' today' : '') + (date === S.calDay ? ' sel' : ''), 'data-date': date,
+        'aria-pressed': date === S.calDay ? 'true' : 'false',
+        'aria-label': I.fullDate(date) + (exp ? ', ' + t('sum.spent') + ' ' + money(exp, cur) : '') + (inc ? ', ' + t('sum.income') + ' ' + money(inc, cur) : ''),
+        on: { click: function () { S.calDay = date; render(); var dd = document.getElementById('cal-detail'); if (dd && dd.scrollIntoView) dd.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); } } },
+        h('span', { class: 'cal-num', text: String(d) }),
+        exp ? h('span', { class: 'cal-amt out', text: '−' + B.shortAmount(exp, cur) }) : null,
+        inc ? h('span', { class: 'cal-amt in', text: '+' + B.shortAmount(inc, cur) }) : null));
+    })(d);
+    var wrap = h('div', { class: 'bcal-wrap' }, h('section', { class: 'card' }, grid));
+    if (S.calDay) {
+      var day = byDay[S.calDay], e2 = 0, i2 = 0;
+      if (day) day.items.forEach(function (tx) { if (tx.cur !== cur) return; if (tx.type === 'income') i2 += tx.amt; else e2 += tx.amt; });
+      add(wrap, h('section', { class: 'card cal-detail', id: 'cal-detail' },
+        h('h2', { text: I.fullDate(S.calDay) }),
+        h('p', { class: 'hint', id: 'cal-totals', text: t('cal.totals', { e: money(e2, cur), i: money(i2, cur) }) }),
+        day ? h('ul', { class: 'tx' }, day.items.slice().reverse().map(txRow)) : h('p', { class: 'hint', text: t('cal.none') }),
+        h('button', { type: 'button', class: 'btn block', id: 'cal-add', text: t('cal.add'), on: { click: function () { openAdd(null, { date: S.calDay }); } } })));
+    }
+    return wrap;
   }
   function txRow(tx) {
     var inc = tx.type === 'income';
@@ -950,17 +1202,20 @@
   function openAdd(existing, preset) {
     var editing = !!existing;
     var lastPm = lsGet(PM_KEY), hasPm = function (id) { return !!methodOf(id); };
-    var st = { type: existing ? existing.type : preset && preset.type === 'income' ? 'income' : 'expense', cat: existing ? existing.cat : null,
+    var st = { type: existing ? existing.type : preset && preset.type === 'income' ? 'income' : 'expense', cat: existing ? existing.cat : preset && preset.cat && catOf(preset.cat) ? preset.cat : null,
       pm: existing ? existing.pm || null : (hasPm(lastPm) ? lastPm : null), photo: existing ? existing.photo || null : null };
     var cur = existing ? existing.cur : S.budget.currency;
     var defDate = existing ? existing.date : preset && preset.date && B.validDate(preset.date) ? preset.date : (S.ym === thisMonth() ? today() : S.ym + '-' + pad(Math.min(new Date().getDate(), B.daysInMonth(S.ym))));
     var slips = 0;
     sheet(editing ? t('edit.title') : t('add.title'), function (body, close) {
-      var abox = amountBox(cur, existing ? B.majorString(existing.amt, existing.cur) : '', 'amount', t('add.amount'));
+      var abox = amountBox(cur, existing ? B.majorString(existing.amt, existing.cur) : preset && preset.amt ? B.majorString(preset.amt, cur) : '', 'amount', t('add.amount'));
       var amount = abox.input, preview = abox.preview; amount.setAttribute('data-autofocus', '1');
-      var note = h('input', { class: 'input', id: 'note', maxlength: 300, autocomplete: 'off', value: existing ? existing.note : '' });
+      var note = h('input', { class: 'input', id: 'note', maxlength: 300, autocomplete: 'off', value: existing ? existing.note : preset && preset.note ? preset.note : '' });
       var date = h('input', { class: 'input', id: 'date', type: 'date', value: defDate });
       var repeat = h('input', { type: 'checkbox', id: 'repeat' });
+      var repFreq = h('select', { class: 'input small-select', id: 'repeat-freq', 'aria-label': t('add.repeatHow'), hidden: true },
+        h('option', { value: 'month', text: t('rep.month') }), h('option', { value: 'week', text: t('rep.week') }));
+      repeat.addEventListener('change', function () { repFreq.hidden = !repeat.checked; });
       var msg = msgEl();
       var typeSeg = h('div', { class: 'seg', role: 'radiogroup', 'aria-label': t('add.category') });
       var grid = h('div', { class: 'cat-grid', id: 'cat-grid' });
@@ -1018,7 +1273,7 @@
         if (!list.length) return;
         add(freq, h('p', { class: 'hint', text: t('add.frequent') }), h('div', { class: 'chips' }, list.map(function (f) {
           return h('button', { type: 'button', class: 'chip', on: { click: function () {
-            var tx = B.addTx(S.budget, { type: f.type, amt: f.amt, cur: f.cur, cat: f.cat, date: today(), note: f.note, pm: st.pm, photo: st.photo });
+            var tx = B.addTx(S.budget, { type: f.type, amt: f.amt, cur: f.cur, cat: f.cat, date: today(), note: f.note, pm: st.pm, photo: st.photo, at: nowMin() });
             finish(tx);
           } } }, h('span', { 'aria-hidden': 'true', text: catEmoji(f.cat) + ' ' }), (f.note || catName(f.cat)) + ' ' + money(f.amt, f.cur));
         })));
@@ -1046,9 +1301,12 @@
           saveBudget(); close(); render(); toast(t('add.saved', { what: catEmoji(st.cat) + ' ' + catName(st.cat) + ' ' + money(amt, cur) }));
           return;
         }
-        var tx = B.addTx(S.budget, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim(), pm: st.pm, photo: st.photo });
+        var tx = B.addTx(S.budget, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim(), pm: st.pm, photo: st.photo, at: d === today() ? nowMin() : undefined });
         lsSet(PM_KEY, st.pm || null);
-        if (repeat.checked) {
+        if (repeat.checked && repFreq.value === 'week') {
+          var rw = B.addRecurring(S.budget, { type: st.type, amt: amt, cat: st.cat, note: tx.note, freq: 'week', startDate: d, pm: st.pm });
+          rw.lastDate = d; rw.last = d.slice(0, 7); tx.rid = rw.id;
+        } else if (repeat.checked) {
           var r = B.addRecurring(S.budget, { type: st.type, amt: amt, cat: st.cat, note: tx.note, day: +d.slice(8, 10), start: d.slice(0, 7), pm: st.pm });
           r.last = d.slice(0, 7); tx.rid = r.id;
         }
@@ -1059,7 +1317,7 @@
         h('div', { class: 'field' }, h('label', { for: 'amount', text: t('add.amount') + ' (' + cur + ')' }), amount, abox.ops, preview),
         freq,
         h('div', { class: 'two' }, field(t('add.note'), note), field(t('add.date'), date)),
-        editing ? null : h('div', { class: 'check' }, repeat, h('label', { for: 'repeat', text: t('add.repeat') })),
+        editing ? null : h('div', { class: 'check repeat-row' }, repeat, h('label', { for: 'repeat', text: t('add.repeat') }), repFreq),
         pmRow, rcBox, rcFile,
         h('p', { class: 'hint pick-hint', text: editing ? t('add.category') : t('add.pick') }),
         grid, msg);
@@ -1266,6 +1524,8 @@
 
   // ----- fingerprint / face unlock -----
   var pkAvail = null;
+  function nowMin() { var d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
+  function wdName(wd) { return new Intl.DateTimeFormat(I.locale(), { weekday: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(2026, 10, 1 + wd))); }   // Nov 1 2026 is a Sunday
   function pkCheck() { if (pkAvail === null) pkAvail = C.passkeyAvailable(); return pkAvail; }
   function pkText(err) { return err && err.code === 'pk-cancel' ? t('pk.cancel') : err && err.code === 'no-prf' ? t('pk.noPrf') : t('pk.failed'); }
   function openPasskey() {
@@ -1287,6 +1547,63 @@
         });
         add(body, h('p', { text: t('pk.body') }), h('p', { class: 'hint', text: t('pk.how') }), p.el, msg, go);
       });
+    });
+  }
+
+  // ----- payment reminders as Android notifications, with no server -----
+  // Chrome on Android lets an installed app wake up now and then (about once a day; the phone decides when).
+  // The data stays locked, so while the app is open it leaves behind only the days payments are due and how many —
+  // never names or amounts — and the reminder says just that: "2 payments due tomorrow".
+  var NT_KEY = 'ppm-notify', NT_CACHE = 'ppm-due', NT_URL = '/__ppm-due';
+  function ntSupported() {
+    try { return !DESK && 'serviceWorker' in navigator && 'Notification' in window && typeof ServiceWorkerRegistration !== 'undefined' && 'periodicSync' in ServiceWorkerRegistration.prototype; } catch (e) { return false; }
+  }
+  function ntWrite() {
+    if (!lsGet(NT_KEY) || !window.caches || !S.budget) return Promise.resolve();
+    var hs = S.settings && S.settings.helper;
+    var data = { on: true, sched: B.dueSchedule(S.budget, today(), 35), ci: hs && hs.ci !== false && !hs.off ? { last: hs.checkin.days.slice(-1)[0] || null, hour: 19 } : null,
+      text: { title: t('nt.appTitle'), today: t('nt.today'), tomorrow: t('nt.tomorrow'), both: t('nt.both'), ci: t('nt.ci') }, updated: Date.now() };
+    return caches.open(NT_CACHE).then(function (c) {
+      return c.match(NT_URL).then(function (old) { return old ? old.json().catch(function () { return {}; }) : {}; }).then(function (prev) {
+        data.shown = prev.shown || null;
+        return c.put(NT_URL, new Response(JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } }));
+      });
+    }).catch(function () {});
+  }
+  function ntOn() {
+    return Notification.requestPermission().then(function (p) {
+      if (p !== 'granted') throw { code: 'denied' };
+      return navigator.serviceWorker.ready;
+    }).then(function (reg) {
+      var q = navigator.permissions && navigator.permissions.query ? navigator.permissions.query({ name: 'periodic-background-sync' }).catch(function () { return { state: 'prompt' }; }) : Promise.resolve({ state: 'prompt' });
+      return q.then(function (st) {
+        if (st.state === 'denied') throw { code: 'install' };
+        return reg.periodicSync.register('ppm-due', { minInterval: 12 * 3600e3 });
+      }).catch(function (e) { throw e && e.code ? e : { code: 'install' }; });
+    }).then(function () { lsSet(NT_KEY, '1'); return ntWrite(); });
+  }
+  function ntOff() {
+    lsSet(NT_KEY, null);
+    return navigator.serviceWorker.ready.then(function (reg) { return reg.periodicSync && reg.periodicSync.unregister('ppm-due'); }).catch(function () {})
+      .then(function () { return window.caches ? caches.open(NT_CACHE).then(function (c) { return c.delete(NT_URL); }) : null; }).catch(function () {});
+  }
+  function openNotify() {
+    sheet(t('nt.title'), function (body, close) {
+      var msg = msgEl(), on = !!lsGet(NT_KEY);
+      add(body, h('p', { text: t('nt.body') }), h('p', { class: 'hint', text: t('nt.private') }));
+      if (on) {
+        add(body,
+          h('button', { type: 'button', class: 'btn block', id: 'notify-test', text: t('nt.test'), on: { click: function () {
+            navigator.serviceWorker.ready.then(function (reg) { return reg.showNotification(t('nt.appTitle'), { body: t('nt.testBody'), tag: 'ppm-due-test', icon: '/icons/tool-vault-192.png' }); })
+              .then(function () { setMsg(msg, t('nt.testSent'), true); }, function () { setMsg(msg, t('nt.denied')); });
+          } } }),
+          h('button', { type: 'button', class: 'btn block', id: 'notify-off', text: t('pk.off'), on: { click: function () { ntOff().then(function () { close(); render(); toast(t('nt.offDone')); }); } } }), msg);
+        return;
+      }
+      add(body, h('button', { type: 'button', class: 'btn primary block', id: 'notify-on', text: t('nt.on'), on: { click: function () {
+        setMsg(msg, '');
+        ntOn().then(function () { close(); render(); toast(t('nt.onDone')); }, function (e) { setMsg(msg, e && e.code === 'denied' ? t('nt.denied') : t('nt.needInstall')); });
+      } } }), msg, h('p', { class: 'hint', text: t('nt.other') }));
     });
   }
 
@@ -1570,11 +1887,14 @@
   });
   function afterUnlock(adopted) {
     S.pkArm = false; S.pkNudge = false;
+    if (!DESK) ntWrite();
     if (!DESK) helperWatch();
     if (!DESK) abInit();
     liveKids().forEach(sendKey);
     if (DESK) { if (!adopted && openerIsApp()) sendKey(window.opener); return; }
     if (S.startAdd) { S.startAdd = false; S.tab = 'budget'; render(); openAdd(); }      // the "Add spending" home-screen shortcut
+    else if (S.startCheckin) { S.startCheckin = false; render(); openCheckin(); }       // from the evening reminder
+    else setTimeout(ciAsk, 1200);
     if (S.shared) saveShared();
     if (!adopted && deskCapable() && deskIds().length) setTimeout(function () { deskReopen(false); }, 0);
   }
@@ -2156,6 +2476,8 @@
   }
   function group(title, items) { return h('section', { class: 'set-group' }, h('h2', { text: title }), h('ul', { class: 'set-list card' }, items)); }
   function renderSettings(main) {
+    var ntRow = ntSupported() ? h('li', { id: 'notify-row' }, h('button', { type: 'button', class: 'set-row', id: 'set-notify', on: { click: openNotify } },
+      h('span', { class: 'set-label', text: t('nt.title') }), h('span', { class: 'set-value', text: lsGet(NT_KEY) ? t('pk.stateOn') : t('pk.stateOff') }), icon('chev', 18))) : null;
     var devRow = h('li', { id: 'devopen-row' });
     C.deviceOpenOn().then(function (on) {
       if (!document.contains(devRow)) return;
@@ -2202,6 +2524,7 @@
         row(t('set.recHelp'), null, function () { openRecHelp(false); }, 'set-rechelp'),
         pkRow,
         devRow,
+        ntRow,
         h('li', { class: 'set-ctrl' }, h('button', { type: 'button', class: 'set-row', on: { click: function () { C.persist().then(function (p) { storage.textContent = p ? t('set.storageOn') : t('set.storageOff'); }); } } },
           h('span', { class: 'set-label', text: t('set.storage') }), storage))]),
       group(t('set.diary'), [row(t('pr.title'), null, function () { openDiaryPrint(); }, 'set-diary-print'), row(t('diary.exportTitle'), String(S.diary.entries.length), openDiaryExport, 'set-diary-export')]),
@@ -2302,14 +2625,27 @@
         body.textContent = '';
         add(body, h('p', { class: 'hint', text: t('rec.listBody') }));
         if (!S.budget.recurring.length) return add(body, h('p', { class: 'empty-title', text: t('rec.empty') }));
+        var hide = h('input', { type: 'checkbox', id: 'rec-ics-hide' }), icsMsg = msgEl();
+        var hasExp = S.budget.recurring.some(function (r) { return r.active && r.type === 'expense'; });
+        if (hasExp) add(body, h('div', { class: 'card rec-ics' },
+          h('p', { class: 'hint', text: t('rec.icsBody') }),
+          h('button', { type: 'button', class: 'btn block', id: 'rec-ics', text: '📅 ' + t('rec.ics'), on: { click: function () {
+            var text = B.recurringIcs(S.budget, { today: today(), hideAmounts: hide.checked, label: t('rec.icsLabel'), title: function (r) { return r.note || catName(r.cat); }, money: function (a, c) { return money(a, c); } });
+            download(text, 'poppopmake-payments.ics', 'text/calendar;charset=utf-8'); setMsg(icsMsg, t('rec.icsDone'), true);
+          } } }),
+          h('div', { class: 'check' }, hide, h('label', { for: 'rec-ics-hide', text: t('rec.icsHide') })), icsMsg));
         add(body, h('ul', { class: 'rec-list' }, S.budget.recurring.map(function (r) {
           return h('li', { class: r.active ? '' : 'paused' },
             h('span', { class: 'emoji', 'aria-hidden': 'true', text: catEmoji(r.cat) }),
             h('span', { class: 'tx-main' }, h('span', { class: 'tx-cat', text: (r.note || catName(r.cat)) + ' · ' + (r.type === 'income' ? '+' : '−') + money(r.amt, r.cur) }),
-              h('span', { class: 'tx-note', text: t('rec.day', { d: r.day }) + (r.active ? '' : ' · ' + t('rec.paused')) })),
+              h('span', { class: 'tx-note', text: (r.freq === 'week' ? t('rec.week', { wd: wdName(r.wd) }) : t('rec.day', { d: r.day })) + (r.active ? '' : ' · ' + t('rec.paused')) })),
             h('button', { type: 'button', class: 'btn small', text: r.active ? t('rec.pause') : t('rec.resume'), on: { click: function () {
               B.updateRecurring(S.budget, r.id, { active: !r.active });
-              if (r.active) {                       // resuming: do not back-fill the months it was paused
+              if (r.active && r.freq === 'week') {  // resuming: only from the latest due day on, not the weeks it was paused
+                var back = (B.weekday(today()) - r.wd + 7) % 7, lastDue = B.addDays(today(), -back);
+                r.lastDate = B.addDays(lastDue, -7) > (r.lastDate || '') ? B.addDays(lastDue, -7) : r.lastDate;
+                B.applyRecurring(S.budget, today());
+              } else if (r.active) {                       // resuming: do not back-fill the months it was paused
                 var prev = B.addMonths(thisMonth(), -1);
                 if ((!r.last || r.last < prev) && r.start <= prev) r.last = prev;
                 B.applyRecurring(S.budget, today());
@@ -2489,7 +2825,7 @@
   // ---------- a daily reminder in the calendar the person already uses (no server, no notifications permission) ----------
   function icsText(s0) { return String(s0).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
   function reminderParts(time, what) {
-    var url = location.origin + '/vault' + (what === 'diary' ? '?start=diary' : what === 'budget' ? '?start=add' : '');
+    var url = location.origin + '/vault' + (what === 'diary' ? '?start=diary' : what === 'budget' ? '?start=add' : '?start=checkin');
     var title = t(what === 'diary' ? 'rm.evDiary' : what === 'budget' ? 'rm.evBudget' : 'rm.evBoth');
     var hm = /^(\d{2}):(\d{2})$/.exec(time) || [0, '21', '00'];
     var d = new Date(); d.setHours(+hm[1], +hm[2], 0, 0);
@@ -2941,7 +3277,7 @@
   // ---------- the helper (vault-helper.js): today's suggestions, "ask in your own words", step-by-step pointers ----------
   var GUIDE = HP ? new HP.Guide({ t: t }) : null, hpSeen = {}, hpWatch = null;
   var ACT_LABEL = { add: 'hp.do.add', recurring: 'hp.do.recurring', note: 'hp.do.note', charts: 'hp.do.charts', 'monthly-budget': 'hp.do.budget',
-    recap: 'hp.do.recap', 'make-recurring': 'hp.do.makeRec', diary: 'hp.do.diary', guide: 'hp.do.guide', 'add-income': 'hp.do.income', goal: 'hp.do.goal', passkey: 'hp.do.passkey' };
+    recap: 'hp.do.recap', 'make-recurring': 'hp.do.makeRec', diary: 'hp.do.diary', guide: 'hp.do.guide', 'add-income': 'hp.do.income', goal: 'hp.do.goal', passkey: 'hp.do.passkey', 'quick-add': 'hp.do.quickAdd', 'make-weekly': 'hp.do.makeWeekly', checkin: 'ci.start' };
   function hpText(x) {
     var v = {}, src = x[1] || {};
     Object.keys(src).forEach(function (k) { v[k] = src[k]; });
@@ -2950,6 +3286,8 @@
     if (v.cat !== undefined) { v.what = v.what || catName(v.cat); v.cat = catName(v.cat); }
     if (v.date) v.date = I.dayLabel(v.date);
     if (v.ym) v.ym = I.monthLabel(v.ym);
+    if (typeof v.wd === 'number') v.wd = wdName(v.wd);
+    if (typeof v.at === 'number') v.time = pad(Math.floor(v.at / 60)) + ':' + pad(v.at % 60);
     return t(x[0], v);
   }
   // Up to three cards on Budget (two on Notes and Diary, only about that tab). Safety notices keep their own card above.
@@ -2957,8 +3295,12 @@
     if (!HP || DESK || !S.settings) return null;
     helperWatch();                                       // (also right after first setup, which has no unlock)
     if (S.settings.helper.off) return null;
-    var all = HP.suggest({ budget: S.budget, notes: S.notes, diary: S.diary, today: today(), hour: new Date().getHours(), B: B, state: S.settings.helper }, 8);
+    var all = HP.suggest({ budget: S.budget, notes: S.notes, diary: S.diary, today: today(), hour: new Date().getHours(), minute: new Date().getMinutes(), B: B, state: S.settings.helper }, 8);
     var list = tab === 'budget' ? all : all.filter(function (x) { return (x.tab === tab || !x.tab) && !(tab === 'diary' && x.type === 'diary'); });
+    if (S.settings.helper.ci !== false && !S.settings.helper.mute.checkin && new Date().getHours() >= 18 && ciState().days.indexOf(today()) < 0 && S.settings.helper.snooze.checkin !== today()) {
+      var cs = ciStreak(B.addDays(today(), -1));
+      list.unshift({ id: 'checkin', type: 'checkin', emoji: '✅', title: ['hp.s.checkinT'], body: cs >= 1 ? ['hp.s.checkinStreak', { n: cs }] : ['hp.s.checkinB'], act: 'checkin' });
+    }
     if (pkCardDue()) list.unshift({ id: 'passkey', type: 'passkey', emoji: '👆', title: ['hp.pk.t'], body: ['hp.pk.b'], act: 'passkey', alt: 'hp.pk.later' });
     list = list.slice(0, tab === 'budget' ? 3 : 2);
     if (!list.length) return null;
@@ -2974,6 +3316,7 @@
         h('div', { class: 'helper-text' }, h('strong', { text: hpText(x.title) }), h('p', { text: hpText(x.body) }),
           h('div', { class: 'helper-actions' },
             h('button', { type: 'button', class: 'btn small primary', 'data-act': x.act, text: t(ACT_LABEL[x.act] || 'hp.do.open'), on: { click: function () { runAct(x.act, x.args || {}); } } }),
+            x.extra ? h('button', { type: 'button', class: 'btn small', 'data-extra': x.extra.act, text: t(x.extra.label), on: { click: function () { runAct(x.extra.act, x.args || {}); } } }) : null,
             h('button', { type: 'button', class: 'link', 'data-later': x.id, text: t(x.alt || 'hp.later'), on: { click: function () { hs.snooze[x.id] = today(); saveSettings(); render(); } } }),
             x.type === 'first' ? null : h('button', { type: 'button', class: 'link quiet', 'data-mute': x.type, text: t('hp.mute'), on: { click: function () {
               hs.mute[x.type] = 1; saveSettings(); render();
@@ -3000,6 +3343,28 @@
   function runAct(act, a) {
     a = a || {};
     if (act === 'passkey') { openPasskey(); return; }
+    if (act === 'checkin') { openCheckin(); return; }
+    if (act === 'quick-receipt') {                   // the same entry, with a receipt photo: the camera / gallery opens straight away
+      goTab('budget'); openAdd(null, { amt: a.amt, note: a.note, cat: a.cat });
+      var rf = document.getElementById('receipt-input'); if (rf) rf.click();
+      return;
+    }
+    if (act === 'quick-add') {                       // "today's usual": one tap writes it
+      var qt = B.addTx(S.budget, { type: a.type === 'income' ? 'income' : 'expense', amt: a.amt, cat: a.cat, date: today(), note: a.note, at: nowMin() });
+      helperDone('add', qt.id); saveBudget(); render();
+      toast(t('add.saved', { what: catEmoji(qt.cat) + ' ' + catName(qt.cat) + ' ' + money(qt.amt, qt.cur) }), { label: t('btn.undo'), fn: function () { B.deleteTx(S.budget, qt.id); saveBudget(); render(); } });
+      return;
+    }
+    if (act === 'make-weekly') {                     // the same payment every week: make it repeat weekly, from the last one written
+      var rw = B.addRecurring(S.budget, { type: 'expense', amt: a.amt, cat: a.cat, note: a.note, freq: 'week', startDate: a.last, pm: a.pm });
+      rw.lastDate = a.last; rw.last = a.last.slice(0, 7);
+      B.applyRecurring(S.budget, today()); saveBudget(); render();
+      toast(t('hp.weeklyMade', { what: a.note || catName(a.cat), wd: wdName(rw.wd) }), { label: t('btn.undo'), fn: function () {
+        S.budget.tx.filter(function (x) { return x.rid === rw.id; }).map(function (x) { return x.id; }).forEach(function (id) { B.deleteTx(S.budget, id); });
+        B.deleteRecurring(S.budget, rw.id); saveBudget(); render();
+      } });
+      return;
+    }
     if (act === 'add') { goTab('budget'); openAdd(null, a.date ? { date: a.date } : null); }
     else if (act === 'add-income') { goTab('budget'); openAdd(null, { type: 'income' }); }
     else if (act === 'goal') { goTab('budget'); S.budgetView = 'goals'; render(); openGoal(a.id); }
@@ -3126,6 +3491,11 @@
       { id: 'categories', kw: ['분류', '카테고리', '항목', 'category', 'categories', 'カテゴリ', '分類'], run: go(openCategories) },
       { id: 'goals', flow: 'goal', kw: ['저축', '목표', '모으기', '모으', '적금', 'goal', 'saving', 'save up', '目標', '貯金', '貯め'], run: function () { runAct('goals'); } },
       { id: 'charts', kw: ['그래프', '차트', '통계', '분석', '어디에 많이', '어디에 썼', 'chart', 'graph', 'stats', 'where did', 'グラフ', '分析'], run: function () { runAct('charts'); } },
+      { id: 'checkin', boost: 1, kw: ['체크인', '하루 정리', '오늘 정리', '정리할', '물어봐', '오늘 하루', 'check in', 'check-in', 'wrap up', 'my day', 'チェックイン', '振り返'], run: function () { openCheckin(); } },
+      { id: 'notify', kw: ['결제 알림', '미리 알려', '결제일', '푸시', '알림 받', 'payment reminder', 'notification', 'notify', 'due date', '支払い通知', 'お知らせ', '支払日'], run: function () { if (ntSupported()) openNotify(); else openRecurring(); } },
+      { id: 'calendar', kw: ['달력', '캘린더', '날짜별', '일별', '그날', 'calendar', 'by day', 'カレンダー', '日別'], run: function () { goTab('budget'); S.budgetView = 'cal'; render(); } },
+      { id: 'quick', kw: ['한 줄', '한줄', '빠르게', '빨리', '간단히', '간편', 'quick', 'one line', 'fast', '1行', '素早く'], run: setTab('budget', '#quick-input') },
+      { id: 'weekly', kw: ['매주', '주마다', '일주일마다', 'weekly', 'every week', '毎週'], run: function () { goTab('budget'); openAdd(); setTimeout(function () { var r = document.getElementById('repeat'); if (r) { r.checked = true; r.dispatchEvent(new Event('change')); var f = document.getElementById('repeat-freq'); if (f) f.value = 'week'; } }, 0); } },
       { id: 'year', kw: ['연간', '1년', '일년', '올해', '작년', 'year', 'annual', '年間', '今年'], run: function () { goTab('budget'); S.budgetView = 'year'; render(); } },
       { id: 'search', kw: ['검색', '찾기', '찾아', '언제 샀', 'search', 'find', '検索', '探'], run: function () { runAct('search'); } },
       { id: 'note', flow: 'note', kw: ['메모', '포스트잇', '적어두', '할일', '할 일', '장보기', 'note', 'memo', 'sticky', 'todo', 'to-do', 'メモ', '付箋', 'やること'],
@@ -3199,6 +3569,7 @@
       var hs = S.settings.helper;
       var on = h('input', { type: 'checkbox', id: 'hp-on', checked: !hs.off });
       var gd = h('input', { type: 'checkbox', id: 'hp-guides', checked: hs.guides });
+      var ci = h('input', { type: 'checkbox', id: 'hp-ci', checked: hs.ci !== false, on: { change: function () { hs.ci = ci.checked; saveSettings(); } } });
       on.addEventListener('change', function () { hs.off = !on.checked; saveSettings(); render(); });
       gd.addEventListener('change', function () { hs.guides = gd.checked; saveSettings(); });
       var n = Object.keys(hs.mute).length;
@@ -3208,6 +3579,7 @@
       add(body,
         h('div', { class: 'check' }, on, h('label', { for: 'hp-on', text: t('hp.setOn') })),
         h('div', { class: 'check' }, gd, h('label', { for: 'hp-guides', text: t('hp.setGuides') })),
+        h('div', { class: 'check' }, ci, h('label', { for: 'hp-ci', text: t('ci.setting') })),
         un,
         h('h3', { class: 'hp-sub', text: t('hp.guidesTitle') }),
         h('ul', { class: 'set-list card', id: 'hp-flows' }, Object.keys(FLOWS).map(function (f) {
@@ -3220,6 +3592,7 @@
 
   function render() {
     applyLang();
+    var ae = document.activeElement; if (ae && ae.id === 'quick-input') S.quickFocus = true;     // typing in the one-line box: keep the cursor there
     var p = S.phase;
     if (p === 'loading') { app.textContent = ''; add(app, h('div', { class: 'screen center' }, h('p', { class: 'hint', text: '…' }))); }
     else if (p === 'nocrypto') renderUnsupported('err.crypto');
@@ -3252,10 +3625,11 @@
   render();
   C.status().then(function (st) {
     S.phase = st === 'empty' ? 'welcome' : 'locked';
-    var sm = (location.search + location.hash).match(/[?&#]start=(notes|diary|add|share)\b/);
+    var sm = (location.search + location.hash).match(/[?&#]start=(notes|diary|add|share|checkin)\b/);
     var lastTab = lsGet(TAB_KEY);
     if (!sm && /^(budget|notes|diary)$/.test(lastTab || '')) S.tab = lastTab;        // reopen where you left off
-    if (sm && sm[1] === 'add') { S.tab = 'budget'; S.startAdd = true; } else if (sm && sm[1] === 'share') takeShared(); else if (sm) S.tab = sm[1];
+    if (sm && sm[1] === 'checkin') { S.startCheckin = true; S.tab = 'budget'; }
+    else if (sm && sm[1] === 'add') { S.tab = 'budget'; S.startAdd = true; } else if (sm && sm[1] === 'share') takeShared(); else if (sm) S.tab = sm[1];
     if (S.phase === 'locked' && !DESK) devOpenAtStart(); else render();
   }).catch(function () { S.phase = 'nostorage'; render(); });
   // "Open without the passcode on this device": straight into the app, the lock screen never shows.

@@ -92,6 +92,16 @@
       }
     }
 
+    // today's usual: something written on 3+ of the last 7 days, not yet today — after the time it is usually written
+    var usual = usualCandidate(doc, today, data.hour * 60 + (data.minute || 0));
+    if (usual) push({ id: 'usual-' + usual.key + '-' + today, type: 'usual', emoji: '⏰', title: ['hp.s.usualT', { what: usual.note, cat: usual.cat }],
+      body: usual.at !== null ? ['hp.s.usualBt', { n: usual.n, amt: usual.amt, at: usual.at }] : ['hp.s.usualB', { n: usual.n, amt: usual.amt }], act: 'quick-add',
+      args: { type: usual.type, cat: usual.cat, amt: usual.amt, note: usual.note }, alt: 'hp.usual.no', extra: usual.type === 'expense' ? { act: 'quick-receipt', label: 'hp.usual.receipt' } : null, tab: 'budget', pri: 3 });
+    // the same payment on the same weekday, week after week, not set to repeat: one tap makes it a weekly repeat
+    var wk = weeklyCandidate(doc, today);
+    if (wk) push({ id: 'weekly-' + wk.key, type: 'weekly', emoji: '🗓️', title: ['hp.s.weeklyT', { wd: wk.wd }],
+      body: ['hp.s.weeklyB', { what: wk.note, cat: wk.cat, amt: wk.amt, wd: wk.wd }], act: 'make-weekly', args: wk, tab: 'budget', pri: 5 });
+
     // the same payment in each of the last two months, not set to repeat: one tap makes it repeat
     var rep = repeatCandidate(doc, today);
     if (rep) push({ id: 'repeat-' + rep.key, type: 'repeat', emoji: '🔁', title: ['hp.s.repeatT'],
@@ -160,6 +170,60 @@
   }
   // A payment with the same category and amount (and note, if any) in each of the two months before this one,
   // around the same day, that is not already a repeating entry.
+  // Written on 3 or more of the last 7 days (same note and category), not today yet. The amount offered is the one used
+  // most. If the times it was written are known, the card waits until that time of day; otherwise until noon.
+  function usualCandidate(doc, today, nowMin) {
+    if (!doc || !doc.tx) return null;
+    var from = addDays(today, -7), groups = {};
+    doc.tx.forEach(function (t) {
+      if (t.rid || t.cur !== doc.currency || t.date > today || t.date < from) return;
+      var note = String(t.note || '').trim(); if (!note) return;
+      var key = t.type + '|' + t.cat + '|' + note.toLowerCase();
+      (groups[key] = groups[key] || []).push(t);
+    });
+    var best = null;
+    Object.keys(groups).forEach(function (k) {
+      var g = groups[k];
+      if (g.some(function (t) { return t.date === today; })) return;
+      var days = {}; g.forEach(function (t) { days[t.date] = 1; });
+      var n = Object.keys(days).length; if (n < 3) return;
+      var amts = {}; g.forEach(function (t) { amts[t.amt] = (amts[t.amt] || 0) + 1; });
+      var amt = +Object.keys(amts).sort(function (a, b) { return amts[b] - amts[a] || a - b; })[0];
+      var ats = g.filter(function (t) { return Number.isInteger(t.at); }).map(function (t) { return t.at; }).sort(function (a, b) { return a - b; });
+      var when = ats.length >= 2 ? ats[Math.floor((ats.length - 1) / 2)] : 12 * 60;
+      if (nowMin < when) return;
+      var c = { key: k.replace(/[^a-z0-9가-힣|]/gi, '').slice(0, 40), type: g[0].type, cat: g[0].cat, note: String(g[g.length - 1].note).trim(), amt: amt, n: n, at: ats.length >= 2 ? when : null };
+      if (!best || c.n > best.n) best = c;
+    });
+    return best;
+  }
+  // The same expense (note, category, amount) on the same weekday in at least 3 of the last 4 weeks — and not
+  // on most other days (that is a habit, not a weekly payment).
+  function weeklyCandidate(doc, today) {
+    if (!doc || !doc.tx) return null;
+    var from = addDays(today, -28), groups = {};
+    doc.tx.forEach(function (t) {
+      if (t.type !== 'expense' || t.rid || t.cur !== doc.currency || t.date > today || t.date <= from) return;
+      var key = t.cat + '|' + t.amt + '|' + String(t.note || '').trim().toLowerCase();
+      (groups[key] = groups[key] || []).push(t);
+    });
+    var best = null;
+    Object.keys(groups).forEach(function (k) {
+      var g = groups[k], byWd = {}, weeks = {};
+      g.forEach(function (t) { var wd = new Date(+t.date.slice(0, 4), +t.date.slice(5, 7) - 1, +t.date.slice(8, 10)).getDay(); (byWd[wd] = byWd[wd] || []).push(t); });
+      Object.keys(byWd).forEach(function (wd) {
+        var list = byWd[wd]; weeks = {};
+        list.forEach(function (t) { weeks[Math.floor(dayDiff(t.date, today) / 7)] = 1; });
+        if (Object.keys(weeks).length < 3 || g.length - list.length > 1) return;
+        var t0 = list[0], last = list.map(function (t) { return t.date; }).sort().pop();
+        var already = (doc.recurring || []).some(function (r) { return r.cat === t0.cat && r.amt === t0.amt && r.type === 'expense'; });
+        if (already) return;
+        var c = { key: k.replace(/[^a-z0-9가-힣|]/gi, '').slice(0, 40) + '-' + wd, cat: t0.cat, amt: t0.amt, note: String(t0.note || '').trim(), wd: +wd, last: last, pm: t0.pm || null };
+        if (!best || c.amt > best.amt) best = c;
+      });
+    });
+    return best;
+  }
   function repeatCandidate(doc, today) {
     if (!doc || !doc.tx) return null;
     var ym = ymOf(today), m1 = addMonths(ym, -1), m2 = addMonths(ym, -2), groups = {};

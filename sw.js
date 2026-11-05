@@ -272,8 +272,46 @@ function saveAll() {
     });
   });
 }
+// Payment reminders (Android, installed app): the app leaves only due dates and counts in this cache.
+var DUE_CACHE = 'ppm-due', DUE_URL = '/__ppm-due';
+function localDay(offset) { var d = new Date(); d.setDate(d.getDate() + (offset || 0)); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+function dueCheck() {
+  return caches.open(DUE_CACHE).then(function (c) {
+    return c.match(DUE_URL).then(function (r) { return r ? r.json() : null; }).then(function (data) {
+      if (!data || !data.on || !Array.isArray(data.sched)) return null;
+      var today = localDay(0), tomorrow = localDay(1);
+      if (data.shown === today) return null;                       // at most one reminder a day
+      var a = 0, b = 0;
+      data.sched.forEach(function (x) { if (x.d === today) a += x.n | 0; else if (x.d === tomorrow) b += x.n | 0; });
+      var tx0 = data.text || {};
+      if (!a && !b) {                                               // nothing due: in the evening, a nudge to check in
+        if (!data.ci || data.ci.last === today || new Date().getHours() < (typeof data.ci.hour === 'number' ? data.ci.hour : 19)) return null;
+        data.shown = today;
+        return c.put(DUE_URL, new Response(JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } })).then(function () {
+          return self.registration.showNotification(tx0.title || 'PopPopMake', { body: tx0.ci || '', tag: 'ppm-due', icon: '/icons/tool-vault-192.png', badge: '/icons/tool-vault-192.png', data: { url: '/vault?start=checkin' } });
+        });
+      }
+      var tx = data.text || {}, body = a && b ? String(tx.both || '').replace('{a}', a).replace('{b}', b) : a ? String(tx.today || '').replace('{n}', a) : String(tx.tomorrow || '').replace('{n}', b);
+      data.shown = today;
+      return c.put(DUE_URL, new Response(JSON.stringify(data), { headers: { 'Content-Type': 'application/json' } })).then(function () {
+        return self.registration.showNotification(tx.title || 'PopPopMake', { body: body, tag: 'ppm-due', icon: '/icons/tool-vault-192.png', badge: '/icons/tool-vault-192.png', data: { url: '/vault' } });
+      });
+    });
+  }).catch(function () {});
+}
+self.addEventListener('periodicsync', function (event) { if (event.tag === 'ppm-due') event.waitUntil(dueCheck()); });
+self.addEventListener('notificationclick', function (event) {
+  event.notification.close();
+  var url = (event.notification.data && event.notification.data.url) || '/vault';
+  event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (list) {
+    for (var i = 0; i < list.length; i++) { if (new URL(list[i].url).pathname === new URL(url, self.location.origin).pathname && 'focus' in list[i]) { if (url.indexOf('start=') > 0 && list[i].navigate) return list[i].navigate(url).then(function (w) { return w && w.focus(); }); return list[i].focus(); } }
+    return self.clients.openWindow ? self.clients.openWindow(url) : null;
+  }));
+});
+
 self.addEventListener('message', function (event) {
   var d = event.data || {}, port = event.ports && event.ports[0];
+  if (d.type === 'ppm-due-check') { event.waitUntil(dueCheck()); return; }
   if (d.type !== 'ppm-save-offline' || !port) return;
   event.waitUntil(saveAll().then(function (r) {
     port.postMessage({ type: 'ppm-offline-done', version: CACHE_VERSION, count: r.count, failed: r.failed || 0, already: !!r.already });
