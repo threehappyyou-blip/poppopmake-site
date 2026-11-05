@@ -650,3 +650,6 @@ a.btn { text-decoration: none; display: flex; align-items: center; justify-conte
 .hp-say-row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
 .hp-say-btn { background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, .45); border-radius: 999px; padding: 8px 16px; min-height: 40px; font: inherit; font-weight: 600; cursor: pointer; }
 .hp-say-btn.primary { background: #fff; color: #1C2321; border-color: #fff; }
+
+/* open without the passcode: the trade-off, said before it is turned on */
+.dev-warn { background: var(--paper-2); border-left: 4px solid var(--danger); border-radius: 10px; padding: 12px 14px; margin: 12px 0; font-weight: 600; line-height: 1.5; }

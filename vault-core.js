@@ -188,6 +188,9 @@
       return tx(['meta'], 'readonly', function (t) { return req(t.objectStore('meta').get('main')); });
     });
   }
+  function readDevice() {
+    return exists().then(function (yes) { return yes ? tx(['meta'], 'readonly', function (t) { return req(t.objectStore('meta').get('device')); }) : null; }).catch(function () { return null; });
+  }
   function writeMeta(meta) { return tx(['meta'], 'readwrite', function (t) { return req(t.objectStore('meta').put(meta, 'main')); }); }
 
   // ---------- session (in memory only) ----------
@@ -334,6 +337,46 @@
     },
     passkeyRemove: function () {
       return readMeta().then(function (meta) { if (!meta || !meta.pk) return; delete meta.pk; return writeMeta(meta).then(function () { if (session) session.meta = meta; emit({ type: 'passkey' }); }); });
+    },
+
+    // ----- open without the passcode on this device (the owner's choice, off by default) -----
+    // A browser key that can never be exported is made on this device and kept in its own record next to the vault;
+    // it seals one more copy of the data key. Anyone who can use this browser can then open the vault, which is
+    // exactly what was asked for. It is never in a backup, a QR move or anything sent anywhere.
+    deviceOpenOn: function () {
+      return Promise.all([readMeta(), readDevice()]).then(function (r) { return !!(r[0] && r[1] && r[1].id === r[0].id); });
+    },
+    deviceOpenEnable: function (pass) {
+      var meta, raw;
+      return readMeta().then(function (m) {
+        if (!m) throw fail('empty', 'There is no vault on this device yet.');
+        meta = m;
+        return rawFromPass(meta, String(pass || '').normalize('NFC'));
+      }).then(function (r) {
+        raw = r;
+        return subtle.generateKey({ name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+      }).then(function (k) {
+        return seal(k, raw, aadFor(meta, 'device')).then(function (box) {
+          raw.fill(0);
+          return tx(['meta'], 'readwrite', function (t) { return req(t.objectStore('meta').put({ id: meta.id, key: k, box: box, created: new Date().toISOString() }, 'device')); });
+        });
+      }).then(function () { emit({ type: 'device-open' }); return true; })
+        .catch(function (e) { if (raw) raw.fill(0); throw e; });
+    },
+    deviceOpenDisable: function () {
+      return tx(['meta'], 'readwrite', function (t) { return req(t.objectStore('meta').delete('device')); }).then(function () { emit({ type: 'device-open' }); });
+    },
+    // Opens the vault with the device copy. A copy that doesn't fit this vault (restored or replaced since) is dropped.
+    deviceUnlock: function () {
+      return Promise.all([readMeta(), readDevice()]).then(function (r) {
+        var meta = r[0], d = r[1];
+        if (!meta || !d) throw fail('no-device', 'Not set up on this device.');
+        var drop = function () { return Vault.deviceOpenDisable().catch(function () {}).then(function () { throw fail('no-device', 'Not set up on this device.'); }); };
+        if (d.id !== meta.id || !d.key || !d.box) return drop();
+        return open(d.key, d.box, aadFor(meta, 'device')).then(function (raw) {
+          return importDataKey(raw).then(function (key) { raw.fill(0); session = { key: key, meta: meta }; });
+        }, drop);
+      });
     },
 
     lock: function () { session = null; emit({ type: 'locked' }); return Promise.resolve(); },
@@ -500,7 +543,8 @@
                     var d = blobs[k];
                     return req(bs.put({ iv: d.iv, ct: d.ct, type: d.type }, k));
                   })));
-                }).then(function () { return req(t.objectStore('meta').put(kept, 'main')); });
+                }).then(function () { return req(t.objectStore('meta').put(kept, 'main')); })
+                  .then(function () { return req(t.objectStore('meta').delete('device')); });     // belongs to the device and the old vault
               });
             })
             .then(function () { session = { key: key, meta: kept }; emit({ type: 'restored' }); });

@@ -30,7 +30,7 @@
     '.ppm-install[hidden]{display:none}' +
     '.ppm-pop{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:2147483000;max-width:min(440px,calc(100vw - 32px));background:#1C2321;color:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:.9rem;line-height:1.45}' +
     '.ppm-pop[hidden]{display:none}' +
-    '.ppm-pop button{margin-top:10px;background:#fff;color:#1C2321;border:0;border-radius:999px;padding:6px 14px;font:inherit;font-weight:600;cursor:pointer}' +
+    '.ppm-pop button{margin:10px 8px 0 0;background:#fff;color:#1C2321;border:0;border-radius:999px;padding:6px 14px;font:inherit;font-weight:600;cursor:pointer}' +
     '.ppm-offline{position:fixed;top:0;left:0;right:0;z-index:2147482999;background:#F4B740;color:#1C2321;text-align:center;font-size:.84rem;padding:6px 12px}' +
     '.ppm-offline[hidden]{display:none}' +
     '.ppm-recent{max-width:1100px;margin:18px auto 0;padding:0 20px}' +
@@ -44,21 +44,40 @@
     '.ppm-ad-label a{color:inherit}' +
     '.ppm-ad-link{display:block;line-height:0}' +
     '.ppm-ad-img{display:block;width:100%;height:auto;max-width:728px;margin:0 auto;border-radius:6px;background:#F3F4F2}' +
-    '@media (prefers-color-scheme: dark){.ppm-recent a{background:#1f2624;color:#eef1ef;border-color:rgba(255,255,255,.2)}.ppm-ad-label{color:#9aa39e}}';
+    '@media (prefers-color-scheme: dark){.ppm-recent a{background:#1f2624;color:#eef1ef;border-color:rgba(255,255,255,.2)}.ppm-ad-label{color:#9aa39e}}' +
+    // phones: buttons big enough for a thumb (about 40 px), without changing how anything looks on a computer
+    '@media (pointer:coarse){.ppm-install{min-height:40px;padding:8px 14px}.ppm-pop button{min-height:40px;padding:8px 16px}' +
+    '.install-dismiss,#installDismiss,#ppm-thanks-close{min-width:40px!important;min-height:40px!important;display:inline-flex!important;align-items:center;justify-content:center}' +
+    '.copy-btn{min-height:36px!important;padding-top:8px!important;padding-bottom:8px!important}' +
+    'header nav>a[href="/"],header nav>a[href="/manual"]{display:inline-flex;align-items:center;min-height:40px}' +
+    'main details>summary{padding-top:8px;padding-bottom:8px}}';
   document.head.appendChild(el('style', { id: 'ppm-app-css' }, css));
+
+  // iPhone/iPad zoom into any text box whose letters are smaller than 16 px, and the page stays zoomed after typing.
+  // maximum-scale=1 stops that jump; iPhone and iPad still let you pinch to zoom, so nothing is taken away.
+  // (Android does block pinch zoom with it, so Android is left alone.)
+  (function () {
+    var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    var m = document.querySelector('meta[name=viewport]');
+    if (!ios || !m) return;
+    var c = m.getAttribute('content') || '';
+    if (!/maximum-scale/.test(c)) m.setAttribute('content', c + (c ? ', ' : '') + 'maximum-scale=1');
+  })();
 
   // ------------------------------------------------------------------------------------------- small notices
   var pop = null, popTimer = null;
-  function notice(text, ms) {
+  function notice(text, ms, buttons) {
     if (!pop) {
       pop = el('div', { class: 'ppm-pop', id: 'ppm-pop', role: 'status', 'aria-live': 'polite', hidden: '' });
       document.body.appendChild(pop);
     }
     pop.textContent = '';
     pop.appendChild(el('div', { id: 'ppm-pop-text' }, text));
-    var ok = el('button', { type: 'button', id: 'ppm-pop-ok' }, 'OK');
-    ok.addEventListener('click', function () { pop.hidden = true; });
-    pop.appendChild(ok);
+    (buttons || [{ id: 'ppm-pop-ok', label: 'OK' }]).forEach(function (x) {
+      var b = el('button', { type: 'button', id: x.id }, x.label);
+      b.addEventListener('click', function () { pop.hidden = true; if (x.fn) x.fn(); });
+      pop.appendChild(b);
+    });
     pop.hidden = false;
     clearTimeout(popTimer);
     if (ms) popTimer = setTimeout(function () { pop.hidden = true; }, ms);
@@ -210,8 +229,33 @@
     if (f && !f.querySelector('a[href="/advertise"]')) footLink(f, el('a', { href: '/advertise', id: 'ppm-advertise-link' }, 'Advertise'));
   }
 
+  // Installed app left open while a new version comes out: offer to reload (compares the files' version tags
+  // every few hours and when the app comes back to the front).
+  var UP = { base: null, shown: false, last: 0 };
+  function upTag(u) {
+    return fetch(u, { method: 'HEAD', cache: 'no-store', credentials: 'same-origin' }).then(function (r) {
+      return r.ok ? (r.headers.get('ETag') || r.headers.get('Last-Modified') || r.headers.get('Content-Length') || '') : null;
+    }).catch(function () { return null; });
+  }
+  function upCheck() {
+    UP.last = Date.now();
+    Promise.all(['/ppm-app.js', '/site-helper.js', location.pathname].map(upTag)).then(function (tags) {
+      if (tags.some(function (x) { return x === null; })) return;
+      var k = tags.join('|');
+      if (UP.base === null) { UP.base = k; return; }
+      if (k !== UP.base && !UP.shown) {
+        UP.shown = true;
+        notice('A new version of PopPopMake is ready.', 0, [{ id: 'ppm-up-reload', label: 'Reload', fn: function () { location.reload(); } }, { id: 'ppm-up-later', label: 'Later' }]);
+      }
+    });
+  }
+
   function start() {
     makeButton();
+    if (standalone) {
+      upCheck(); setInterval(upCheck, 3 * 3600e3);
+      document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - UP.last > 30 * 60e3) upCheck(); });
+    }
     if (isHome) showRecent();
     footerLinks();
     showOffline();

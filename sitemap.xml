@@ -286,6 +286,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://poppopmake.com/blog-photo-prep</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://poppopmake.com/manual</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>

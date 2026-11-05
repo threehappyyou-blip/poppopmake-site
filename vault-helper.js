@@ -104,6 +104,39 @@
       push({ id: 'diary-' + today, type: 'diary', emoji: '📔', title: ['hp.s.diaryT'], body: streak >= 2 ? ['hp.s.diaryStreak', { n: streak }] : ['hp.s.diaryB'], act: 'diary', tab: 'diary', pri: 5 });
     }
 
+    // income that came in around the same day in each of the last two months, not written down yet this month
+    var inc = txs.filter(function (t) { return t.type === 'income' && t.cur === cur; }), m1i = addMonths(ym, -1), m2i = addMonths(ym, -2);
+    var i1 = inc.filter(function (t) { return ymOf(t.date) === m1i; }), i2 = inc.filter(function (t) { return ymOf(t.date) === m2i; });
+    if (i1.length && i2.length && !inc.some(function (t) { return ymOf(t.date) === ym; })) {
+      var dd = Math.max(+i1[0].date.slice(8, 10), +i2[0].date.slice(8, 10));
+      if (Math.abs(+i1[0].date.slice(8, 10) - +i2[0].date.slice(8, 10)) <= 3 && +today.slice(8, 10) >= Math.min(dd, dim(ym)) + 1)
+        push({ id: 'income-' + ym, type: 'income', emoji: '💰', title: ['hp.s.incomeT'], body: ['hp.s.incomeB', { day: dd }], act: 'add-income', tab: 'budget', pri: 4 });
+    }
+
+    // savings goals: nearly there, or the date is close
+    ((doc && doc.goals) || []).forEach(function (g) {
+      if (g.done || !(g.target > 0)) return;
+      var saved = (g.moves || []).reduce(function (a, m) { return a + m.amt; }, 0), left = g.target - saved;
+      if (left <= 0) return;
+      if (g.due && g.due >= today && dayDiff(today, g.due) <= 14)
+        push({ id: 'goal-due-' + g.id + '-' + today, type: 'goal', emoji: '⏳', title: ['hp.s.goalDueT', { name: g.name }], body: ['hp.s.goalDueB', { amt: left, n: dayDiff(today, g.due) }], act: 'goal', args: { id: g.id }, tab: 'budget', pri: 4 });
+      else if (saved / g.target >= 0.9)
+        push({ id: 'goal-near-' + g.id, type: 'goal', emoji: '🎯', title: ['hp.s.goalNearT', { name: g.name }], body: ['hp.s.goalNearB', { amt: left, pct: Math.floor(saved / g.target * 100) }], act: 'goal', args: { id: g.id }, tab: 'budget', pri: 5 });
+    });
+
+    // Monday: how last week went
+    var wd = new Date(+today.slice(0, 4), +today.slice(5, 7) - 1, +today.slice(8, 10)).getDay();
+    if (wd === 1) {
+      var w1s = addDays(today, -7), w2s = addDays(today, -14);
+      var wk = exp.filter(function (t) { return t.date >= w1s && t.date < today; }), wk2 = exp.filter(function (t) { return t.date >= w2s && t.date < w1s; });
+      if (wk.length >= 3) {
+        var s1 = wk.reduce(function (a, t) { return a + t.amt; }, 0), s2 = wk2.reduce(function (a, t) { return a + t.amt; }, 0);
+        var wdiff = s2 > 0 ? Math.round((s1 - s2) / s2 * 100) : null;
+        push({ id: 'week-' + today, type: 'week', emoji: '🗓️', title: ['hp.s.weekT'],
+          body: [wdiff === null ? 'hp.s.weekB0' : wdiff <= 0 ? 'hp.s.weekLess' : 'hp.s.weekMore', { amt: s1, pct: Math.abs(wdiff || 0) }], act: 'charts', tab: 'budget', pri: 6 });
+      }
+    }
+
     // a feature people miss — at most one, a different one each day, once there are three days of use
     if (usedDays >= 3) {
       var hasPhoto = txs.some(function (t) { return t.photo; });

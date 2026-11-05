@@ -116,6 +116,15 @@
      'annotate a screenshot', 'markup screenshot', 'draw arrow on screenshot', 'add arrows to an image', 'add text to an image', 'highlight part of a screenshot', 'crop a screenshot', 'crop an image', 'crop a photo', 'blur part of a screenshot', 'blur out information in a screenshot', 'blur a license plate', 'circle something in a screenshot', 'draw on an image', 'mark up an image', 'write on a photo', 'hide info in a screenshot'],
     ['screenshot', 'annotate', 'markup', 'arrow', 'highlight', 'crop', 'draw', 'shape', 'blur', 'capture', 'callout', 'snipping'],
     { notIf: ['close', 'reopen', 'restore'] });
+  T('blog-photo-prep', 'Blog Photo Prep', 'Documents', '/blog-photo-prep',
+    'Get all the photos for a blog post ready at once: resized, compressed, renamed by a keyword, location removed — optional blog name and face covering.',
+    ['prepare photos for a blog', 'blog photos', 'photos for a blog post', 'resize photos for a blog', 'resize images for a blog', 'optimize images for a blog',
+     'batch resize photos', 'bulk resize photos', 'bulk resize images', 'resize multiple photos', 'resize many photos at once', 'resize all photos at once', 'bulk compress images', 'batch compress photos',
+     'rename photos', 'rename photos in bulk', 'batch rename images', 'rename image files with a keyword', 'seo image file names', 'image file names for seo',
+     'remove location from photos', 'remove location data from a photo', 'remove gps from a photo', 'strip exif from a photo', 'remove exif data', 'remove metadata from photos', 'delete photo location', 'hide where a photo was taken',
+     'add my blog name to photos', 'watermark photos', 'add a watermark to photos', 'watermark many photos', 'add text watermark to images',
+     'fix sideways photos', 'photo is sideways', 'naver blog photos', 'wordpress blog photos', 'too many photos to resize one by one'],
+    ['blog', 'blogger', 'batch', 'bulk', 'rename', 'exif', 'gps', 'geotag', 'location', 'watermark', 'naver', 'sideways', 'upright']);
 
   /* ------------------------------------------------------------------ MONEY & TAX */
   T('paycheck-us', 'Paycheck Calculator (US)', 'Money & Tax', '/paycheck-calculator',
@@ -477,9 +486,6 @@
   G('image-formats', 'Other image formats (SVG, RAW, Photoshop, or saving as HEIC, GIF or AVIF)',
     { rx: [/\b(svg|raw|psd|eps|cr2|nef|dng|arw)\b/, /\b(to|into|as|2)\s+(an?\s+)?(animated\s+)?(heic|heif|gif|avif)\b/] },
     'We can’t open SVG, camera RAW or Photoshop files, or save pictures as HEIC, GIF or AVIF. HEIC, JPG, PNG, WebP, GIF, BMP and AVIF files can be opened, and saved as JPG, PNG, WebP, BMP, TIFF, ICO or PDF.', ['file-converter'], true);
-  G('image-exif', 'Remove location or EXIF data from a photo',
-    { all: [['remove', 'delete', 'strip', 'clean', 'erase', 'hide', 'scrub'], ['exif', 'gps', 'location', 'geotag', 'metadata'], ['photo', 'image', 'picture', 'jpg', 'jpeg', 'png', 'selfie']] },
-    'Clean Metadata works on PDFs, not on photos.', ['clean-metadata']);
   G('office-metadata', 'Remove metadata or edit history from a Word, Excel or PowerPoint file',
     { rx: [/\b(docx?|xlsx?|pptx?|word|excel|powerpoint|spreadsheet|office)\b.*\b(metadata|author|edit history|revision history|tracked changes|document properties|hidden (data|information|text))\b/,
            /\b(metadata|author|edit history|revision history|tracked changes|document properties|hidden (data|information|text))\b.*\b(docx?|xlsx?|pptx?|word|excel|powerpoint|spreadsheet)\b/] },
@@ -776,7 +782,7 @@
     ['서명', 'sign signature'], ['사인', 'sign signature'], ['전자서명', 'esign signature'], ['주가', 'stock price'], ['가계부', 'budget expense'], ['예산', 'budget'], ['지출', 'expense'], ['메모', 'notes memo'], ['메모장', 'notepad notes'], ['포스트잇', 'sticky notes'], ['스티커메모', 'sticky notes'], ['일기', 'diary'], ['다이어리', 'diary'], ['장보기', 'shopping list'], ['용돈', 'budget'], ['소비', 'spending'], ['기록', 'record'],
     ['암호화', 'encrypt password'], ['해제', 'unlock remove'], ['잠금', 'locked'], ['회전', 'rotate'], ['워터마크', 'watermark'], ['쪽번호', 'page numbers'], ['페이지번호', 'page numbers'],
     ['편집', 'edit'], ['수정', 'edit'], ['자막', 'subtitles'], ['양식', 'template'], ['파일', 'file'], ['한글', 'korean hangul'], ['한컴', 'hancom'],
-    ['아이폰', 'iphone'], ['헤이크', 'heic'], ['파비콘', 'favicon'], ['웹피', 'webp'], ['제이피지', 'jpg'], ['피엔지', 'png'], ['피디에프', 'pdf']
+    ['블로그', 'blog'], ['포스팅', 'blog post'], ['네이버블로그', 'naver blog'], ['티스토리', 'blog'], ['위치정보', 'location gps'], ['일괄', 'batch bulk'], ['파일명', 'rename'], ['이름바꾸기', 'rename'], ['용량', 'compress smaller'], ['줄이기', 'smaller'], ['리사이즈', 'resize'], ['크기', 'resize size'], ['아이폰', 'iphone'], ['헤이크', 'heic'], ['파비콘', 'favicon'], ['웹피', 'webp'], ['제이피지', 'jpg'], ['피엔지', 'png'], ['피디에프', 'pdf']
   ];
   /* Korean filler that should simply be ignored. */
   var KO_STOP = ['싶어', '싶은', '싶습니다', '해주세요', '해줘', '해줄', '주세요', '알려', '도와', '도움', '하고', '하는', '합니다', '하려', '할때', '할려', '있나요', '있어', '있을', '어디', '뭐', '무엇', '이거', '그거', '제가', '저는', '내가', '나는', '우리', '좀', '같은', '해야', '됩니다', '되나요', '가능', '수있', '때', '대한', '관련', '위한', '에서', '으로', '에게', '합니', '해서', '해도', '하면', '하기', '으면', '어떻게', '방법', '하는법', '인가요', '인지', '는데', '입니다', '이에요', '예요', '하고싶'];

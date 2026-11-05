@@ -567,7 +567,7 @@
         clearFails();
         return loadAll();
       }).then(function () {
-        S.phase = 'app'; touch(); render(); afterUnlock();
+        S.phase = 'app'; touch(); render(); afterUnlock(); if (!DESK) pkNudge();
       }).catch(function (err) {
         go.textContent = t('lock.unlock'); go.disabled = false;
         if (err && err.code === 'bad-passcode') { noteFail(); setMsg(msg, t('lock.wrong')); p.input.select(); tick(); }
@@ -581,8 +581,17 @@
       deskHello(); tick(); return;
     }
     var pkSlot = h('div', { class: 'pk-slot' });
-    Promise.all([C.passkeyEnrolled(), pkCheck()]).then(function (r) {
-      if (!r[0] || !r[1] || S.phase !== 'locked' || !document.contains(pkSlot)) return;
+    Promise.all([C.passkeyEnrolled(), pkCheck(), C.deviceOpenOn()]).then(function (r) {
+      if (S.phase !== 'locked' || !document.contains(pkSlot)) return;
+      if (r[2]) {
+        var d = h('button', { type: 'button', class: 'btn primary block pk-btn', id: 'dev-open', text: t('dev.open') });
+        d.addEventListener('click', function () { d.disabled = true; setMsg(msg, ''); devOpen().catch(function () { d.disabled = false; render(); }); });
+        add(pkSlot, d, h('p', { class: 'hint center', text: t('pk.or') }));
+        S.pkBtn = null; S.devBtn = d;
+        if (S.pkArm && document.visibilityState === 'visible') { S.pkArm = false; d.click(); }
+        return;
+      }
+      if (!r[0] || !r[1]) return;
       var b = h('button', { type: 'button', class: 'btn primary block pk-btn', id: 'pk-unlock' }, h('span', { 'aria-hidden': 'true', text: '👆 ' }), t('pk.unlock'));
       b.addEventListener('click', function () {
         b.disabled = true; setMsg(msg, '');
@@ -618,6 +627,7 @@
   document.addEventListener('visibilitychange', function () {
     if (document.visibilityState === 'hidden') { if (S.phase === 'locked') S.pkArm = true; return; }
     if (S.phase === 'locked' && S.pkBtn && document.contains(S.pkBtn[0]) && !modals.length) pkAutoTry(S.pkBtn[0], S.pkBtn[1]);
+    else if (S.phase === 'locked' && S.pkArm && S.devBtn && document.contains(S.devBtn) && !S.devBtn.disabled && !modals.length) { S.pkArm = false; S.devBtn.click(); }
   });
 
   function renderForgot() {
@@ -1272,10 +1282,33 @@
         var go = h('button', { type: 'button', class: 'btn primary block', id: 'pk-enroll', text: t('pk.on') });
         go.addEventListener('click', function () {
           go.disabled = true; setMsg(msg, t('pk.wait'), true);
-          C.passkeyEnroll(p.input.value, t('app.name')).then(function () { close(); render(); toast(t('pk.onDone')); })
+          C.passkeyEnroll(p.input.value, t('app.name')).then(function () { S.pkNudge = false; close(); render(); toast(t('pk.onDone')); })
             .catch(function (e) { go.disabled = false; setMsg(msg, e && e.code === 'bad-passcode' ? t('lock.wrong') : pkText(e)); });
         });
         add(body, h('p', { text: t('pk.body') }), h('p', { class: 'hint', text: t('pk.how') }), p.el, msg, go);
+      });
+    });
+  }
+
+  // Open without the passcode on this device: the owner's choice, with the trade-off said plainly before it is on.
+  function openDevOpen() {
+    C.deviceOpenOn().then(function (on) {
+      sheet(t('dev.title'), function (body, close) {
+        if (on) {
+          add(body, h('p', { text: t('dev.onBody') }),
+            h('button', { type: 'button', class: 'btn block', id: 'devopen-off', text: t('pk.off'), on: { click: function () {
+              C.deviceOpenDisable().then(function () { close(); render(); toast(t('dev.offDone')); });
+            } } }));
+          return;
+        }
+        var p = passField(t('lock.pass'), true, 'current-password'), msg = msgEl();
+        var go = h('button', { type: 'button', class: 'btn primary block', id: 'devopen-on', text: t('dev.on') });
+        go.addEventListener('click', function () {
+          go.disabled = true; setMsg(msg, '');
+          C.deviceOpenEnable(p.input.value).then(function () { close(); render(); toast(t('dev.onDone')); })
+            .catch(function (e) { go.disabled = false; setMsg(msg, e && e.code === 'bad-passcode' ? t('lock.wrong') : errText(e)); p.input.select(); });
+        });
+        add(body, h('p', { text: t('dev.body') }), h('div', { class: 'dev-warn', role: 'note', text: t('dev.warn') }), h('p', { class: 'hint', text: t('dev.when') }), p.el, msg, go);
       });
     });
   }
@@ -1536,7 +1569,7 @@
     }
   });
   function afterUnlock(adopted) {
-    S.pkArm = false;
+    S.pkArm = false; S.pkNudge = false;
     if (!DESK) helperWatch();
     if (!DESK) abInit();
     liveKids().forEach(sendKey);
@@ -2123,6 +2156,12 @@
   }
   function group(title, items) { return h('section', { class: 'set-group' }, h('h2', { text: title }), h('ul', { class: 'set-list card' }, items)); }
   function renderSettings(main) {
+    var devRow = h('li', { id: 'devopen-row' });
+    C.deviceOpenOn().then(function (on) {
+      if (!document.contains(devRow)) return;
+      add(devRow, h('button', { type: 'button', class: 'set-row', id: 'set-devopen', on: { click: openDevOpen } },
+        h('span', { class: 'set-label', text: t('dev.title') }), h('span', { class: 'set-value', text: on ? t('pk.stateOn') : t('pk.stateOff') }), icon('chev', 18)));
+    });
     var pkRow = h('li', { id: 'pk-row-wrap', hidden: true });
     Promise.all([pkCheck(), C.passkeyEnrolled()]).then(function (r) {
       if (!r[0] || !document.contains(pkRow)) return;
@@ -2162,6 +2201,7 @@
         row(t('set.newCode'), null, openNewCode, 'set-code'),
         row(t('set.recHelp'), null, function () { openRecHelp(false); }, 'set-rechelp'),
         pkRow,
+        devRow,
         h('li', { class: 'set-ctrl' }, h('button', { type: 'button', class: 'set-row', on: { click: function () { C.persist().then(function (p) { storage.textContent = p ? t('set.storageOn') : t('set.storageOff'); }); } } },
           h('span', { class: 'set-label', text: t('set.storage') }), storage))]),
       group(t('set.diary'), [row(t('pr.title'), null, function () { openDiaryPrint(); }, 'set-diary-print'), row(t('diary.exportTitle'), String(S.diary.entries.length), openDiaryExport, 'set-diary-export')]),
@@ -2542,7 +2582,7 @@
   }
 
   // ---------- keyboard shortcuts on a computer (by key position, so Korean / Japanese input mode doesn't matter) ----------
-  var KB = [['N', 'kb.n'], ['A', 'kb.a'], ['D', 'kb.d'], ['/', 'kb.search'], ['1 2 3 4', 'kb.tabs'], ['L', 'kb.lock'], ['?', 'kb.help']];
+  var KB = [['N', 'kb.n'], ['A', 'kb.a'], ['D', 'kb.d'], ['/', 'kb.search'], ['H', 'hp.ask'], ['1 2 3 4', 'kb.tabs'], ['L', 'kb.lock'], ['?', 'kb.help']];
   function openShortcuts() {
     sheet(t('kb.title'), function (body) {
       add(body, h('ul', { class: 'kb-list', id: 'kb-list' }, KB.map(function (k) {
@@ -2567,6 +2607,7 @@
     };
     else if (/^Digit[1-4]$/.test(c)) act = function () { goTab(['budget', 'notes', 'diary', 'settings'][+c.slice(5) - 1]); };
     else if (c === 'KeyL') act = function () { lockNow(false); };
+    else if (c === 'KeyH' && HP) act = openAsk;
     if (!act) return;
     e.preventDefault(); act();
   });
@@ -2900,7 +2941,7 @@
   // ---------- the helper (vault-helper.js): today's suggestions, "ask in your own words", step-by-step pointers ----------
   var GUIDE = HP ? new HP.Guide({ t: t }) : null, hpSeen = {}, hpWatch = null;
   var ACT_LABEL = { add: 'hp.do.add', recurring: 'hp.do.recurring', note: 'hp.do.note', charts: 'hp.do.charts', 'monthly-budget': 'hp.do.budget',
-    recap: 'hp.do.recap', 'make-recurring': 'hp.do.makeRec', diary: 'hp.do.diary', guide: 'hp.do.guide' };
+    recap: 'hp.do.recap', 'make-recurring': 'hp.do.makeRec', diary: 'hp.do.diary', guide: 'hp.do.guide', 'add-income': 'hp.do.income', goal: 'hp.do.goal', passkey: 'hp.do.passkey' };
   function hpText(x) {
     var v = {}, src = x[1] || {};
     Object.keys(src).forEach(function (k) { v[k] = src[k]; });
@@ -2918,6 +2959,7 @@
     if (S.settings.helper.off) return null;
     var all = HP.suggest({ budget: S.budget, notes: S.notes, diary: S.diary, today: today(), hour: new Date().getHours(), B: B, state: S.settings.helper }, 8);
     var list = tab === 'budget' ? all : all.filter(function (x) { return (x.tab === tab || !x.tab) && !(tab === 'diary' && x.type === 'diary'); });
+    if (pkCardDue()) list.unshift({ id: 'passkey', type: 'passkey', emoji: '👆', title: ['hp.pk.t'], body: ['hp.pk.b'], act: 'passkey', alt: 'hp.pk.later' });
     list = list.slice(0, tab === 'budget' ? 3 : 2);
     if (!list.length) return null;
     var hs = S.settings.helper;
@@ -2940,9 +2982,27 @@
     });
     return wrap;
   }
+  // Typing the passcode to open the app, again and again, on a phone that could open it with a fingerprint or face:
+  // from the 3rd time the helper suggests turning that on. "Not now" waits a week; once it is on, it never comes back.
+  // The count is kept in the encrypted settings with the rest of the helper's memory.
+  function pkNudge() {
+    var hs = S.settings && S.settings.helper; if (!HP || !hs) return;
+    hs.done.pw = Math.min(99, (hs.done.pw || 0) + 1); saveSettings();
+    if (hs.done.pw < 3 || hs.off || hs.mute.passkey) return;
+    Promise.all([pkCheck(), C.passkeyEnrolled()]).then(function (r) {
+      if (r[0] && !r[1] && S.phase === 'app') { S.pkNudge = true; render(); }
+    }).catch(function () {});
+  }
+  function pkCardDue() {
+    var hs = S.settings.helper, sn = hs.snooze.passkey;
+    return !!S.pkNudge && !hs.mute.passkey && !(sn && HP.addDays(sn, 7) > today());
+  }
   function runAct(act, a) {
     a = a || {};
+    if (act === 'passkey') { openPasskey(); return; }
     if (act === 'add') { goTab('budget'); openAdd(null, a.date ? { date: a.date } : null); }
+    else if (act === 'add-income') { goTab('budget'); openAdd(null, { type: 'income' }); }
+    else if (act === 'goal') { goTab('budget'); S.budgetView = 'goals'; render(); openGoal(a.id); }
     else if (act === 'recurring') openRecurring();
     else if (act === 'note') { goTab('notes'); openNote(a.id); }
     else if (act === 'charts' || act === 'recap') { goTab('budget'); S.ym = a.ym || thisMonth(); S.budgetView = 'charts'; render(); }
@@ -3017,6 +3077,24 @@
       { sel: '#set-import', key: 'hp.g.import1', vars: { label: t('set.import') }, until: 'click', opener: true, before: function () { goTab('settings'); } },
       { sel: '#import-file', key: 'hp.g.import2', until: function () { return !!document.getElementById('import-go'); } },
       { sel: '#import-go', key: 'hp.g.import3', vars: { label: t('import.go') }, until: function () { return !document.getElementById('import-file'); } }]; },
+    recurring: function () { return [
+      { sel: '#add-btn', key: 'hp.g.add1', until: 'click', opener: true, before: function () { goTab('budget'); } },
+      { sel: '#amount', key: 'hp.g.rec1', until: 'input' },
+      { sel: '#repeat', hit: '#repeat, label[for="repeat"]', key: 'hp.g.rec2', vars: { label: t('add.repeat') }, until: function () { var r = document.getElementById('repeat'); return !r || r.checked; } },
+      { sel: '#cat-grid', key: 'hp.g.add3', until: function () { return !document.getElementById('amount'); } }]; },
+    goal: function () { return [
+      { sel: '#goal-new', key: 'hp.g.goal1', until: 'click', opener: true, before: function () { goTab('budget'); if (S.budgetView !== 'goals') { S.budgetView = 'goals'; render(); } } },
+      { sel: '#goal-name', key: 'hp.g.goal2', until: 'input' },
+      { sel: '#goal-target', key: 'hp.g.goal3', until: 'input' },
+      { sel: '#goal-save', key: 'hp.g.goal4', until: function () { return !document.getElementById('goal-name'); } }]; },
+    methods: function () { return [
+      { sel: '#set-methods', key: 'hp.g.pm1', vars: { label: t('pm.title') }, until: 'click', opener: true, before: function () { goTab('settings'); } },
+      { sel: '#pm-new-name', key: 'hp.g.pm2', until: 'input' },
+      { sel: '#pm-add', key: 'hp.g.pm3', until: function () { var i = document.getElementById('pm-new-name'); return !i || !i.value.trim(); } }]; },
+    transfer: function () { return [
+      { sel: '#set-qr', key: 'hp.g.qr1', vars: { label: t('qr.title') }, until: 'click', opener: true, before: function () { goTab('settings'); } },
+      { sel: '#qr-send', key: 'hp.g.qr2', vars: { label: t('qr.send') }, until: 'click' },
+      { sel: '#qr-canvas', key: 'hp.g.qr3', vars: { label: t('qr.receive') }, until: function () { return !document.getElementById('qr-canvas'); } }]; },
     remind: function () { return [
       { sel: '.note-card', key: 'hp.g.remind1', until: 'click', opener: true, before: function () { goTab('notes'); } },
       { sel: '#note-remind', key: 'hp.g.remind2', vars: { label: t('nr.btn') }, until: 'click' },
@@ -3043,10 +3121,10 @@
       { id: 'export', kw: ['내보내기', '다운로드', '엑셀로', 'export', 'download', '書き出し', 'エクスポート'], run: go(openExport) },
       { id: 'budget', flow: 'budget', kw: ['예산', '한달', '한 달', '한도', '얼마까지', 'budget', 'limit', '予算'], run: go(openMonthlyBudget) },
       { id: 'catbudgets', kw: ['분류별 예산', '카테고리 예산', '식비 예산', 'category budget', 'カテゴリ予算'], run: go(openCatBudgets) },
-      { id: 'recurring', kw: ['반복', '고정지출', '고정 지출', '매달', '정기', '구독', '월세', '자동이체', 'recurring', 'repeat', 'monthly', 'subscription', 'rent', 'fixed', '固定費', '毎月', '定期', 'サブスク', '家賃'], run: go(openRecurring) },
-      { id: 'methods', kw: ['결제수단', '결제 수단', '카드', '현금', '계좌', 'payment method', 'card', 'cash', '支払い方法', 'カード', '現金'], run: go(openMethods) },
+      { id: 'recurring', flow: 'recurring', kw: ['반복', '고정지출', '고정 지출', '매달', '정기', '구독', '월세', '자동이체', 'recurring', 'repeat', 'monthly', 'subscription', 'rent', 'fixed', '固定費', '毎月', '定期', 'サブスク', '家賃'], run: go(openRecurring) },
+      { id: 'methods', flow: 'methods', kw: ['결제수단', '결제 수단', '카드', '현금', '계좌', 'payment method', 'card', 'cash', '支払い方法', 'カード', '現金'], run: go(openMethods) },
       { id: 'categories', kw: ['분류', '카테고리', '항목', 'category', 'categories', 'カテゴリ', '分類'], run: go(openCategories) },
-      { id: 'goals', kw: ['저축', '목표', '모으기', '모으', '적금', 'goal', 'saving', 'save up', '目標', '貯金', '貯め'], run: function () { runAct('goals'); } },
+      { id: 'goals', flow: 'goal', kw: ['저축', '목표', '모으기', '모으', '적금', 'goal', 'saving', 'save up', '目標', '貯金', '貯め'], run: function () { runAct('goals'); } },
       { id: 'charts', kw: ['그래프', '차트', '통계', '분석', '어디에 많이', '어디에 썼', 'chart', 'graph', 'stats', 'where did', 'グラフ', '分析'], run: function () { runAct('charts'); } },
       { id: 'year', kw: ['연간', '1년', '일년', '올해', '작년', 'year', 'annual', '年間', '今年'], run: function () { goTab('budget'); S.budgetView = 'year'; render(); } },
       { id: 'search', kw: ['검색', '찾기', '찾아', '언제 샀', 'search', 'find', '検索', '探'], run: function () { runAct('search'); } },
@@ -3059,7 +3137,7 @@
       { id: 'backup', flow: 'backup', kw: ['백업', '저장해', '날아가', '안전하게', 'backup', 'back up', 'save a copy', 'バックアップ'], run: go(openBackup) },
       { id: 'restore', kw: ['복원', '되돌리', '백업 불러', 'restore', '復元'], run: go(openRestore) },
       { id: 'autobackup', kw: ['자동 백업', '자동백업', '폴더', 'auto backup', 'folder', '自動バックアップ', 'フォルダ'], run: go(openAutoBackup), hide: function () { return !abCapable(); } },
-      { id: 'transfer', kw: ['옮기', '새 폰', '새폰', '다른 기기', '폰 바꿨', '휴대폰 바꾸', '기기 변경', 'qr', 'move', 'new phone', 'transfer', 'another device', '移行', '機種変更', '新しいスマホ'], run: function () { openTransfer(true); } },
+      { id: 'transfer', flow: 'transfer', kw: ['옮기', '새 폰', '새폰', '다른 기기', '폰 바꿨', '휴대폰 바꾸', '기기 변경', 'qr', 'move', 'new phone', 'transfer', 'another device', '移行', '機種変更', '新しいスマホ'], run: function () { openTransfer(true); } },
       { id: 'passcode', kw: ['비밀번호', '암호', '패스워드', '비번', 'password', 'passcode', 'パスワード', '暗証'], run: go(openChangePass) },
       { id: 'recovery', kw: ['복구 코드', '복구코드', '잊어버', '까먹', 'recovery code', 'forgot', '復旧コード', '忘れ'], run: go(openNewCode) },
       { id: 'passkey', kw: ['지문', '얼굴인식', '얼굴 인식', '패스키', '생체', 'fingerprint', 'face id', 'passkey', '指紋', '顔認証', 'パスキー'], run: go(openPasskey) },
@@ -3178,8 +3256,46 @@
     var lastTab = lsGet(TAB_KEY);
     if (!sm && /^(budget|notes|diary)$/.test(lastTab || '')) S.tab = lastTab;        // reopen where you left off
     if (sm && sm[1] === 'add') { S.tab = 'budget'; S.startAdd = true; } else if (sm && sm[1] === 'share') takeShared(); else if (sm) S.tab = sm[1];
-    render();
+    if (S.phase === 'locked' && !DESK) devOpenAtStart(); else render();
   }).catch(function () { S.phase = 'nostorage'; render(); });
+  // "Open without the passcode on this device": straight into the app, the lock screen never shows.
+  function devOpenAtStart() {
+    C.deviceOpenOn().then(function (on) {
+      if (!on) { render(); return; }
+      return devOpen().catch(function (err) { if (S.phase !== 'corrupt') { S.phase = 'locked'; render(); } });
+    }).catch(function () { render(); });
+  }
+  function devOpen() {
+    return C.deviceUnlock().then(function () { clearFails(); return loadAll(); })
+      .then(function () { S.phase = 'app'; touch(); render(); afterUnlock(); })
+      .catch(function (err) { if (err && err.code === 'corrupt') { S.phase = 'corrupt'; render(); } throw err; });
+  }
+
+  // A new version on the site while the app stays open (desk notes can stay open for days): offer to reload.
+  // Compares the app's own files every few hours and when it comes back to the front; nothing else is sent.
+  var UP = { base: null, shown: false, last: 0 };
+  function upTag(u) {
+    return fetch(u, { method: 'HEAD', cache: 'no-store', credentials: 'same-origin' }).then(function (r) {
+      return r.ok ? (r.headers.get('ETag') || r.headers.get('Last-Modified') || r.headers.get('Content-Length') || '') : null;
+    }).catch(function () { return null; });
+  }
+  function upCheck() {
+    UP.last = Date.now();
+    return Promise.all(['/vault-app.js', '/vault-helper.js', '/vault-i18n.js', '/vault.css'].map(upTag)).then(function (tags) {
+      if (tags.some(function (x) { return x === null; })) return;            // offline or a hiccup: try again later
+      var k = tags.join('|');
+      if (UP.base === null) { UP.base = k; return; }
+      if (k !== UP.base && !UP.shown && GUIDE) {
+        UP.shown = true;
+        GUIDE.say(t('up.ready'), [{ id: 'up-reload', label: t('up.reload'), primary: true, fn: function () {
+          (DESK ? Promise.resolve(deskFlush && deskFlush()) : flushAll()).then(function () { location.reload(); }, function () { location.reload(); });
+        } }, { id: 'up-later', label: t('up.later') }], 0);
+      }
+    });
+  }
+  upCheck();
+  setInterval(upCheck, 3 * 3600e3);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - UP.last > 30 * 60e3) upCheck(); });
 
   // Offline: once the service worker is in charge, fetch the app's own files once so they are cached.
   if ('serviceWorker' in navigator) {
@@ -3191,7 +3307,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
         .forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Blog Photo Prep: Bulk Resize, Compress &amp; Rename Photos (Free) — PopPopMake</title>
+<meta name="description" content="Drop a batch of photos and get them back ready to post: resized, much lighter, renamed by keyword, location removed, turned upright, with an optional watermark and covered faces. Free, no upload.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/blog-photo-prep">
+<link rel="canonical" href="https://poppopmake.com/blog-photo-prep">
+<meta property="og:title" content="Blog Photo Prep: Bulk Resize, Compress &amp; Rename Photos (Free) — PopPopMake">
+<meta property="og:description" content="Drop a batch of photos and get them back ready to post: resized, much lighter, renamed by keyword, location removed, turned upright, with an optional watermark and covered faces. Free, no upload.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Blog Photo Prep: Bulk Resize, Compress &amp; Rename Photos (Free) — PopPopMake">
+<meta name="twitter:description" content="Drop a batch of photos and get them back ready to post: resized, much lighter, renamed by keyword, location removed, turned upright, with an optional watermark and covered faces. Free, no upload.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+
+  .install-bar{background:var(--card);border-bottom:1px solid var(--line);}
+  .install-bar[hidden]{display:none;}
+  .install-bar-inner{display:flex;align-items:center;gap:12px;padding:10px 24px;}
+  .install-icon{flex-shrink:0;color:var(--teal);display:flex;}
+  .install-text{flex:1;font-size:0.86rem;color:var(--ink-soft);}
+  .install-btn{background:var(--ink);color:#fff;border:none;border-radius:999px;padding:8px 18px;font-size:0.85rem;font-weight:600;cursor:pointer;font-family:inherit;flex-shrink:0;}
+  .install-btn:hover{opacity:0.88;}
+  .install-btn[hidden]{display:none;}
+  .install-dismiss{background:none;border:none;color:var(--ink-soft);font-size:1.3rem;line-height:1;cursor:pointer;padding:4px 6px;flex-shrink:0;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}
+  .skip-link:focus{left:0;}
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  h2{font-family:'Space Grotesk',sans-serif;font-size:1.2rem;margin:0 0 6px;}
+  .lede{color:var(--ink-soft);max-width:60ch;margin:0 0 12px;}
+  .privacy-strip{display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;font-size:0.82rem;color:var(--ink-soft);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:9px 16px 9px 10px;margin-bottom:28px;}
+  .privacy-strip .pip{width:7px;height:7px;border-radius:50%;background:var(--teal);}
+  .tool-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;}
+  .tool-card .sub{color:var(--ink-soft);font-size:0.92rem;margin:0 0 20px;}
+  .drop{border:2px dashed var(--line);border-radius:10px;padding:28px;text-align:center;cursor:pointer;background:var(--paper);transition:border-color .15s ease;}
+  .drop:hover, .drop.dragover{border-color:var(--teal);}
+  .drop input{display:none;}
+  .drop .btn-label{display:inline-block;background:var(--ink);color:#fff;font-weight:600;font-size:0.9rem;padding:9px 18px;border-radius:999px;margin-top:8px;}
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.98rem;padding:12px 24px;border-radius:999px;cursor:pointer;margin-top:18px;margin-right:8px;}
+  .action-btn:disabled{background:var(--paper-2);color:var(--ink-soft);cursor:not-allowed;}
+  .action-btn:hover:not(:disabled){opacity:0.92;}
+  .preset-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
+  .preset-btn:hover{border-color:var(--teal);color:var(--ink);}
+  .preset-btn.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .basis-btn{padding:7px 14px;border:1px solid var(--line);border-radius:999px;background:#fff;font-size:0.85rem;color:var(--ink-soft);cursor:pointer;font-family:'Inter',sans-serif;}
+  .basis-btn.active{background:var(--orange);color:#fff;border-color:var(--orange);}
+  .preset-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
+  .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.info{background:rgba(15,139,141,0.08);color:var(--teal);}
+  .status.error{background:rgba(242,84,45,0.08);color:var(--orange);}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .hint{font-size:0.82rem;color:var(--ink-soft);}
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.86rem;color:var(--ink-soft);}
+  .disclaimer strong{color:var(--ink);}
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+  .pb-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;margin-top:18px}
+  @media (max-width:640px){.pb-grid{grid-template-columns:1fr}}
+  .pb-field label,.pb-field .lbl{display:block;font-weight:600;font-size:.88rem;margin-bottom:6px}
+  .pb-field input[type=text],.pb-field input[type=number],.pb-field select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+  .pb-field input[type=range]{width:100%}
+  .pb-check{display:flex;gap:10px;align-items:flex-start;font-size:.9rem}
+  .pb-check input{margin-top:4px}
+  .pb-list{list-style:none;margin:16px 0 0;padding:0;max-height:420px;overflow:auto}
+  .pb-item{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:6px;background:#fff}
+  .pb-item.ok{border-color:rgba(13,122,124,.45)} .pb-item.bad{border-color:var(--orange)}
+  .pb-name{font-weight:600;flex:1 1 200px;overflow-wrap:anywhere}
+  .pb-info{color:var(--ink-soft);font-size:.84rem;flex:1 1 220px}
+  .pb-item.bad .pb-info{color:var(--orange)}
+  .pb-dl{font-weight:600;font-size:.86rem}
+  .pb-x{background:none;border:0;font-size:1.3rem;line-height:1;color:var(--ink-soft);cursor:pointer;padding:2px 8px}
+  .pb-summary{margin-top:12px;font-weight:600}
+  #pb-zip:not(:disabled){background:var(--ink)} #pb-share:not(:disabled){background:var(--teal)} #pb-share[hidden]{display:none}
+  /* phones: the buttons stay at the bottom of the screen while you scroll through the settings */
+  @media (max-width:640px){
+    .pb-bar{position:sticky;bottom:0;z-index:5;display:flex;flex-wrap:wrap;gap:8px;margin:16px -24px 0;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:var(--card);border-top:1px solid var(--line);box-shadow:0 -8px 18px -10px rgba(14,27,46,.25)}
+    .pb-bar .action-btn,.pb-bar .ghost-btn{flex:1 1 140px;margin:0;min-height:46px;padding:10px 12px;font-size:.95rem;white-space:nowrap}
+  }
+  @media (pointer:coarse){
+    .pb-check{min-height:40px;align-items:center} .pb-check input{width:22px;height:22px;margin-top:0;flex-shrink:0} .pb-check label{padding:6px 0}
+    .pb-x{min-width:40px;min-height:40px} .pb-dl{display:inline-block;padding:8px 4px}
+  }
+  .pb-summary[hidden],.pb-clear[hidden],#pb-stop[hidden]{display:none}
+  .ghost-btn{background:none;border:1px solid var(--line);color:var(--ink-soft);font-weight:600;font-size:.9rem;padding:10px 18px;border-radius:999px;cursor:pointer;margin-top:18px}
+  .ghost-btn:hover{border-color:var(--teal);color:var(--ink)}
+  .steps{margin:26px 0 0;padding-left:20px;color:var(--ink-soft)} .steps li{margin-bottom:6px}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/document-tools">More document &amp; image tools</a></nav>
+  </div>
+</header>
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Photos</span>
+  <h1>Blog Photo Prep</h1>
+  <p class="lede">Drop all the photos for a post at once and get them back ready to upload: resized for the web, much lighter, renamed with your keyword, location removed, phone photos turned the right way up &mdash; and, if you like, your blog name on each one and faces covered.</p>
+  <span class="privacy-strip"><span class="pip"></span>Everything runs in your browser. Your photos are never uploaded anywhere.</span>
+
+  <div class="tool-card" id="pb-app">
+    <h2>Prepare photos for a post</h2>
+    <p class="sub">Add the photos, check the settings (they&rsquo;re remembered for next time), press &ldquo;Prepare photos&rdquo;, then download them one by one or as a ZIP.</p>
+    <div class="drop" id="pb-drop" tabindex="0" role="button" aria-label="Add photos: drag them here or press Enter to choose">
+      <div>Drag photos here (as many as you like), paste them, or</div>
+      <label class="btn-label" for="pb-input">Choose photos</label>
+      <input type="file" id="pb-input" accept="image/*,.heic,.heif" multiple>
+      <div class="hint" style="margin-top:8px">JPG, PNG, WebP and iPhone (HEIC) photos. Up to 300 at a time.</div>
+    </div>
+    <ul class="pb-list" id="pb-list" aria-live="polite"></ul>
+    <button type="button" class="ghost-btn pb-clear" id="pb-clear" hidden>Remove all</button>
+
+    <div class="pb-grid">
+      <div class="pb-field">
+        <span class="lbl" id="pb-width-label">Width</span>
+        <div class="preset-row" id="pb-width" role="group" aria-labelledby="pb-width-label">
+          <button type="button" class="preset-btn" data-w="800">800 px</button>
+          <button type="button" class="preset-btn" data-w="1200">1200 px</button>
+          <button type="button" class="preset-btn" data-w="1600">1600 px</button>
+          <button type="button" class="preset-btn" data-w="2000">2000 px</button>
+          <button type="button" class="preset-btn" data-w="0">Keep size</button>
+        </div>
+        <div class="hint" style="margin-top:6px">1200 px looks sharp in most blogs and loads fast. Smaller photos are never enlarged.</div>
+      </div>
+      <div class="pb-field">
+        <label for="pb-keyword">Name the files by a keyword (optional)</label>
+        <input type="text" id="pb-keyword" maxlength="60" placeholder="e.g. seoul-cafe" autocomplete="off">
+        <div class="hint" id="pb-name-preview" style="margin-top:6px"></div>
+      </div>
+      <div class="pb-field">
+        <label for="pb-format">Format</label>
+        <select id="pb-format">
+          <option value="jpeg">JPG (best for photos)</option>
+          <option value="webp">WebP (even smaller)</option>
+          <option value="png">PNG (screenshots, logos)</option>
+        </select>
+      </div>
+      <div class="pb-field">
+        <label for="pb-quality">Quality: <span id="pb-quality-val">82%</span></label>
+        <input type="range" id="pb-quality" min="40" max="100" step="1" value="82">
+        <div class="hint">Around 80% looks the same as the original at a fraction of the size.</div>
+      </div>
+      <div class="pb-field">
+        <label for="pb-order">Order and numbering</label>
+        <select id="pb-order">
+          <option value="taken">By the time each photo was taken</option>
+          <option value="added">As added</option>
+        </select>
+      </div>
+      <div class="pb-field">
+        <label for="pb-mark">Your blog name on each photo (optional)</label>
+        <input type="text" id="pb-mark" maxlength="40" placeholder="e.g. @mydailyblog" autocomplete="off">
+        <select id="pb-mark-pos" aria-label="Where the name goes" style="margin-top:8px">
+          <option value="br">Bottom right</option>
+          <option value="bl">Bottom left</option>
+          <option value="c">Center</option>
+        </select>
+      </div>
+      <div class="pb-field">
+        <div class="pb-check"><input type="checkbox" id="pb-faces"><label for="pb-faces" style="font-weight:500">Cover faces automatically <span class="hint">(a small detector downloads once, then stays on this device)</span></label></div>
+      </div>
+      <div class="pb-field">
+        <div class="pb-check"><input type="checkbox" id="pb-cap"><label for="pb-cap" style="font-weight:500">Keep each file under</label></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px"><input type="number" id="pb-cap-kb" min="50" max="20000" step="50" value="500" style="max-width:120px" aria-label="Largest file size in KB"> <span class="hint">KB (for sites with upload limits)</span></div>
+      </div>
+    </div>
+    <p class="hint" style="margin-top:14px">Always done: location and camera details are removed, and sideways phone photos are turned upright.</p>
+
+    <div class="pb-bar" id="pb-bar">
+      <button type="button" class="action-btn" id="pb-go" disabled>Prepare photos</button>
+      <button type="button" class="action-btn" id="pb-share" hidden>Save to phone</button>
+      <button type="button" class="action-btn" id="pb-zip" disabled>Download all (ZIP)</button>
+      <button type="button" class="ghost-btn" id="pb-stop" hidden>Stop</button>
+    </div>
+    <div class="pb-summary" id="pb-summary" hidden></div>
+    <div class="status" id="pb-status" role="status"></div>
+  </div>
+
+  <ol class="steps">
+    <li><strong>Why resize?</strong> A phone photo is often 3&ndash;6 MB and 4000 px wide. Blogs show it at about 700&ndash;1200 px, so most of that weight only slows your page down.</li>
+    <li><strong>Why remove the location?</strong> Phone photos can carry the exact GPS spot where they were taken &mdash; often your home. Re-saving here leaves it out.</li>
+    <li><strong>Why rename?</strong> &ldquo;seoul-cafe-01.jpg&rdquo; tells search engines and readers what the picture is; &ldquo;IMG_4821.jpg&rdquo; tells them nothing.</li>
+  </ol>
+
+  <div class="disclaimer">
+    <strong>How this works:</strong> Your browser opens each photo, draws it at the new size and saves it again &mdash; that is what drops the location and camera details. Nothing is uploaded; face covering uses a small detector that runs on your device. Check covered faces before you post: automatic detection can miss a face that is small, turned away or partly hidden. Need to fine-tune one photo? Use <a href="/document-tools#facemosaic">Face Mosaic</a> or <a href="/screenshot-markup">Screenshot Markup</a>.
+  </div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/about">About</a><a href="/all-tools">All Tools</a><a href="/terms">Terms</a><a href="/privacy">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script src="/file-converter.js"></script>
+<script src="/photo-batch.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
