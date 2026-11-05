@@ -710,3 +710,8 @@ a.btn { text-decoration: none; display: flex; align-items: center; justify-conte
 .tile-amts .chip { font-size: 1rem; min-height: 46px; padding: 10px 16px; }
 .tile-days { margin: 10px 0; }
 .sheet-body .tiles { margin: 6px 0 4px; }
+
+.tile-ico { width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; }
+.tile-ico .tile-svg { display: block; }
+.tile { min-height: 78px; }
+.sheet-head h2 .tile-ico { display: inline-flex; width: 36px; height: 36px; border-radius: 11px; vertical-align: middle; margin-right: 8px; }

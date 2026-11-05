@@ -911,8 +911,15 @@
   function tileGrid(onSaved, id) {
     return h('div', { class: 'tiles', id: id || 'tiles' }, B.tiles(S.budget, I.get(), today()).map(function (tl) {
       return h('button', { type: 'button', class: 'tile', 'data-tile': tl.key, 'aria-label': tl.label, on: { click: function () { openTile(tl, onSaved); } } },
-        h('span', { class: 'tile-emoji', 'aria-hidden': 'true', text: tl.emoji }), h('span', { class: 'tile-label', text: tl.label }));
+        tileIcon(tl, 40), h('span', { class: 'tile-label', text: tl.label }));
     }));
+  }
+  // the PopPopMake drawing for a button (same on every phone); the emoji only if the drawings could not load
+  function tileIcon(tl, size) {
+    var svg = window.VaultIcons && window.VaultIcons.element(I.get(), tl.key, size);
+    if (!svg) return h('span', { class: 'tile-emoji', 'aria-hidden': 'true', text: tl.emoji });
+    var box = h('span', { class: 'tile-ico', 'aria-hidden': 'true' }); box.style.background = window.VaultIcons.bg(I.get(), tl.key); box.appendChild(svg);
+    return box;
   }
   function tilesCard() {
     if (S.ym !== thisMonth() || S.budgetView === 'goals') return null;
@@ -920,7 +927,8 @@
   }
   function openTile(tl, onSaved) {
     var cur = S.budget.currency, day = 0;
-    sheet(tl.emoji + ' ' + tl.label, function (body, close) {
+    sheet(tl.label, function (body, close) {
+      var head = body.parentNode && body.parentNode.querySelector('.sheet-head h2'); if (head) head.insertBefore(tileIcon(tl, 30), head.firstChild);
       var abox = amountBox(cur, '', 'tile-amount', t('add.amount')); abox.input.setAttribute('data-autofocus', '1');
       var memo = h('input', { class: 'input', id: 'tile-memo', maxlength: 200, autocomplete: 'off', placeholder: t('tile.memo') });
       var msg = msgEl();
@@ -933,7 +941,7 @@
         if (onSaved) { onSaved(tx); return; }
         if (tx.date.slice(0, 7) !== S.ym) S.ym = tx.date.slice(0, 7);
         render();
-        toast(t('add.saved', { what: tl.emoji + ' ' + tl.label + ' ' + money(tx.amt, tx.cur) }), { label: t('btn.undo'), fn: function () { B.deleteTx(S.budget, tx.id); saveBudget(); render(); } });
+        toast(t('add.saved', { what: tl.label + ' ' + money(tx.amt, tx.cur) }), { label: t('btn.undo'), fn: function () { B.deleteTx(S.budget, tx.id); saveBudget(); render(); } });
       }
       var amts = B.tileAmounts(S.budget, tl, today(), 4);
       var days = h('div', { class: 'seg tile-days', role: 'radiogroup', 'aria-label': t('add.date') });
@@ -3655,7 +3663,7 @@
   }
   function upCheck() {
     UP.last = Date.now();
-    return Promise.all(['/vault-app.js', '/vault-helper.js', '/vault-i18n.js', '/vault.css'].map(upTag)).then(function (tags) {
+    return Promise.all(['/vault-app.js', '/vault-helper.js', '/vault-i18n.js', '/vault.css', '/vault-icons.js'].map(upTag)).then(function (tags) {
       if (tags.some(function (x) { return x === null; })) return;            // offline or a hiccup: try again later
       var k = tags.join('|');
       if (UP.base === null) { UP.base = k; return; }
@@ -3681,7 +3689,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-icons.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
         .forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }

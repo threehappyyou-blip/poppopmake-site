@@ -26,6 +26,7 @@ var PRECACHE_URLS = [
   '/ppm-banner.js',
   '/site-helper.js',
   '/vault-helper.js',
+  '/vault-icons.js',
   '/ads.json',
   '/command-palette.js',
   '/icons/icon-192.png',
