@@ -608,3 +608,45 @@ a.btn { text-decoration: none; display: flex; align-items: center; justify-conte
 .vault-ad .ppm-ad-label a{color:inherit}
 .vault-ad .ppm-ad-link{display:block;line-height:0}
 .vault-ad .ppm-ad-img{display:block;width:100%;height:auto;border-radius:8px}
+
+/* ---------- the helper (vault-helper.js) ---------- */
+.helper { margin: 12px 0; }
+.helper-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin: 0 2px 6px; }
+.helper-title { font-size: .95rem; margin: 0; }
+.helper-head .link.small { min-height: 36px; padding: 4px 6px; font-size: .84rem; }
+.helper-card { display: flex; gap: 12px; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-left: 4px solid var(--teal);
+  border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; }
+.helper-ico { font-size: 1.35rem; line-height: 1.2; }
+.helper-text { flex: 1; min-width: 0; }
+.helper-text strong { display: block; font-size: .95rem; }
+.helper-text p { margin: 2px 0 8px; font-size: .9rem; color: var(--ink-soft); overflow-wrap: anywhere; }
+.helper-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+.helper-actions .link { min-height: 36px; padding: 4px 4px; font-size: .86rem; }
+.helper-actions .link.quiet { color: var(--ink-soft); font-weight: 500; }
+.helper-btn span { font-size: 1.2rem; line-height: 1; }
+.hp-results { list-style: none; margin: 12px 0 0; padding: 0; }
+.hp-result { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 8px; background: var(--card); }
+.hp-result.best { border-color: var(--teal); box-shadow: 0 0 0 1px var(--teal) inset; }
+.hp-result-label { font-weight: 600; flex: 1 1 160px; }
+.hp-result-btns { display: flex; gap: 6px; }
+.hp-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 12px; }
+.hp-chips[hidden], #hp-none[hidden] { display: none; }
+.hp-chips .hint { width: 100%; margin: 0; }
+.hp-chips .chip { white-space: normal; }
+.hp-sub { font-size: .95rem; margin: 18px 0 8px; }
+/* step-by-step pointers: a ring around the real button and a note next to it; nothing is covered or blocked */
+.hp-guide { position: fixed; inset: 0; pointer-events: none; z-index: 2147483000; }
+.hp-ring { position: fixed; display: none; border: 3px solid var(--orange); border-radius: 14px; box-shadow: 0 0 0 6px rgba(193, 67, 36, .22); transition: all .18s ease; }
+@media (prefers-reduced-motion: no-preference) { .hp-ring { animation: hp-pulse 1.6s ease-in-out infinite; } }
+@keyframes hp-pulse { 50% { box-shadow: 0 0 0 11px rgba(193, 67, 36, .12); } }
+.hp-tip { position: fixed; pointer-events: none; background: #1C2321; color: #fff; border-radius: 14px; padding: 12px 14px 10px; box-shadow: 0 12px 32px rgba(0, 0, 0, .3); font-size: .95rem; line-height: 1.45; }
+.hp-tip-text { margin: 0 0 8px; }
+.hp-tip-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.hp-tip-count { font-size: .8rem; opacity: .75; }
+.hp-tip-quit { pointer-events: auto; background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, .45); border-radius: 999px; padding: 6px 14px; min-height: 36px; font: inherit; font-size: .85rem; cursor: pointer; }
+.hp-say { position: fixed; left: 50%; bottom: calc(var(--tab-h) + 16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 2147483001;
+  width: min(440px, calc(100vw - 24px)); background: #1C2321; color: #fff; border-radius: 14px; padding: 12px 14px; box-shadow: 0 12px 32px rgba(0, 0, 0, .3); font-size: .95rem; }
+.hp-say p { margin: 0 0 10px; }
+.hp-say-row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+.hp-say-btn { background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, .45); border-radius: 999px; padding: 8px 16px; min-height: 40px; font: inherit; font-weight: 600; cursor: pointer; }
+.hp-say-btn.primary { background: #fff; color: #1C2321; border-color: #fff; }

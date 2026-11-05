@@ -4,7 +4,7 @@
 (function () {
   'use strict';
 
-  var C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, ST = window.VaultStickers, t = I.t;
+  var HP = window.VaultHelper, C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, ST = window.VaultStickers, t = I.t;
   var NOTE_FONTS = ['base', 'hand', 'pen'], NOTE_SIZES = ['s', 'm', 'l'];
   var app = document.getElementById('app');
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray'];
@@ -150,7 +150,21 @@
     return form;
   }
   function validateSettings(raw) {
-    var s = { autoLock: 5, lastBackup: null, lastChange: null, tourDone: false, codeSaved: true };
+    var s = { autoLock: 5, lastBackup: null, lastChange: null, tourDone: false, codeSaved: true, helper: { off: false, guides: true, snooze: {}, mute: {}, done: {} } };
+    if (raw && raw.helper && typeof raw.helper === 'object') {      // the helper: what was put off today, turned off, and learned
+      var hp = raw.helper, week = HP ? HP.addDays(today(), -7) : '';
+      s.helper.off = hp.off === true; s.helper.guides = hp.guides !== false;
+      ['snooze', 'mute', 'done'].forEach(function (k) {
+        var src = hp[k]; if (!src || typeof src !== 'object') return;
+        Object.keys(src).slice(0, 120).forEach(function (id) {
+          if (!/^[A-Za-z0-9|_-]{1,80}$/.test(id)) return;
+          var v = src[id];
+          if (k === 'snooze' && typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && v >= week) s.helper.snooze[id] = v;
+          else if (k === 'mute' && v) s.helper.mute[id] = 1;
+          else if (k === 'done' && v > 0) s.helper.done[id] = Math.min(99, v | 0);
+        });
+      });
+    }
     if (raw && typeof raw === 'object') {
       if ([0, 1, 5, 15, 60].indexOf(raw.autoLock) >= 0) s.autoLock = raw.autoLock;      // 0 = never (lock it yourself)
       if (raw.lastBackup > 0) s.lastBackup = raw.lastBackup;
@@ -662,6 +676,7 @@
   function topBar(title, extra) {
     return h('header', { class: 'top' }, title,
       h('div', { class: 'top-actions' }, extra || null,
+        HP && !DESK ? h('button', { type: 'button', class: 'icon-btn helper-btn', id: 'helper-btn', 'aria-label': t('hp.ask'), title: t('hp.ask'), on: { click: function () { openAsk(); } } }, h('span', { 'aria-hidden': 'true', text: '💁' })) : null,
         h('button', { type: 'button', class: 'icon-btn', id: 'lock-btn', 'aria-label': t('top.lock'), title: t('top.lock'), on: { click: function () { lockNow(false); } } }, icon('lock'))));
   }
 
@@ -690,7 +705,7 @@
     if (ym === thisMonth()) add(card, allowanceLine());
     add(card, goalsChip());
     if (sum.otherCurrency) add(card, h('p', { class: 'hint', text: t('budget.other', { n: sum.otherCurrency }) }));
-    add(main, card, notice());
+    add(main, card, notice(), helperCards('budget'));
 
     add(main, h('div', { class: 'seg', role: 'tablist' },
       h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'list' ? 'true' : 'false', class: S.budgetView === 'list' ? 'on' : '', id: 'view-list', text: t('view.list'), on: { click: function () { S.budgetView = 'list'; render(); } } }),
@@ -743,7 +758,7 @@
     }
     var ic = installCard(false);
     if (ic) return ic;
-    if (S.tipHidden) return null;
+    if (S.tipHidden || (HP && S.settings.helper && !S.settings.helper.off)) return null;
     var key = TIPS[S.tip % TIPS.length];
     var card = noticeCard('💡', t('tip.label'), t(key), t('btn.next'), function () { S.tip++; render(); }, 'notice-tip');
     add(card.querySelector('.notice-actions'), h('button', { type: 'button', class: 'link', text: t('btn.close'), on: { click: function () { S.tipHidden = true; render(); } } }));
@@ -922,13 +937,14 @@
   }
 
   // ----- add / edit an entry -----
-  function openAdd(existing) {
+  function openAdd(existing, preset) {
     var editing = !!existing;
     var lastPm = lsGet(PM_KEY), hasPm = function (id) { return !!methodOf(id); };
-    var st = { type: existing ? existing.type : 'expense', cat: existing ? existing.cat : null,
+    var st = { type: existing ? existing.type : preset && preset.type === 'income' ? 'income' : 'expense', cat: existing ? existing.cat : null,
       pm: existing ? existing.pm || null : (hasPm(lastPm) ? lastPm : null), photo: existing ? existing.photo || null : null };
     var cur = existing ? existing.cur : S.budget.currency;
-    var defDate = existing ? existing.date : (S.ym === thisMonth() ? today() : S.ym + '-' + pad(Math.min(new Date().getDate(), B.daysInMonth(S.ym))));
+    var defDate = existing ? existing.date : preset && preset.date && B.validDate(preset.date) ? preset.date : (S.ym === thisMonth() ? today() : S.ym + '-' + pad(Math.min(new Date().getDate(), B.daysInMonth(S.ym))));
+    var slips = 0;
     sheet(editing ? t('edit.title') : t('add.title'), function (body, close) {
       var abox = amountBox(cur, existing ? B.majorString(existing.amt, existing.cur) : '', 'amount', t('add.amount'));
       var amount = abox.input, preview = abox.preview; amount.setAttribute('data-autofocus', '1');
@@ -998,6 +1014,7 @@
         })));
       }
       function finish(tx) {
+        helperDone('add', tx.id); if (tx.photo) helperDone('receipt', tx.id);
         saveBudget(); close();
         if (tx.date.slice(0, 7) !== S.ym) S.ym = tx.date.slice(0, 7);
         render();
@@ -1011,8 +1028,8 @@
       }
       function commit() {
         var amt = abox.value();
-        if (!amt) { setMsg(msg, t('add.needAmount')); amount.focus(); grid.classList.add('shake'); setTimeout(function () { grid.classList.remove('shake'); }, 400); return; }
-        if (!st.cat) { setMsg(msg, t('add.pick')); return; }
+        if (!amt) { setMsg(msg, t('add.needAmount')); amount.focus(); grid.classList.add('shake'); setTimeout(function () { grid.classList.remove('shake'); }, 400); if (++slips === 2 && !editing) helperOffer('add'); return; }
+        if (!st.cat) { setMsg(msg, t('add.pick')); if (++slips === 2 && !editing) helperOffer('add'); return; }
         var d = B.validDate(date.value) ? date.value : today();
         if (editing) {
           B.updateTx(S.budget, existing.id, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim(), pm: st.pm || null, photo: st.photo || null });
@@ -1304,7 +1321,7 @@
     return S.notes.notes.slice().sort(function (a, b) { return (b.pinned - a.pinned) || (b.updated - a.updated); });
   }
   function renderNotes(main) {
-    add(main, topBar(h('h1', { class: 'title', text: t('notes.title') })));
+    add(main, topBar(h('h1', { class: 'title', text: t('notes.title') })), helperCards('notes'));
     var list = sortedNotes();
     if (list.length) {
       var input = h('input', { type: 'search', class: 'input', id: 'notes-search', placeholder: t('notes.search'), value: S.notesQuery, 'aria-label': t('notes.search') });
@@ -1355,6 +1372,7 @@
     var deleted = false;
     sheet(isNew ? t('notes.new') : t('notes.title'), function (body, close, m) {
       var ta = h('textarea', { class: 'input note-edit ' + noteLook(n), id: 'note-text', rows: 10, placeholder: t('notes.ph'), 'aria-label': t('notes.title'), 'data-autofocus': '1', value: n.text });
+      ta.addEventListener('input', function () { if (ta.value.trim()) helperDone('note', n.id); });
       function persist() {
         noteFlush = null;
         if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
@@ -1519,6 +1537,7 @@
   });
   function afterUnlock(adopted) {
     S.pkArm = false;
+    if (!DESK) helperWatch();
     if (!DESK) abInit();
     liveKids().forEach(sendKey);
     if (DESK) { if (!adopted && openerIsApp()) sendKey(window.opener); return; }
@@ -1806,7 +1825,8 @@
     add(main, h('section', { class: 'card diary-sum' },
       h('div', { class: 'streak', id: 'diary-streak' }, h('span', { class: 'streak-ico', 'aria-hidden': 'true', text: streak ? '🔥' : '✏️' }),
         h('strong', { text: streak ? t('diary.streak', { n: streak }) : t('diary.streak0') })),
-      h('p', { class: 'hint', id: 'diary-stats', text: t('diary.stats', { n: st.count }) + (st.avgMood ? ' · ' + t('diary.avgMood') + ' ' + moodEmoji(st.avgMood) : '') })));
+      h('p', { class: 'hint', id: 'diary-stats', text: t('diary.stats', { n: st.count }) + (st.avgMood ? ' · ' + t('diary.avgMood') + ' ' + moodEmoji(st.avgMood) : '') })),
+      helperCards('diary'));
 
     var otd = DY.onThisDay(S.diary, todayS);
     if (otd.length && ym === thisMonth()) {
@@ -1923,6 +1943,7 @@
       }
       drawMoods();
       var ta = h('textarea', { class: 'entry-edit', id: 'entry-text', rows: 6, placeholder: opts.prompt || t('diary.ph'), 'aria-label': t('diary.title'), 'data-autofocus': '1', value: e.text });
+      ta.addEventListener('input', function () { if (ta.value.trim()) helperDone('diary', e.id); });
       var page = h('div', { class: 'page', id: 'entry-page' }, ta);
       function growText() { ta.style.height = 'auto'; ta.style.height = Math.max(ta.scrollHeight + 2, 168) + 'px'; }
       ta.addEventListener('input', growText); setTimeout(growText, 0);
@@ -2153,6 +2174,7 @@
         row(t('set.import'), null, openImport, 'set-import'),
         row(t('set.erase'), null, openErase, 'set-erase', true)]),
       group(t('set.help'), [
+        HP ? row(t('hp.set'), S.settings.helper.off ? t('pm.off') : null, openHelperSettings, 'set-helper') : null,
         row(t('set.tour'), null, openTour, 'set-tour'),
         row(t('set.install'), isStandalone() ? t('install.done') : null, openInstall, 'set-install'),
         isPhone() ? null : row(t('set.autostart'), null, openAutoStart, 'set-autostart'),
@@ -2189,7 +2211,7 @@
         } } })));
     });
   }
-  function openMonthlyBudget() { amountSheet(t('monthly.title'), t('monthly.body'), S.budget.budgets.total, function (v) { S.budget.budgets.total = v; }); }
+  function openMonthlyBudget() { amountSheet(t('monthly.title'), t('monthly.body'), S.budget.budgets.total, function (v) { S.budget.budgets.total = v; if (v) helperDone('budget', 'm'); }); }
   function openCatBudgets() {
     sheet(t('catb.title'), function (body, close) {
       var inputs = {};
@@ -2300,7 +2322,7 @@
       var msg = msgEl();
       function make() {
         return flushAll().then(function () { return C.exportBackup(); }).then(function (text) {
-          S.settings.lastBackup = Date.now(); saveSettings(); setMsg(msg, t('backup.done'), true); return text;
+          S.settings.lastBackup = Date.now(); helperDone('backup', String(S.settings.lastBackup)); saveSettings(); setMsg(msg, t('backup.done'), true); return text;
         }).catch(function (e) { setMsg(msg, errText(e)); throw e; });
       }
       add(body, h('p', { class: 'hint', text: t('backup.body') }),
@@ -2762,6 +2784,7 @@
             h('div', { class: 'check' }, flip, h('label', { for: 'import-flip', text: t('import.flip') })), prev,
             h('button', { type: 'button', class: 'btn primary block', id: 'import-go', text: t('import.go'), on: { click: function () {
               var r = B.importRows(S.budget, rows, map, S.budget.currency);
+              if (r.added) helperDone('import', String(Date.now()));
               saveBudget(); close(); render();
               toast(t('import.result', { added: r.added, skipped: r.skipped, bad: r.bad }));
             } } }));
@@ -2874,6 +2897,249 @@
   }
 
   // ---------- render ----------
+  // ---------- the helper (vault-helper.js): today's suggestions, "ask in your own words", step-by-step pointers ----------
+  var GUIDE = HP ? new HP.Guide({ t: t }) : null, hpSeen = {}, hpWatch = null;
+  var ACT_LABEL = { add: 'hp.do.add', recurring: 'hp.do.recurring', note: 'hp.do.note', charts: 'hp.do.charts', 'monthly-budget': 'hp.do.budget',
+    recap: 'hp.do.recap', 'make-recurring': 'hp.do.makeRec', diary: 'hp.do.diary', guide: 'hp.do.guide' };
+  function hpText(x) {
+    var v = {}, src = x[1] || {};
+    Object.keys(src).forEach(function (k) { v[k] = src[k]; });
+    if (v.amt !== undefined) v.amt = money(v.amt);
+    if (v.per !== undefined) v.per = money(v.per);
+    if (v.cat !== undefined) { v.what = v.what || catName(v.cat); v.cat = catName(v.cat); }
+    if (v.date) v.date = I.dayLabel(v.date);
+    if (v.ym) v.ym = I.monthLabel(v.ym);
+    return t(x[0], v);
+  }
+  // Up to three cards on Budget (two on Notes and Diary, only about that tab). Safety notices keep their own card above.
+  function helperCards(tab) {
+    if (!HP || DESK || !S.settings) return null;
+    helperWatch();                                       // (also right after first setup, which has no unlock)
+    if (S.settings.helper.off) return null;
+    var all = HP.suggest({ budget: S.budget, notes: S.notes, diary: S.diary, today: today(), hour: new Date().getHours(), B: B, state: S.settings.helper }, 8);
+    var list = tab === 'budget' ? all : all.filter(function (x) { return (x.tab === tab || !x.tab) && !(tab === 'diary' && x.type === 'diary'); });
+    list = list.slice(0, tab === 'budget' ? 3 : 2);
+    if (!list.length) return null;
+    var hs = S.settings.helper;
+    var wrap = h('section', { class: 'helper', id: 'helper-' + tab, 'aria-label': t('hp.today') },
+      h('div', { class: 'helper-head' }, h('h2', { class: 'helper-title', text: '💁 ' + t('hp.today') }),
+        h('button', { type: 'button', class: 'link small', id: 'helper-hide', text: t('hp.hideToday'), on: { click: function () {
+          list.forEach(function (x) { hs.snooze[x.id] = today(); }); saveSettings(); render();
+        } } })));
+    list.forEach(function (x) {
+      add(wrap, h('article', { class: 'helper-card', 'data-sid': x.id, 'data-type': x.type },
+        h('span', { class: 'helper-ico', 'aria-hidden': 'true', text: x.emoji }),
+        h('div', { class: 'helper-text' }, h('strong', { text: hpText(x.title) }), h('p', { text: hpText(x.body) }),
+          h('div', { class: 'helper-actions' },
+            h('button', { type: 'button', class: 'btn small primary', 'data-act': x.act, text: t(ACT_LABEL[x.act] || 'hp.do.open'), on: { click: function () { runAct(x.act, x.args || {}); } } }),
+            h('button', { type: 'button', class: 'link', 'data-later': x.id, text: t(x.alt || 'hp.later'), on: { click: function () { hs.snooze[x.id] = today(); saveSettings(); render(); } } }),
+            x.type === 'first' ? null : h('button', { type: 'button', class: 'link quiet', 'data-mute': x.type, text: t('hp.mute'), on: { click: function () {
+              hs.mute[x.type] = 1; saveSettings(); render();
+              toast(t('hp.muted'), { label: t('btn.undo'), fn: function () { delete hs.mute[x.type]; saveSettings(); render(); } });
+            } } })))));
+    });
+    return wrap;
+  }
+  function runAct(act, a) {
+    a = a || {};
+    if (act === 'add') { goTab('budget'); openAdd(null, a.date ? { date: a.date } : null); }
+    else if (act === 'recurring') openRecurring();
+    else if (act === 'note') { goTab('notes'); openNote(a.id); }
+    else if (act === 'charts' || act === 'recap') { goTab('budget'); S.ym = a.ym || thisMonth(); S.budgetView = 'charts'; render(); }
+    else if (act === 'monthly-budget') openMonthlyBudget();
+    else if (act === 'make-recurring') {
+      var r = B.addRecurring(S.budget, { type: 'expense', amt: a.amt, cat: a.cat, note: a.note, day: a.day, start: thisMonth(), pm: a.pm });
+      r.last = a.last; B.applyRecurring(S.budget, today()); saveBudget(); render();
+      toast(t('hp.recMade', { what: a.note || catName(a.cat) }), { label: t('btn.undo'), fn: function () {
+        S.budget.tx.filter(function (x) { return x.rid === r.id; }).map(function (x) { return x.id; }).forEach(function (id) { B.deleteTx(S.budget, id); });
+        B.deleteRecurring(S.budget, r.id); saveBudget(); render();
+      } });
+    }
+    else if (act === 'diary') { goTab('diary'); newEntry(today()); }
+    else if (act === 'guide') startGuide(a.flow);
+    else if (act === 'methods') openMethods();
+    else if (act === 'goals') { goTab('budget'); S.budgetView = 'goals'; render(); }
+    else if (act === 'new-note') startGuide('remind');
+    else if (act === 'diary-print') openDiaryPrint();
+    else if (act === 'search') { goTab('budget'); S.searchOpen = true; render(); }
+  }
+  // Counts what someone has done on their own; after two times the stuck-help for it stops.
+  function helperDone(flow, uid) {
+    if (!HP || !S.settings) return;
+    var k = flow + ':' + (uid || ''); if (hpSeen[k]) return; hpSeen[k] = 1;
+    var d = S.settings.helper.done; d[flow] = Math.min(99, (d[flow] || 0) + 1); saveSettings();
+  }
+  function helperOffer(flow) {
+    var hs = S.settings && S.settings.helper;
+    if (!GUIDE || !hs || hs.off || !hs.guides || GUIDE.running() || (hs.done[flow] || 0) >= 2) return;
+    GUIDE.say(t('hp.stuck.' + flow), [{ id: 'hp-stuck-show', label: t('hp.stuck.show'), primary: true, fn: function () { startGuide(flow, true); } }, { id: 'hp-stuck-no', label: t('hp.stuck.no') }], 15000);
+  }
+  function helperWatch() {
+    if (hpWatch || !HP) return;
+    hpWatch = HP.Stuck({ wait: 20000, offer: helperOffer, check: function () {
+      var hs = S.settings && S.settings.helper;
+      if (S.phase !== 'app' || !hs || hs.off || !hs.guides || (GUIDE && GUIDE.running())) return null;
+      var m = modals[modals.length - 1]; if (!m || !m.el) return null;
+      var box = m.el, head = box.querySelector('.sheet-head h2'), el, flow;
+      if ((el = box.querySelector('#amount')) && !box.querySelector('#delete-tx')) flow = 'add';
+      else if ((el = box.querySelector('#amount-input')) && head && head.textContent === t('monthly.title')) flow = 'budget';
+      else if ((el = box.querySelector('#note-text'))) flow = 'note';
+      else if ((el = box.querySelector('#entry-text'))) flow = 'diary';
+      else return null;
+      return (hs.done[flow] || 0) >= 2 ? null : { flow: flow, el: el };
+    } });
+  }
+  // Step-by-step pointers. "opener" steps open the screen; they are skipped when the screen is already open.
+  var FLOWS = {
+    add: function () { return [
+      { sel: '#add-btn', key: 'hp.g.add1', until: 'click', opener: true, before: function () { goTab('budget'); } },
+      { sel: '#amount', key: 'hp.g.add2', until: 'input' },
+      { sel: '#cat-grid', key: 'hp.g.add3', until: function () { return !document.getElementById('amount'); } }]; },
+    receipt: function () { return [
+      { sel: '#add-btn', key: 'hp.g.add1', until: 'click', opener: true, before: function () { goTab('budget'); } },
+      { sel: '#amount', key: 'hp.g.add2', until: 'input' },
+      { sel: '#receipt-add', key: 'hp.g.rc1', vars: { label: t('rc.add') }, until: function () { return !!document.getElementById('receipt-remove') || !document.getElementById('amount'); } },
+      { sel: '#cat-grid', key: 'hp.g.add3', until: function () { return !document.getElementById('amount'); } }]; },
+    note: function () { return [
+      { sel: '#new-note', key: 'hp.g.note1', until: 'click', opener: true, before: function () { goTab('notes'); } },
+      { sel: '#note-text', key: 'hp.g.note2', until: 'input' }]; },
+    diary: function () { return [
+      { sel: '#new-entry', key: 'hp.g.diary1', until: 'click', opener: true, before: function () { goTab('diary'); } },
+      { sel: '#entry-text', key: 'hp.g.diary2', until: 'input' }]; },
+    budget: function () { return [
+      { sel: '#set-monthly', key: 'hp.g.budget1', vars: { label: t('set.monthly') }, until: 'click', opener: true, before: function () { goTab('settings'); } },
+      { sel: '#amount-input', key: 'hp.g.budget2', until: 'input' },
+      { sel: '#amount-save', key: 'hp.g.budget3', vars: { label: t('btn.save') }, until: function () { return !document.getElementById('amount-input'); } }]; },
+    backup: function () { return [
+      { sel: '#set-backup', key: 'hp.g.backup1', vars: { label: t('set.backup') }, until: 'click', opener: true, before: function () { goTab('settings'); } },
+      { sel: '#backup-download', key: 'hp.g.backup2', vars: { label: t('backup.download') }, until: 'click' }]; },
+    'import': function () { return [
+      { sel: '#set-import', key: 'hp.g.import1', vars: { label: t('set.import') }, until: 'click', opener: true, before: function () { goTab('settings'); } },
+      { sel: '#import-file', key: 'hp.g.import2', until: function () { return !!document.getElementById('import-go'); } },
+      { sel: '#import-go', key: 'hp.g.import3', vars: { label: t('import.go') }, until: function () { return !document.getElementById('import-file'); } }]; },
+    remind: function () { return [
+      { sel: '.note-card', key: 'hp.g.remind1', until: 'click', opener: true, before: function () { goTab('notes'); } },
+      { sel: '#note-remind', key: 'hp.g.remind2', vars: { label: t('nr.btn') }, until: 'click' },
+      { sel: '#nr-date', key: 'hp.g.remind3', until: function () {           // done once the note shows its reminder time
+        var b = document.getElementById('note-remind'); return !!b && b.textContent.indexOf(t('nr.btn')) < 0; } }]; }
+  };
+  function startGuide(flow, inSheet) {
+    if (!GUIDE || !FLOWS[flow]) return;
+    var steps = FLOWS[flow]();
+    if (inSheet) steps = steps.filter(function (x) { return !x.opener; });
+    else closeAllModals();
+    GUIDE.start(flow, steps, 'hp.g.' + flow + 'Done');
+  }
+  // What people may ask for, in any of the three languages (people mix them). run(question) does it.
+  function askList() {
+    function go(fn) { return function () { fn(); }; }
+    function setTab(tab, sel) { return function () { goTab(tab); var el = sel && document.querySelector(sel); if (el) { el.scrollIntoView({ block: 'center' }); el.focus(); } }; }
+    var L = [
+      { id: 'add', flow: 'add', boost: 1, kw: ['지출', '쓴돈', '썼', '돈 쓴', '기록', '적기', '가계부', '결제', '샀', '구매', '쓴 돈', 'spend', 'spent', 'expense', 'add', 'paid', 'bought', 'log', '支出', '使った', '記録', '買った', '出費', '家計簿'],
+        run: function (q) { runAct('add', HP.wantsYesterday(q) ? { date: HP.addDays(today(), -1) } : {}); } },
+      { id: 'income', kw: ['수입', '월급', '들어온', '입금', '용돈', '부수입', 'income', 'salary', 'earned', 'got paid', '収入', '給料', '入金'], run: function () { goTab('budget'); openAdd(null, { type: 'income' }); } },
+      { id: 'receipt', flow: 'receipt', kw: ['영수증', '사진', '찍', 'receipt', 'photo', 'picture', 'レシート', '領収書', '写真'], run: function () { goTab('budget'); openAdd(); } },
+      { id: 'import', flow: 'import', kw: ['엑셀', 'csv', '카드내역', '카드 내역', '은행', '가져오기', '불러오기', '명세서', 'import', 'bank', 'statement', 'excel', 'spreadsheet', '取り込み', '明細', 'エクセル', '銀行'], run: go(openImport) },
+      { id: 'export', kw: ['내보내기', '다운로드', '엑셀로', 'export', 'download', '書き出し', 'エクスポート'], run: go(openExport) },
+      { id: 'budget', flow: 'budget', kw: ['예산', '한달', '한 달', '한도', '얼마까지', 'budget', 'limit', '予算'], run: go(openMonthlyBudget) },
+      { id: 'catbudgets', kw: ['분류별 예산', '카테고리 예산', '식비 예산', 'category budget', 'カテゴリ予算'], run: go(openCatBudgets) },
+      { id: 'recurring', kw: ['반복', '고정지출', '고정 지출', '매달', '정기', '구독', '월세', '자동이체', 'recurring', 'repeat', 'monthly', 'subscription', 'rent', 'fixed', '固定費', '毎月', '定期', 'サブスク', '家賃'], run: go(openRecurring) },
+      { id: 'methods', kw: ['결제수단', '결제 수단', '카드', '현금', '계좌', 'payment method', 'card', 'cash', '支払い方法', 'カード', '現金'], run: go(openMethods) },
+      { id: 'categories', kw: ['분류', '카테고리', '항목', 'category', 'categories', 'カテゴリ', '分類'], run: go(openCategories) },
+      { id: 'goals', kw: ['저축', '목표', '모으기', '모으', '적금', 'goal', 'saving', 'save up', '目標', '貯金', '貯め'], run: function () { runAct('goals'); } },
+      { id: 'charts', kw: ['그래프', '차트', '통계', '분석', '어디에 많이', '어디에 썼', 'chart', 'graph', 'stats', 'where did', 'グラフ', '分析'], run: function () { runAct('charts'); } },
+      { id: 'year', kw: ['연간', '1년', '일년', '올해', '작년', 'year', 'annual', '年間', '今年'], run: function () { goTab('budget'); S.budgetView = 'year'; render(); } },
+      { id: 'search', kw: ['검색', '찾기', '찾아', '언제 샀', 'search', 'find', '検索', '探'], run: function () { runAct('search'); } },
+      { id: 'note', flow: 'note', kw: ['메모', '포스트잇', '적어두', '할일', '할 일', '장보기', 'note', 'memo', 'sticky', 'todo', 'to-do', 'メモ', '付箋', 'やること'],
+        run: function () { goTab('notes'); setTimeout(function () { var b = document.getElementById('new-note'); if (b) b.click(); }, 0); } },
+      { id: 'remind', flow: 'remind', kw: ['알림', '알람', '잊지', '리마인더', 'remind', 'reminder', 'alarm', 'リマインダー', '通知', 'アラーム'], run: function () { startGuide('remind'); } },
+      { id: 'diary', flow: 'diary', kw: ['일기', '다이어리', '하루 기록', '오늘 있었던', 'diary', 'journal', '日記'], run: function () { runAct('diary'); } },
+      { id: 'diarysearch', kw: ['일기 검색', '일기 찾', 'search diary', '日記 検索'], run: function () { goTab('diary'); S.diarySearch = true; render(); } },
+      { id: 'diaryprint', kw: ['pdf', '인쇄', '책으로', '출력', 'print', 'book', '印刷'], run: function () { openDiaryPrint(); } },
+      { id: 'backup', flow: 'backup', kw: ['백업', '저장해', '날아가', '안전하게', 'backup', 'back up', 'save a copy', 'バックアップ'], run: go(openBackup) },
+      { id: 'restore', kw: ['복원', '되돌리', '백업 불러', 'restore', '復元'], run: go(openRestore) },
+      { id: 'autobackup', kw: ['자동 백업', '자동백업', '폴더', 'auto backup', 'folder', '自動バックアップ', 'フォルダ'], run: go(openAutoBackup), hide: function () { return !abCapable(); } },
+      { id: 'transfer', kw: ['옮기', '새 폰', '새폰', '다른 기기', '폰 바꿨', '휴대폰 바꾸', '기기 변경', 'qr', 'move', 'new phone', 'transfer', 'another device', '移行', '機種変更', '新しいスマホ'], run: function () { openTransfer(true); } },
+      { id: 'passcode', kw: ['비밀번호', '암호', '패스워드', '비번', 'password', 'passcode', 'パスワード', '暗証'], run: go(openChangePass) },
+      { id: 'recovery', kw: ['복구 코드', '복구코드', '잊어버', '까먹', 'recovery code', 'forgot', '復旧コード', '忘れ'], run: go(openNewCode) },
+      { id: 'passkey', kw: ['지문', '얼굴인식', '얼굴 인식', '패스키', '생체', 'fingerprint', 'face id', 'passkey', '指紋', '顔認証', 'パスキー'], run: go(openPasskey) },
+      { id: 'autolock', kw: ['자동 잠금', '자동잠금', '잠금 시간', 'auto lock', 'auto-lock', '自動ロック'], run: setTab('settings', '#set-autolock') },
+      { id: 'lock', kw: ['잠그', '잠금', 'lock', 'ロック'], run: function () { lockNow(false); } },
+      { id: 'language', kw: ['언어', '영어로', '한국어로', '일본어', 'language', 'english', '言語', '英語'], run: setTab('settings', '#set-lang') },
+      { id: 'currency', kw: ['통화', '달러', '원화', '엔화', '화폐', 'currency', 'dollar', '通貨', '円'], run: setTab('settings', '#set-currency') },
+      { id: 'install', kw: ['설치', '앱으로', '홈화면', '홈 화면', '아이콘', 'install', 'app', 'home screen', 'icon', 'インストール', 'ホーム画面', 'アイコン'], run: go(openInstall) },
+      { id: 'autostart', kw: ['단축키', '빨리 열', '시작할 때', '자동 실행', '켤 때', 'shortcut key', 'start up', 'startup', 'open faster', 'ショートカットキー', '自動起動'], run: go(openAutoStart), hide: isPhone },
+      { id: 'reminder', kw: ['매일 알림', '기록 알림', '잊어버려', '매일', 'daily reminder', 'every day', '毎日'], run: go(openReminder) },
+      { id: 'shortcuts', kw: ['키보드', 'keyboard', 'キーボード'], run: go(openShortcuts), hide: isPhone },
+      { id: 'tour', kw: ['사용법', '처음', '어떻게 써', '도움말', '설명', 'how to use', 'help', 'tutorial', 'intro', '使い方', 'ヘルプ'], run: go(openTour) },
+      { id: 'manual', kw: ['설명서', '매뉴얼', 'manual', 'guide', 'マニュアル', '説明書'], run: function () { window.open('/manual-vault', '_blank', 'noopener'); } },
+      { id: 'erase', kw: ['전부 삭제', '모두 삭제', '초기화', '다 지우', 'erase', 'reset', 'delete everything', '全部削除', '初期化'], run: go(openErase) }
+    ];
+    return L.filter(function (a) { return !a.hide || !a.hide(); });
+  }
+  function openAsk() {
+    if (!HP) return;
+    var LIST = askList(), byId = {};
+    LIST.forEach(function (a) { byId[a.id] = a; });
+    sheet(t('hp.askTitle'), function (body, close) {
+      var q = h('input', { class: 'input', id: 'hp-q', type: 'search', placeholder: t('hp.askPh'), autocomplete: 'off', 'data-autofocus': '1', 'aria-label': t('hp.askTitle'), enterkeyhint: 'go' });
+      var res = h('ul', { class: 'hp-results', id: 'hp-results', 'aria-live': 'polite' });
+      var none = h('p', { class: 'hint', id: 'hp-none', hidden: true, text: t('hp.none') });
+      function go(a) { close(); setTimeout(function () { a.run(q.value); }, 0); }
+      function how(a) { close(); setTimeout(function () { startGuide(a.flow); }, 0); }
+      var chips = h('div', { class: 'hp-chips', id: 'hp-chips' }, h('span', { class: 'hint', text: t('hp.examples') }),
+        ['add', 'receipt', 'budget', 'backup', 'transfer', 'diaryprint'].filter(function (id) { return byId[id]; }).map(function (id) {
+          return h('button', { type: 'button', class: 'chip', 'data-ask': id, text: t('hp.a.' + id), on: { click: function () { go(byId[id]); } } });
+        }));
+      function draw() {
+        res.textContent = '';
+        if (!q.value.trim()) { none.hidden = true; chips.hidden = false; return; }
+        chips.hidden = true;
+        var found = HP.match(q.value, LIST, 4);
+        none.hidden = found.length > 0;
+        found.forEach(function (r, i) {
+          var a = byId[r.id];
+          var label = a.id === 'add' && HP.wantsYesterday(q.value) ? t('hp.a.addYesterday') : t('hp.a.' + a.id);
+          add(res, h('li', { class: 'hp-result' + (i === 0 ? ' best' : ''), 'data-id': a.id },
+            h('span', { class: 'hp-result-label', text: label }),
+            h('span', { class: 'hp-result-btns' },
+              a.flow ? h('button', { type: 'button', class: 'btn small', id: 'hp-how-' + a.id, text: t('hp.show'), on: { click: function () { how(a); } } }) : null,
+              h('button', { type: 'button', class: 'btn small primary', id: 'hp-go-' + a.id, text: t('hp.go'), on: { click: function () { go(a); } } }))));
+        });
+      }
+      q.addEventListener('input', draw);
+      q.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' || e.isComposing) return;
+        e.preventDefault();
+        var m = HP.match(q.value, LIST, 1); if (m.length) go(byId[m[0].id]);
+      });
+      add(body, h('p', { class: 'hint', text: t('hp.askHint') }), q, chips, res, none, h('p', { class: 'fine', text: t('hp.setNote') }));
+    });
+  }
+  function openHelperSettings() {
+    sheet(t('hp.set'), function (body, close) {
+      var hs = S.settings.helper;
+      var on = h('input', { type: 'checkbox', id: 'hp-on', checked: !hs.off });
+      var gd = h('input', { type: 'checkbox', id: 'hp-guides', checked: hs.guides });
+      on.addEventListener('change', function () { hs.off = !on.checked; saveSettings(); render(); });
+      gd.addEventListener('change', function () { hs.guides = gd.checked; saveSettings(); });
+      var n = Object.keys(hs.mute).length;
+      var un = h('button', { type: 'button', class: 'btn', id: 'hp-unmute', disabled: !n, text: t('hp.unmute', { n: n }), on: { click: function () {
+        hs.mute = {}; hs.snooze = {}; saveSettings(); close(); render(); toast(t('hp.unmuted'));
+      } } });
+      add(body,
+        h('div', { class: 'check' }, on, h('label', { for: 'hp-on', text: t('hp.setOn') })),
+        h('div', { class: 'check' }, gd, h('label', { for: 'hp-guides', text: t('hp.setGuides') })),
+        un,
+        h('h3', { class: 'hp-sub', text: t('hp.guidesTitle') }),
+        h('ul', { class: 'set-list card', id: 'hp-flows' }, Object.keys(FLOWS).map(function (f) {
+          return h('li', {}, h('button', { type: 'button', class: 'set-row', id: 'hp-flow-' + f, on: { click: function () { close(); setTimeout(function () { startGuide(f); }, 0); } } },
+            h('span', { class: 'set-label', text: t('hp.f.' + f) }), icon('chev', 18)));
+        })),
+        h('p', { class: 'fine', text: t('hp.setNote') }));
+    });
+  }
+
   function render() {
     applyLang();
     var p = S.phase;
