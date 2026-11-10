@@ -12,13 +12,22 @@
   var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.deco', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv', 'tip.desk', 'tip.goals', 'tip.calc', 'tip.list'];
   var FAIL_KEY = 'ppm-vault-fails', THEME_KEY = 'ppm-vault-theme', DESK_KEY = 'ppm-vault-desk';
   var PM_KEY = 'ppm-vault-last-pm';         // id of the payment method used last (a random id, no content)
-  // One part on its own (installed as "Diary", "Notes" or "Budget"): /vault?app=diary. Kept for this window only, so the
-  // full app in a browser tab is never stuck in it; app=all goes back to everything.
+  // One part on its own (installed as "Diary", "Notes" or "Budget"): its own page, /diary-app, /notes-app or /budget-app
+  // (<html data-only>), with its own manifest and its own scope — so an installed full app (scope /vault) can't take
+  // the address over, and the phone offers the part as a separate app. Same site, so the same locked data.
   var ONLY = (function () {
-    var m = location.search.match(/[?&]app=(diary|notes|budget|all)\b/), v = m ? m[1] : null;
-    try { if (v === 'all') { sessionStorage.removeItem('ppm-vault-only'); v = null; } else if (v) sessionStorage.setItem('ppm-vault-only', v); else v = sessionStorage.getItem('ppm-vault-only'); } catch (e) { /* private mode: the address decides */ }
-    return /^(diary|notes|budget)$/.test(v || '') ? v : null;
+    try { sessionStorage.removeItem('ppm-vault-only'); } catch (e) { /* older versions kept the part here */ }
+    var d = document.documentElement.getAttribute('data-only');
+    if (/^(diary|notes|budget)$/.test(d || '')) return d;
+    var m = location.search.match(/[?&]app=(diary|notes|budget)\b/);
+    if (m && !window.PPMToss) {                                    // an old /vault?app=diary link: go to the part's own page
+      var q = location.search.replace(/([?&])app=[a-z]+(&|$)/, '$1').replace(/[?&]$/, '');
+      location.replace('/' + m[1] + '-app' + q + location.hash);
+      return m[1];
+    }
+    return null;
   })();
+  function partUrl(x) { return x === 'all' || !x ? '/vault' : '/' + x + '-app'; }
   // Inside the Toss app (the bundle's toss-bridge.js sets window.PPMToss): the same app, with Toss's rules —
   // one part only, light only, no install prompts, no desktop windows, no service worker, no links out, its own storage copy.
   var TOSS = window.PPMToss && window.PPMToss.platform === 'toss' ? window.PPMToss : null;
@@ -2747,7 +2756,7 @@
     add(main,
       group(t('set.general'), [ctrlRow(t('lang.label'), lang), ctrlRow(t('cur.label'), cur, t('set.curNote')), TOSS ? null : ctrlRow(t('set.theme'), theme),
         row(t('sheet.title'), t('sheet.' + (S.settings.sheet || 'none')), openSheets, 'set-sheet'),
-        TOSS ? null : ONLY ? row(t('only.mode', { what: t('tab.' + ONLY) }), t('only.full'), function () { location.href = '/vault?app=all'; }, 'set-only') : row(t('only.set'), null, openInstall, 'set-only'),
+        TOSS ? null : ONLY ? row(t('only.mode', { what: t('tab.' + ONLY) }), t('only.full'), function () { location.href = '/vault'; }, 'set-only') : row(t('only.set'), null, openInstall, 'set-only'),
         SE ? row(t('seal.book'), seals.mine().length + '/' + SE.IDS.length, openSealBook, 'set-seals') : null,
         row(t('in.again'), null, function () { Object.keys(S.settings.helper.done).forEach(function (k) { if (k.indexOf('in-') === 0) delete S.settings.helper.done[k]; }); saveSettings(); toast(t('in.reset')); }, 'set-intros')]),
       group(t('set.budget'), [
@@ -3451,14 +3460,25 @@
   function openInstall() {
     sheet(t('install.title'), function (body) {
       add(body, h('p', { class: 'hint', text: t('install.why') }));
-      if (isStandalone()) { add(body, h('p', { class: 'msg ok', text: t('install.done') })); if (!isPhone()) add(body, autoStartSteps()); return; }
+      var inApp = isStandalone();
+      if (inApp) add(body, h('p', { class: 'msg ok', text: t('install.done') }));
+      var note = h('p', { class: 'msg', id: 'only-inapp', hidden: true });
       if (!DESK) add(body, h('p', { class: 'field-label', text: t('only.title') }), h('div', { class: 'only-pick', id: 'only-pick', role: 'radiogroup', 'aria-label': t('only.title') },
         [['all', 'vault'], ['diary', 'diary'], ['notes', 'notes'], ['budget', 'budget']].map(function (x) {
           var on = (ONLY || 'all') === x[0];
           return h('button', { type: 'button', role: 'radio', class: 'only-opt' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-only': x[0], id: 'only-' + x[0],
-            on: { click: function () { if (on) return; location.href = '/vault?app=' + x[0] + '&install=1&lang=' + I.get(); } } },
+            on: { click: function () {
+              if (on) return;
+              var url = partUrl(x[0]) + '?install=1&lang=' + I.get();
+              if (!inApp) { location.href = url; return; }
+              // inside an installed app the phone can't add another one: hand over the address for Chrome / Safari
+              var full = location.origin + url;
+              note.textContent = t('only.inApp', { url: full }); note.hidden = false;
+              try { navigator.clipboard.writeText(full).then(function () { note.textContent = t('only.inAppCopied', { url: full }); }, function () {}); } catch (e) { /* the address is on screen */ }
+            } } },
             h('img', { src: '/icons/tool-' + x[1] + '-192.png', alt: '', width: 44, height: 44 }), h('span', { text: t('only.' + x[0]) }));
-        })), h('p', { class: 'hint', text: t('only.hint') }));
+        })), h('p', { class: 'hint', text: t('only.hint') }), note);
+      if (inApp) { if (!isPhone()) add(body, autoStartSteps()); return; }
       if (S.installEvt) add(body, h('button', { type: 'button', class: 'btn primary block', id: 'install-go', text: t('install.button'), on: { click: function () {
         var ev = S.installEvt; S.installEvt = null; ev.prompt(); ev.userChoice.then(function () { render(); }, function () {});
       } } }));
@@ -4058,7 +4078,11 @@
     if (sm && sm[1] === 'checkin') { S.startCheckin = true; S.tab = 'budget'; }
     else if (sm && sm[1] === 'add') { S.tab = 'budget'; S.startAdd = true; } else if (sm && sm[1] === 'share') takeShared(); else if (sm) S.tab = sm[1];
     if (S.phase === 'locked' && !DESK) devOpenAtStart(); else render();
-    if (/[?&]install=1\b/.test(location.search) && !isStandalone()) setTimeout(openInstall, 500);    // came here to install one part
+    if (/[?&]install=1\b/.test(location.search)) {                                // came here to install one part
+      // take install=1 out of the address, so a home-screen icon saved from this page doesn't reopen the sheet every time
+      try { history.replaceState(history.state, '', location.pathname + location.search.replace(/([?&])install=1(&|$)/, '$1').replace(/[?&]$/, '') + location.hash); } catch (e) { /* keep it */ }
+      if (!isStandalone()) setTimeout(openInstall, 500);
+    }
   }).catch(function () { S.phase = 'nostorage'; render(); });
   // "Open without the passcode on this device": straight into the app, the lock screen never shows.
   function devOpenAtStart() {
@@ -4111,7 +4135,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-icons.js', '/vault-coach.js', '/vault-seals.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', ONLY ? '/manifest-' + ONLY + '-' + I.get() + '.json' : null, ONLY ? '/icons/tool-' + ONLY + '-192.png' : null, '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-icons.js', '/vault-coach.js', '/vault-seals.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', ONLY && !TOSS ? partUrl(ONLY) : null, ONLY ? '/manifest-' + ONLY + '-' + I.get() + '.json' : null, ONLY ? '/icons/tool-' + ONLY + '-192.png' : null, '/icons/tool-vault-192.png']
         .filter(Boolean).forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }
