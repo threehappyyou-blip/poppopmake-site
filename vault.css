@@ -885,3 +885,7 @@ html[data-theme="light"][data-sheet="heart"] { --paper: #FFF4F6; --paper-2: #FBE
 .only-opt { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 2px; border: 2px solid var(--line); border-radius: 14px; background: var(--card); color: var(--ink); font-weight: 700; font-size: .8rem; cursor: pointer; }
 .only-opt.on { border-color: var(--teal); background: var(--teal-soft); }
 .only-opt img { border-radius: 10px; }
+
+/* the Toss version: no links that leave the app (the legal pages excepted), no install bits */
+html.toss a[target="_blank"]:not(.legal) { display: none !important; }
+html.toss .install-card, html.toss #desk-open-all, html.toss .desk-bar-main { display: none !important; }

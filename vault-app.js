@@ -19,6 +19,10 @@
     try { if (v === 'all') { sessionStorage.removeItem('ppm-vault-only'); v = null; } else if (v) sessionStorage.setItem('ppm-vault-only', v); else v = sessionStorage.getItem('ppm-vault-only'); } catch (e) { /* private mode: the address decides */ }
     return /^(diary|notes|budget)$/.test(v || '') ? v : null;
   })();
+  // Inside the Toss app (the bundle's toss-bridge.js sets window.PPMToss): the same app, with Toss's rules —
+  // one part only, light only, no install prompts, no desktop windows, no service worker, no links out, its own storage copy.
+  var TOSS = window.PPMToss && window.PPMToss.platform === 'toss' ? window.PPMToss : null;
+  if (TOSS) { ONLY = /^(diary|notes|budget)$/.test(TOSS.app || '') ? TOSS.app : 'budget'; document.documentElement.classList.add('toss'); }
   var TAB_KEY = 'ppm-vault-tab', INSTALL_KEY = 'ppm-vault-install-later', PK_AUTO_KEY = 'ppm-vault-pk-auto';   // only the tab name and two on/off choices, never content
   // A desktop note window (/vault?w=note&id=…) shows one note on its own; everything else is the full app.
   var DESK = (location.search.match(/[?&]w=note&id=([A-Za-z0-9_-]{4,40})(?:&|$)/) || [])[1] || null;
@@ -95,6 +99,11 @@
   function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function lsSet(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
   function download(text, name, type) {
+    if (TOSS && TOSS.saveFile) {                       // the Toss web view has no downloads: hand the file to the phone
+      var bytes = new TextEncoder().encode(text), bin = ''; for (var i = 0; i < bytes.length; i += 8192) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192));
+      Promise.resolve(TOSS.saveFile(name, btoa(bin), String(type).split(';')[0])).catch(function () { toast(t('toss.saveFail')); });
+      return;
+    }
     var url = URL.createObjectURL(new Blob([text], { type: type }));
     var a = h('a', { href: url, download: name, style: 'display:none' });
     document.body.appendChild(a); a.click(); a.remove();
@@ -121,7 +130,7 @@
     if (ati) ati.setAttribute('href', '/icons/tool-' + (ONLY || 'vault') + '-apple-180.png');
   }
   function applyTheme() {
-    var th = lsGet(THEME_KEY) || 'auto';
+    var th = TOSS ? 'light' : (lsGet(THEME_KEY) || 'auto');
     if (th === 'auto') document.documentElement.removeAttribute('data-theme');
     else document.documentElement.setAttribute('data-theme', th);
   }
@@ -180,6 +189,7 @@
       });
     }
     s.sheet = raw && SHEETS.indexOf(raw.sheet) >= 0 ? raw.sheet : 'none';
+    s.ownPass = !raw || raw.ownPass !== false;           // false only in the Toss version until a passcode is chosen
     s.seals = {};
     if (raw && raw.seals && typeof raw.seals === 'object' && SE) SE.IDS.forEach(function (id) { var v = raw.seals[id]; if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v)) s.seals[id] = v; });
     if (raw && typeof raw === 'object') {
@@ -508,17 +518,19 @@
       meter.className = 'meter ' + (st || '');
       meter.textContent = st ? t('pass.' + st) : '';
     });
+    var legalHref = function (pth) { return TOSS ? 'https://poppopmake.com' + pth : pth; };
     var form = h('form', { class: 'stack', novalidate: true },
-      p1.el, meter, p2.el,
+      TOSS ? null : p1.el, TOSS ? null : meter, TOSS ? null : p2.el, TOSS ? h('p', { class: 'hint', id: 'toss-nopass', text: t('toss.noPass') }) : null,
       field(t('cur.label'), cur),
       h('div', { class: 'check' }, agree, h('label', { for: 'agree' }, t('setup.agree') + ' ',
-        h('a', { href: '/terms', target: '_blank', rel: 'noopener', text: t('setup.terms') }), ' · ',
-        h('a', { href: '/privacy', target: '_blank', rel: 'noopener', text: t('setup.privacy') }))),
+        h('a', { href: legalHref('/terms'), target: '_blank', rel: 'noopener', class: 'legal', text: t('setup.terms') }), ' · ',
+        h('a', { href: legalHref('/privacy'), target: '_blank', rel: 'noopener', class: 'legal', text: t('setup.privacy') }))),
       msg, go,
       h('button', { type: 'button', class: 'btn ghost block', text: t('btn.back'), on: { click: function () { S.phase = 'welcome'; render(); } } }));
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var a = p1.input.value, b = p2.input.value;
+      if (TOSS) { var rnd = new Uint8Array(24); crypto.getRandomValues(rnd); a = b = Array.prototype.map.call(rnd, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
       if (Array.from(a).length < C.MIN_PASS || !a.trim()) return setMsg(msg, t('pass.short'));
       if (a !== b) return setMsg(msg, t('pass.mismatch'));
       if (!agree.checked) return setMsg(msg, t('setup.needAgree'));
@@ -527,16 +539,16 @@
         S.budget = B.newDoc(I.get(), cur.value);
         S.notes = { v: 1, notes: [] };
         S.diary = DY.newDoc(); S.diaryYm = thisMonth();
-        S.settings = validateSettings({ codeSaved: false });
+        S.settings = validateSettings({ codeSaved: false, ownPass: !TOSS });
         S.ym = thisMonth();
         S.pendingCode = r.recoveryCode;
-        return Promise.all([saveBudget(), saveNotes(), saveDiary(), saveSettings()]);
+        return Promise.all([saveBudget(), saveNotes(), saveDiary(), saveSettings()]).then(function () { if (TOSS) return C.deviceOpenEnable(a); });
       }).then(function () {
         C.persist();
         S.phase = 'recovery'; render();
       }).catch(function (err) { go.disabled = false; go.textContent = t('btn.continue'); setMsg(msg, errText(err)); });
     });
-    add(s, brand(), h('h1', { text: t('setup.passTitle') }), h('p', { class: 'lede', text: t('setup.passBody') }), form);
+    add(s, brand(), h('h1', { text: t(TOSS ? 'toss.startTitle' : 'setup.passTitle') }), h('p', { class: 'lede', text: t(TOSS ? 'toss.startBody' : 'setup.passBody') }), form);
   }
 
   function recoveryBlock(code, after) {
@@ -974,6 +986,7 @@
   }
   // Asking first: in the evening, the first time the app is opened, a small note offers the check-in (once a day).
   function ciAsk() {
+    if (TOSS) return;                                  // Toss: nothing pops up by itself on opening; the card on top asks instead
     var hs = S.settings && S.settings.helper;
     if (DESK || !GUIDE || !hs || hs.off || hs.ci === false || hs.mute.checkin || new Date().getHours() < 18) return;
     if (hs.checkin.days.indexOf(today()) >= 0 || hs.snooze['ci-ask'] === today() || GUIDE.running() || modals.length) return;
@@ -1200,7 +1213,7 @@
   }
   // "Install as an app" stays in view (lock screen and the top of the app) until it is installed or put off.
   function installCard(onLock) {
-    if (DESK || isStandalone() || lsGet(INSTALL_KEY)) return null;
+    if (TOSS || DESK || isStandalone() || lsGet(INSTALL_KEY)) return null;
     var card = noticeCard('📲', t('install.cardTitle'), t('install.cardBody'), t('install.title'), openInstall, onLock ? 'install-card-lock' : 'notice-install');
     card.classList.add('install-card');
     add(card.querySelector('.notice-actions'), h('button', { type: 'button', class: 'link', id: onLock ? 'install-later-lock' : 'install-later', text: t('install.later'), on: { click: function () {
@@ -1783,6 +1796,15 @@
   function openDevOpen() {
     C.deviceOpenOn().then(function (on) {
       sheet(t('dev.title'), function (body, close) {
+        if (on && !S.settings.ownPass) {                 // Toss, never locked: turning it off means choosing a passcode now
+          var q1 = passField(t('pass.new'), true, 'new-password', t('pass.hint')), q2 = passField(t('pass.repeat'), false, 'new-password'), qm = msgEl();
+          add(body, h('p', { text: t('toss.lockBody') }), q1.el, q2.el, qm, h('button', { type: 'button', class: 'btn primary block', id: 'devopen-setpass', text: t('toss.lockOn'), on: { click: function (e) {
+            var v = q1.input.value; if (Array.from(v).length < C.MIN_PASS || !v.trim()) return setMsg(qm, t('pass.short')); if (v !== q2.input.value) return setMsg(qm, t('pass.mismatch'));
+            e.currentTarget.disabled = true;
+            C.setPasscodeFromDevice(v).then(function () { S.settings.ownPass = true; return saveSettings(); }).then(function () { close(); render(); toast(t('toss.lockDone')); }, function (err) { setMsg(qm, errText(err)); });
+          } } }));
+          return;
+        }
         if (on) {
           add(body, h('p', { text: t('dev.onBody') }),
             h('button', { type: 'button', class: 'btn block', id: 'devopen-off', text: t('pk.off'), on: { click: function () {
@@ -2061,6 +2083,7 @@
   // Only on a computer (mouse + keyboard). The open session never goes over the broadcast channel: it is handed by
   // postMessage only to windows this page opened itself, or back to the app window that opened this one.
   function deskCapable() {
+    if (TOSS) return false;
     try { return !/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) && matchMedia('(hover: hover) and (pointer: fine)').matches; } catch (e) { return false; }
   }
   function pipCapable() { return deskCapable() && 'documentPictureInPicture' in window; }
@@ -2096,7 +2119,7 @@
     }
   });
   function afterUnlock(adopted) {
-    S.pkArm = false; S.pkNudge = false;
+    S.pkArm = false; S.pkNudge = false; S.openedAt = Date.now();
     if (!DESK) ntWrite();
     if (!DESK) helperWatch();
     if (!DESK) abInit();
@@ -2722,9 +2745,9 @@
     C.persisted().then(function (p) { storage.textContent = p ? t('set.storageOn') : t('set.storageOff'); });
 
     add(main,
-      group(t('set.general'), [ctrlRow(t('lang.label'), lang), ctrlRow(t('cur.label'), cur, t('set.curNote')), ctrlRow(t('set.theme'), theme),
+      group(t('set.general'), [ctrlRow(t('lang.label'), lang), ctrlRow(t('cur.label'), cur, t('set.curNote')), TOSS ? null : ctrlRow(t('set.theme'), theme),
         row(t('sheet.title'), t('sheet.' + (S.settings.sheet || 'none')), openSheets, 'set-sheet'),
-        ONLY ? row(t('only.mode', { what: t('tab.' + ONLY) }), t('only.full'), function () { location.href = '/vault?app=all'; }, 'set-only') : row(t('only.set'), null, openInstall, 'set-only'),
+        TOSS ? null : ONLY ? row(t('only.mode', { what: t('tab.' + ONLY) }), t('only.full'), function () { location.href = '/vault?app=all'; }, 'set-only') : row(t('only.set'), null, openInstall, 'set-only'),
         SE ? row(t('seal.book'), seals.mine().length + '/' + SE.IDS.length, openSealBook, 'set-seals') : null,
         row(t('in.again'), null, function () { Object.keys(S.settings.helper.done).forEach(function (k) { if (k.indexOf('in-') === 0) delete S.settings.helper.done[k]; }); saveSettings(); toast(t('in.reset')); }, 'set-intros')]),
       group(t('set.budget'), [
@@ -2735,7 +2758,7 @@
         row(t('pm.title'), (S.budget.methods || []).length ? String(S.budget.methods.length) : t('pm.off'), openMethods, 'set-methods')]),
       group(t('set.security'), [
         h('li', { class: 'set-ctrl' }, h('label', { for: 'set-autolock', text: t('set.autolock') }), lock, lockWarn),
-        row(t('set.changePass'), null, openChangePass, 'set-pass'),
+        S.settings.ownPass ? row(t('set.changePass'), null, openChangePass, 'set-pass') : null,
         row(t('set.newCode'), null, openNewCode, 'set-code'),
         row(t('set.recHelp'), null, function () { openRecHelp(false); }, 'set-rechelp'),
         pkRow,
@@ -3513,9 +3536,11 @@
       var ae = document.activeElement, typing = ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
       var quiet = false; try { quiet = navigator.webdriver && lsGet('ppm-seals') !== 'on'; } catch (e) { /* fine */ }
       if (quiet) { fresh.forEach(function (id) { S.settings.seals[id] = today(); }); saveSettings(); S.sealPending = false; return; }
-      if (modals.length || typing || (GUIDE && GUIDE.running())) { S.sealPending = true; if (typing && !modals.length) setTimeout(function () { seals.check(); }, 4000); return; }
+      var early = TOSS && Date.now() - (S.openedAt || 0) < 20000;
+      if (modals.length || typing || early || (GUIDE && GUIDE.running())) { S.sealPending = true; if ((typing || early) && !modals.length) setTimeout(function () { seals.check(); }, early ? 20500 - (Date.now() - (S.openedAt || 0)) : 4000); return; }
       S.sealPending = false;
       fresh.forEach(function (id) { S.settings.seals[id] = today(); }); saveSettings();
+      if (TOSS && TOSS.haptic) Promise.resolve(TOSS.haptic('confetti')).catch(function () {});
       sealGift(fresh);
     }
   };
@@ -4016,7 +4041,15 @@
   if (!window.crypto || !window.crypto.subtle || !window.TextEncoder) { S.phase = 'nocrypto'; render(); return; }
   if (!window.indexedDB) { S.phase = 'nostorage'; render(); return; }
   render();
-  C.status().then(function (st) {
+  if (TOSS && TOSS.onBack) TOSS.onBack(function () {
+    if (GUIDE && GUIDE.running()) { GUIDE.stop(false); return; }
+    if (modals.length) { modals[modals.length - 1].close(); return; }
+    if (S.phase === 'app' && S.tab !== ONLY) { goTab(ONLY); return; }
+    if (S.phase === 'app' && S.tab === 'budget' && S.budgetView !== 'list') { S.budgetView = 'list'; render(); return; }
+    if (TOSS.close) TOSS.close();
+  });
+  if (TOSS && TOSS.storage) C.useMirror(TOSS.storage, { keyStore: true });
+  (TOSS ? C.restoreFromMirror().catch(function () { return false; }) : Promise.resolve(false)).then(function () { return C.status(); }).then(function (st) {
     S.phase = st === 'empty' ? 'welcome' : 'locked';
     var sm = (location.search + location.hash).match(/[?&#]start=(notes|diary|add|share|checkin)\b/);
     var lastTab = lsGet(TAB_KEY);
@@ -4062,12 +4095,14 @@
       }
     });
   }
-  upCheck();
-  setInterval(upCheck, 3 * 3600e3);
-  document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - UP.last > 30 * 60e3) upCheck(); });
+  if (!TOSS) {                                         // the Toss version updates through the Toss console, not from the site
+    upCheck();
+    setInterval(upCheck, 3 * 3600e3);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - UP.last > 30 * 60e3) upCheck(); });
+  }
 
   // Offline: once the service worker is in charge, fetch the app's own files once so they are cached.
-  if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator && !TOSS) {
     navigator.serviceWorker.register('/sw.js').then(function () { return navigator.serviceWorker.ready; }).then(function () {
       return new Promise(function (res) {
         if (navigator.serviceWorker.controller) return res();

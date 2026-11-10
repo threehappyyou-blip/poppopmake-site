@@ -191,7 +191,45 @@
   function readDevice() {
     return exists().then(function (yes) { return yes ? tx(['meta'], 'readonly', function (t) { return req(t.objectStore('meta').get('device')); }) : null; }).catch(function () { return null; });
   }
-  function writeMeta(meta) { return tx(['meta'], 'readwrite', function (t) { return req(t.objectStore('meta').put(meta, 'main')); }); }
+  function writeMeta(meta) { return tx(['meta'], 'readwrite', function (t) { return req(t.objectStore('meta').put(meta, 'main')); }).then(function (r) { return mset('m:main', meta).then(function () { return r; }); }); }
+
+  // ---------- a second copy in the host app's own storage (the Toss version) ----------
+  // Inside Toss, iOS may empty IndexedDB after 7 days without use, so every encrypted record is also kept in the host's
+  // Storage (strings only, cleared only when the Toss app is removed). Same ciphertext: nothing readable is added.
+  // With keyStore on, "open without the passcode" keeps the data key there too (the host app's sandbox is the lock).
+  var MIRROR = null, KS = false;
+  function mset(k, v) { if (!MIRROR) return Promise.resolve(); return Promise.resolve().then(function () { return MIRROR.set(k, JSON.stringify(v)); }).catch(function () {}); }
+  function mdel(k) { if (!MIRROR) return Promise.resolve(); return Promise.resolve().then(function () { return MIRROR.remove(k); }).catch(function () {}); }
+  function mget(k) { return Promise.resolve().then(function () { return MIRROR.get(k); }).then(function (v) { return v ? JSON.parse(v) : null; }).catch(function () { return null; }); }
+  var mq = Promise.resolve();
+  function mindex(kind, name, add) {                  // the list of docs / blobs kept, so they can be read back
+    if (!MIRROR) return Promise.resolve();
+    mq = mq.then(function () { return mget(kind + ':index'); }).then(function (list) {
+      list = Array.isArray(list) ? list : [];
+      var i = list.indexOf(name);
+      if (add && i < 0) list.push(name); else if (!add && i >= 0) list.splice(i, 1); else return;
+      return mset(kind + ':index', list);
+    }).catch(function () {});
+    return mq;
+  }
+  function mirrorAll() {
+    if (!MIRROR) return Promise.resolve();
+    return tx(['meta', 'docs', 'blobs'], 'readonly', function (t) {
+      var out = { docs: {}, blobs: {} };
+      return req(t.objectStore('meta').get('main')).then(function (m) { out.meta = m; return req(t.objectStore('docs').getAllKeys()); })
+        .then(function (ks) { return Promise.all(ks.map(function (k) { return req(t.objectStore('docs').get(k)).then(function (v) { out.docs[k] = v; }); })); })
+        .then(function () { return req(t.objectStore('blobs').getAllKeys()); })
+        .then(function (ks) { return Promise.all(ks.map(function (k) { return req(t.objectStore('blobs').get(k)).then(function (v) { out.blobs[k] = v; }); })); })
+        .then(function () { return out; });
+    }).then(function (o) {
+      return Promise.resolve().then(function () { return MIRROR.clear(); }).catch(function () {}).then(function () {
+        var jobs = [mset('m:main', o.meta), mset('d:index', Object.keys(o.docs)), mset('b:index', Object.keys(o.blobs))];
+        Object.keys(o.docs).forEach(function (k) { jobs.push(mset('d:' + k, o.docs[k])); });
+        Object.keys(o.blobs).forEach(function (k) { jobs.push(mset('b:' + k, o.blobs[k])); });
+        return Promise.all(jobs);
+      });
+    });
+  }
 
   // ---------- session (in memory only) ----------
   var session = null;        // { key: CryptoKey (not extractable), meta }
@@ -344,10 +382,18 @@
     // it seals one more copy of the data key. Anyone who can use this browser can then open the vault, which is
     // exactly what was asked for. It is never in a backup, a QR move or anything sent anywhere.
     deviceOpenOn: function () {
+      if (KS) return Promise.all([readMeta(), mget('k:open')]).then(function (r) { return !!(r[0] && r[1] && r[1].id === r[0].id); });
       return Promise.all([readMeta(), readDevice()]).then(function (r) { return !!(r[0] && r[1] && r[1].id === r[0].id); });
     },
     deviceOpenEnable: function (pass) {
       var meta, raw;
+      if (KS) return readMeta().then(function (m) {
+        if (!m) throw fail('empty', 'There is no vault on this device yet.');
+        meta = m; return rawFromPass(meta, String(pass || '').normalize('NFC'));
+      }).then(function (r) {
+        var v = { id: meta.id, raw: b64(r) }; r.fill(0);
+        return Promise.resolve().then(function () { return MIRROR.set('k:open', JSON.stringify(v)); });
+      }).then(function () { emit({ type: 'device-open' }); return true; });
       return readMeta().then(function (m) {
         if (!m) throw fail('empty', 'There is no vault on this device yet.');
         meta = m;
@@ -364,10 +410,17 @@
         .catch(function (e) { if (raw) raw.fill(0); throw e; });
     },
     deviceOpenDisable: function () {
+      if (KS) return mdel('k:open').then(function () { emit({ type: 'device-open' }); });
       return tx(['meta'], 'readwrite', function (t) { return req(t.objectStore('meta').delete('device')); }).then(function () { emit({ type: 'device-open' }); });
     },
     // Opens the vault with the device copy. A copy that doesn't fit this vault (restored or replaced since) is dropped.
     deviceUnlock: function () {
+      if (KS) return Promise.all([readMeta(), mget('k:open')]).then(function (r) {
+        var meta = r[0], d = r[1];
+        if (!meta || !d || d.id !== meta.id || typeof d.raw !== 'string') throw fail('no-device', 'Not set up on this device.');
+        var raw = unb64(d.raw);
+        return importDataKey(raw).then(function (key) { raw.fill(0); session = { key: key, meta: meta }; });
+      });
       return Promise.all([readMeta(), readDevice()]).then(function (r) {
         var meta = r[0], d = r[1];
         if (!meta || !d) throw fail('no-device', 'Not set up on this device.');
@@ -380,6 +433,46 @@
     },
 
     lock: function () { session = null; emit({ type: 'locked' }); return Promise.resolve(); },
+
+    // store: { get(k), set(k, v), remove(k), clear() } → promises of strings. opts.keyStore: device-open key lives there.
+    useMirror: function (store, opts) { MIRROR = store || null; KS = !!(store && opts && opts.keyStore); },
+    // IndexedDB emptied (iOS, 7 days unused) but the host still has the copy: put it back. Resolves true if it did.
+    restoreFromMirror: function () {
+      if (!MIRROR) return Promise.resolve(false);
+      return readMeta().then(function (m) {
+        if (m) return false;
+        return mget('m:main').then(function (meta) {
+          if (!meta || !meta.id || !meta.pass) return false;
+          return Promise.all([mget('d:index'), mget('b:index')]).then(function (ix) {
+            var dn = (Array.isArray(ix[0]) ? ix[0] : []).filter(function (k) { return MODULE_RE.test(k); }), bn = (Array.isArray(ix[1]) ? ix[1] : []).filter(function (k) { return BLOB_RE.test(k); });
+            return Promise.all(dn.map(function (k) { return mget('d:' + k); }).concat(bn.map(function (k) { return mget('b:' + k); }))).then(function (vals) {
+              return tx(['meta', 'docs', 'blobs'], 'readwrite', function (t) {
+                var jobs = [req(t.objectStore('meta').put(meta, 'main'))];
+                dn.forEach(function (k, i) { if (vals[i]) jobs.push(req(t.objectStore('docs').put(vals[i], k))); });
+                bn.forEach(function (k, i) { var v = vals[dn.length + i]; if (v) jobs.push(req(t.objectStore('blobs').put(v, k))); });
+                return Promise.all(jobs);
+              });
+            }).then(function () { emit({ type: 'restored' }); return true; });
+          });
+        });
+      });
+    },
+    // Opened without a passcode (device copy): choose a passcode now. Turns "open without the passcode" off.
+    setPasscodeFromDevice: function (newPass) {
+      return Promise.resolve().then(function () {
+        newPass = checkPass(newPass);
+        return Promise.all([readMeta(), KS ? mget('k:open') : readDevice()]);
+      }).then(function (r) {
+        var meta = r[0], d = r[1];
+        if (!meta || !d || d.id !== meta.id) throw fail('no-device', 'Not set up on this device.');
+        return (KS ? Promise.resolve(unb64(d.raw)) : open(d.key, d.box, aadFor(meta, 'device'))).then(function (raw) {
+          var next = JSON.parse(JSON.stringify(meta));
+          return wrapWithPass(next, raw, newPass).then(function () { raw.fill(0); return writeMeta(next); })
+            .then(function () { if (session) session.meta = next; return Vault.deviceOpenDisable(); });
+        });
+      });
+    },
+    mirrorAll: function () { return mirrorAll(); },
 
     // Hand the open session to a window this page opened itself (desktop note windows). The key stays
     // non-extractable; it only travels by postMessage between this app's own windows, never over the broadcast channel.
@@ -427,7 +520,8 @@
         var s = session;
         return seal(s.key, te.encode(JSON.stringify(data)), aadFor(s.meta, 'doc|' + module)).then(function (box) {
           box.updated = Date.now();
-          return tx(['docs'], 'readwrite', function (t) { return req(t.objectStore('docs').put(box, module)); });
+          return tx(['docs'], 'readwrite', function (t) { return req(t.objectStore('docs').put(box, module)); })
+            .then(function () { return mset('d:' + module, box).then(function () { return mindex('d', module, true); }); });
         }).then(function () { emit({ type: 'saved', module: module }); });
       });
     },
@@ -441,7 +535,8 @@
         var s = session;
         return seal(s.key, bytes, aadFor(s.meta, 'blob|' + id + '|' + type)).then(function (box) {
           box.type = type;
-          return tx(['blobs'], 'readwrite', function (t) { return req(t.objectStore('blobs').put(box, id)); });
+          return tx(['blobs'], 'readwrite', function (t) { return req(t.objectStore('blobs').put(box, id)); })
+            .then(function (r) { return mset('b:' + id, box).then(function () { return mindex('b', id, true); }).then(function () { return r; }); });
         });
       });
     },
@@ -462,7 +557,8 @@
       return Promise.resolve().then(function () {
         needOpen();
         if (!BLOB_RE.test(id)) throw fail('bad-id');
-        return tx(['blobs'], 'readwrite', function (t) { return req(t.objectStore('blobs').delete(id)); });
+        return tx(['blobs'], 'readwrite', function (t) { return req(t.objectStore('blobs').delete(id)); })
+          .then(function (r) { return mdel('b:' + id).then(function () { return mindex('b', id, false); }).then(function () { return r; }); });
       });
     },
     blobIds: function () {
@@ -547,7 +643,8 @@
                   .then(function () { return req(t.objectStore('meta').delete('device')); });     // belongs to the device and the old vault
               });
             })
-            .then(function () { session = { key: key, meta: kept }; emit({ type: 'restored' }); });
+            .then(function () { session = { key: key, meta: kept }; return mirrorAll().then(function () { return mdel('k:open'); }); })
+            .then(function () { emit({ type: 'restored' }); });
         });
       });
     },
@@ -564,7 +661,8 @@
           r.onerror = function () { reject(fail('no-storage', String(r.error))); };
           r.onblocked = function () { /* other tabs close on versionchange; success follows */ };
         });
-      }).then(function () { emit({ type: 'wiped' }); });
+      }).then(function () { if (MIRROR) return Promise.resolve().then(function () { return MIRROR.clear(); }).catch(function () {}); })
+        .then(function () { emit({ type: 'wiped' }); });
     },
 
     // Ask the browser not to clear this site's storage under storage pressure.
