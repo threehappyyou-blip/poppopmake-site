@@ -880,3 +880,8 @@ html[data-theme="light"][data-sheet="heart"] { --paper: #FFF4F6; --paper-2: #FBE
 @media (max-width: 420px) { .top-actions .icon-btn { width: 36px; } .month-nav .icon-btn { width: 32px; } .month { font-size: 1.08rem; } }
 .ntpl-row { display: flex; gap: 6px; overflow-x: auto; padding: 2px 0 10px; flex-wrap: nowrap; }
 .ntpl-row .ntpl { flex: 0 0 auto; min-height: 36px; padding: 6px 12px; flex-direction: row; border-radius: 99px; color: #1C2321; }
+/* install: everything, or one part as its own app */
+.only-pick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin: 6px 0 4px; }
+.only-opt { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 2px; border: 2px solid var(--line); border-radius: 14px; background: var(--card); color: var(--ink); font-weight: 700; font-size: .8rem; cursor: pointer; }
+.only-opt.on { border-color: var(--teal); background: var(--teal-soft); }
+.only-opt img { border-radius: 10px; }

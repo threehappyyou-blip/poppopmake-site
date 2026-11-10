@@ -12,6 +12,13 @@
   var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.deco', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv', 'tip.desk', 'tip.goals', 'tip.calc', 'tip.list'];
   var FAIL_KEY = 'ppm-vault-fails', THEME_KEY = 'ppm-vault-theme', DESK_KEY = 'ppm-vault-desk';
   var PM_KEY = 'ppm-vault-last-pm';         // id of the payment method used last (a random id, no content)
+  // One part on its own (installed as "Diary", "Notes" or "Budget"): /vault?app=diary. Kept for this window only, so the
+  // full app in a browser tab is never stuck in it; app=all goes back to everything.
+  var ONLY = (function () {
+    var m = location.search.match(/[?&]app=(diary|notes|budget|all)\b/), v = m ? m[1] : null;
+    try { if (v === 'all') { sessionStorage.removeItem('ppm-vault-only'); v = null; } else if (v) sessionStorage.setItem('ppm-vault-only', v); else v = sessionStorage.getItem('ppm-vault-only'); } catch (e) { /* private mode: the address decides */ }
+    return /^(diary|notes|budget)$/.test(v || '') ? v : null;
+  })();
   var TAB_KEY = 'ppm-vault-tab', INSTALL_KEY = 'ppm-vault-install-later', PK_AUTO_KEY = 'ppm-vault-pk-auto';   // only the tab name and two on/off choices, never content
   // A desktop note window (/vault?w=note&id=…) shows one note on its own; everything else is the full app.
   var DESK = (location.search.match(/[?&]w=note&id=([A-Za-z0-9_-]{4,40})(?:&|$)/) || [])[1] || null;
@@ -104,11 +111,14 @@
   function applyLang() {
     var l = I.get();
     document.documentElement.lang = l;
-    document.title = t('app.name') + ' — PopPopMake';
+    var name = ONLY ? t('tab.' + ONLY) : t('app.name');
+    document.title = name + ' — PopPopMake';
     var man = document.getElementById('vault-manifest');
-    if (man) man.setAttribute('href', '/manifest-vault-' + l + '.json');
+    if (man) man.setAttribute('href', ONLY ? '/manifest-' + ONLY + '-' + l + '.json' : '/manifest-vault-' + l + '.json');
     var apt = document.querySelector('meta[name="apple-mobile-web-app-title"]');
-    if (apt) apt.setAttribute('content', t('app.name'));
+    if (apt) apt.setAttribute('content', name);
+    var ati = document.querySelector('link[rel="apple-touch-icon"]');
+    if (ati) ati.setAttribute('href', '/icons/tool-' + (ONLY || 'vault') + '-apple-180.png');
   }
   function applyTheme() {
     var th = lsGet(THEME_KEY) || 'auto';
@@ -682,7 +692,7 @@
     else if (S.tab === 'diary') renderDiary(main);
     else renderSettings(main);
     var tabs = h('nav', { class: 'tabbar', 'aria-label': t('app.name') });
-    [['budget', 'wallet'], ['notes', 'note'], ['diary', 'book'], ['settings', 'gear']].forEach(function (x) {
+    [['budget', 'wallet'], ['notes', 'note'], ['diary', 'book'], ['settings', 'gear']].filter(function (x) { return !ONLY || x[0] === ONLY || x[0] === 'settings' || x[0] === S.tab; }).forEach(function (x) {
       add(tabs, h('button', { type: 'button', class: 'tab' + (S.tab === x[0] ? ' on' : ''), 'aria-current': S.tab === x[0] ? 'page' : null, 'data-tab': x[0],
         on: { click: function () { if (S.tab !== x[0]) { flushNote(); flushEntry(); hideToast(); S.tab = x[0]; lsSet(TAB_KEY, x[0]); S.searchOpen = false; render(); window.scrollTo(0, 0); } } } },
         icon(x[1]), h('span', { text: t('tab.' + x[0]) })));
@@ -2714,6 +2724,7 @@
     add(main,
       group(t('set.general'), [ctrlRow(t('lang.label'), lang), ctrlRow(t('cur.label'), cur, t('set.curNote')), ctrlRow(t('set.theme'), theme),
         row(t('sheet.title'), t('sheet.' + (S.settings.sheet || 'none')), openSheets, 'set-sheet'),
+        ONLY ? row(t('only.mode', { what: t('tab.' + ONLY) }), t('only.full'), function () { location.href = '/vault?app=all'; }, 'set-only') : row(t('only.set'), null, openInstall, 'set-only'),
         SE ? row(t('seal.book'), seals.mine().length + '/' + SE.IDS.length, openSealBook, 'set-seals') : null,
         row(t('in.again'), null, function () { Object.keys(S.settings.helper.done).forEach(function (k) { if (k.indexOf('in-') === 0) delete S.settings.helper.done[k]; }); saveSettings(); toast(t('in.reset')); }, 'set-intros')]),
       group(t('set.budget'), [
@@ -3418,6 +3429,13 @@
     sheet(t('install.title'), function (body) {
       add(body, h('p', { class: 'hint', text: t('install.why') }));
       if (isStandalone()) { add(body, h('p', { class: 'msg ok', text: t('install.done') })); if (!isPhone()) add(body, autoStartSteps()); return; }
+      if (!DESK) add(body, h('p', { class: 'field-label', text: t('only.title') }), h('div', { class: 'only-pick', id: 'only-pick', role: 'radiogroup', 'aria-label': t('only.title') },
+        [['all', 'vault'], ['diary', 'diary'], ['notes', 'notes'], ['budget', 'budget']].map(function (x) {
+          var on = (ONLY || 'all') === x[0];
+          return h('button', { type: 'button', role: 'radio', class: 'only-opt' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-only': x[0], id: 'only-' + x[0],
+            on: { click: function () { if (on) return; location.href = '/vault?app=' + x[0] + '&install=1&lang=' + I.get(); } } },
+            h('img', { src: '/icons/tool-' + x[1] + '-192.png', alt: '', width: 44, height: 44 }), h('span', { text: t('only.' + x[0]) }));
+        })), h('p', { class: 'hint', text: t('only.hint') }));
       if (S.installEvt) add(body, h('button', { type: 'button', class: 'btn primary block', id: 'install-go', text: t('install.button'), on: { click: function () {
         var ev = S.installEvt; S.installEvt = null; ev.prompt(); ev.userChoice.then(function () { render(); }, function () {});
       } } }));
@@ -4003,9 +4021,11 @@
     var sm = (location.search + location.hash).match(/[?&#]start=(notes|diary|add|share|checkin)\b/);
     var lastTab = lsGet(TAB_KEY);
     if (!sm && /^(budget|notes|diary)$/.test(lastTab || '')) S.tab = lastTab;        // reopen where you left off
+    if (!sm && ONLY) S.tab = ONLY;                                                   // the one-part app always opens on its part
     if (sm && sm[1] === 'checkin') { S.startCheckin = true; S.tab = 'budget'; }
     else if (sm && sm[1] === 'add') { S.tab = 'budget'; S.startAdd = true; } else if (sm && sm[1] === 'share') takeShared(); else if (sm) S.tab = sm[1];
     if (S.phase === 'locked' && !DESK) devOpenAtStart(); else render();
+    if (/[?&]install=1\b/.test(location.search) && !isStandalone()) setTimeout(openInstall, 500);    // came here to install one part
   }).catch(function () { S.phase = 'nostorage'; render(); });
   // "Open without the passcode on this device": straight into the app, the lock screen never shows.
   function devOpenAtStart() {
@@ -4056,8 +4076,8 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-icons.js', '/vault-coach.js', '/vault-seals.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
-        .forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
+      ['/vault', '/vault-core.js', '/vault-icons.js', '/vault-coach.js', '/vault-seals.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', ONLY ? '/manifest-' + ONLY + '-' + I.get() + '.json' : null, ONLY ? '/icons/tool-' + ONLY + '-192.png' : null, '/icons/tool-vault-192.png']
+        .filter(Boolean).forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }
 

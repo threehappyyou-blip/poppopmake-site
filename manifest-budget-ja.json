@@ -1,0 +1,33 @@
+{
+  "name": "家計簿 – PopPopMake",
+  "short_name": "家計簿",
+  "description": "この端末だけに暗号化して保存する家計簿。登録不要。",
+  "lang": "ja",
+  "id": "/vault?app=budget",
+  "start_url": "/vault?app=budget&source=pwa",
+  "scope": "/vault",
+  "display": "standalone",
+  "background_color": "#EEF1EF",
+  "theme_color": "#EEF1EF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icons/tool-budget-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-budget-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/tool-budget-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
