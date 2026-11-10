@@ -16,6 +16,7 @@
   }
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   var PHOTO_RE = /^[a-z0-9]{1,40}$/;
+  var RATE_RE = /^[gw]$/;
   function ymOf(date) { return date.slice(0, 7); }
   function addDays(date, n) { var d = new Date(Date.UTC(+date.slice(0, 4), +date.slice(5, 7) - 1, +date.slice(8, 10) + n)); return d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()); }
   function weekday(date) { return new Date(Date.UTC(+date.slice(0, 4), +date.slice(5, 7) - 1, +date.slice(8, 10))).getUTCDay(); }
@@ -351,6 +352,7 @@
     if (t.pm && typeof t.pm === 'string') tx.pm = t.pm;
     if (t.photo && PHOTO_RE.test(t.photo)) tx.photo = t.photo;
     if (Number.isInteger(t.at) && t.at >= 0 && t.at < 1440) tx.at = t.at;      // minute of the day it was written (only when written that day)
+    if (RATE_RE.test(t.rate)) tx.rate = t.rate;                                 // the person's own verdict: 'g' worth it, 'w' a waste
     doc.tx.push(tx);
     return tx;
   }
@@ -363,6 +365,8 @@
       if (patch[k] === null || patch[k] === '') delete t[k];
       else if (typeof patch[k] === 'string' && (k !== 'photo' || PHOTO_RE.test(patch[k]))) t[k] = patch[k];
     });
+    if (patch.rate === null || patch.rate === '') delete t.rate;
+    else if (RATE_RE.test(patch.rate)) t.rate = patch.rate;
     return true;
   }
   function deleteTx(doc, id) {
@@ -751,7 +755,7 @@
     if (Array.isArray(raw.tx)) d.tx = raw.tx.filter(function (t) {
       return t && typeof t.id === 'string' && (t.type === 'expense' || t.type === 'income') && Number.isInteger(t.amt) && t.amt > 0 &&
         typeof t.cat === 'string' && validDate(t.date);
-    }).map(function (t) { t.cur = typeof t.cur === 'string' ? t.cur : d.currency; t.note = String(t.note || ''); if (t.photo !== undefined && !PHOTO_RE.test(String(t.photo))) delete t.photo; if (t.at !== undefined && !(Number.isInteger(t.at) && t.at >= 0 && t.at < 1440)) delete t.at; return t; });
+    }).map(function (t) { t.cur = typeof t.cur === 'string' ? t.cur : d.currency; t.note = String(t.note || ''); if (t.photo !== undefined && !PHOTO_RE.test(String(t.photo))) delete t.photo; if (t.at !== undefined && !(Number.isInteger(t.at) && t.at >= 0 && t.at < 1440)) delete t.at; if (t.rate !== undefined && !RATE_RE.test(t.rate)) delete t.rate; return t; });
     if (Array.isArray(raw.methods)) d.methods = raw.methods.map(cleanMethod).filter(Boolean).slice(0, 30);
     var mids = {}; d.methods.forEach(function (m) { mids[m.id] = true; });
     d.tx.forEach(function (t) { if (t.pm !== undefined && !mids[t.pm]) delete t.pm; });

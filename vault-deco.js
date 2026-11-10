@@ -76,21 +76,23 @@
     var stTab = 'art';
     function panelStickers() {
       var tabs = h('div', { class: 'seg small', role: 'tablist' });
-      [['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji']].forEach(function (x) {
+      [['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
         add(tabs, h('button', { type: 'button', role: 'tab', id: 'st-tab-' + x[0], 'aria-selected': stTab === x[0] ? 'true' : 'false', class: stTab === x[0] ? 'on' : '', text: t(x[1]),
           on: { click: function () { stTab = x[0]; toggle('stickers'); toggle('stickers'); } } }));
       });
       var grid = h('div', { class: 'st-grid' + (stTab === 'tape' ? ' tapes' : ''), id: 'st-grid' });
-      var keys = stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) : ST.EMOJI.map(function (k) { return 'e:' + k; });
+      var keys = stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
+        stTab === 'seal' ? (ctx.seals ? ctx.seals() : []).map(function (k) { return 's:' + k; }) : ST.EMOJI.map(function (k) { return 'e:' + k; });
       keys.forEach(function (k) {
         var el = ST.element(k); if (!el) return;
         add(grid, h('button', { type: 'button', class: 'st-pick', 'data-k': k, 'aria-label': nameOf(k), title: nameOf(k), on: { click: function () { addSticker(k); } } }, el));
       });
-      add(panel, tabs, h('p', { class: 'hint', text: t('st.hint') }), grid);
+      add(panel, tabs, h('p', { class: 'hint', text: stTab === 'seal' ? (keys.length ? t('st.sealHint') : t('st.sealNone')) : t('st.hint') }), grid);
     }
     function nameOf(k) {
       if (k.slice(0, 2) === 'a:') return t('st.' + k.slice(2));
       if (k.slice(0, 2) === 't:') return t('tape.' + k.slice(2));
+      if (k.slice(0, 2) === 's:') return t('seal.' + k.slice(2));
       return k.slice(2);
     }
 
@@ -152,6 +154,25 @@
           add(ul, h('li', {}, cb, inp, h('button', { type: 'button', class: 'icon-btn xs', 'aria-label': t('todo.remove'), on: { click: function () { tp.todo.splice(i, 1); drawTpl(); commit(true); } } }, ctx.icon('x', 14))));
         });
         add(tplBox, ul, tp.todo.length < 30 ? h('button', { type: 'button', class: 'mini', id: 'todo-add', text: '+ ' + t('todo.add'), on: { click: function () { addTodo(tp.todo.length); } } }) : null);
+      } else if (on === 'thanks') {
+        add(tplBox, h('p', { class: 'tpl-title', text: t('thanks.title') }));
+        tp.thanks = tp.thanks || ['', '', ''];
+        [0, 1, 2].forEach(function (i) {
+          var inp = h('input', { class: 'tpl-in thanks-in', 'data-i': i, value: tp.thanks[i] || '', placeholder: t('thanks.ph' + (i + 1)), maxlength: 200, 'aria-label': t('thanks.title') + ' ' + (i + 1) });
+          inp.addEventListener('input', function () { tp.thanks[i] = inp.value; commit(); });
+          add(tplBox, h('label', { class: 'tpl-row thanks-row' }, h('span', { class: 'thanks-n', 'aria-hidden': 'true', text: '♥ ' + (i + 1) }), inp));
+        });
+      } else if (on === 'money') {
+        var m = ctx.moneyDay ? ctx.moneyDay(e.date) : null;
+        add(tplBox, h('p', { class: 'tpl-title', text: t('mday.title') }));
+        if (m && m.items.length) {
+          add(tplBox, h('ul', { class: 'mday-list', id: 'mday-list' }, m.items.map(function (x) {
+            return h('li', { class: x.waste ? 'waste' : '' }, h('span', { 'aria-hidden': 'true', text: x.emoji + ' ' }), h('span', { class: 'mday-what', text: x.what }), h('span', { class: 'mday-amt', text: x.amt }));
+          })), h('p', { class: 'mday-total', id: 'mday-total', text: t('mday.total', { amt: m.total }) + (m.waste ? ' · ' + t('mday.waste', { amt: m.waste }) : '') }));
+        } else add(tplBox, h('p', { class: 'hint', id: 'mday-none', text: t('mday.none') }));
+        var mt = h('textarea', { class: 'tpl-in mday-in', id: 'mday-note', rows: 2, value: tp.money || '', placeholder: t('mday.ph'), maxlength: 500, 'aria-label': t('mday.ph') });
+        mt.addEventListener('input', function () { tp.money = mt.value; grow(mt); commit(); });
+        add(tplBox, mt); setTimeout(function () { grow(mt); }, 0);
       }
       placeStickers();
     }

@@ -7,8 +7,8 @@
 (function (root) {
   'use strict';
   var MAX_PHOTOS = 4, PROMPTS = 16, MAX_STICKERS = 60;
-  var PAPERS = ['plain', 'lines', 'grid', 'dots'], TINTS = ['none', 'cream', 'pink', 'mint', 'sky', 'lavender', 'kraft'], FONTS = ['base', 'hand', 'pen'];
-  var TPLS = ['time', 'week', 'todo'], HOURS = [];
+  var PAPERS = ['plain', 'lines', 'grid', 'dots', 'gingham', 'hearts', 'flowers', 'stars', 'clouds', 'manuscript'], TINTS = ['none', 'cream', 'pink', 'mint', 'sky', 'lavender', 'kraft'], FONTS = ['base', 'hand', 'pen'];
+  var TPLS = ['time', 'week', 'todo', 'thanks', 'money'], HOURS = [];
   for (var hh = 6; hh <= 24; hh++) HOURS.push((hh < 10 ? '0' : '') + hh);
 
   function uid() {
@@ -46,13 +46,15 @@
     if (!x || typeof x !== 'object' || typeof x.k !== 'string') return null;
     var k = x.k;
     if (/^[at]:[a-z0-9]{1,16}$/.test(k)) {}                                               // drawn sticker or tape, by name
+    else if (/^s:[a-z0-9-]{1,16}$/.test(k)) {}                                            // a reward seal the person earned
     else if (/^e:/.test(k) && k.length <= 18 && EMOJI_RE.test(k.slice(2)) && !ASCII_WORD_RE.test(k.slice(2))) {}   // one emoji
     else return null;
     return { k: k, x: num(x.x, 0, 1, 0.5), y: num(x.y, 0, 40, 0), s: num(x.s, 0.05, 0.8, 0.16), r: Math.round(num(x.r, -180, 180, 0)) };
   }
   function cleanTpl(t) {
     t = t && typeof t === 'object' ? t : {};
-    var out = { on: TPLS.indexOf(t.on) >= 0 ? t.on : null, time: {}, week: { days: [], habits: [] }, todo: [] };
+    var out = { on: TPLS.indexOf(t.on) >= 0 ? t.on : null, time: {}, week: { days: [], habits: [] }, todo: [], thanks: ['', '', ''], money: str(t.money, 500) };
+    for (var k = 0; k < 3; k++) out.thanks[k] = str(Array.isArray(t.thanks) ? t.thanks[k] : '', 200);
     var tm = t.time && typeof t.time === 'object' ? t.time : {};
     HOURS.forEach(function (h) { var v = str(tm[h], 300); if (v) out.time[h] = v; });
     var wk = t.week && typeof t.week === 'object' ? t.week : {};
@@ -71,7 +73,8 @@
   function tplHasContent(tp) {
     if (!tp) return false;
     return Object.keys(tp.time).length > 0 || tp.week.days.some(function (d) { return d.trim(); }) ||
-      tp.week.habits.some(function (hb) { return hb.name.trim() || hb.done.some(Boolean); }) || tp.todo.some(function (it) { return it.text.trim(); });
+      tp.week.habits.some(function (hb) { return hb.name.trim() || hb.done.some(Boolean); }) || tp.todo.some(function (it) { return it.text.trim(); }) ||
+      (tp.thanks || []).some(function (x) { return x.trim(); }) || !!(tp.money || '').trim();
   }
   function cleanDeco(raw) {
     if (!raw || typeof raw !== 'object') return null;

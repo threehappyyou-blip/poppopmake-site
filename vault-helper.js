@@ -322,13 +322,15 @@
     var foot = document.createElement('div'); foot.className = 'hp-tip-foot';
     var count = document.createElement('span'); count.className = 'hp-tip-count'; count.id = 'hp-tip-count';
     var quit = document.createElement('button'); quit.type = 'button'; quit.className = 'hp-tip-quit'; quit.id = 'hp-tip-quit'; quit.textContent = t('hp.g.quit');
-    foot.appendChild(count); foot.appendChild(quit);
+    var nextBtn = document.createElement('button'); nextBtn.type = 'button'; nextBtn.className = 'hp-tip-next'; nextBtn.id = 'hp-tip-next'; nextBtn.hidden = true;
+    foot.appendChild(count); foot.appendChild(nextBtn); foot.appendChild(quit);
     tip.appendChild(txt); tip.appendChild(foot);
     box.appendChild(ring); box.appendChild(tip);
     document.body.appendChild(box);
     var g = { flow: flow, steps: steps, i: -1, box: box, ring: ring, tip: tip, txt: txt, count: count, el: null, missing: 0, timer: null, inputT: null };
     this.active = g;
     quit.addEventListener('click', function () { self.stop(false); });
+    nextBtn.addEventListener('click', function () { next(); });
     g.onClick = function (e) {
       var s = g.steps[g.i]; if (!s || s.until !== 'click' || !g.el) return;
       var target = e.target && e.target.closest ? e.target.closest(s.hit || s.sel) : null;
@@ -356,6 +358,7 @@
       var el = document.querySelector(s.sel);
       if (!visible(el)) {
         g.el = null; ring.style.display = 'none'; tip.style.visibility = 'hidden';
+        if (s.until === 'next' && g.missing > 3) { next(); return; }
         if (++g.missing > 40) self.stop(false);         // about 8 seconds without the button: quietly give up
         return;
       }
@@ -403,6 +406,8 @@
       tip.style.visibility = 'hidden';                     // shown again once it sits next to the new button
       txt.textContent = t(s.key, s.vars);
       count.textContent = (g.i + 1) + ' / ' + g.steps.length;
+      nextBtn.hidden = s.until !== 'next'; nextBtn.textContent = t(g.i === g.steps.length - 1 ? 'in.done' : 'btn.next');
+      quit.textContent = t(s.until === 'next' ? 'in.skip' : 'hp.g.quit');
       g.el = null; g.missing = 0;
       setTimeout(place, 30);
     }

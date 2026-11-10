@@ -27,6 +27,8 @@ var PRECACHE_URLS = [
   '/site-helper.js',
   '/vault-helper.js',
   '/vault-icons.js',
+  '/vault-coach.js',
+  '/vault-seals.js',
   '/ads.json',
   '/command-palette.js',
   '/icons/icon-192.png',

@@ -93,6 +93,8 @@
       var tp = TAPES[name], id = 'tp' + (++n) + Math.random().toString(36).slice(2, 6);
       markup = (tp.pat ? '<defs>' + tp.pat.replace('ID', id) + '</defs>' : '') + '<path d="' + TAPE_EDGE + '" fill="' + tp.fill + '"/>' + (tp.pat ? '<path d="' + TAPE_EDGE + '" fill="url(#' + id + ')"/>' : '');
       vb = '0 0 160 40';
+    } else if (kind === 's:') {
+      return root.VaultSeals ? root.VaultSeals.element(name) : null;
     } else if (kind === 'e:') {
       var sp = doc.createElement('span'); sp.className = 'st-emoji'; sp.textContent = name; return sp;
     }

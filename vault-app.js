@@ -4,10 +4,11 @@
 (function () {
   'use strict';
 
-  var HP = window.VaultHelper, C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, ST = window.VaultStickers, t = I.t;
+  var SE = window.VaultSeals, CO = window.VaultCoach, HP = window.VaultHelper, C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, ST = window.VaultStickers, t = I.t;
   var NOTE_FONTS = ['base', 'hand', 'pen'], NOTE_SIZES = ['s', 'm', 'l'];
   var app = document.getElementById('app');
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray'];
+  var SHEETS = ['none', 'mint', 'cream', 'sakura', 'lavender', 'sky', 'lemon', 'kraft', 'heart'];     // 속지: the paper the whole app sits on
   var TIPS = ['tip.quick', 'tip.notes', 'tip.diary', 'tip.deco', 'tip.frequent', 'tip.recurring', 'tip.charts', 'tip.search', 'tip.lock', 'tip.csv', 'tip.desk', 'tip.goals', 'tip.calc', 'tip.list'];
   var FAIL_KEY = 'ppm-vault-fails', THEME_KEY = 'ppm-vault-theme', DESK_KEY = 'ppm-vault-desk';
   var PM_KEY = 'ppm-vault-last-pm';         // id of the payment method used last (a random id, no content)
@@ -61,6 +62,7 @@
     gear: ['<circle cx="12" cy="12" r="3"/>', 'M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1'],
     repeat: ['M17 2l4 4-4 4', 'M3 11V9a3 3 0 0 1 3-3h15', 'M7 22l-4-4 4-4', 'M21 13v2a3 3 0 0 1-3 3H3'],
     chev: ['M9 18l6-6-6-6'], shield: ['M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z'],
+    edit: ['M4 20h4L19 9l-4-4L4 16z', 'M14 6l4 4'], help: ['<circle cx="12" cy="12" r="9"/>', 'M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.6v.6', 'M12 17.2h.01'],
     desk: ['<rect x="3" y="4" width="18" height="12" rx="2"/>', 'M8 20h8M12 16v4'], list: ['M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01']
   };
   function icon(name, size) {
@@ -167,6 +169,9 @@
         });
       });
     }
+    s.sheet = raw && SHEETS.indexOf(raw.sheet) >= 0 ? raw.sheet : 'none';
+    s.seals = {};
+    if (raw && raw.seals && typeof raw.seals === 'object' && SE) SE.IDS.forEach(function (id) { var v = raw.seals[id]; if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v)) s.seals[id] = v; });
     if (raw && typeof raw === 'object') {
       if ([0, 1, 5, 15, 60].indexOf(raw.autoLock) >= 0) s.autoLock = raw.autoLock;      // 0 = never (lock it yourself)
       if (raw.lastBackup > 0) s.lastBackup = raw.lastBackup;
@@ -194,7 +199,7 @@
   }
   var saving = Promise.resolve();
   function queue(fn) { saving = saving.then(fn, fn); return saving; }
-  function saveBudget() { return save('budget', function () { return S.budget; }); }
+  function saveBudget() { sealSoon(); return save('budget', function () { return S.budget; }); }
   // Notes are saved by merging: only the notes changed in this window are written over what is stored, inside a lock
   // shared by all windows of the app — so a note window and the app can edit different notes at the same moment.
   var noteDirty = {}, noteGone = {}, noteLocal = {};     // ids changed / deleted here and not saved yet; ids created here, never stored
@@ -214,6 +219,7 @@
     return out;
   }
   function saveNotes() {
+    sealSoon();
     if (S.settings) S.settings.lastChange = Date.now();
     return queue(function () {
       if (!S.notes) return null;
@@ -687,7 +693,7 @@
 
   function topBar(title, extra) {
     return h('header', { class: 'top' }, title,
-      h('div', { class: 'top-actions' }, extra || null,
+      h('div', { class: 'top-actions' }, extra || null, introBtn(),
         HP && !DESK ? h('button', { type: 'button', class: 'icon-btn helper-btn', id: 'helper-btn', 'aria-label': t('hp.ask'), title: t('hp.ask'), on: { click: function () { openAsk(); } } }, h('span', { 'aria-hidden': 'true', text: '💁' })) : null,
         h('button', { type: 'button', class: 'icon-btn', id: 'lock-btn', 'aria-label': t('top.lock'), title: t('top.lock'), on: { click: function () { lockNow(false); } } }, icon('lock'))));
   }
@@ -715,21 +721,24 @@
         h('p', { class: 'budget-text', id: 'budget-text', text: sum.budget.left >= 0 ? t('budget.left', { amt: money(sum.budget.left), total: money(sum.budget.total) }) : t('budget.over', { amt: money(-sum.budget.left) }) }));
     } else add(card, h('button', { type: 'button', class: 'link', text: t('budget.set'), on: { click: openMonthlyBudget } }));
     if (ym === thisMonth()) add(card, allowanceLine());
-    add(card, goalsChip());
+    add(card, h('div', { class: 'chip-row' }, goalsChip(), sealsChip()));
     if (sum.otherCurrency) add(card, h('p', { class: 'hint', text: t('budget.other', { n: sum.otherCurrency }) }));
-    add(main, card, quickLine(), tilesCard(), notice(), helperCards('budget'));
+    var vtab = function (v, id, key) {
+      var on = S.budgetView === v || (v === 'charts' && S.budgetView === 'year');
+      return h('button', { type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', class: on ? 'on' : '', id: id, text: t(key), on: { click: function () { S.budgetView = v; render(); } } });
+    };
+    add(main, h('div', { class: 'seg bview', role: 'tablist', id: 'budget-views' }, vtab('list', 'view-list', 'view.list'), vtab('cal', 'view-cal', 'view.calendar'),
+      vtab('plan', 'view-plan', 'view.plan'), vtab('charts', 'view-charts', 'view.charts'), vtab('goals', 'view-goals', 'view.goals')));
+    themeHost(main);
+    if (S.budgetView !== 'list' && S.budgetView !== 'year') add(main, helperCards('budget'));      // what the app wants to ask stays in view everywhere
 
-    add(main, h('div', { class: 'seg', role: 'tablist' },
-      h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'list' ? 'true' : 'false', class: S.budgetView === 'list' ? 'on' : '', id: 'view-list', text: t('view.list'), on: { click: function () { S.budgetView = 'list'; render(); } } }),
-      h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'cal' ? 'true' : 'false', class: S.budgetView === 'cal' ? 'on' : '', id: 'view-cal', text: t('view.calendar'), on: { click: function () { S.budgetView = 'cal'; render(); } } }),
-      h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'charts' ? 'true' : 'false', class: S.budgetView === 'charts' ? 'on' : '', id: 'view-charts', text: t('view.charts'), on: { click: function () { S.budgetView = 'charts'; render(); } } }),
-      h('button', { type: 'button', role: 'tab', 'aria-selected': S.budgetView === 'goals' ? 'true' : 'false', class: S.budgetView === 'goals' ? 'on' : '', id: 'view-goals', text: t('view.goals'), on: { click: function () { S.budgetView = 'goals'; render(); } } })));
-
-    if (S.budgetView === 'cal') add(main, budgetCalendar(ym));
+    if (S.budgetView === 'cal') add(main, calHead(sum), quickLine(), budgetCalendar(ym));
+    else if (S.budgetView === 'plan') add(main, planView(sum));
     else if (S.budgetView === 'charts') add(main, charts(sum));
     else if (S.budgetView === 'year') { main.textContent = ''; renderYear(main); }
     else if (S.budgetView === 'goals') renderGoals(main);
     else {
+      add(main, card, coachCard(), quickLine(), tilesCard(), notice(), helperCards('budget'));
       var days = B.days(S.budget, ym);
       if (!days.length) add(main, empty('🧾', t('empty.month'), t('empty.monthHint')));
       else add(main, h('div', { class: 'days', id: 'tx-list' }, days.map(function (d) {
@@ -791,6 +800,60 @@
     return h('section', { class: 'card quick', id: px + 'quick', 'aria-label': t('q.label') }, h('div', { class: 'quick-row' }, input, go), prev, cats);
   }
 
+  // ----- the money coach (vault-coach.js): says it before the money goes; "why?" shows the numbers -----
+  function coachVar(k, v, vars) {
+    if (CO && CO.MONEY.indexOf(k) >= 0) return money(v);
+    if (k === 'cat') return catName(v);
+    if (k === 'wd') return wdName(v);
+    if (k === 'slot') return t('coach.slot.' + v);
+    if (k === 'ym') return I.monthLabel(v);
+    if (k === 'date' || k === 'from' || k === 'to') return +v.slice(5, 7) + '/' + +v.slice(8, 10);
+    if (k === 'x') return String(v);
+    return v;
+  }
+  function coachText(msg, vars) {
+    var out = {}; Object.keys(vars || {}).forEach(function (k) { out[k] = coachVar(k, vars[k], vars); });
+    if (vars && vars.cat !== undefined) out.what = vars.note || catName(vars.cat);
+    return t(msg, out);
+  }
+  function coachList() {
+    var hs = S.settings.helper;
+    if (!CO || hs.off || hs.mute.coach) return [];
+    return CO.pick(CO.all(S.budget, S.diary, today(), { now: nowMin(), ns: hs.checkin.ns, lang: I.get() }), function (k) { return !!hs.snooze['coach|' + k]; });
+  }
+  function coachItem(a, onDone) {
+    var why = h('ul', { class: 'coach-why', hidden: true }, a.why.map(function (w) { return h('li', { text: coachText(w.msg, w.vars) }); }));
+    var item = h('div', { class: 'coach-item', 'data-coach': a.id },
+      h('p', { class: 'coach-text', text: coachText(a.msg, a.vars) }),
+      h('div', { class: 'coach-actions' },
+        a.act && a.act.kind === 'budget' ? h('button', { type: 'button', class: 'btn small primary coach-act', text: t('coach.apply'), on: { click: function () {
+          S.budget.budgets.total = a.act.amt; helperDone('budget', 'm'); saveBudget(); S.settings.helper.snooze['coach|' + a.key] = today(); saveSettings();
+          toast(t('coach.applied', { amt: money(a.act.amt) })); seals.check(); if (onDone) onDone(); else render();
+        } } }) : null,
+        h('button', { type: 'button', class: 'link coach-why-btn', 'aria-expanded': 'false', text: t('coach.why'), on: { click: function (e) { why.hidden = !why.hidden; e.currentTarget.setAttribute('aria-expanded', why.hidden ? 'false' : 'true'); } } }),
+        h('button', { type: 'button', class: 'link coach-away', text: t('coach.away'), on: { click: function () { S.settings.helper.snooze['coach|' + a.key] = today(); saveSettings(); if (onDone) onDone(); else render(); } } })),
+      why);
+    return item;
+  }
+  function coachCard() {
+    if (S.ym !== thisMonth()) return null;
+    var list = coachList(); if (!list.length) return null;
+    return h('section', { class: 'card coach', id: 'coach', 'aria-label': t('coach.title') }, h('p', { class: 'coach-title' }, h('span', { 'aria-hidden': 'true', text: '🧭 ' }), t('coach.title')), list.map(function (a) { return coachItem(a); }));
+  }
+  // the person's own verdict on a spend, one tap: worth it 👍 / a waste 💸 (tap again to clear)
+  function rateButtons(tx, onChange) {
+    var box = h('span', { class: 'rate', role: 'group', 'aria-label': t('rate.q') });
+    function draw() {
+      box.textContent = '';
+      [['g', '👍', 'rate.g'], ['w', '💸', 'rate.w']].forEach(function (r) {
+        add(box, h('button', { type: 'button', class: 'rate-btn' + (tx.rate === r[0] ? ' on' : ''), 'data-rate': r[0], 'aria-pressed': tx.rate === r[0] ? 'true' : 'false', title: t(r[2]),
+          on: { click: function () { B.updateTx(S.budget, tx.id, { rate: tx.rate === r[0] ? null : r[0] }); saveBudget(); draw(); if (onChange) onChange(); } } }, r[1] + ' ' + t(r[2])));
+      });
+    }
+    draw();
+    return box;
+  }
+
   // ----- "today in 30 seconds": the app asks, the person answers with a few taps -----
   // 1. money spent today (frequent entries as buttons, one line, or "nothing today")  2. how the day was (a mood tap,
   // a line if they like → diary)  3. anything not to forget tomorrow (a line → a pinned note). Then the run of days.
@@ -815,10 +878,11 @@
       function btnRow() { return h('div', { class: 'ci-actions' }, Array.prototype.slice.call(arguments)); }
       function money1() {
         var todays = function () { return S.budget.tx.filter(function (x) { return x.date === today() && x.type === 'expense'; }); };
-        var list = h('ul', { class: 'ci-added', id: 'ci-added' });
+        var list = h('ul', { class: 'ci-added', id: 'ci-added' }), rateHint = h('p', { class: 'hint ci-rate-hint', id: 'ci-rate-hint', text: t('rate.hint'), hidden: true });
         function drawList() {
           list.textContent = '';
-          todays().forEach(function (x) { add(list, h('li', { text: '✓ ' + catEmoji(x.cat) + ' ' + (x.note || catName(x.cat)) + ' ' + money(x.amt, x.cur) })); });
+          todays().forEach(function (x) { add(list, h('li', {}, h('span', { class: 'ci-what', text: '✓ ' + catEmoji(x.cat) + ' ' + (x.note || catName(x.cat)) + ' ' + money(x.amt, x.cur) }), rateButtons(x))); });
+          rateHint.hidden = !todays().length;
           none.hidden = todays().length > 0; none.style.display = none.hidden ? 'none' : '';
         }
         var freq = B.frequent(S.budget, today(), 8).filter(function (f) { return f.type === 'expense'; }).slice(0, 6);
@@ -835,7 +899,7 @@
         add(body, h('h3', { class: 'ci-q', text: t('ci.q1') }),
           freq.length ? h('p', { class: 'hint', text: t('ci.q1hint') }) : null, freq.length ? chips : null,
           h('p', { class: 'hint', text: t('tile.hint') }), tileGrid(function () { drawList(); did.push('money'); }, 'ci-tiles'),
-          quickBox(function () { drawList(); did.push('money'); }), list,
+          quickBox(function () { drawList(); did.push('money'); }), list, rateHint,
           btnRow(h('button', { type: 'button', class: 'btn primary', id: 'ci-next', text: t('ci.next'), on: { click: next } })), none);
         drawList();
       }
@@ -877,7 +941,9 @@
           h('h3', { text: t('ci.doneT') }),
           h('p', { id: 'ci-streak', text: n >= 2 ? t('ci.streak', { n: n }) : t('ci.first') }),
           weekSoFar(),
+          (function () { var c = coachList()[0]; return c ? h('div', { class: 'ci-coach', id: 'ci-coach' }, coachItem(c, function () { var el = document.getElementById('ci-coach'); if (el) el.remove(); })) : null; })(),
           h('button', { type: 'button', class: 'btn primary block', id: 'ci-close', text: t('btn.close'), on: { click: close } })));
+        seals.check();
       }
       step();
     }, { onClose: render });
@@ -965,6 +1031,93 @@
   }
 
   // ----- the month as a calendar: what went out (and came in) each day; tap a day for its entries -----
+  // the month in one line above the calendar: what is left (or short), money in and out
+  function calHead(sum) {
+    return h('section', { class: 'card cal-head', id: 'cal-head' },
+      h('div', {}, h('span', { class: 'label', text: t('calh.net') }), h('strong', { class: 'big' + (sum.net < 0 ? ' neg' : ' pos') + longCls(money(sum.net), 11), id: 'cal-net', text: (sum.net > 0 ? '+' : '') + money(sum.net) })),
+      h('div', { class: 'cal-head-side' }, h('span', { class: 'pos', id: 'cal-in', text: '+' + money(sum.income) }), h('span', { class: 'neg', id: 'cal-out', text: '−' + money(sum.expense).replace(/^[-−]/, '') })));
+  }
+  // where today should be on a month bar: a thin mark, so "ahead of the month" shows at a glance
+  function paceOf(ym) { if (ym < thisMonth()) return 1; if (ym > thisMonth()) return 0; return (+today().slice(8, 10)) / B.daysInMonth(ym); }
+  function planBar(spent, budget, pace, label) {
+    var pct = budget > 0 ? spent / budget : 0, cls = pct > 1 ? 'over' : pct > pace + 0.02 ? 'warn' : 'ok';
+    return h('div', { class: 'pbar ' + cls, role: 'progressbar', 'aria-label': label, 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-valuenow': Math.min(100, Math.round(pct * 100)) },
+      h('span', { class: 'pbar-fill', style: 'width:' + Math.min(100, Math.round(pct * 100)) + '%' }),
+      pace > 0 && pace < 1 ? h('span', { class: 'pbar-tick', style: 'left:' + Math.round(pace * 100) + '%', title: t('plan.today') }) : null);
+  }
+  function planRow(emoji, name, spent, budget, pace, id) {
+    var left = budget - spent;
+    return h('li', { class: 'plan-row', 'data-plan': id },
+      h('div', { class: 'plan-top' }, h('span', { class: 'emoji', 'aria-hidden': 'true', text: emoji }), h('span', { class: 'plan-name', text: name }), h('span', { class: 'plan-used', text: t('plan.used', { amt: money(spent) }) })),
+      planBar(spent, budget, pace, name),
+      h('div', { class: 'plan-bottom' }, h('span', { class: left < 0 ? 'neg plan-left' : 'plan-left', text: left < 0 ? t('plan.over', { amt: money(-left) }) : t('plan.left', { amt: money(left) }) }), h('span', { class: 'hint', text: t('plan.of', { amt: money(budget) }) })));
+  }
+  function planView(sum) {
+    var wrap = h('div', { class: 'plan', id: 'plan' }), pace = paceOf(S.ym), tb = S.budget.budgets.total;
+    var head = h('section', { class: 'card plan-total', id: 'plan-total' },
+      h('div', { class: 'plan-head' }, h('div', {}, h('span', { class: 'label', text: t('plan.month') }), h('strong', { class: 'big', id: 'plan-amt', text: tb ? money(tb) : '—' })),
+        h('button', { type: 'button', class: 'icon-btn', id: 'plan-edit', 'aria-label': t('plan.edit'), title: t('plan.edit'), on: { click: openMonthlyBudget } }, icon('edit'))));
+    if (tb) {
+      var left = tb - sum.expense;
+      add(head, h('p', { class: 'plan-used right', text: t('plan.used', { amt: money(sum.expense) }) }), planBar(sum.expense, tb, pace, t('plan.month')),
+        h('div', { class: 'plan-bottom' }, h('span', { class: left < 0 ? 'neg plan-left' : 'plan-left', id: 'plan-left', text: left < 0 ? t('plan.over', { amt: money(-left) }) : t('plan.left', { amt: money(left) }) }), h('span', { class: 'hint', text: t('plan.of', { amt: money(tb) }) })));
+      if (S.ym === thisMonth()) add(head, h('p', { class: 'hint plan-pace', text: t('plan.paceHint') }));
+    } else add(head, h('p', { class: 'hint', text: t('plan.none') }), h('button', { type: 'button', class: 'btn primary block', id: 'plan-set', text: t('budget.set'), on: { click: openMonthlyBudget } }));
+    add(wrap, head);
+    var cats = h('section', { class: 'card plan-cats', id: 'plan-cats' },
+      h('div', { class: 'plan-head' }, h('h2', { text: t('charts.budgets') }), h('button', { type: 'button', class: 'icon-btn', id: 'plan-cats-edit', 'aria-label': t('plan.catsEdit'), title: t('plan.catsEdit'), on: { click: openCatBudgets } }, icon('edit'))));
+    if (sum.catBudgets.length) {
+      var list = h('ul', { class: 'plan-list' }), sumB = 0, inB = {};
+      sum.catBudgets.slice().sort(function (a, b) { return b.budget - a.budget; }).forEach(function (c) { sumB += c.budget; inB[c.cat] = 1; add(list, planRow(catEmoji(c.cat), catName(c.cat), c.spent, c.budget, pace, c.cat)); });
+      if (tb && tb > sumB) {
+        var rest = sum.byCat.filter(function (c) { return !inB[c.cat]; }).reduce(function (s, c) { return s + c.amt; }, 0);
+        add(list, planRow('🏷️', t('plan.rest'), rest, tb - sumB, pace, 'rest'));
+      }
+      add(cats, list);
+    } else add(cats, h('p', { class: 'hint', text: t('plan.catsNone') }), h('button', { type: 'button', class: 'btn block', id: 'plan-cats-set', text: t('plan.catsEdit'), on: { click: openCatBudgets } }));
+    add(wrap, cats, h('button', { type: 'button', class: 'btn block', id: 'plan-sheet', on: { click: openSheets } }, '🎨 ', t('sheet.title')));
+    return wrap;
+  }
+  // one category over the months, what it was spent on (the first word of the note), and every entry by day
+  function openCatDetail(cat) {
+    var cur = S.budget.currency, months = [], filt = null;
+    for (var i = 8; i >= 0; i--) months.push(B.addMonths(S.ym, -i));
+    var mine = function (tx) { return tx.type === 'expense' && tx.cat === cat && tx.cur === cur; };
+    var per = months.map(function (m) { return S.budget.tx.filter(function (tx) { return mine(tx) && tx.date.slice(0, 7) === m; }).reduce(function (s, tx) { return s + tx.amt; }, 0); });
+    var list = S.budget.tx.filter(function (tx) { return mine(tx) && tx.date.slice(0, 7) === S.ym; });
+    var subOf = function (tx) { return (tx.note || '').trim().split(/\s+/)[0] || t('cd.noNote'); };
+    var subs = {}; list.forEach(function (tx) { var k = subOf(tx); subs[k] = (subs[k] || 0) + tx.amt; });
+    var keys = Object.keys(subs).sort(function (a, b) { return subs[b] - subs[a]; });
+    sheet(catEmoji(cat) + ' ' + catName(cat), function (body) {
+      var top = Math.max.apply(null, per.concat([1]));
+      var total = list.reduce(function (s, tx) { return s + tx.amt; }, 0);
+      add(body, h('div', { class: 'cd-months', id: 'cd-months' }, months.map(function (m, k) {
+        return h('div', { class: 'cd-col' + (m === S.ym ? ' on' : ''), title: I.monthLabel(m) + ' ' + money(per[k]) },
+          m === S.ym && per[k] ? h('span', { class: 'cd-val', text: money(per[k]) }) : null,
+          h('span', { class: 'cd-bar', style: 'height:' + Math.round(per[k] / top * 100) + '%' }), h('span', { class: 'cd-m', text: I.shortMonth(m) }));
+      })),
+        h('div', { class: 'cd-sum' }, h('span', { class: 'label', text: I.monthLabel(S.ym) }), h('span', { class: 'chip small', id: 'cd-count', text: t('cd.count', { n: list.length }) })),
+        h('strong', { class: 'big', id: 'cd-total', text: money(total) }));
+      if (keys.length) {
+        var mx = subs[keys[0]];
+        add(body, h('ul', { class: 'bars cd-subs', id: 'cd-subs' }, keys.slice(0, 6).map(function (k) {
+          return h('li', {}, h('span', { class: 'bar-label', text: k }), h('span', { class: 'bar' }, h('span', { style: 'width:' + Math.max(2, Math.round(subs[k] / mx * 100)) + '%' })), h('span', { class: 'bar-val', text: money(subs[k]) }));
+        })));
+        var chipsBox = h('div', { class: 'chips wrap', id: 'cd-filter' }), items = h('div', { id: 'cd-items' });
+        var draw = function () {
+          chipsBox.textContent = ''; items.textContent = '';
+          [null].concat(keys.slice(0, 6)).forEach(function (k) {
+            add(chipsBox, h('button', { type: 'button', class: 'chip' + (filt === k ? ' on' : ''), 'aria-pressed': filt === k ? 'true' : 'false', text: k === null ? t('cd.all') : k, on: { click: function () { filt = k; draw(); } } }));
+          });
+          var byDay = {};
+          list.filter(function (tx) { return filt === null || subOf(tx) === filt; }).forEach(function (tx) { (byDay[tx.date] = byDay[tx.date] || []).push(tx); });
+          Object.keys(byDay).sort().reverse().forEach(function (d) { add(items, h('h3', { class: 'day-head', text: I.dayLabel(d) }), h('ul', { class: 'tx' }, byDay[d].map(txRow))); });
+        };
+        draw();
+        add(body, chipsBox, items);
+      } else add(body, h('p', { class: 'hint', text: t('charts.none') }));
+    });
+  }
   function budgetCalendar(ym) {
     var first = new Date(Date.UTC(+ym.slice(0, 4), +ym.slice(5, 7) - 1, 1)).getUTCDay(), n = B.daysInMonth(ym), cur = S.budget.currency;
     var byDay = {}; B.days(S.budget, ym).forEach(function (d) { byDay[d.date] = d; });
@@ -1003,6 +1156,7 @@
       h('span', { class: 'tx-main' }, h('span', { class: 'tx-cat', text: catName(tx.cat) }), tx.note ? h('span', { class: 'tx-note', text: tx.note }) : null),
       tx.rid ? h('span', { class: 'tx-rep', title: t('set.recurring') }, icon('repeat', 14)) : null,
       tx.photo ? h('span', { class: 'tx-rep tx-photo', title: t('rc.has'), 'aria-label': t('rc.has'), text: '🧾' }) : null,
+      tx.rate === 'w' ? h('span', { class: 'tx-rep tx-waste', title: t('rate.w'), 'aria-label': t('rate.w'), text: '💸' }) : null,
       methodOf(tx.pm) ? h('span', { class: 'tx-pm', title: methodOf(tx.pm).name, text: methodOf(tx.pm).emoji || '💳' }) : null,
       h('span', { class: 'tx-amt' + (inc ? ' pos' : ''), text: (inc ? '+' : '−') + money(tx.amt, tx.cur).replace(/^[-−]/, '') })));
   }
@@ -1054,27 +1208,26 @@
 
   function charts(sum) {
     var wrap = h('div', { class: 'charts', id: 'charts' });
+    var prevSum = B.summary(S.budget, B.addMonths(S.ym, -1)), diff = sum.expense - prevSum.expense;
+    add(wrap, h('section', { class: 'card an-head', id: 'an-head' }, h('span', { class: 'label', text: t('an.total') }), h('strong', { class: 'big', id: 'an-total', text: money(sum.expense) }),
+      prevSum.expense ? h('p', { class: 'hint', id: 'an-diff', text: diff > 0 ? t('an.more', { amt: money(diff) }) : diff < 0 ? t('an.less', { amt: money(-diff) }) : t('an.same') }) : null));
     var box1 = h('section', { class: 'card' }, h('h2', { text: t('charts.byCat') }));
     if (!sum.byCat.length) add(box1, h('p', { class: 'hint', text: t('charts.none') }));
     else {
       var max = sum.byCat[0].amt;
-      add(box1, h('ul', { class: 'bars' }, sum.byCat.map(function (c) {
-        var pct = Math.round(c.amt / sum.expense * 100);
-        return h('li', {}, h('span', { class: 'bar-label' }, h('span', { 'aria-hidden': 'true', text: catEmoji(c.cat) + ' ' }), catName(c.cat)),
-          h('span', { class: 'bar' }, h('span', { style: 'width:' + Math.max(2, Math.round(c.amt / max * 100)) + '%' })),
-          h('span', { class: 'bar-val', text: money(c.amt) + ' · ' + pct + '%' }));
-      })));
+      add(box1, h('div', { class: 'vbars', id: 'an-vbars', 'aria-hidden': 'true' }, sum.byCat.slice(0, 6).map(function (c, k) {
+        return h('div', { class: 'vbar-col' }, h('span', { class: 'vbar c' + k, style: 'height:' + Math.max(6, Math.round(c.amt / max * 110)) + 'px' }),
+          h('span', { class: 'emoji small', text: catEmoji(c.cat) }), h('span', { class: 'vbar-name', text: catName(c.cat) }));
+      })),
+        h('ul', { class: 'an-list bars', id: 'an-list' }, sum.byCat.map(function (c) {
+          var pct = Math.round(c.amt / sum.expense * 100);
+          return h('li', {}, h('button', { type: 'button', class: 'an-row', 'data-cat': c.cat, on: { click: function () { openCatDetail(c.cat); } } },
+            h('span', { class: 'emoji', 'aria-hidden': 'true', text: catEmoji(c.cat) }),
+            h('span', { class: 'tx-main' }, h('span', { class: 'tx-cat bar-label', text: catName(c.cat) }), h('span', { class: 'tx-note', text: pct + '%' })),
+            h('span', { class: 'bar-val an-amt', text: money(c.amt) }), h('span', { class: 'an-chev', 'aria-hidden': 'true', text: '›' })));
+        })));
     }
     add(wrap, box1);
-    if (sum.catBudgets.length) {
-      add(wrap, h('section', { class: 'card' }, h('h2', { text: t('charts.budgets') }), h('ul', { class: 'bars' }, sum.catBudgets.map(function (c) {
-        var pct = Math.round(c.spent / c.budget * 100);
-        return h('li', { class: c.left < 0 ? 'over' : pct >= 85 ? 'warn' : '' },
-          h('span', { class: 'bar-label' }, h('span', { 'aria-hidden': 'true', text: catEmoji(c.cat) + ' ' }), catName(c.cat)),
-          h('span', { class: 'bar', role: 'progressbar', 'aria-valuenow': Math.min(100, pct), 'aria-valuemin': 0, 'aria-valuemax': 100, 'aria-label': catName(c.cat) }, h('span', { style: 'width:' + Math.min(100, pct) + '%' })),
-          h('span', { class: 'bar-val', text: t('charts.spentOf', { spent: money(c.spent), budget: money(c.budget) }) }));
-      }))));
-    }
     var tr = B.trend(S.budget, S.ym, 6), top = Math.max.apply(null, tr.map(function (x) { return Math.max(x.expense, x.income); }).concat([1]));
     add(wrap, h('section', { class: 'card' }, h('h2', { text: t('charts.trend') }),
       h('div', { class: 'trend' }, tr.map(function (m) {
@@ -1327,6 +1480,7 @@
         h('div', { class: 'two' }, field(t('add.note'), note), field(t('add.date'), date)),
         editing ? null : h('div', { class: 'check repeat-row' }, repeat, h('label', { for: 'repeat', text: t('add.repeat') }), repFreq),
         pmRow, rcBox, rcFile,
+        editing && existing.type === 'expense' ? h('div', { class: 'rate-row', id: 'rate-row' }, h('span', { class: 'field-label', text: t('rate.q') }), rateButtons(existing, render)) : null,
         h('p', { class: 'hint pick-hint', text: editing ? t('add.category') : t('add.pick') }),
         grid, msg);
       if (editing) {
@@ -1654,7 +1808,10 @@
       items.forEach(function (it, i) {
         var cb = h('input', { type: 'checkbox', class: 'cl-cb', checked: it.done, 'aria-label': it.text || t('cl.item') });
         var inp = h('input', { class: 'cl-in' + (it.done ? ' done' : ''), value: it.text, placeholder: t('cl.item'), 'aria-label': t('cl.item') + ' ' + (i + 1), maxlength: 300 });
-        cb.addEventListener('change', function () { it.done = cb.checked; inp.classList.toggle('done', it.done); save(true); });
+        cb.addEventListener('change', function () {
+          it.done = cb.checked; inp.classList.toggle('done', it.done); save(true);
+          if (it.done && items.length >= 3 && items.every(function (x) { return x.done && x.text.trim(); })) toast(t('cl.allDone'));
+        });
         inp.addEventListener('input', function () { it.text = inp.value; save(); });
         inp.addEventListener('keydown', function (e) {
           if (e.isComposing) return;
@@ -1680,7 +1837,26 @@
   }
   function renderNotes(main) {
     add(main, topBar(h('h1', { class: 'title', text: t('notes.title') })), helperCards('notes'));
+    var qn = h('input', { class: 'input', id: 'notes-quick', type: 'text', maxlength: 2000, autocomplete: 'off', placeholder: t('notes.quickPh'), 'aria-label': t('notes.quickPh') });
+    qn.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' || e.isComposing || !qn.value.trim()) return;
+      e.preventDefault();
+      var v = qn.value.trim(), isList = /^(\[\s?\]|-\s*\[\s?\])\s*/.test(v);
+      var n = { id: B.uid(), text: isList ? '- [ ] ' + v.replace(/^(\[\s?\]|-\s*\[\s?\])\s*/, '') : v, color: 'yellow', pinned: false, created: Date.now(), updated: Date.now() };
+      if (isList) n.list = true;
+      S.notes.notes.push(n); noteLocal[n.id] = 1; markNote(n); saveNotes(); S.notesQuickFocus = true; render();
+      toast(t('notes.quickDone'), { label: t('notes.open'), fn: function () { openNote(n.id); } });
+    });
+    add(main, h('div', { class: 'card notes-quick-card' }, qn));
+    if (S.notesQuickFocus) { S.notesQuickFocus = false; setTimeout(function () { var el = document.getElementById('notes-quick'); if (el) el.focus(); }, 0); }
     var list = sortedNotes();
+    var used = NOTE_COLORS.filter(function (c) { return list.some(function (n) { return (n.color || 'yellow') === c; }); });
+    if (S.notesColor && used.indexOf(S.notesColor) < 0) S.notesColor = null;
+    if (used.length >= 2) add(main, h('div', { class: 'chips notes-colors', id: 'notes-colors', role: 'radiogroup', 'aria-label': t('notes.byColor') }, [null].concat(used).map(function (c) {
+      return h('button', { type: 'button', role: 'radio', class: 'chip color-chip' + (c ? ' note-' + c : '') + (S.notesColor === c ? ' on' : ''), 'aria-checked': S.notesColor === c ? 'true' : 'false', 'data-color': c || 'all',
+        'aria-label': c ? t('color.' + c) : t('cd.all'), text: c ? '' : t('cd.all'), on: { click: function () { S.notesColor = c; render(); } } });
+    })));
+    if (S.notesColor) list = list.filter(function (n) { return (n.color || 'yellow') === S.notesColor; });
     if (list.length) {
       var input = h('input', { type: 'search', class: 'input', id: 'notes-search', placeholder: t('notes.search'), value: S.notesQuery, 'aria-label': t('notes.search') });
       var grid = h('div', { class: 'notes', id: 'notes-grid' });
@@ -1795,6 +1971,17 @@
         toast(n.locked ? t('notes.lockedNow') : t('notes.unlockedNow'));
       });
       drawEditor();
+      // a new, empty note offers ready-made starts right above it (no extra step for a plain note)
+      var tplRow = isNew && !n.text ? h('div', { class: 'chips ntpl-row', id: 'note-tpls', 'aria-label': t('ntpl.title') }, NOTE_TPLS.slice(1).map(function (x) {
+        return h('button', { type: 'button', class: 'chip ntpl note-' + x[2], 'data-tpl': x[0], id: 'ntpl-' + x[0], on: { click: function () {
+          var tp = tplText(x[0]); n.text = tp; n.color = x[2]; if (x[3]) n.list = true; else delete n.list;
+          ta.value = n.text; ta.className = 'input note-edit ' + noteLook(n); n.updated = Date.now(); markNote(n); saveNotes();
+          drawEditor(); drawColors(); listBtn.setAttribute('aria-pressed', n.list ? 'true' : 'false'); listBtn.lastChild.textContent = n.list ? t('cl.off') : t('cl.on');
+          tplRow.remove();
+          setTimeout(function () { var el = n.list ? wrap.querySelector('.cl-in:last-of-type') : ta; var ins = wrap.querySelectorAll('.cl-in'); el = n.list && ins.length ? ins[ins.length - 1] : ta; if (el) { el.focus(); if (!n.list) el.setSelectionRange(el.value.length, el.value.length); } }, 0);
+        } } }, h('span', { 'aria-hidden': 'true', text: x[1] + ' ' }), t('ntpl.' + x[0]));
+      })) : null;
+      if (tplRow) ta.addEventListener('input', function () { if (ta.value && tplRow.parentNode) tplRow.remove(); });
       var nphotos = h('div', { class: 'photos note-photos', id: 'note-photos' }), npmsg = msgEl();
       var nfile = h('input', { type: 'file', accept: 'image/*', multiple: true, id: 'note-photo-input', class: 'sr', 'aria-label': t('nr.addPhoto') });
       function drawNotePhotos() {
@@ -1829,10 +2016,15 @@
         flushNote(); if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); saveNotes(); }
         openNoteReminder(n, function () { remindBtn.lastChild.textContent = n.remind ? whenText(n.remind) : t('nr.btn'); });
       } } }, h('span', { 'aria-hidden': 'true', text: '⏰ ' }), n.remind && n.remind >= nowLocal() ? whenText(n.remind) : t('nr.btn'));
-      add(body, wrap, nphotos, nfile, npmsg, h('div', { class: 'note-tools' }, colors),
+      add(body, tplRow, wrap, nphotos, nfile, npmsg, h('div', { class: 'note-tools' }, colors),
         pickRow(t('deco.font'), NOTE_FONTS, function () { return n.font; }, function (v) { return t('font.' + v); }, function (v) { n.font = v; }, 'font'),
         pickRow(t('notes.size'), NOTE_SIZES, function () { return n.size; }, function (v) { return t('size.' + v); }, function (v) { n.size = v; }, 'size'),
         h('div', { class: 'row' }, pin, listBtn, lockBtn, remindBtn, del),
+        h('button', { type: 'button', class: 'btn block note-tb', id: 'note-to-budget', on: { click: function () {
+          flushNote(); if (cl) cl.flush(); if (!n.list && n.text !== ta.value) { n.text = ta.value; saveNotes(); }
+          if (!noteMoneyLines(n).length) { toast(t('ntb.none')); return; }
+          openNoteToBudget(n);
+        } } }, '💸 ', t('ntb.btn')),
         deskCapable() ? h('div', { class: 'row desk-actions' },
           h('button', { type: 'button', class: 'btn', id: 'note-desk', on: { click: function () {
             flushNote(); if (n.text !== ta.value) { n.text = ta.value; n.updated = Date.now(); markNote(n); }
@@ -2170,7 +2362,7 @@
     B.photosOf(S.budget).forEach(function (p) { used[p] = true; });
     return C.blobIds().then(function (ids) { return Promise.all(ids.filter(function (id) { return !used[id]; }).map(function (id) { return C.deleteBlob(id); })); }).catch(function () {});
   }
-  function saveDiary() { return save('diary', function () { return S.diary; }); }
+  function saveDiary() { sealSoon(); return save('diary', function () { return S.diary; }); }
 
   function renderDiary(main) {
     if (S.diarySearch) return renderDiarySearch(main);
@@ -2311,7 +2503,9 @@
       var dmsg = msgEl();
       var deco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: e, page: page, ta: ta,
         commit: function (d) { if (!S.diary) return; DY.updateEntry(S.diary, e.id, { deco: d }); saveDiary(); },
-        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function (msg, err) { setMsg(dmsg, msg, !err); } });
+        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function (msg, err) { setMsg(dmsg, msg, !err); },
+        seals: function () { return seals.mine(); }, moneyDay: moneyDay });
+      setTimeout(function () { maybeIntro('entry', true); }, 700);
       openDeco = deco;
       var tagLine = h('p', { class: 'hint entry-tagline', id: 'entry-tags' });
       function drawTags() { var tg = DY.tagsOf(ta.value); tagLine.textContent = tg.length ? tg.map(function (x) { return '#' + x; }).join(' ') : t('diary.tagsTip'); }
@@ -2518,7 +2712,10 @@
     C.persisted().then(function (p) { storage.textContent = p ? t('set.storageOn') : t('set.storageOff'); });
 
     add(main,
-      group(t('set.general'), [ctrlRow(t('lang.label'), lang), ctrlRow(t('cur.label'), cur, t('set.curNote')), ctrlRow(t('set.theme'), theme)]),
+      group(t('set.general'), [ctrlRow(t('lang.label'), lang), ctrlRow(t('cur.label'), cur, t('set.curNote')), ctrlRow(t('set.theme'), theme),
+        row(t('sheet.title'), t('sheet.' + (S.settings.sheet || 'none')), openSheets, 'set-sheet'),
+        SE ? row(t('seal.book'), seals.mine().length + '/' + SE.IDS.length, openSealBook, 'set-seals') : null,
+        row(t('in.again'), null, function () { Object.keys(S.settings.helper.done).forEach(function (k) { if (k.indexOf('in-') === 0) delete S.settings.helper.done[k]; }); saveSettings(); toast(t('in.reset')); }, 'set-intros')]),
       group(t('set.budget'), [
         row(t('set.monthly'), S.budget.budgets.total ? money(S.budget.budgets.total) : t('set.monthlyNone'), openMonthlyBudget, 'set-monthly'),
         row(t('set.catBudgets'), null, openCatBudgets, 'set-catbudgets'),
@@ -3284,6 +3481,167 @@
   // ---------- render ----------
   // ---------- the helper (vault-helper.js): today's suggestions, "ask in your own words", step-by-step pointers ----------
   var GUIDE = HP ? new HP.Guide({ t: t }) : null, hpSeen = {}, hpWatch = null;
+
+  // ===== reward seals (vault-seals.js): reaching something gives a peel-off seal for the book and the diary =====
+  var sealTimer = null;
+  function sealSoon() { clearTimeout(sealTimer); sealTimer = setTimeout(function () { seals.check(); }, 700); }
+  var seals = {
+    mine: function () { var m = (S.settings && S.settings.seals) || {}; return SE ? SE.IDS.filter(function (id) { return m[id]; }) : []; },
+    check: function () {
+      if (!SE || S.phase !== 'app' || !S.settings || !S.budget) return;
+      var got = SE.earned({ budget: S.budget, diary: S.diary, notes: S.notes, ci: S.settings.helper.checkin, lastBackup: S.settings.lastBackup, today: today() });
+      var fresh = got.filter(function (id) { return !S.settings.seals[id]; });
+      if (!fresh.length) { S.sealPending = false; return; }
+      var ae = document.activeElement, typing = ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
+      var quiet = false; try { quiet = navigator.webdriver && lsGet('ppm-seals') !== 'on'; } catch (e) { /* fine */ }
+      if (quiet) { fresh.forEach(function (id) { S.settings.seals[id] = today(); }); saveSettings(); S.sealPending = false; return; }
+      if (modals.length || typing || (GUIDE && GUIDE.running())) { S.sealPending = true; if (typing && !modals.length) setTimeout(function () { seals.check(); }, 4000); return; }
+      S.sealPending = false;
+      fresh.forEach(function (id) { S.settings.seals[id] = today(); }); saveSettings();
+      sealGift(fresh);
+    }
+  };
+  function sealName(id) { return t('seal.' + id); }
+  function sealGift(ids) {
+    sheet(ids.length > 1 ? t('seal.gotN', { n: ids.length }) : t('seal.got'), function (body, close) {
+      add(body, h('div', { class: 'seal-gift', id: 'seal-gift' }, ids.slice(0, 6).map(function (id, k) {
+        return h('figure', { class: 'seal-pop', 'data-seal': id, style: 'animation-delay:' + (k * 0.12) + 's' }, SE.element(id, ids.length > 1 ? 84 : 132),
+          h('figcaption', {}, h('strong', { text: sealName(id) }), h('span', { class: 'hint', text: t('sealw.' + id) })));
+      })),
+        h('p', { class: 'hint center', text: t('seal.useInDiary') }),
+        h('div', { class: 'row end' },
+          h('button', { type: 'button', class: 'btn', id: 'seal-book-open', text: t('seal.book'), on: { click: function () { close(); openSealBook(); } } }),
+          h('button', { type: 'button', class: 'btn primary', id: 'seal-close', 'data-autofocus': '1', text: t('seal.thanks'), on: { click: close } })));
+    }, { onClose: function () { render(); } });
+  }
+  function openSealBook() {
+    var mine = (S.settings && S.settings.seals) || {}, n = seals.mine().length;
+    sheet(t('seal.book') + ' · ' + n + '/' + SE.IDS.length, function (body) {
+      add(body, h('p', { class: 'hint', text: t('seal.bookHint') }), h('div', { class: 'seal-book', id: 'seal-book' }, SE.IDS.map(function (id) {
+        var have = !!mine[id];
+        return h('div', { class: 'seal-cell' + (have ? ' have' : ' locked'), 'data-seal': id },
+          SE.element(id, 64), h('strong', { text: have ? sealName(id) : '?' }), h('span', { class: 'hint', text: have ? I.dayLabel(mine[id]) : t('sealw.' + id) }));
+      })));
+    });
+  }
+  function sealsChip() {
+    if (!SE) return null;
+    var n = seals.mine().length;
+    return h('button', { type: 'button', class: 'goal-chip seals-chip', id: 'seals-chip', on: { click: openSealBook } }, h('span', { 'aria-hidden': 'true', text: '🏅 ' }), t('seal.chip', { n: n, all: SE.IDS.length }));
+  }
+
+  // ===== 속지: the paper and colour the app sits on (same in PopPopMake and the Toss version; light only) =====
+  function openSheets() {
+    sheet(t('sheet.title'), function (body) {
+      var grid = h('div', { class: 'sheet-grid', role: 'radiogroup', id: 'sheet-grid', 'aria-label': t('sheet.title') });
+      function draw() {
+        grid.textContent = '';
+        SHEETS.forEach(function (v) {
+          var on = (S.settings.sheet || 'none') === v;
+          add(grid, h('button', { type: 'button', role: 'radio', class: 'sheet-sw' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-sheet': v, id: 'sheet-' + v,
+            on: { click: function () { S.settings.sheet = v; saveSettings(); applySheet(); draw(); } } },
+            h('span', { class: 'sheet-sample sheet-pv-' + v, 'aria-hidden': 'true' }), h('span', { class: 'sheet-name', text: t('sheet.' + v) })));
+        });
+      }
+      draw();
+      add(body, h('p', { class: 'hint', text: t('sheet.hint') }), grid);
+    });
+  }
+  // what the diary's "today's money" page shows for a day
+  function moneyDay(date) {
+    var cur = S.budget.currency, list = S.budget.tx.filter(function (x) { return x.date === date && x.type === 'expense' && x.cur === cur; });
+    var total = 0, waste = 0;
+    var items = list.map(function (x) { total += x.amt; if (x.rate === 'w') waste += x.amt; return { emoji: catEmoji(x.cat), what: x.note || catName(x.cat), amt: money(x.amt, cur), waste: x.rate === 'w' }; });
+    return { items: items, total: money(total, cur), waste: waste ? money(waste, cur) : null };
+  }
+
+  // ===== notes: a ready-made start for a new note =====
+  var NOTE_TPLS = [['blank', '📝', 'yellow', false], ['list', '☑️', 'green', true], ['shop', '🛒', 'blue', true], ['todo', '✅', 'pink', true],
+    ['idea', '💡', 'purple', false], ['money', '💸', 'yellow', false], ['meet', '📞', 'gray', false]];
+  function tplText(k) {
+    var text = t('ntpl.' + k + 'Text');
+    if (text === 'ntpl.' + k + 'Text' || k === 'blank') return '';
+    return k === 'meet' ? text.replace('{date}', I.fullDate(today())) : text;
+  }
+  function noteFromTpl(k) {
+    var tp = NOTE_TPLS.find(function (x) { return x[0] === k; }) || NOTE_TPLS[0], text = tplText(k);
+    var n = { id: B.uid(), text: text, color: tp[2], pinned: false, created: Date.now(), updated: Date.now() };
+    if (tp[3]) n.list = true;
+    S.notes.notes.push(n); noteLocal[n.id] = 1; markNote(n);
+    return n;
+  }
+  function openNoteTpls() {
+    sheet(t('ntpl.title'), function (body, close) {
+      add(body, h('div', { class: 'ntpl-grid', id: 'note-tpls' }, NOTE_TPLS.map(function (x) {
+        return h('button', { type: 'button', class: 'ntpl note-' + x[2], 'data-tpl': x[0], id: 'ntpl-' + x[0], on: { click: function () { var n = noteFromTpl(x[0]); close(); openNote(n.id, true); } } },
+          h('span', { class: 'ntpl-ico', 'aria-hidden': 'true', text: x[1] }), h('strong', { text: t('ntpl.' + x[0]) }), h('span', { class: 'hint', text: t('ntpl.' + x[0] + 'Hint') }));
+      })));
+    });
+  }
+  // lines with an amount in a note ("커피 4500") → budget entries, after a look
+  function noteMoneyLines(n) {
+    var cur = S.budget.currency;
+    return LS.parse(n.text).map(function (it) { return it.text; }).concat(n.list ? [] : []).filter(Boolean).map(function (line) {
+      var p = B.quickParse(line, cur); return p.amt ? { line: line, p: p } : null;
+    }).filter(Boolean).slice(0, 30);
+  }
+  function openNoteToBudget(n) {
+    var rows = noteMoneyLines(n), cur = S.budget.currency;
+    sheet(t('ntb.title'), function (body, close) {
+      var picks = rows.map(function () { return true; });
+      add(body, h('p', { class: 'hint', text: t('ntb.hint') }), h('ul', { class: 'ntb-list', id: 'ntb-list' }, rows.map(function (r, i) {
+        var cat = B.guessQuick(S.budget, r.p.note, r.p.type);
+        r.cat = cat;
+        var cb = h('input', { type: 'checkbox', checked: true, 'data-i': i, on: { change: function (e) { picks[i] = e.target.checked; save.textContent = t('ntb.save', { n: picks.filter(Boolean).length }); } } });
+        return h('li', {}, h('label', { class: 'check' }, cb, h('span', { text: (r.p.type === 'income' ? '+ ' : '') + catEmoji(cat) + ' ' + (r.p.note || catName(cat)) + ' · ' + money(r.p.amt, cur) })));
+      })));
+      var save = h('button', { type: 'button', class: 'btn primary block', id: 'ntb-save', text: t('ntb.save', { n: rows.length }), on: { click: function () {
+        var made = [];
+        rows.forEach(function (r, i) { if (!picks[i]) return; made.push(B.addTx(S.budget, { type: r.p.type, amt: r.p.amt, cat: r.cat, date: B.addDays(today(), r.p.day), note: r.p.note })); });
+        if (!made.length) return;
+        saveBudget(); close();
+        toast(t('ntb.done', { n: made.length }), { label: t('btn.undo'), fn: function () { made.forEach(function (x) { B.deleteTx(S.budget, x.id); }); saveBudget(); render(); } });
+      } } });
+      add(body, save);
+    });
+  }
+
+  // ===== first visit of each screen: what it is and what each button does (replay: the ? button) =====
+  function introKey() {
+    if (S.phase !== 'app') return null;
+    if (S.tab === 'budget') return S.searchOpen ? null : 'budget-' + (S.budgetView === 'year' ? 'charts' : S.budgetView);
+    return S.tab === 'notes' || S.tab === 'diary' || S.tab === 'settings' ? S.tab : null;
+  }
+  var INTROS = {
+    'budget-list': [['#budget-views', 'in.bl.views'], ['.card.summary', 'in.bl.sum'], ['#coach', 'in.bl.coach'], ['#quick-input', 'in.bl.quick'], ['#tiles', 'in.bl.tiles'], ['#seals-chip', 'in.bl.seals'], ['#add-btn', 'in.bl.add'], ['#intro-btn', 'in.bl.help']],
+    'budget-cal': [['#cal-head', 'in.bc.head'], ['#budget-cal', 'in.bc.cal'], ['#cal-add', 'in.bc.add']],
+    'budget-plan': [['#plan-total', 'in.bp.total'], ['#plan-cats', 'in.bp.cats'], ['#plan-sheet', 'in.bp.sheet']],
+    'budget-charts': [['#an-head', 'in.ba.head'], ['#an-list', 'in.ba.list'], ['#open-year', 'in.ba.year']],
+    'budget-goals': [['#goal-new', 'in.bg.new']],
+    notes: [['#notes-quick', 'in.n.quick'], ['#new-note', 'in.n.new'], ['#notes-colors', 'in.n.colors'], ['#notes-search', 'in.n.search']],
+    diary: [['#new-entry', 'in.d.new'], ['#diary-view-cal', 'in.d.cal']],
+    entry: [['#deco-page', 'in.e.page'], ['#deco-paper', 'in.e.paper'], ['#deco-stickers', 'in.e.stickers']],
+    settings: [['#set-sheet', 'in.s.sheet'], ['#set-seals', 'in.s.seals'], ['#set-intros', 'in.s.intros']]
+  };
+  function introsAllowed() {
+    var hs = S.settings && S.settings.helper;
+    if (!GUIDE || DESK || !hs || hs.off || hs.guides === false) return false;
+    try { if (navigator.webdriver && lsGet('ppm-intros') !== 'on') return false; } catch (e) { /* fine */ }
+    return true;
+  }
+  function startIntro(key) {
+    var list = INTROS[key]; if (!list || !GUIDE) return;
+    S.settings.helper.done['in-' + key] = 1; saveSettings();
+    GUIDE.start('intro-' + key, list.map(function (x) { return { sel: x[0], key: x[1], until: 'next' }; }));
+  }
+  function maybeIntro(key, inSheet) {
+    key = key || introKey();
+    if (!key || !introsAllowed() || GUIDE.running() || (!inSheet && modals.length) || S.settings.helper.done['in-' + key]) return;
+    startIntro(key);
+  }
+  function introBtn() {
+    return HP && !DESK ? h('button', { type: 'button', class: 'icon-btn', id: 'intro-btn', 'aria-label': t('in.btn'), title: t('in.btn'), on: { click: function () { var k = introKey(); if (k) startIntro(k); } } }, icon('help')) : null;
+  }
   var ACT_LABEL = { add: 'hp.do.add', recurring: 'hp.do.recurring', note: 'hp.do.note', charts: 'hp.do.charts', 'monthly-budget': 'hp.do.budget',
     recap: 'hp.do.recap', 'make-recurring': 'hp.do.makeRec', diary: 'hp.do.diary', guide: 'hp.do.guide', 'add-income': 'hp.do.income', goal: 'hp.do.goal', passkey: 'hp.do.passkey', 'quick-add': 'hp.do.quickAdd', 'make-weekly': 'hp.do.makeWeekly', checkin: 'ci.start' };
   function hpText(x) {
@@ -3501,8 +3859,11 @@
       { id: 'charts', kw: ['그래프', '차트', '통계', '분석', '어디에 많이', '어디에 썼', 'chart', 'graph', 'stats', 'where did', 'グラフ', '分析'], run: function () { runAct('charts'); } },
       { id: 'checkin', boost: 1, kw: ['체크인', '하루 정리', '오늘 정리', '정리할', '물어봐', '오늘 하루', 'check in', 'check-in', 'wrap up', 'my day', 'チェックイン', '振り返'], run: function () { openCheckin(); } },
       { id: 'notify', kw: ['결제 알림', '미리 알려', '결제일', '푸시', '알림 받', 'payment reminder', 'notification', 'notify', 'due date', '支払い通知', 'お知らせ', '支払日'], run: function () { if (ntSupported()) openNotify(); else openRecurring(); } },
+      { id: 'seals', kw: ['씰', '띠부', '스티커 모음', '보상', '배지', 'seal', 'badge', 'reward', 'シール', 'ご褒美'], run: function () { openSealBook(); } },
+      { id: 'sheet', kw: ['속지', '테마', '배경', '꾸미기', '예쁘게', 'paper', 'theme', 'background', '中紙', 'テーマ', '背景'], run: function () { openSheets(); } },
+      { id: 'plan', kw: ['예산 막대', '분류별 예산', '예산 보기', 'budget bars', 'category budget', '予算の表示'], run: function () { goTab('budget'); S.budgetView = 'plan'; render(); } },
       { id: 'calendar', kw: ['달력', '캘린더', '날짜별', '일별', '그날', 'calendar', 'by day', 'カレンダー', '日別'], run: function () { goTab('budget'); S.budgetView = 'cal'; render(); } },
-      { id: 'quick', kw: ['한 줄', '한줄', '빠르게', '빨리', '간단히', '간편', 'quick', 'one line', 'fast', '1行', '素早く'], run: setTab('budget', '#quick-input') },
+      { id: 'quick', kw: ['한 줄', '한줄', '빠르게', '빨리', '간단히', '간편', 'quick', 'one line', 'fast', '1行', '素早く'], run: function () { goTab('budget'); if (S.budgetView !== 'cal') { S.budgetView = 'list'; render(); } setTab('budget', '#quick-input')(); } },
       { id: 'weekly', kw: ['매주', '주마다', '일주일마다', 'weekly', 'every week', '毎週'], run: function () { goTab('budget'); openAdd(); setTimeout(function () { var r = document.getElementById('repeat'); if (r) { r.checked = true; r.dispatchEvent(new Event('change')); var f = document.getElementById('repeat-freq'); if (f) f.value = 'week'; } }, 0); } },
       { id: 'year', kw: ['연간', '1년', '일년', '올해', '작년', 'year', 'annual', '年間', '今年'], run: function () { goTab('budget'); S.budgetView = 'year'; render(); } },
       { id: 'search', kw: ['검색', '찾기', '찾아', '언제 샀', 'search', 'find', '検索', '探'], run: function () { runAct('search'); } },
@@ -3598,8 +3959,14 @@
     });
   }
 
+  function applySheet() {
+    var v = S.phase === 'app' && S.settings && S.settings.sheet && S.settings.sheet !== 'none' ? S.settings.sheet : null;
+    if (v) document.documentElement.setAttribute('data-sheet', v); else document.documentElement.removeAttribute('data-sheet');
+  }
+  function themeHost() { applySheet(); }
   function render() {
-    applyLang();
+    applyLang(); applySheet();
+    if (S.phase === 'app') { setTimeout(function () { maybeIntro(); if ((S.sealPending || !S.sealChecked) && !modals.length) { S.sealChecked = true; seals.check(); } }, 650); }
     var ae = document.activeElement; if (ae && ae.id === 'quick-input') S.quickFocus = true;     // typing in the one-line box: keep the cursor there
     var p = S.phase;
     if (p === 'loading') { app.textContent = ''; add(app, h('div', { class: 'screen center' }, h('p', { class: 'hint', text: '…' }))); }
@@ -3663,7 +4030,7 @@
   }
   function upCheck() {
     UP.last = Date.now();
-    return Promise.all(['/vault-app.js', '/vault-helper.js', '/vault-i18n.js', '/vault.css', '/vault-icons.js'].map(upTag)).then(function (tags) {
+    return Promise.all(['/vault-app.js', '/vault-helper.js', '/vault-i18n.js', '/vault.css', '/vault-icons.js', '/vault-coach.js', '/vault-seals.js'].map(upTag)).then(function (tags) {
       if (tags.some(function (x) { return x === null; })) return;            // offline or a hiccup: try again later
       var k = tags.join('|');
       if (UP.base === null) { UP.base = k; return; }
@@ -3689,7 +4056,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-icons.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-icons.js', '/vault-coach.js', '/vault-seals.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', '/icons/tool-vault-192.png']
         .forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }
