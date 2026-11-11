@@ -3486,6 +3486,7 @@
         h('li', { class: isIOS() ? 'here' : '', text: t('install.ios') }),
         h('li', { class: !isIOS() && /Android/i.test(navigator.userAgent) ? 'here' : '', text: t('install.android') }),
         h('li', { class: !isPhone() ? 'here' : '', text: t('install.desktop') })));
+      if (!S.installEvt && /Android/i.test(navigator.userAgent)) add(body, h('p', { class: 'msg', id: 'install-none', text: t('install.none') }));
       if (!isPhone()) add(body, autoStartSteps());
     });
   }

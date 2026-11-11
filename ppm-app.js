@@ -28,6 +28,22 @@
     '.ppm-install{display:inline-flex;align-items:center;gap:6px;margin-left:10px;padding:6px 12px;border-radius:999px;border:1px solid currentColor;background:transparent;color:inherit;font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;line-height:1.2;white-space:nowrap;flex-shrink:0}' +
     '.ppm-install:hover{background:rgba(127,127,127,.18)}' +
     '.ppm-install[hidden]{display:none}' +
+    // the "what to install" chooser
+    '.ppm-pick-bg{position:fixed;inset:0;z-index:2147483001;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center}' +
+    '.ppm-pick-bg[hidden]{display:none}' +
+    '.ppm-pick{width:min(460px,100%);max-height:88vh;overflow:auto;background:#fff;color:#1C2321;border-radius:18px 18px 0 0;padding:18px 16px calc(16px + env(safe-area-inset-bottom));font-size:.95rem;line-height:1.45;box-shadow:0 -10px 30px rgba(0,0,0,.2)}' +
+    '@media (min-width:560px){.ppm-pick-bg{align-items:center}.ppm-pick{border-radius:18px}}' +
+    '.ppm-pick h2{font-size:1.1rem;margin:0 0 4px}.ppm-pick .ppm-pick-sub{margin:0 0 12px;color:#56605B;font-size:.86rem}' +
+    '.ppm-pick ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}' +
+    '.ppm-pick li button{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:10px 12px;min-height:60px;border:1px solid rgba(28,35,33,.16);border-radius:14px;background:#fff;color:inherit;font:inherit;cursor:pointer}' +
+    '.ppm-pick li button:hover,.ppm-pick li button:focus-visible{border-color:#0F8B8D;outline:none}' +
+    '.ppm-pick li button.here{border:2px solid #0F8B8D;background:#EEF7F6}' +
+    '.ppm-pick img{width:40px;height:40px;border-radius:10px;flex-shrink:0}' +
+    '.ppm-pick b{display:block;font-size:.95rem}.ppm-pick small{display:block;color:#56605B;font-size:.8rem}' +
+    '.ppm-pick .ppm-pick-help{margin:12px 0 0;padding:10px 12px;border-radius:12px;background:#FFF6E0;font-size:.86rem}' +
+    '.ppm-pick .ppm-pick-help[hidden]{display:none}' +
+    '.ppm-pick .ppm-pick-close{margin-top:12px;width:100%;min-height:44px;border:0;border-radius:999px;background:#EEF1EF;color:#1C2321;font:inherit;font-weight:600;cursor:pointer}' +
+    '@media (prefers-color-scheme: dark){.ppm-pick{background:#1f2624;color:#eef1ef}.ppm-pick li button{background:#1f2624;border-color:rgba(255,255,255,.2)}.ppm-pick li button.here{background:#16302f}.ppm-pick .ppm-pick-sub,.ppm-pick small{color:#a9b3ae}.ppm-pick .ppm-pick-help{background:#3a3220}.ppm-pick .ppm-pick-close{background:#2c3532;color:#eef1ef}}' +
     '.ppm-pop{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:2147483000;max-width:min(440px,calc(100vw - 32px));background:#1C2321;color:#fff;border-radius:12px;padding:14px 16px;box-shadow:0 10px 30px rgba(0,0,0,.25);font-size:.9rem;line-height:1.45}' +
     '.ppm-pop[hidden]{display:none}' +
     '.ppm-pop button{margin:10px 8px 0 0;background:#fff;color:#1C2321;border:0;border-radius:999px;padding:6px 14px;font:inherit;font-weight:600;cursor:pointer}' +
@@ -117,40 +133,109 @@
   window.addEventListener('online', showOffline);
 
   // ------------------------------------------------------------------------------------------- install button
+  // "Install app" first asks WHAT to install: all of PopPopMake, or one program (Diary, Notes, Budget, or the three
+  // together) as its own app with its own icon. The browser can only install the app named by the page's own manifest,
+  // so a choice that isn't this page's goes to that program's page, where its install button is waiting.
   var deferred = null, btn = null;
   var pageHasOwnInstall = !!document.getElementById('installBar');   // the per-tool install bar on a few tool pages
+  var LANG = /^(ko|ja)/.test(document.documentElement.lang || '') ? document.documentElement.lang.slice(0, 2) : 'en';
+  var TX = {
+    en: { btn: 'Install app', title: 'What do you want to install?', sub: 'Each one gets its own icon on your home screen. Install as many as you like.',
+      site: ['All of PopPopMake', 'All 47 tools in one app'], vault: ['Budget, Notes & Diary', 'The three together, locked with your passcode'],
+      diary: ['Diary only', 'Opens straight on your diary'], notes: ['Notes only', 'Opens straight on your notes'], budget: ['Budget only', 'Opens straight on your budget'],
+      here: 'This page', close: 'Close',
+      ios: 'On iPhone: tap the Share button at the bottom of Safari, then “Add to Home Screen”.',
+      none: 'Your browser didn’t offer to install it here. Open the browser menu (⋮) and tap “Install app” or “Add to Home screen”. If it only says “Open app”, it is already installed — or the full PopPopMake app is, and the phone treats it as the same app: remove the PopPopMake icon from your home screen, then try again (your entries stay on this phone; making a backup first is still wise).',
+      done: 'Installed. Open PopPopMake from its icon on your desktop, Start menu or home screen. All tools are being saved so they work offline.' },
+    ko: { btn: '앱 설치', title: '무엇을 설치할까요?', sub: '고른 것마다 홈 화면에 아이콘이 따로 생겨요. 여러 개 설치해도 돼요.',
+      site: ['팝팝메이크 전체', '도구 47개를 한 앱으로'], vault: ['가계부·메모·일기', '세 가지를 한 앱에, 비밀번호로 잠가서'],
+      diary: ['일기만', '누르면 바로 일기가 열려요'], notes: ['메모만', '누르면 바로 메모가 열려요'], budget: ['가계부만', '누르면 바로 가계부가 열려요'],
+      here: '이 페이지', close: '닫기',
+      ios: '아이폰: 사파리 아래쪽 공유 버튼 → ‘홈 화면에 추가’를 누르세요.',
+      none: '이 브라우저가 여기서 설치 창을 띄우지 않았어요. 브라우저 메뉴(⋮) → ‘앱 설치’ 또는 ‘홈 화면에 추가’를 눌러 주세요. ‘앱 열기’만 보이면 이미 설치돼 있거나, 팝팝메이크 전체 앱이 깔려 있어서 폰이 같은 앱으로 보는 경우예요. 홈 화면의 PopPopMake 아이콘을 지운 뒤 다시 해 보세요. (기록은 폰에 그대로 남지만, 혹시 모르니 먼저 백업해 두면 안전해요.)',
+      done: '설치됐어요. 홈 화면의 아이콘으로 여세요. 인터넷 없이도 열리도록 도구를 저장하고 있어요.' },
+    ja: { btn: 'アプリを入れる', title: '何を入れますか？', sub: '選んだものごとにホーム画面にアイコンができます。いくつ入れてもOK。',
+      site: ['PopPopMake全部', '47個のツールを1つのアプリに'], vault: ['家計簿・メモ・日記', '3つを1つに、パスコードでロック'],
+      diary: ['日記だけ', 'すぐ日記が開きます'], notes: ['メモだけ', 'すぐメモが開きます'], budget: ['家計簿だけ', 'すぐ家計簿が開きます'],
+      here: 'このページ', close: '閉じる',
+      ios: 'iPhone：Safari下の共有ボタン →「ホーム画面に追加」。',
+      none: 'このブラウザはここでインストール画面を出しませんでした。ブラウザのメニュー（⋮）→「アプリをインストール」か「ホーム画面に追加」を押してください。「アプリを開く」しか出ない場合は、すでに入っているか、PopPopMake全部のアプリが入っていて同じアプリと見なされています。ホーム画面のPopPopMakeアイコンを削除してからもう一度試してください（記録は端末に残りますが、念のため先にバックアップを）。',
+      done: 'インストールしました。ホーム画面のアイコンから開いてください。オフラインでも使えるよう保存中です。' }
+  }[LANG];
+  var manLink = document.querySelector('link[rel="manifest"]');
+  var pageApp = (function () {                       // which app this page's manifest installs
+    var h = manLink ? manLink.getAttribute('href') || '' : '';
+    var m = h.match(/manifest-(diary|notes|budget|vault)-/);
+    return m ? m[1] : /\/manifest\.json$/.test(h) ? 'site' : null;
+  })();
+  var PICKS = [['site', 'icon-192.png', '/'], ['vault', 'tool-vault-192.png', '/vault'], ['diary', 'tool-diary-192.png', '/diary-app'], ['notes', 'tool-notes-192.png', '/notes-app'], ['budget', 'tool-budget-192.png', '/budget-app']];
+  var picker = null;
+  function promptNow(help) {
+    if (deferred) {
+      var d = deferred; deferred = null;
+      d.prompt();
+      (d.userChoice || Promise.resolve({})).then(function (c) { if (c && c.outcome === 'accepted' && picker) picker.hidden = true; }).catch(function () {});
+      return true;
+    }
+    if (help) { help.textContent = isIOS ? TX.ios : TX.none; help.hidden = false; }
+    return false;
+  }
+  function openPicker() {
+    if (picker) picker.remove();
+    picker = el('div', { class: 'ppm-pick-bg', id: 'ppm-pick' });
+    var box = el('div', { class: 'ppm-pick', role: 'dialog', 'aria-modal': 'true', 'aria-labelledby': 'ppm-pick-h' });
+    box.appendChild(el('h2', { id: 'ppm-pick-h' }, TX.title));
+    box.appendChild(el('p', { class: 'ppm-pick-sub' }, TX.sub));
+    var ul = el('ul'), help = el('p', { class: 'ppm-pick-help', id: 'ppm-pick-help', role: 'status', hidden: '' });
+    var order = PICKS.slice().sort(function (a, b) { return (b[0] === pageApp) - (a[0] === pageApp); });   // this page's own app first
+    order.forEach(function (x) {
+      var here = x[0] === pageApp;
+      var b = el('button', { type: 'button', id: 'ppm-pick-' + x[0], class: here ? 'here' : null, 'data-app': x[0] });
+      b.appendChild(el('img', { src: '/icons/' + x[1], alt: '' }));
+      var t = el('span'); t.appendChild(el('b', null, TX[x[0]][0] + (here ? ' · ' + TX.here : ''))); t.appendChild(el('small', null, TX[x[0]][1])); b.appendChild(t);
+      b.addEventListener('click', function () {
+        if (here) { promptNow(help); return; }
+        location.href = x[2] + '?install=1' + (LANG !== 'en' && x[0] !== 'site' ? '&lang=' + LANG : '');
+      });
+      var li = el('li'); li.appendChild(b); ul.appendChild(li);
+    });
+    box.appendChild(ul); box.appendChild(help);
+    var close = el('button', { type: 'button', class: 'ppm-pick-close', id: 'ppm-pick-close' }, TX.close);
+    close.addEventListener('click', function () { picker.hidden = true; });
+    box.appendChild(close);
+    picker.addEventListener('click', function (e) { if (e.target === picker) picker.hidden = true; });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && picker) picker.hidden = true; });
+    picker.appendChild(box); document.body.appendChild(picker);
+    var first = ul.querySelector('button'); if (first) first.focus();
+  }
   function makeButton() {
     if (btn || standalone || pageHasOwnInstall) return btn;
     var nav = document.querySelector('header nav') || document.querySelector('header .inner') || document.querySelector('header');
     if (!nav) return null;
-    btn = el('button', { type: 'button', class: 'ppm-install', id: 'ppm-install', hidden: '', title: 'Opens PopPopMake in its own window from your desktop or home screen, even offline' }, 'Install app');
+    btn = el('button', { type: 'button', class: 'ppm-install', id: 'ppm-install', hidden: '', title: TX.sub }, TX.btn);
     btn.addEventListener('click', onInstallClick);
     nav.appendChild(btn);
     var ref = document.querySelector('header .logo') || nav.querySelector('a');   // same colour as the logo (light on dark headers)
     try { if (ref) btn.style.color = getComputedStyle(ref).color; } catch (e) { /* keep inherited */ }
     return btn;
   }
-  function onInstallClick() {
-    if (deferred) {
-      var d = deferred; deferred = null;
-      d.prompt();
-      (d.userChoice || Promise.resolve({})).then(function (c) { if (c && c.outcome === 'accepted' && btn) btn.hidden = true; }).catch(function () {});
-      return;
-    }
-    if (isIOSSafari) notice('To install: tap the Share button at the bottom of Safari, then “Add to Home Screen”. PopPopMake then opens from its own icon, even offline.');
-  }
+  function onInstallClick() { openPicker(); }
   if (!standalone && !pageHasOwnInstall) {
     window.addEventListener('beforeinstallprompt', function (e) {
       e.preventDefault();
       deferred = e;
-      var b = makeButton(); if (b) b.hidden = false;
     });
-    if (isIOSSafari) { var b0 = makeButton(); if (b0) b0.hidden = false; }
+    // shown always (not only when the browser offers an install): the choice matters even when the full app is installed
+    var b0 = makeButton(); if (b0) b0.hidden = false;
+    if (/[?&]install=1\b/.test(location.search)) {        // came from a chooser on another page: ask again here, this page's app on top
+      try { history.replaceState(history.state, '', location.pathname + location.search.replace(/([?&])install=1(&|$)/, '$1').replace(/[?&]$/, '') + location.hash); } catch (e) { /* keep it */ }
+      setTimeout(openPicker, 400);
+    }
   }
   window.addEventListener('appinstalled', function () {
     deferred = null;
-    if (btn) btn.hidden = true;
-    notice('Installed. Open PopPopMake from its icon on your desktop, Start menu or home screen. All tools are being saved so they work offline.', 10000);
+    if (picker) picker.hidden = true;
+    notice(TX.done, 10000);
     saveOffline(false);
   });
 
