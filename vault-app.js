@@ -497,8 +497,8 @@
     add(s,
       h('div', { class: 'lang-top' }, field(t('lang.label'), langSelect(render))),
       brand(),
-      h('h1', { text: t('setup.title') }),
-      h('p', { class: 'lede', text: t('setup.lede') }),
+      h('h1', { text: t(ONLY ? 'setup.title.' + ONLY : 'setup.title') }),
+      h('p', { class: 'lede', text: t(ONLY ? 'setup.lede.' + ONLY : 'setup.lede') }),
       h('ul', { class: 'points' },
         h('li', {}, h('span', { class: 'pt-ico', 'aria-hidden': 'true', text: '🔒' }), t('setup.p1')),
         h('li', {}, h('span', { class: 'pt-ico', 'aria-hidden': 'true', text: '📱' }), t('setup.p2')),
@@ -3457,13 +3457,18 @@
       h('p', { class: 'hint', text: t('install.autoNote') }));
   }
   function openAutoStart() { sheet(t('set.autostart'), function (body) { add(body, autoStartSteps()); }); }
+  // Installing: one app, one big button. The browser's install offer can come a moment after the page opens, so the button
+  // waits for it ("Getting ready…") and wakes up by itself; only if none comes does it show the one step for this device.
+  function installSteps() {
+    return isIOS() ? t('install.ios') : /Android/i.test(navigator.userAgent) ? t('inst.android') : t('install.desktop');
+  }
   function openInstall() {
-    sheet(t('install.title'), function (body) {
-      add(body, h('p', { class: 'hint', text: t('install.why') }));
+    sheet(t('install.title'), function (body, close, m) {
       var inApp = isStandalone();
+      var name = ONLY ? t('tab.' + ONLY) : t('app.name');
       if (inApp) add(body, h('p', { class: 'msg ok', text: t('install.done') }));
       var note = h('p', { class: 'msg', id: 'only-inapp', hidden: true });
-      if (!DESK) add(body, h('p', { class: 'field-label', text: t('only.title') }), h('div', { class: 'only-pick', id: 'only-pick', role: 'radiogroup', 'aria-label': t('only.title') },
+      var picker = DESK ? null : h('div', { class: 'only-pick', id: 'only-pick', role: 'radiogroup', 'aria-label': t('only.title') },
         [['all', 'vault'], ['diary', 'diary'], ['notes', 'notes'], ['budget', 'budget']].map(function (x) {
           var on = (ONLY || 'all') === x[0];
           return h('button', { type: 'button', role: 'radio', class: 'only-opt' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-only': x[0], id: 'only-' + x[0],
@@ -3477,17 +3482,46 @@
               try { navigator.clipboard.writeText(full).then(function () { note.textContent = t('only.inAppCopied', { url: full }); }, function () {}); } catch (e) { /* the address is on screen */ }
             } } },
             h('img', { src: '/icons/tool-' + x[1] + '-192.png', alt: '', width: 44, height: 44 }), h('span', { text: t('only.' + x[0]) }));
-        })), h('p', { class: 'hint', text: t('only.hint') }), note);
-      if (inApp) { if (!isPhone()) add(body, autoStartSteps()); return; }
-      if (S.installEvt) add(body, h('button', { type: 'button', class: 'btn primary block', id: 'install-go', text: t('install.button'), on: { click: function () {
-        var ev = S.installEvt; S.installEvt = null; ev.prompt(); ev.userChoice.then(function () { render(); }, function () {});
-      } } }));
-      add(body, h('ul', { class: 'install-steps' },
-        h('li', { class: isIOS() ? 'here' : '', text: t('install.ios') }),
-        h('li', { class: !isIOS() && /Android/i.test(navigator.userAgent) ? 'here' : '', text: t('install.android') }),
-        h('li', { class: !isPhone() ? 'here' : '', text: t('install.desktop') })));
-      if (!S.installEvt && /Android/i.test(navigator.userAgent)) add(body, h('p', { class: 'msg', id: 'install-none', text: t('install.none') }));
+        }));
+      if (inApp) {
+        if (picker) add(body, h('p', { class: 'field-label', text: t('only.title') }), picker, h('p', { class: 'hint', text: t('only.hint') }), note);
+        if (!isPhone()) add(body, autoStartSteps());
+        return;
+      }
+      // this page's app, big and clear
+      add(body, h('div', { class: 'inst-hero', id: 'inst-hero' },
+        h('img', { src: '/icons/tool-' + (ONLY || 'vault') + '-192.png', alt: '', width: 64, height: 64 }),
+        h('div', {}, h('strong', { id: 'inst-name', text: name }), h('span', { class: 'hint', text: t('inst.lede') }))));
+      var go = h('button', { type: 'button', class: 'btn primary block inst-go', id: 'install-go' });
+      var how = h('p', { class: 'inst-how', id: 'install-how', hidden: true });
+      var ok = h('p', { class: 'msg ok', id: 'install-ok', role: 'status', hidden: true });
+      var trouble = /Android/i.test(navigator.userAgent) ? h('details', { class: 'inst-trouble', id: 'install-trouble', hidden: true },
+        h('summary', { text: t('inst.trouble') }), h('p', { id: 'install-none', text: t('install.none') })) : null;
+      var waited = isIOS();                       // Safari never offers: show its step at once
+      function state() {
+        if (m.closed) return;
+        if (S.installed) {
+          go.hidden = true; how.hidden = true; if (trouble) trouble.hidden = true;
+          ok.textContent = t('inst.ok', { name: name }); ok.hidden = false; return;
+        }
+        if (S.installEvt) { go.hidden = false; go.disabled = false; go.textContent = t('install.button'); how.hidden = true; if (trouble) trouble.hidden = true; return; }
+        if (!waited) { go.hidden = false; go.disabled = true; go.textContent = t('inst.wait'); return; }
+        go.hidden = true; how.textContent = installSteps(); how.hidden = false; if (trouble) trouble.hidden = false;
+      }
+      go.addEventListener('click', function () {
+        var ev = S.installEvt; if (!ev) return;
+        S.installEvt = null; go.disabled = true;
+        ev.prompt();
+        (ev.userChoice || Promise.resolve({})).then(function (c) { if (c && c.outcome === 'accepted') S.installed = true; state(); }, function () { state(); });
+      });
+      add(body, go, how, ok);
+      if (trouble) add(body, trouble);
+      S.installUpdate = state;
+      if (!waited) setTimeout(function () { waited = true; state(); }, 3500);
+      state();
+      if (picker) add(body, h('p', { class: 'field-label inst-other', text: t('inst.other') }), picker);
       if (!isPhone()) add(body, autoStartSteps());
+      setTimeout(function () { if (!m.closed && !go.hidden && !go.disabled) go.focus(); }, 60);
     });
   }
   function openAbout() {
@@ -4048,8 +4082,8 @@
   }
 
   // ---------- start ----------
-  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); S.installEvt = e; });
-  window.addEventListener('appinstalled', function () { S.installEvt = null; });
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); S.installEvt = e; if (S.installUpdate) S.installUpdate(); });
+  window.addEventListener('appinstalled', function () { S.installEvt = null; S.installed = true; if (S.installUpdate) S.installUpdate(); });
   window.addEventListener('pagehide', function () { flushNote(); flushEntry(); deskFlush(); deskSaveGeo(); });
 
   var qlang = (location.search.match(/[?&]lang=(ko|ja|en)\b/) || [])[1];   // the Korean / Japanese introduction pages open the app in their language
