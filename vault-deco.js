@@ -25,7 +25,7 @@
     var layer = h('div', { class: 'st-layer', id: 'st-layer' });
     add(page, tplBox, drawImg, layer);
     function applyLook() {
-      page.className = 'page paper-' + deco.paper + ' tint-' + deco.tint + ' font-' + deco.font;
+      page.className = 'page paper-' + deco.paper + ' tint-' + deco.tint + ' font-' + deco.font + (ctx.lookClass ? ' ' + ctx.lookClass() : '');
     }
     function width() { return page.clientWidth || 320; }
 
@@ -33,7 +33,7 @@
     var panel = h('div', { class: 'deco-panel', id: 'deco-panel', hidden: true });
     var current = null, btns = {};
     var bar = h('div', { class: 'deco-bar', role: 'toolbar', 'aria-label': t('deco.title') });
-    [['page', '📄'], ['paper', '🎨'], ['font', '✍️'], ['stickers', '⭐'], ['draw', '🖍️']].forEach(function (x) {
+    [['page', '📄'], ['paper', '🎨'], ['font', '✍️'], ['stickers', '⭐'], ['draw', '🖍️']].filter(function (x) { return !ctx.parts || ctx.parts.indexOf(x[0]) >= 0; }).forEach(function (x) {
       btns[x[0]] = h('button', { type: 'button', class: 'deco-btn', id: 'deco-' + x[0], 'aria-expanded': 'false', 'aria-controls': 'deco-panel',
         on: { click: function () { toggle(x[0]); } } }, h('span', { 'aria-hidden': 'true', text: x[1] }), h('span', { text: t('deco.' + x[0]) }));
       add(bar, btns[x[0]]);
@@ -65,23 +65,23 @@
       add(panel, h('p', { class: 'field-label', text: t('deco.paper') }),
         chips(DY.PAPERS, deco.paper, t('deco.paper'), function (v) { deco.paper = v; applyLook(); commit(true); toggle('paper'); toggle('paper'); },
           function (b, v) { b.textContent = t('paper.' + v); b.classList.add('paper-chip', 'paper-' + v); }),
-        h('p', { class: 'field-label', text: t('draw.color') }),
-        chips(DY.TINTS, deco.tint, t('draw.color'), function (v) { deco.tint = v; applyLook(); commit(true); toggle('paper'); toggle('paper'); },
+        ctx.noTint ? null : h('p', { class: 'field-label', text: t('draw.color') }),
+        ctx.noTint ? null : chips(DY.TINTS, deco.tint, t('draw.color'), function (v) { deco.tint = v; applyLook(); commit(true); toggle('paper'); toggle('paper'); },
           function (b, v) { b.classList.add('tint-chip', 'tint-' + v); b.setAttribute('aria-label', t('tint.' + v)); b.title = t('tint.' + v); }));
     }
     function panelFont() {
       add(panel, chips(DY.FONTS, deco.font, t('deco.font'), function (v) { deco.font = v; applyLook(); commit(true); toggle('font'); toggle('font'); },
         function (b, v) { b.classList.add('font-chip', 'font-' + v); add(b, h('span', { class: 'font-name', text: t('font.' + v) }), h('span', { class: 'font-sample', text: t('font.sample') })); }));
     }
-    var stTab = 'art';
+    var stTab = 'deco';
     function panelStickers() {
       var tabs = h('div', { class: 'seg small', role: 'tablist' });
-      [['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
+      [['deco', 'st.tabDeco'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
         add(tabs, h('button', { type: 'button', role: 'tab', id: 'st-tab-' + x[0], 'aria-selected': stTab === x[0] ? 'true' : 'false', class: stTab === x[0] ? 'on' : '', text: t(x[1]),
           on: { click: function () { stTab = x[0]; toggle('stickers'); toggle('stickers'); } } }));
       });
       var grid = h('div', { class: 'st-grid' + (stTab === 'tape' ? ' tapes' : ''), id: 'st-grid' });
-      var keys = stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
+      var keys = stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
         stTab === 'seal' ? (ctx.seals ? ctx.seals() : []).map(function (k) { return 's:' + k; }) : ST.EMOJI.map(function (k) { return 'e:' + k; });
       keys.forEach(function (k) {
         var el = ST.element(k); if (!el) return;
@@ -162,6 +162,8 @@
           inp.addEventListener('input', function () { tp.thanks[i] = inp.value; commit(); });
           add(tplBox, h('label', { class: 'tpl-row thanks-row' }, h('span', { class: 'thanks-n', 'aria-hidden': 'true', text: '♥ ' + (i + 1) }), inp));
         });
+      } else if (DY.FORMS[on]) {
+        drawForm(on);
       } else if (on === 'money') {
         var m = ctx.moneyDay ? ctx.moneyDay(e.date) : null;
         add(tplBox, h('p', { class: 'tpl-title', text: t('mday.title') }));
@@ -175,6 +177,56 @@
         add(tplBox, mt); setTimeout(function () { grow(mt); }, 0);
       }
       placeStickers();
+    }
+    // a ready-made page from DY.FORMS: every field saved as it is typed or tapped
+    function drawForm(k) {
+      var tp = deco.tpl;
+      tp.forms = tp.forms || {};
+      var f = tp.forms[k] || {};
+      DY.FORMS[k].forEach(function (fd) { if (!(fd[0] in f)) f[fd[0]] = DY.cleanField(fd[1], fd[2], undefined); });
+      tp.forms[k] = f;
+      var L = function (x) { return t('tf.' + k + '.' + x); };
+      add(tplBox, h('p', { class: 'tpl-title', text: (DY.FORM_ICON[k] || '') + ' ' + t('tpl.' + k) }));
+      DY.FORMS[k].forEach(function (fd) {
+        var name = fd[0], kind = fd[1], row = h('div', { class: 'tf-row tf-' + kind, 'data-f': name });
+        var label = h('span', { class: 'tf-label', text: L(name) });
+        if (kind === 'line' || kind === 'num' || kind === 'time') {
+          var inp = h('input', { class: 'tpl-in tf-in', type: kind === 'num' ? 'number' : kind === 'time' ? 'time' : 'text', inputmode: kind === 'num' ? 'numeric' : null, value: f[name] === '' ? '' : String(f[name]), maxlength: 200, 'aria-label': L(name), placeholder: kind === 'line' ? L(name + 'Ph') : null });
+          inp.addEventListener('input', function () { f[name] = DY.cleanField(kind, fd[2], kind === 'num' ? (inp.value === '' ? '' : inp.value) : inp.value); commit(); });
+          add(row, label, inp);
+        } else if (kind === 'area') {
+          var ta = h('textarea', { class: 'tpl-in tf-in', rows: 2, value: f[name], maxlength: 1000, 'aria-label': L(name), placeholder: L(name + 'Ph') });
+          ta.addEventListener('input', function () { f[name] = ta.value; grow(ta); commit(); });
+          add(row, label, ta); setTimeout(function () { grow(ta); }, 0);
+        } else if (kind === 'stars' || kind === 'cups') {
+          var max = kind === 'stars' ? 5 : 8, box = h('div', { class: 'tf-taps', role: 'radiogroup', 'aria-label': L(name) });
+          var paint = function () { box.querySelectorAll('button').forEach(function (b, i) { var on = i < f[name]; b.classList.toggle('on', on); b.setAttribute('aria-checked', i + 1 === f[name] ? 'true' : 'false'); }); };
+          for (var i = 0; i < max; i++) (function (i) {
+            add(box, h('button', { type: 'button', role: 'radio', class: 'tf-tap', 'aria-label': String(i + 1), text: kind === 'stars' ? '★' : '💧',
+              on: { click: function () { f[name] = f[name] === i + 1 ? i : i + 1; paint(); commit(true); } } }));
+          })(i);
+          add(row, label, box); paint();
+        } else if (kind === 'checks') {
+          var cg = h('div', { class: 'tf-checks' });
+          fd[2].forEach(function (opt, i) {
+            var cb = h('input', { type: 'checkbox', checked: f[name][i] });
+            cb.addEventListener('change', function () { f[name][i] = cb.checked; commit(true); });
+            add(cg, h('label', { class: 'tf-check' }, cb, h('span', { text: L('o.' + opt) })));
+          });
+          add(row, label, cg);
+        } else if (kind === 'list') {
+          var ul = h('ul', { class: 'todo tf-list' });
+          f[name].forEach(function (it, i) {
+            var cb = h('input', { type: 'checkbox', class: 'todo-cb', checked: it.done, 'aria-label': (it.text || L(name)) + ' ' + (i + 1) });
+            var inp = h('input', { class: 'tpl-in todo-in' + (it.done ? ' done' : ''), value: it.text, placeholder: (i + 1) + '. ' + L(name + 'Ph'), maxlength: 200, 'aria-label': L(name) + ' ' + (i + 1) });
+            cb.addEventListener('change', function () { it.done = cb.checked; inp.classList.toggle('done', it.done); commit(true); });
+            inp.addEventListener('input', function () { it.text = inp.value; commit(); });
+            add(ul, h('li', {}, cb, inp));
+          });
+          add(row, label, ul);
+        }
+        add(tplBox, row);
+      });
     }
     function addTodo(at) {
       if (deco.tpl.todo.length >= 30) return;
@@ -357,7 +409,7 @@
     applyLook(); drawTpl(); showDrawing();
     if (root.ResizeObserver) { var lastW = 0; new root.ResizeObserver(function () { var w = width(); if (w !== lastW) { lastW = w; placeStickers(); } }).observe(page); }
     return {
-      bar: bar, panel: panel,
+      bar: bar, panel: panel, look: applyLook,
       flush: function () { if (drawing) return finishDraw().then(flush); flush(); return Promise.resolve(); },
       deco: function () { return deco; }
     };

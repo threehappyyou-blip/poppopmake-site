@@ -7,8 +7,12 @@
 (function (root) {
   'use strict';
   var MAX_PHOTOS = 4, PROMPTS = 16, MAX_STICKERS = 60;
-  var PAPERS = ['plain', 'lines', 'grid', 'dots', 'gingham', 'hearts', 'flowers', 'stars', 'clouds', 'manuscript'], TINTS = ['none', 'cream', 'pink', 'mint', 'sky', 'lavender', 'kraft'], FONTS = ['base', 'hand', 'pen'];
-  var TPLS = ['time', 'week', 'todo', 'thanks', 'money'], HOURS = [];
+  var PAPERS = ['plain', 'lines', 'grid', 'dots', 'gingham', 'hearts', 'flowers', 'stars', 'clouds', 'manuscript', 'loveblue', 'chrome', 'ballet', 'strawberry', 'cherry', 'daisy', 'polka', 'stripe', 'pastelgrid', 'rainbow', 'lemon', 'clover', 'bear', 'starnight', 'waves'], TINTS = ['none', 'cream', 'pink', 'mint', 'sky', 'lavender', 'kraft', 'peach', 'lemon', 'coral', 'sage', 'ice'], FONTS = ['base', 'hand', 'pen', 'gamja', 'poor', 'single', 'yeon', 'dongle', 'dodum', 'batang', 'jua', 'dohyeon', 'cute', 'kirang', 'dokdo'];
+  var TPLS = ['time', 'week', 'todo', 'thanks', 'money', 'reading', 'movie', 'workout', 'meal', 'sleep', 'travel', 'bucket', 'wish', 'review', 'praise', 'selfcare', 'goals'], HOURS = [];
+  // Ready-made pages filled in by tapping and typing: each field is [name, kind, extra]. Kinds: line, area (several lines),
+  // stars (0–5), num, time (hh:mm), cups (0–8 glasses), checks (named tick boxes), list (up to n lines with a tick each).
+  var FORMS = {"reading": [["title", "line"], ["author", "line"], ["stars", "stars"], ["quote", "area"], ["thoughts", "area"]], "movie": [["title", "line"], ["where", "line"], ["stars", "stars"], ["review", "area"]], "workout": [["what", "line"], ["minutes", "num"], ["effort", "stars"], ["note", "area"]], "meal": [["breakfast", "line"], ["lunch", "line"], ["dinner", "line"], ["snack", "line"], ["water", "cups"]], "sleep": [["bed", "time"], ["wake", "time"], ["quality", "stars"], ["condition", "stars"], ["note", "line"]], "travel": [["where", "line"], ["with", "line"], ["best", "area"], ["food", "area"], ["again", "stars"]], "bucket": [["items", "list", 10]], "wish": [["items", "list", 8]], "review": [["keep", "area"], ["problem", "area"], ["try", "area"]], "praise": [["p1", "line"], ["p2", "line"], ["p3", "line"]], "selfcare": [["care", "checks", ["water", "walk", "stretch", "sleep", "fun", "tidy"]], ["word", "line"]], "goals": [["items", "list", 6], ["promise", "area"]]};
+  var FORM_ICON = {"reading": "📚", "movie": "🎬", "workout": "🏃", "meal": "🍱", "sleep": "🌙", "travel": "✈️", "bucket": "🌠", "wish": "🎁", "review": "🔁", "praise": "👏", "selfcare": "🫧", "goals": "🎯"};
   for (var hh = 6; hh <= 24; hh++) HOURS.push((hh < 10 ? '0' : '') + hh);
 
   function uid() {
@@ -53,7 +57,7 @@
   }
   function cleanTpl(t) {
     t = t && typeof t === 'object' ? t : {};
-    var out = { on: TPLS.indexOf(t.on) >= 0 ? t.on : null, time: {}, week: { days: [], habits: [] }, todo: [], thanks: ['', '', ''], money: str(t.money, 500) };
+    var out = { on: TPLS.indexOf(t.on) >= 0 ? t.on : null, time: {}, week: { days: [], habits: [] }, todo: [], thanks: ['', '', ''], money: str(t.money, 500), forms: cleanForms(t.forms) };
     for (var k = 0; k < 3; k++) out.thanks[k] = str(Array.isArray(t.thanks) ? t.thanks[k] : '', 200);
     var tm = t.time && typeof t.time === 'object' ? t.time : {};
     HOURS.forEach(function (h) { var v = str(tm[h], 300); if (v) out.time[h] = v; });
@@ -70,8 +74,51 @@
     });
     return out;
   }
+  function cleanField(kind, extra, v) {
+    if (kind === 'line') return str(v, 200);
+    if (kind === 'area') return str(v, 1000);
+    if (kind === 'stars') return Math.round(num(v, 0, 5, 0));
+    if (kind === 'cups') return Math.round(num(v, 0, 8, 0));
+    if (kind === 'num') return v === '' || v == null ? '' : Math.round(num(v, 0, 100000, 0));
+    if (kind === 'time') return typeof v === 'string' && /^\d{2}:\d{2}$/.test(v) ? v : '';
+    if (kind === 'checks') return extra.map(function (x, i) { return Array.isArray(v) && v[i] === true; });
+    if (kind === 'list') { var out = []; for (var i = 0; i < extra; i++) { var it = Array.isArray(v) ? v[i] : null; out.push({ text: str(it && it.text, 200), done: !!(it && it.done === true) }); } return out; }
+    return '';
+  }
+  function cleanForms(raw) {
+    var out = {};
+    if (!raw || typeof raw !== 'object') return out;
+    Object.keys(FORMS).forEach(function (k) {
+      var r = raw[k]; if (!r || typeof r !== 'object') return;
+      var f = {};
+      FORMS[k].forEach(function (fd) { f[fd[0]] = cleanField(fd[1], fd[2], r[fd[0]]); });
+      if (formHas(k, f)) out[k] = f;
+    });
+    return out;
+  }
+  function formHas(k, f) {
+    return FORMS[k].some(function (fd) {
+      var v = f[fd[0]];
+      if (fd[1] === 'checks') return v.some(Boolean);
+      if (fd[1] === 'list') return v.some(function (it) { return it.text.trim() || it.done; });
+      return typeof v === 'number' ? v > 0 : !!String(v || '').trim();
+    });
+  }
+  function formText(k, f, label) {           // a filled-in page as plain lines (for the list, search and the text file)
+    var out = [];
+    FORMS[k].forEach(function (fd) {
+      var v = f[fd[0]], name = label ? label(k, fd[0]) : fd[0];
+      if (fd[1] === 'checks') { var on = fd[2].filter(function (x, i) { return v[i]; }); if (on.length) out.push(name + ': ' + on.map(function (x) { return label ? label(k, 'o.' + x) : x; }).join(', ')); }
+      else if (fd[1] === 'list') v.forEach(function (it) { if (it.text.trim()) out.push((it.done ? '[x] ' : '[ ] ') + it.text); });
+      else if (fd[1] === 'stars') { if (v) out.push(name + ': ' + '★★★★★'.slice(0, v) + '☆☆☆☆☆'.slice(0, 5 - v)); }
+      else if (fd[1] === 'cups') { if (v) out.push(name + ': ' + v); }
+      else if (v !== '' && v != null && String(v).trim()) out.push(name + ': ' + v);
+    });
+    return out;
+  }
   function tplHasContent(tp) {
     if (!tp) return false;
+    if (tp.forms && Object.keys(tp.forms).length) return true;
     return Object.keys(tp.time).length > 0 || tp.week.days.some(function (d) { return d.trim(); }) ||
       tp.week.habits.some(function (hb) { return hb.name.trim() || hb.done.some(Boolean); }) || tp.todo.some(function (it) { return it.text.trim(); }) ||
       (tp.thanks || []).some(function (x) { return x.trim(); }) || !!(tp.money || '').trim();
@@ -93,6 +140,9 @@
     tp.week.days.forEach(function (d) { if (d.trim()) out.push(d); });
     tp.week.habits.forEach(function (hb) { if (hb.name.trim()) out.push(hb.name); });
     tp.todo.forEach(function (it) { if (it.text.trim()) out.push((it.done ? '[x] ' : '[ ] ') + it.text); });
+    (tp.thanks || []).forEach(function (x) { if (x.trim()) out.push('♥ ' + x); });
+    if ((tp.money || '').trim()) out.push(tp.money);
+    Object.keys(tp.forms || {}).forEach(function (k) { out = out.concat(formText(k, tp.forms[k], api.formLabel)); });
     return out.join(sep || '\n');
   }
   function hasContent(e) {
@@ -199,7 +249,7 @@
     return d;
   }
 
-  var api = { MAX_PHOTOS: MAX_PHOTOS, PROMPTS: PROMPTS, MAX_STICKERS: MAX_STICKERS, PAPERS: PAPERS, TINTS: TINTS, FONTS: FONTS, TPLS: TPLS, HOURS: HOURS,
+  var api = { FORMS: FORMS, FORM_ICON: FORM_ICON, cleanField: cleanField, formLabel: null, MAX_PHOTOS: MAX_PHOTOS, PROMPTS: PROMPTS, MAX_STICKERS: MAX_STICKERS, PAPERS: PAPERS, TINTS: TINTS, FONTS: FONTS, TPLS: TPLS, HOURS: HOURS,
     cleanDeco: cleanDeco, hasContent: hasContent, blobsOf: blobsOf, tplText: tplText, newDoc: newDoc, validate: validate, addEntry: addEntry, updateEntry: updateEntry, deleteEntry: deleteEntry,
     byMonth: byMonth, byDate: byDate, onThisDay: onThisDay, streak: streak, search: search, moodByDay: moodByDay, monthStats: monthStats,
     allTags: allTags, tagsOf: tagsOf, promptIndex: promptIndex, toText: toText, addDays: addDays, uid: uid };

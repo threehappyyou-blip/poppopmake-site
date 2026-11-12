@@ -20,6 +20,42 @@ Copyright (c) YoonDesign Inc. All Rights Reserved.
 pen-ja.woff2  —  Klee One
 Copyright 2020 The Klee Project Authors (https://github.com/fontworks-fonts/Klee)
 
+gamja.woff2  —  Gamja Flower
+Copyright (c) YoonDesign Inc. All Rights Reserved.
+
+poor.woff2  —  Poor Story
+Copyright (c) YoonDesign Inc. All Rights Reserved.
+
+single.woff2  —  Single Day
+Copyright 2015 DXKorea Inc. All rights reserved.
+
+yeon.woff2  —  Yeon Sung
+Copyright 2018 The BM YEONSUNG Project Authors
+
+dongle.woff2  —  Dongle
+Copyright 2021 The Dongle Project Authors (https://github.com/yangheeryu/Dongle)
+
+dodum.woff2  —  Gowun Dodum
+Copyright 2021 The Gowun Dodum Project Authors (https://github.com/yangheeryu/Gowun-Dodum)
+
+batang.woff2  —  Gowun Batang
+Copyright 2021 The Gowun Batang Project Authors (https://github.com/yangheeryu/Gowun-Batang)
+
+jua.woff2  —  Jua
+Copyright 2018 The Jua Project Authors
+
+dohyeon.woff2  —  Do Hyeon
+Copyright 2018 The Do Hyeon Project Authors
+
+cute.woff2  —  Cute Font
+Copyright 2018 The Cute Font Project Authors
+
+kirang.woff2  —  Kirang Haerang
+Copyright 2018 The Kirang Haerang Project Authors
+
+dokdo.woff2  —  East Sea Dokdo
+Copyright (c) YoonDesign Inc. All Rights Reserved.
+
 ------------------------------------------------------------
 This Font Software is licensed under the SIL Open Font License, Version 1.1.
 This license is copied below, and is also available with a FAQ at:
