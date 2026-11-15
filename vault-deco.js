@@ -20,12 +20,13 @@
     function flush() { if (timer) { clearTimeout(timer); timer = null; ctx.commit(deco); } }
 
     // ----- the page itself -----
+    var INSERTS = { saving24: 1, saving52: 1, grocery: 1, recipe: 1, pricebook: 1 };
     var tplBox = h('div', { class: 'tpl', id: 'entry-tpl' });
     var drawImg = h('img', { class: 'draw-img', id: 'entry-drawing', alt: '', hidden: true });
     var layer = h('div', { class: 'st-layer', id: 'st-layer' });
     add(page, tplBox, drawImg, layer);
     function applyLook() {
-      page.className = 'page paper-' + deco.paper + ' tint-' + deco.tint + ' font-' + deco.font + (ctx.lookClass ? ' ' + ctx.lookClass() : '');
+      page.className = 'page paper-' + deco.paper + ' tint-' + deco.tint + ' font-' + deco.font + (ctx.lookClass ? ' ' + ctx.lookClass() : '') + (INSERTS[deco.tpl && deco.tpl.on] ? ' has-insert' : '');
     }
     function width() { return page.clientWidth || 320; }
 
@@ -33,9 +34,9 @@
     var panel = h('div', { class: 'deco-panel', id: 'deco-panel', hidden: true });
     var current = null, btns = {};
     var bar = h('div', { class: 'deco-bar', role: 'toolbar', 'aria-label': t('deco.title') });
-    [['page', '📄'], ['paper', '🎨'], ['font', '✍️'], ['stickers', '⭐'], ['draw', '🖍️']].filter(function (x) { return !ctx.parts || ctx.parts.indexOf(x[0]) >= 0; }).forEach(function (x) {
+    [['page', 'dpage'], ['paper', 'dpaper'], ['font', 'dfont'], ['stickers', 'dsticker'], ['draw', 'ddraw']].filter(function (x) { return !ctx.parts || ctx.parts.indexOf(x[0]) >= 0; }).forEach(function (x) {
       btns[x[0]] = h('button', { type: 'button', class: 'deco-btn', id: 'deco-' + x[0], 'aria-expanded': 'false', 'aria-controls': 'deco-panel',
-        on: { click: function () { toggle(x[0]); } } }, h('span', { 'aria-hidden': 'true', text: x[1] }), h('span', { text: t('deco.' + x[0]) }));
+        on: { click: function () { toggle(x[0]); } } }, ctx.icon(x[1], 19), h('span', { text: t('deco.' + x[0]) }));
       add(bar, btns[x[0]]);
     });
     function toggle(name) {
@@ -57,14 +58,15 @@
       });
       return g;
     }
+    function tileGrid() { var g = chips.apply(null, arguments); g.classList.add('paper-grid'); return g; }
     function panelPage() {
       add(panel, chips([null].concat(DY.TPLS), deco.tpl.on, t('deco.page'), function (v) { deco.tpl.on = v; drawTpl(); commit(true); toggle('page'); toggle('page'); },
         function (b, v) { b.textContent = t('tpl.' + (v || 'none')); b.setAttribute('data-v', v || 'none'); }));
     }
     function panelPaper() {
       add(panel, h('p', { class: 'field-label', text: t('deco.paper') }),
-        chips(DY.PAPERS, deco.paper, t('deco.paper'), function (v) { deco.paper = v; applyLook(); commit(true); toggle('paper'); toggle('paper'); },
-          function (b, v) { b.textContent = t('paper.' + v); b.classList.add('paper-chip', 'paper-' + v); }),
+        tileGrid(DY.PAPERS, deco.paper, t('deco.paper'), function (v) { deco.paper = v; applyLook(); commit(true); toggle('paper'); toggle('paper'); },
+          function (b, v) { b.classList.add('paper-chip', 'paper-tile', 'paper-' + v, 'tint-' + deco.tint); add(b, h('span', { class: 'paper-name', text: t('paper.' + v) })); }),
         ctx.noTint ? null : h('p', { class: 'field-label', text: t('draw.color') }),
         ctx.noTint ? null : chips(DY.TINTS, deco.tint, t('draw.color'), function (v) { deco.tint = v; applyLook(); commit(true); toggle('paper'); toggle('paper'); },
           function (b, v) { b.classList.add('tint-chip', 'tint-' + v); b.setAttribute('aria-label', t('tint.' + v)); b.title = t('tint.' + v); }));
@@ -76,12 +78,12 @@
     var stTab = 'deco';
     function panelStickers() {
       var tabs = h('div', { class: 'seg small', role: 'tablist' });
-      [['deco', 'st.tabDeco'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
+      [['deco', 'st.tabDeco'], ['food', 'st.tabFood'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
         add(tabs, h('button', { type: 'button', role: 'tab', id: 'st-tab-' + x[0], 'aria-selected': stTab === x[0] ? 'true' : 'false', class: stTab === x[0] ? 'on' : '', text: t(x[1]),
           on: { click: function () { stTab = x[0]; toggle('stickers'); toggle('stickers'); } } }));
       });
       var grid = h('div', { class: 'st-grid' + (stTab === 'tape' ? ' tapes' : ''), id: 'st-grid' });
-      var keys = stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
+      var keys = stTab === 'food' ? (ST.FOOD || []).map(function (k) { return 'a:fd' + k; }) : stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
         stTab === 'seal' ? (ctx.seals ? ctx.seals() : []).map(function (k) { return 's:' + k; }) : ST.EMOJI.map(function (k) { return 'e:' + k; });
       keys.forEach(function (k) {
         var el = ST.element(k); if (!el) return;
@@ -102,6 +104,10 @@
       tplBox.textContent = '';
       var tp = deco.tpl, on = tp.on;
       tplBox.hidden = !on; tplBox.className = 'tpl' + (on ? ' tpl-' + on : '');
+      // a planner insert is the page itself: it sits above the writing, which shrinks to a memo line
+      var anchor = page.firstChild === tplBox ? tplBox.nextSibling : page.firstChild;   // the writing (a textarea, or the note's wrapper)
+      if (anchor && anchor !== drawImg) page.insertBefore(tplBox, INSERTS[on] ? anchor : anchor.nextSibling);
+      page.classList.toggle('has-insert', !!INSERTS[on]);
       if (on === 'time') {
         DY.HOURS.forEach(function (hh) {
           var inp = h('input', { class: 'tpl-in', 'data-h': hh, value: tp.time[hh] || '', 'aria-label': t('time.label', { h: +hh }), maxlength: 300 });
@@ -186,7 +192,12 @@
       DY.FORMS[k].forEach(function (fd) { if (!(fd[0] in f)) f[fd[0]] = DY.cleanField(fd[1], fd[2], undefined); });
       tp.forms[k] = f;
       var L = function (x) { return t('tf.' + k + '.' + x); };
-      add(tplBox, h('p', { class: 'tpl-title', text: (DY.FORM_ICON[k] || '') + ' ' + t('tpl.' + k) }));
+      var INSERT = { saving24: 1, saving52: 1, grocery: 1, recipe: 1, pricebook: 1 };
+      if (INSERT[k]) {                     // planner inserts: a calm header — a big light word, a line in script, the page's name
+        tplBox.classList.add('tf-insert');
+        add(tplBox, h('div', { class: 'ins-head' }, h('p', { class: 'ins-kicker', text: L('kicker') }), h('p', { class: 'ins-title', text: L('big') }),
+          h('p', { class: 'ins-script', text: L('script') }), h('p', { class: 'ins-name', text: t('tpl.' + k) })));
+      } else add(tplBox, h('p', { class: 'tpl-title', text: (DY.FORM_ICON[k] || '') + ' ' + t('tpl.' + k) }));
       DY.FORMS[k].forEach(function (fd) {
         var name = fd[0], kind = fd[1], row = h('div', { class: 'tf-row tf-' + kind, 'data-f': name });
         var label = h('span', { class: 'tf-label', text: L(name) });
@@ -214,6 +225,72 @@
             add(cg, h('label', { class: 'tf-check' }, cb, h('span', { text: L('o.' + opt) })));
           });
           add(row, label, cg);
+        } else if (kind === 'challenge') {
+          // a saving challenge: week n puts aside n × the base amount; tick a week when it is in the jar
+          var base = ctx.challengeBase ? ctx.challengeBase() : 1, n = fd[2], total = base * n * (n + 1) / 2;
+          var sumEl = h('p', { class: 'ch-sum', id: 'ch-sum' }), bar = h('span', { class: 'ch-bar-in' });
+          var paintSum = function () {
+            var saved = 0; f[name].forEach(function (on, i) { if (on) saved += base * (i + 1); });
+            sumEl.textContent = t('tf.ch.saved', { saved: ctx.money(saved), total: ctx.money(total), n: f[name].filter(Boolean).length, all: n });
+            bar.style.width = Math.round(saved / total * 100) + '%';
+          };
+          var grid = h('div', { class: 'ch-grid' + (n > 30 ? ' many' : '') });
+          f[name].forEach(function (on, i) {
+            var b = h('button', { type: 'button', class: 'ch-cell' + (on ? ' on' : ''), 'aria-pressed': on ? 'true' : 'false', 'data-w': i + 1,
+              'aria-label': t('tf.ch.week', { n: i + 1 }) + ' ' + ctx.money(base * (i + 1)),
+              on: { click: function () { f[name][i] = !f[name][i]; b.classList.toggle('on', f[name][i]); b.setAttribute('aria-pressed', f[name][i] ? 'true' : 'false'); paintSum(); commit(true); } } },
+              h('span', { class: 'ch-w', text: t('tf.ch.week', { n: i + 1 }) }), h('span', { class: 'ch-dot', 'aria-hidden': 'true' }), h('span', { class: 'ch-amt', text: ctx.money(base * (i + 1)) }));
+            add(grid, b);
+          });
+          add(row, h('div', { class: 'ch-top' }, h('span', { class: 'ch-num', text: String(n) }), h('span', { class: 'ch-unit', text: t('tf.ch.weeks') }),
+            h('span', { class: 'ch-total', text: t('tf.ch.total', { total: ctx.money(total) }) })), h('div', { class: 'ch-bar' }, bar), sumEl, grid);
+          paintSum();
+        } else if (kind === 'groceries' || kind === 'ingredients') {
+          // rows with a food drawing: tap "+ 재료" and pick; type a name or a price; tick when it is in the basket
+          var priced = kind === 'groceries', box = h('div', { class: 'gr-list' + (priced ? '' : ' chips') }), tot = h('p', { class: 'gr-total', id: 'gr-total-' + name });
+          var foodEl = function (fk, size) { var el = fk && ST.element('a:fd' + fk); if (el) { el.setAttribute('width', size); el.setAttribute('height', size); } return el || h('span', { class: 'gr-noimg', text: '·' }); };
+          var paintTotal = function () {
+            if (!priced) return;
+            var sum = 0, left = 0; f[name].forEach(function (it) { var v = parseFloat(it.price) || 0; sum += v; if (!it.done) left += v; });
+            tot.textContent = t('tf.gr.total', { sum: ctx.money(sum) }) + (k === 'grocery' && sum ? ' · ' + t('tf.gr.left', { left: ctx.money(left) }) : '');
+          };
+          var draw = function () {
+            box.textContent = '';
+            f[name].forEach(function (it, i) {
+              var cb = h('input', { type: 'checkbox', class: 'gr-cb', checked: it.done, 'aria-label': (it.text || t('tf.food.' + it.f)) + ' ' + (i + 1) });
+              cb.addEventListener('change', function () { it.done = cb.checked; rowEl.classList.toggle('done', it.done); paintTotal(); commit(true); });
+              var nm = h('input', { class: 'tpl-in gr-name', value: it.text, placeholder: it.f ? t('tf.food.' + it.f) : L(name + 'Ph'), maxlength: 60, 'aria-label': L(name) + ' ' + (i + 1) });
+              nm.addEventListener('input', function () { it.text = nm.value; commit(); });
+              var pr = priced ? h('input', { class: 'tpl-in gr-price', inputmode: 'decimal', value: it.price || '', placeholder: '0', maxlength: 12, 'aria-label': L('price') + ' ' + (i + 1) }) : null;
+              if (pr) pr.addEventListener('input', function () { var v = pr.value.replace(/[^\d.]/g, ''); it.price = /^\d{0,9}(\.\d{0,2})?$/.test(v) ? v : it.price; paintTotal(); commit(); });
+              var del = h('button', { type: 'button', class: 'icon-btn xs gr-x', 'aria-label': t('todo.remove'), on: { click: function () { f[name].splice(i, 1); draw(); commit(true); } } }, ctx.icon('x', 14));
+              var rowEl = h('div', { class: 'gr-row' + (it.done ? ' done' : ''), 'data-f': it.f || '' }, k === 'pricebook' ? null : cb, h('span', { class: 'gr-img', 'aria-hidden': 'true' }, foodEl(it.f, priced ? 34 : 30)), nm, pr, del);
+              add(box, rowEl);
+            });
+            paintTotal();
+          };
+          var pick = h('div', { class: 'gr-pick', hidden: true, role: 'listbox', 'aria-label': L(name) });
+          (ST.FOOD || []).forEach(function (fk) {
+            add(pick, h('button', { type: 'button', class: 'gr-food', 'data-food': fk, title: t('tf.food.' + fk), 'aria-label': t('tf.food.' + fk), on: { click: function () {
+              if (f[name].length >= fd[2]) { ctx.toast(t('st.limit', { n: fd[2] })); return; }
+              var it = { f: fk, text: '', done: false }; if (priced) it.price = (k === 'grocery' && ctx.priceOf ? ctx.priceOf(fk) : '') || '';
+              f[name].push(it); draw(); commit(true);
+            } } }, foodEl(fk, 34), h('span', { text: t('tf.food.' + fk) })));
+          });
+          var addBtn = h('button', { type: 'button', class: 'mini gr-add', id: 'gr-add-' + name, text: '+ ' + L('add'), 'aria-expanded': 'false', on: { click: function () {
+            pick.hidden = !pick.hidden; addBtn.setAttribute('aria-expanded', pick.hidden ? 'false' : 'true');
+          } } });
+          var plain = h('button', { type: 'button', class: 'mini gr-add-plain', text: '+ ' + L('addText'), on: { click: function () {
+            if (f[name].length >= fd[2]) return; var it = { f: '', text: '', done: false }; if (priced) it.price = ''; f[name].push(it); draw(); commit(true);
+            var ins = box.querySelectorAll('.gr-name'); if (ins.length) ins[ins.length - 1].focus();
+          } } });
+          add(row, label, box, h('div', { class: 'gr-actions' }, addBtn, plain), pick, priced ? tot : null);
+          if (k === 'grocery' && ctx.toBudget) add(row, h('button', { type: 'button', class: 'btn block gr-budget', id: 'gr-budget', on: { click: function () {
+            var sum = 0; f[name].forEach(function (it) { if (it.done) sum += parseFloat(it.price) || 0; });
+            if (!sum) { ctx.toast(t('tf.gr.none')); return; }
+            ctx.toBudget(sum, t('tpl.grocery'));
+          } } }, '💸 ', t('tf.gr.toBudget')));
+          draw();
         } else if (kind === 'list') {
           var ul = h('ul', { class: 'todo tf-list' });
           f[name].forEach(function (it, i) {
