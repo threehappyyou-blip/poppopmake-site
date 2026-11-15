@@ -20,6 +20,9 @@ Copyright (c) YoonDesign Inc. All Rights Reserved.
 pen-ja.woff2  —  Klee One
 Copyright 2020 The Klee Project Authors (https://github.com/fontworks-fonts/Klee)
 
+script.woff2  —  Allura
+Copyright 2010 The Allura Project Authors (https://github.com/googlefonts/allura)
+
 gamja.woff2  —  Gamja Flower
 Copyright (c) YoonDesign Inc. All Rights Reserved.
 

@@ -74,6 +74,14 @@
   }
   var ICONS = {
     lock: ['<rect x="5" y="11" width="14" height="10" rx="2"/>', 'M8 11V7a4 4 0 0 1 8 0v4'],
+    // decorating toolbar (one line weight, so it looks the same on every phone)
+    dpage: ['<rect x="5" y="3" width="14" height="18" rx="2.5"/>', 'M9 8h6M9 12h6M9 16h3.5'],
+    dpaper: ['<rect x="3.5" y="3.5" width="17" height="17" rx="4"/>', '<circle cx="9" cy="9" r="1.1"/>', '<circle cx="15" cy="9" r="1.1"/>', '<circle cx="9" cy="15" r="1.1"/>', '<circle cx="15" cy="15" r="1.1"/>'],
+    dfont: ['M4.5 19l4.5-14h2l4.5 14M7 13.5h6', 'M17 19c0-3 3.5-3.2 3.5-6'],
+    dsticker: ['M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5V13l-7 7H6.5A2.5 2.5 0 0 1 4 17.5z', 'M13 20v-4.5A2.5 2.5 0 0 1 15.5 13H20'],
+    ddraw: ['M4 20l4-1 11-11-3-3L5 16z', 'M14 6l3 3'],
+    dshare: ['M12 4v11', 'M8 8l4-4 4 4', 'M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5'],
+    dfilm: ['<rect x="3" y="6" width="13" height="12" rx="2.5"/>', 'M16 10.5l5-3v9l-5-3'],
     search: ['<circle cx="11" cy="11" r="7"/>', 'M21 21l-4.3-4.3'],
     plus: ['M12 5v14M5 12h14'], left: ['M15 18l-6-6 6-6'], right: ['M9 18l6-6-6-6'], x: ['M18 6L6 18M6 6l12 12'],
     pin: ['M12 17v5', 'M8 3h8l-1 6 3 4H6l3-4z'], trash: ['M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14'],
@@ -164,7 +172,7 @@
   var NOTE_MAX_PHOTOS = 6;
   // a note decorated like a diary page: paper, stickers and tape, a ready-made page (no drawing; the note colour is its colour)
   function noteDeco(raw) { var d = DY.cleanDeco(raw); if (d) { d.drawing = null; d.tint = 'none'; d.font = 'base'; } return d && (d.paper !== 'plain' || d.stickers.length || d.tpl.on || DY.hasContent({ deco: d })) ? d : null; }
-  function noteEmpty(n) { return !n.text.trim() && !(n.photos && n.photos.length) && !(n.deco && DY.hasContent({ deco: n.deco })); }      // nothing written, no photo, no sticker or filled page
+  function noteEmpty(n) { return !n.text.trim() && !(n.photos && n.photos.length) && !(n.deco && (n.deco.tpl.on || DY.hasContent({ deco: n.deco }))); }      // nothing written, no photo, no sticker or filled page
   function noteLook(n) { return 'nc-' + n.color + ' font-' + n.font + ' nsz-' + n.size; }
   var noteShown = {};               // locked notes opened with the passcode in this window (forgotten on lock)
   // A locked note shows its text only after the passcode is typed again (same slow-down after wrong tries as the lock screen).
@@ -1617,6 +1625,20 @@
           p.perMonth ? h('span', { class: 'hint goal-plan', text: t('goal.perMonth', { amt: money(p.perMonth), n: p.monthsLeft }) }) : null)));
     });
     add(box, h('button', { type: 'button', class: 'btn primary block', id: 'goal-new', on: { click: function () { editGoal(null); } } }, '+ ', t('goal.new')));
+    // planner inserts kept as notes: progress shown here, one tap opens them
+    var ins = h('section', { class: 'ins-shelf', id: 'ins-shelf' }, h('h3', { class: 'shelf-head', text: t('ins.title') }), h('p', { class: 'hint', text: t('ins.hint') }));
+    insertNotes(['saving24', 'saving52', 'grocery']).forEach(function (n) {
+      var on = n.deco.tpl.on, f = n.deco.tpl.forms[on], line = '', pct = 0;
+      if (on === 'grocery') { var it = f ? f.items : [], dn = it.filter(function (x) { return x.done; }).length; line = t('ins.grocery', { done: dn, all: it.length }); pct = it.length ? dn / it.length : 0; }
+      else { var w = f ? f.weeks : [], base = challengeBase(), saved = 0, all = on === 'saving24' ? 24 : 52; w.forEach(function (x, i) { if (x) saved += base * (i + 1); }); line = t('tf.ch.saved', { saved: insertMoney(saved), total: insertMoney(base * all * (all + 1) / 2), n: w.filter(Boolean).length, all: all }); pct = saved / (base * all * (all + 1) / 2); }
+      add(ins, h('button', { type: 'button', class: 'card ins-card', 'data-id': n.id, 'data-tpl': on, on: { click: function () { if (!ONLY || ONLY === 'notes') { S.tab = 'notes'; render(); } openNote(n.id); } } },
+        h('span', { class: 'ins-card-name', text: (n.text.trim().split('\n')[0]) || t('tpl.' + on) }), h('span', { class: 'ins-bar' }, h('span', { style: 'width:' + Math.round(pct * 100) + '%' })), h('span', { class: 'hint', text: line })));
+    });
+    add(ins, h('div', { class: 'ins-new' },
+      h('button', { type: 'button', class: 'share-btn', id: 'ins-saving24', on: { click: function () { newInsertNote('saving24', 'gray'); } } }, h('span', { class: 'ins-big', text: '24' }), h('span', { text: t('ins.new24') })),
+      h('button', { type: 'button', class: 'share-btn', id: 'ins-saving52', on: { click: function () { newInsertNote('saving52', 'gray'); } } }, h('span', { class: 'ins-big', text: '52' }), h('span', { text: t('ins.new52') })),
+      h('button', { type: 'button', class: 'share-btn', id: 'ins-grocery', on: { click: function () { newInsertNote('grocery', 'green'); } } }, h('span', { class: 'ins-big', text: '🛒' }), h('span', { text: t('ins.newGrocery') }))));
+    add(box, ins);
     if (done.length) add(box, h('h3', { class: 'shelf-head', text: '🏆 ' + t('goal.shelf') }), h('div', { class: 'shelf', id: 'goal-shelf' }, done.map(function (g) {
       return h('button', { type: 'button', class: 'badge', 'data-id': g.id, on: { click: function () { openGoal(g.id); } } },
         h('span', { class: 'badge-emoji', 'aria-hidden': 'true', text: g.emoji || '🏆' }), h('span', { class: 'badge-name', text: g.name }),
@@ -2002,7 +2024,7 @@
       ndeco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: { deco: n.deco || null, date: ndate }, page: npage, ta: ta,
         parts: ['page', 'paper', 'stickers'], noTint: true, lookClass: function () { return 'note-page ' + noteLook(n); },
         commit: function (d) { var v = noteDeco(d); if (JSON.stringify(v) === JSON.stringify(n.deco || null)) return; n.deco = v; n.updated = Date.now(); markNote(n); saveNotes(); },
-        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); }, moneyDay: moneyDay });
+        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf });
       function drawEditor() {
         wrap.textContent = '';
         if (n.list) { cl = checklistEditor(n, function () { ta.value = n.text; }); cl.className = 'checklist ' + noteLook(n); cl.id = 'note-list'; add(wrap, cl); }
@@ -2468,7 +2490,89 @@
       }
     }
     if (S.diary.entries.some(function (e) { return e.date.slice(0, 7) === ym && DY.hasContent(e); })) add(main, h('button', { type: 'button', class: 'link center-link', id: 'diary-print-link', text: '🖨️ ' + t('pr.thisMonth'), on: { click: function () { openDiaryPrint(ym); } } }));
+    if (SH && S.diary.entries.some(function (e) { return e.mood; })) add(main, h('div', { class: 'share-row poster-row', id: 'diary-posters' },
+      h('button', { type: 'button', class: 'share-btn', id: 'poster-month', on: { click: function () { shareMonth(ym); } } }, icon('dshare', 18), h('span', { text: t('poster.month') })),
+      h('button', { type: 'button', class: 'share-btn', id: 'poster-year', on: { click: function () { shareYear(+ym.slice(0, 4)); } } }, icon('dshare', 18), h('span', { text: t('poster.year') }))));
     add(main, fab(t('diary.new'), function () { newEntry(ym === thisMonth() ? todayS : ym + '-01'); }, 'new-entry'));
+  }
+  // ===== share: a diary page as a picture or a short video, a month / year of moods as a poster (all made on this device) =====
+  var SH = window.VaultShare || null;
+  function moodAvg(list) { var ms = list.map(function (e) { return e.mood; }).filter(Boolean); return ms.length ? Math.round(ms.reduce(function (a, b) { return a + b; }, 0) / ms.length) : 0; }
+  function entryData(e) {
+    var dt = new Date(Date.UTC(+e.date.slice(0, 4), +e.date.slice(5, 7) - 1, +e.date.slice(8, 10)));
+    var dl = new Intl.DateTimeFormat(I.locale(), { month: 'long', day: 'numeric', timeZone: 'UTC' }).format(dt);
+    var sub = new Intl.DateTimeFormat(I.locale(), { weekday: 'long', year: 'numeric', timeZone: 'UTC' }).format(dt) + (e.time ? ' · ' + e.time : '');
+    var lines = DY.tplText(e).split('\n').filter(function (x) { return x.trim(); });
+    return Promise.all((e.photos || []).slice(0, 3).map(function (p) { return photoUrl(p).catch(function () { return null; }); })).then(function (urls) {
+      return { dateLabel: dl, subLabel: sub, mood: e.mood, text: e.text, lines: lines, deco: e.deco, photos: urls.filter(Boolean), brand: t('share.brand') };
+    });
+  }
+  function shareEntry(id, kind) {
+    var e = DY.findEntry ? DY.findEntry(S.diary, id) : S.diary.entries.find(function (x) { return x.id === id; }); if (!e || !SH) return;
+    var wait = sheet(t(kind === 'video' ? 'share.videoTitle' : 'share.title'), function (body) {
+      add(body, h('div', { class: 'share-wait', id: 'share-wait' }, h('div', { class: 'spinner', 'aria-hidden': 'true' }), h('p', { id: 'share-wait-text', text: t(kind === 'video' ? 'share.videoMaking' : 'share.making') })));
+    });
+    var waitEl = function () { return document.getElementById('share-wait-text'); };
+    entryData(e).then(function (d) {
+      if (kind === 'video') return SH.entryVideo(d, { ST: ST }, { progress: function (p) { var w = waitEl(); if (w) w.textContent = t('share.videoMaking') + ' ' + Math.round(p * 100) + '%'; } })
+        .then(function (r) { return { blob: r.blob, name: 'diary-' + e.date + '.' + r.ext, video: true }; });
+      return SH.entryImage(d, { ST: ST }).then(function (b) { return { blob: b, name: 'diary-' + e.date + '.png' }; });
+    }).then(function (r) { wait.close(); shareResult(r); }, function (err) { wait.close(); toast(t(err && err.code === 'novideo' ? 'share.novideo' : 'share.err')); });
+  }
+  function shareMonth(ym) {
+    if (!SH) return;
+    var y = +ym.slice(0, 4), mo = +ym.slice(5, 7), days = new Date(Date.UTC(y, mo, 0)).getUTCDate(), first = (new Date(Date.UTC(y, mo - 1, 1)).getUTCDay() + 6) % 7;
+    var moods = {}, counts = [0, 0, 0, 0, 0], list = S.diary.entries.filter(function (e) { return e.date.slice(0, 7) === ym && DY.hasContent(e); });
+    for (var d = 1; d <= days; d++) { var ds = ym + '-' + pad(d), m = moodAvg(list.filter(function (e) { return e.date === ds; })); if (m) { moods[d] = m; counts[m - 1]++; } }
+    var dates = {}; list.forEach(function (e) { dates[e.date] = 1; });
+    var wd = []; for (var i = 0; i < 7; i++) wd.push(new Intl.DateTimeFormat(I.locale(), { weekday: 'short', timeZone: 'UTC' }).format(new Date(Date.UTC(2024, 0, 1 + i))));
+    var mname = new Intl.DateTimeFormat(I.locale(), { month: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(y, mo - 1, 1)));
+    var top = counts.indexOf(Math.max.apply(null, counts));
+    SH.monthPoster({ title: t('poster.monthTitle', { m: mname }), sub: String(y), weekdays: wd, first: first, days: days, moods: moods, counts: counts, today: ym === thisMonth() ? +today().slice(8, 10) : 0,
+      moodNames: [1, 2, 3, 4, 5].map(function (k) { return t('mood.' + k); }), stats: [[t('poster.entries'), String(list.length)], [t('poster.days'), String(Object.keys(dates).length)], [t('poster.top'), counts[top] ? t('mood.' + (top + 1)) : '—']], brand: t('share.brand') }, { ST: ST })
+      .then(function (b) { shareResult({ blob: b, name: 'moods-' + ym + '.png' }); }, function () { toast(t('share.err')); });
+  }
+  function shareYear(y) {
+    if (!SH) return;
+    var moods = {}, byDate = {};
+    S.diary.entries.forEach(function (e) { if (e.date.slice(0, 4) === String(y) && e.mood) (byDate[e.date] = byDate[e.date] || []).push(e); });
+    Object.keys(byDate).forEach(function (ds) { moods[ds.slice(5)] = moodAvg(byDate[ds]); });
+    var months = []; for (var i = 0; i < 12; i++) months.push(new Intl.DateTimeFormat(I.locale(), { month: 'short', timeZone: 'UTC' }).format(new Date(Date.UTC(y, i, 1))));
+    var good = Object.keys(moods).filter(function (k) { return moods[k] >= 4; }).length;
+    SH.yearPoster({ title: t('poster.yearTitle', { y: y }), sub: t('poster.yearSub'), months: months, year: y, moods: moods, legend: [1, 2, 3, 4, 5].map(function (k) { return t('mood.' + k); }),
+      stats: [[t('poster.days'), String(Object.keys(moods).length)], [t('poster.good'), String(good)]], brand: t('share.brand') })
+      .then(function (b) { shareResult({ blob: b, name: 'moods-' + y + '.png' }); }, function () { toast(t('share.err')); });
+  }
+  function shareResult(r) {
+    var url = URL.createObjectURL(r.blob), file = null;
+    try { file = new File([r.blob], r.name, { type: r.blob.type }); } catch (e) { file = null; }
+    var canShare = !!(file && navigator.canShare && navigator.share && navigator.canShare({ files: [file] }));
+    sheet(t(r.video ? 'share.videoTitle' : 'share.title'), function (body, close) {
+      add(body, h('div', { class: 'share-preview', id: 'share-preview' }, r.video ? h('video', { src: url, controls: true, autoplay: true, muted: true, loop: true, playsinline: true }) : h('img', { src: url, alt: t('share.title') })),
+        h('p', { class: 'hint', text: t('share.hint') }),
+        h('div', { class: 'row' },
+          canShare ? h('button', { type: 'button', class: 'btn primary', id: 'share-go', on: { click: function () { navigator.share({ files: [file] }).catch(function () {}); } } }, icon('dshare', 18), ' ', t('share.share')) : null,
+          h('button', { type: 'button', class: 'btn' + (canShare ? '' : ' primary'), id: 'share-save', on: { click: function () { saveBlob(r.blob, r.name); } } }, t('share.save'))));
+    }, { onClose: function () { setTimeout(function () { URL.revokeObjectURL(url); }, 1000); } });
+  }
+  function saveBlob(blob, name) {
+    if (TOSS && TOSS.saveFile) {
+      blob.arrayBuffer().then(function (buf) { var bytes = new Uint8Array(buf), bin = ''; for (var i = 0; i < bytes.length; i += 8192) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 8192)); return TOSS.saveFile(name, btoa(bin), blob.type); }).catch(function () { toast(t('toss.saveFail')); });
+      return;
+    }
+    var url = URL.createObjectURL(blob), a = h('a', { href: url, download: name, style: 'display:none' });
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+  }
+  // filming mode: only the page and the decorating tools stay on screen (for screen recordings); a small button ends it
+  var filmExit = null;
+  function filmMode(on, m) {
+    var root = document.documentElement;
+    if (!on) { root.classList.remove('film-mode'); if (filmExit) { filmExit.remove(); filmExit = null; } return; }
+    root.classList.add('film-mode');
+    filmExit = h('button', { type: 'button', class: 'film-exit', id: 'film-exit', 'aria-label': t('share.filmExit'), on: { click: function () { filmMode(false); } } }, icon('x', 16), h('span', { text: t('share.filmExit') }));
+    document.body.appendChild(filmExit);
+    var pg = document.getElementById('entry-page'); if (pg) pg.scrollIntoView({ block: 'center' });
+    toast(t('share.filmOn'));
   }
   function firstLine(e) { var s = e.text.trim().split('\n')[0]; return s || (e.photos.length ? '📷' : ''); }
   function entryRow(e) {
@@ -2560,7 +2664,7 @@
       var deco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: e, page: page, ta: ta,
         commit: function (d) { if (!S.diary) return; DY.updateEntry(S.diary, e.id, { deco: d }); saveDiary(); },
         blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function (msg, err) { setMsg(dmsg, msg, !err); },
-        seals: function () { return seals.mine(); }, moneyDay: moneyDay });
+        seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf });
       setTimeout(function () { maybeIntro('entry', true); }, 700);
       openDeco = deco;
       var tagLine = h('p', { class: 'hint entry-tagline', id: 'entry-tags' });
@@ -2606,9 +2710,14 @@
         var removed = DY.deleteEntry(S.diary, e.id); saveDiary(); close(); render();
         toast(t('diary.deleted'), { label: t('btn.undo'), fn: function () { S.diary.entries.push(removed); saveDiary(); render(); } });
       });
-      add(body, h('div', { class: 'two' }, field(t('add.date'), date), field(t('diary.time'), time)),
-        h('p', { class: 'field-label', text: t('diary.mood') }), moods, deco.bar, deco.panel, dmsg, page, tagLine, photos, file, pmsg, h('div', { class: 'row end' }, del));
+      var shareRow = SH ? h('div', { class: 'share-row', id: 'entry-share' },
+        h('button', { type: 'button', class: 'share-btn', id: 'share-image', on: { click: function () { flushEntry(); deco.flush().then(function () { shareEntry(e.id, 'image'); }); } } }, icon('dshare', 18), h('span', { text: t('share.image') })),
+        h('button', { type: 'button', class: 'share-btn', id: 'share-video', on: { click: function () { flushEntry(); deco.flush().then(function () { shareEntry(e.id, 'video'); }); } } }, icon('dfilm', 18), h('span', { text: t('share.video') })),
+        h('button', { type: 'button', class: 'share-btn', id: 'film-mode', on: { click: function () { filmMode(true, m); } } }, icon('dfilm', 18), h('span', { text: t('share.film') }))) : null;
+      add(body, h('div', { class: 'two entry-when' }, field(t('add.date'), date), field(t('diary.time'), time)),
+        h('p', { class: 'field-label entry-moodlabel', text: t('diary.mood') }), moods, deco.bar, deco.panel, dmsg, page, tagLine, photos, file, pmsg, shareRow, h('div', { class: 'row end entry-del' }, del));
       m.onClose = function () {
+        filmMode(false);
         if (openDeco === deco) openDeco = null;
         if (deleted) return;
         flushEntry();
@@ -3680,6 +3789,32 @@
     return { items: items, total: money(total, cur), waste: waste ? money(waste, cur) : null };
   }
 
+  // ===== planner inserts (saving challenge, grocery list, recipe card, price book): money helpers they use =====
+  function challengeBase() { var c = S.budget && S.budget.currency; return c === 'KRW' ? 1000 : c === 'JPY' ? 100 : 1; }      // week n saves n × this
+  function insertMoney(major) { var c = S.budget ? S.budget.currency : 'USD'; return money(B.parseAmount(String(Math.round(major * 100) / 100), c), c); }
+  function insertToBudget(major, note) {          // the ticked groceries, as one expense in 장보기 today
+    var c = S.budget.currency, amt = B.parseAmount(String(Math.round(major * 100) / 100), c); if (!amt) return false;
+    var tx = B.addTx(S.budget, { type: 'expense', amt: amt, cat: 'groceries', date: today(), note: note, at: nowMin() });
+    saveBudget(); toast(t('tf.gr.saved', { amt: money(amt) }), { label: t('btn.undo'), fn: function () { B.deleteTx(S.budget, tx.id); saveBudget(); } });
+    return true;
+  }
+  function priceOf(fk) {                          // the usual price from a price book page, if there is one
+    var found = '';
+    function scan(d) { var pb = d && d.tpl && d.tpl.forms && d.tpl.forms.pricebook; if (pb) pb.items.forEach(function (it) { if (it.f === fk && it.price && !found) found = it.price; }); }
+    (S.notes ? S.notes.notes : []).forEach(function (n) { scan(n.deco); });
+    (S.diary ? S.diary.entries : []).forEach(function (e) { scan(e.deco); });
+    return found;
+  }
+  // a note that opens straight on an insert (from Budget → 모으기)
+  function newInsertNote(tpl, color) {
+    var n = { id: DY.uid(), text: '', color: color || 'gray', pinned: false, font: 'base', size: 'm', locked: false, list: false, photos: [], remind: null, created: Date.now(), updated: Date.now(),
+      deco: DY.cleanDeco({ tpl: { on: tpl } }) };
+    n.deco.tpl.on = tpl; S.notes.notes.unshift(n); markNote(n); saveNotes();
+    if (!ONLY || ONLY === 'notes') S.tab = 'notes';   // the budget-only app keeps its one tab: the page opens over it, and the shelf card brings it back
+    render(); openNote(n.id);
+  }
+  function insertNotes(tpls) { return (S.notes ? S.notes.notes : []).filter(function (n) { return !n.locked && n.deco && tpls.indexOf(n.deco.tpl.on) >= 0; }); }
+
   // ===== notes: a ready-made start for a new note =====
   var NOTE_TPLS = [['blank', '📝', 'yellow', false], ['list', '☑️', 'green', true], ['shop', '🛒', 'blue', true], ['todo', '✅', 'pink', true],
     ['idea', '💡', 'purple', false], ['money', '💸', 'yellow', false], ['meet', '📞', 'gray', false]];
@@ -4197,7 +4332,7 @@
       });
     }).then(function () {
       if (!navigator.serviceWorker.controller) return;
-      ['/vault', '/vault-core.js', '/vault-icons.js', '/vault-coach.js', '/vault-seals.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', ONLY && !TOSS ? partUrl(ONLY) : null, ONLY ? '/manifest-' + ONLY + '-' + I.get() + '.json' : null, ONLY ? '/icons/tool-' + ONLY + '-192.png' : null, '/icons/tool-vault-192.png']
+      ['/vault', '/vault-core.js', '/vault-icons.js', '/vault-coach.js', '/vault-seals.js', '/vault-share.js', '/vault-budget.js', '/vault-diary.js', '/vault-i18n.js', '/vault-stickers.js', '/vault-deco.js', '/vault-snap.js', '/vault-list.js', '/vault-qr.js', '/vault-helper.js', '/ppm-banner.js', '/ads.json', '/vault-app.js', '/qrcode-generator.min.js', '/jsqr.min.js', '/vault.css', '/manifest-vault-' + I.get() + '.json', ONLY && !TOSS ? partUrl(ONLY) : null, ONLY ? '/manifest-' + ONLY + '-' + I.get() + '.json' : null, ONLY ? '/icons/tool-' + ONLY + '-192.png' : null, '/icons/tool-vault-192.png']
         .filter(Boolean).forEach(function (u) { fetch(u, { credentials: 'same-origin' }).catch(function () {}); });
     }).catch(function () {});
   }
