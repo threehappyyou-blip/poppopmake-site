@@ -499,5 +499,19 @@
     e.deco.stickers.slice(0, n || 3).forEach(function (st) { var el = ST.element(st.k); if (el) box.appendChild(el); });
     return box;
   }
-  root.VaultDeco = { attach: attach, preview: preview };
+  // Stickers that only sit there (a cover, an example page): sized and placed in widths of their box (container units).
+  function still(stickers, h) {
+    var layer = h('div', { class: 'st-layer still', 'aria-hidden': 'true' });
+    (stickers || []).forEach(function (st) {
+      var art = ST.element(st.k); if (!art) return;
+      var tape = st.k.charAt(0) === 't', el = h('div', { class: 'sticker' + (tape ? ' tape' : ''), 'data-k': st.k }, art), s = st.s * 100;
+      el.style.width = s + 'cqw'; el.style.height = (tape ? s / 4 : s) + 'cqw';
+      el.style.left = 'calc(' + (st.x * 100) + 'cqw - ' + (s / 2) + 'cqw)'; el.style.top = 'calc(' + (st.y * 100) + 'cqw - ' + (tape ? s / 8 : s / 2) + 'cqw)';
+      el.style.transform = 'rotate(' + st.r + 'deg)';
+      if (st.k.charAt(0) === 'e') el.style.fontSize = (s * 0.82) + 'cqw';
+      layer.appendChild(el);
+    });
+    return layer;
+  }
+  root.VaultDeco = { attach: attach, preview: preview, still: still };
 })(typeof window !== 'undefined' ? window : globalThis);

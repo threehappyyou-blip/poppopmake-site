@@ -265,7 +265,7 @@
   }
 
   var api = { FORMS: FORMS, FORM_ICON: FORM_ICON, cleanField: cleanField, formLabel: null, MAX_PHOTOS: MAX_PHOTOS, PROMPTS: PROMPTS, MAX_STICKERS: MAX_STICKERS, PAPERS: PAPERS, TINTS: TINTS, FONTS: FONTS, TPLS: TPLS, HOURS: HOURS,
-    cleanDeco: cleanDeco, hasContent: hasContent, blobsOf: blobsOf, tplText: tplText, newDoc: newDoc, validate: validate, addEntry: addEntry, updateEntry: updateEntry, deleteEntry: deleteEntry,
+    cleanDeco: cleanDeco, cleanSticker: cleanSticker, hasContent: hasContent, blobsOf: blobsOf, tplText: tplText, newDoc: newDoc, validate: validate, addEntry: addEntry, updateEntry: updateEntry, deleteEntry: deleteEntry,
     byMonth: byMonth, byDate: byDate, onThisDay: onThisDay, streak: streak, search: search, moodByDay: moodByDay, monthStats: monthStats,
     allTags: allTags, tagsOf: tagsOf, promptIndex: promptIndex, toText: toText, addDays: addDays, uid: uid };
   root.VaultDiary = api;
