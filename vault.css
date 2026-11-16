@@ -1271,3 +1271,4 @@ html[data-wall="scene"] .starter-head h2, html[data-wall="scene"] .samples .star
 .wall-pv .wall-scene .cover-art { position: absolute; inset: 0; }
 .wall-none::after { content: '∅'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: var(--ink-soft); }
 .wall-sw .sheet-name { font-size: .68rem; text-align: center; line-height: 1.2; }
+.st-grid:not(.tapes) .st-pick { overflow: hidden; } .st-grid:not(.tapes) .st-pick .st-tape { width: 100%; height: auto; transform: rotate(-8deg) scale(1.05); }
