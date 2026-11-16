@@ -210,6 +210,7 @@
       });
     }
     s.sheet = raw && SHEETS.indexOf(raw.sheet) >= 0 ? raw.sheet : 'none';
+    s.wall = raw && window.VaultCovers && window.VaultCovers.WALLS.indexOf(raw.wall) >= 0 ? raw.wall : 'none';   // the wallpaper behind the app
     s.covers = {}; s.starterHide = {};                     // the illustrated covers, and "start here" cards someone closed
     ['diary', 'notes', 'budget'].forEach(function (k) {
       if (raw && raw.covers && raw.covers[k] && window.VaultCovers) s.covers[k] = window.VaultCovers.clean(raw.covers[k], k, DY.cleanSticker);
@@ -3793,6 +3794,21 @@
       }
       draw();
       add(body, h('p', { class: 'hint', text: t('sheet.hint') }), grid);
+      if (CV) {                                      // wallpapers: a scene, a doodle pattern or one small doodle behind the whole app
+        var walls = h('div', { class: 'wall-grid', role: 'radiogroup', id: 'wall-grid', 'aria-label': t('wall.title') });
+        var drawWalls = function () {
+          walls.textContent = '';
+          CV.WALLS.forEach(function (w) {
+            var on = (S.settings.wall || 'none') === w, kind = w.split(':')[0], key = w.split(':')[1];
+            var pv = h('span', { class: 'wall-pv' }); var el = CV.wall(w, ST, true); if (el) pv.appendChild(el); else pv.classList.add('wall-none');
+            add(walls, h('button', { type: 'button', role: 'radio', class: 'wall-sw' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-wall': w, id: 'wall-' + w.replace(':', '-'),
+              on: { click: function () { S.settings.wall = w; saveSettings(); applyWall(); drawWalls(); } } },
+              pv, h('span', { class: 'sheet-name', text: w === 'none' ? t('wall.none') : kind === 'scene' ? t('cv.a.' + key) : t('wall.' + kind + '.' + key) })));
+          });
+        };
+        drawWalls();
+        add(body, h('h3', { class: 'field-label cv-set-title', text: t('wall.title') }), h('p', { class: 'hint', text: t('wall.hint') }), walls);
+      }
       if (CV) {                                      // the covers of each part, and the start cards someone closed
         var parts = ONLY ? [ONLY] : ['diary', 'notes', 'budget'];
         add(body, h('h3', { class: 'field-label cv-set-title', text: t('cv.settings') }), h('p', { class: 'hint', text: t('cv.settingsHint') }),
@@ -4465,6 +4481,16 @@
   function applySheet() {
     var v = S.phase === 'app' && S.settings && S.settings.sheet && S.settings.sheet !== 'none' ? S.settings.sheet : null;
     if (v) document.documentElement.setAttribute('data-sheet', v); else document.documentElement.removeAttribute('data-sheet');
+    applyWall();
+  }
+  // the wallpaper sits behind everything (cards stay solid so words stay easy to read)
+  function applyWall() {
+    var w = S.phase === 'app' && S.settings && window.VaultCovers && S.settings.wall && S.settings.wall !== 'none' ? S.settings.wall : null;
+    var cur = document.getElementById('app-wall');
+    if (cur && cur.getAttribute('data-wall') === w) return;
+    if (cur) cur.remove();
+    if (w) { var el = window.VaultCovers.wall(w, ST); if (el) { el.id = 'app-wall'; document.body.insertBefore(el, document.body.firstChild); } }
+    if (w) document.documentElement.setAttribute('data-wall', w.split(':')[0]); else document.documentElement.removeAttribute('data-wall');
   }
   function themeHost() { applySheet(); }
   function render() {
