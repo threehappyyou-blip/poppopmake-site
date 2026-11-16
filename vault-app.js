@@ -210,6 +210,11 @@
       });
     }
     s.sheet = raw && SHEETS.indexOf(raw.sheet) >= 0 ? raw.sheet : 'none';
+    s.covers = {}; s.starterHide = {};                     // the illustrated covers, and "start here" cards someone closed
+    ['diary', 'notes', 'budget'].forEach(function (k) {
+      if (raw && raw.covers && raw.covers[k] && window.VaultCovers) s.covers[k] = window.VaultCovers.clean(raw.covers[k], k, DY.cleanSticker);
+      if (raw && raw.starterHide && raw.starterHide[k] === true) s.starterHide[k] = true;
+    });
     s.ownPass = !raw || raw.ownPass !== false;           // false only in the Toss version until a passcode is chosen
     s.seals = {};
     if (raw && raw.seals && typeof raw.seals === 'object' && SE) SE.IDS.forEach(function (id) { var v = raw.seals[id]; if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v)) s.seals[id] = v; });
@@ -751,6 +756,7 @@
       h('button', { type: 'button', class: 'icon-btn', 'aria-label': t('month.next'), id: 'next-month', on: { click: function () { S.ym = B.addMonths(S.ym, 1); render(); } } }, icon('right')));
     add(main, topBar(nav, h('button', { type: 'button', class: 'icon-btn', id: 'search-btn', 'aria-label': t('top.search'), title: t('top.search'), on: { click: function () { S.searchOpen = true; render(); } } }, icon('search'))));
     if (ym !== thisMonth()) add(main, h('button', { type: 'button', class: 'link today-link', text: t('month.today'), on: { click: function () { S.ym = thisMonth(); render(); } } }));
+    renderCover('budget', main, S.budget.tx.length < 3); var stOnB = renderStarter('budget', main);
 
     var card = h('section', { class: 'card summary', 'aria-label': I.monthLabel(ym) },
       h('div', { class: 'sum-main' }, h('span', { class: 'label', text: t('sum.spent') }), h('strong', { class: 'big' + longCls(money(sum.expense), 11), id: 'sum-spent', text: money(sum.expense) })),
@@ -773,7 +779,7 @@
     add(main, h('div', { class: 'seg bview', role: 'tablist', id: 'budget-views' }, vtab('list', 'view-list', 'view.list'), vtab('cal', 'view-cal', 'view.calendar'),
       vtab('plan', 'view-plan', 'view.plan'), vtab('charts', 'view-charts', 'view.charts'), vtab('goals', 'view-goals', 'view.goals')));
     themeHost(main);
-    if (S.budgetView !== 'list' && S.budgetView !== 'year') add(main, helperCards('budget'));      // what the app wants to ask stays in view everywhere
+    if (S.budgetView !== 'list' && S.budgetView !== 'year' && !stOnB) add(main, helperCards('budget'));      // what the app wants to ask stays in view everywhere
 
     if (S.budgetView === 'cal') add(main, calHead(sum), quickLine(), budgetCalendar(ym));
     else if (S.budgetView === 'plan') add(main, planView(sum));
@@ -781,7 +787,7 @@
     else if (S.budgetView === 'year') { main.textContent = ''; renderYear(main); }
     else if (S.budgetView === 'goals') renderGoals(main);
     else {
-      add(main, card, coachCard(), quickLine(), tilesCard(), notice(), helperCards('budget'));
+      add(main, card, coachCard(), quickLine(), tilesCard(), notice(), stOnB ? null : helperCards('budget'));
       var days = B.days(S.budget, ym);
       if (!days.length) add(main, empty('🧾', t('empty.month'), t('empty.monthHint')));
       else add(main, h('div', { class: 'days', id: 'tx-list' }, days.map(function (d) {
@@ -1903,7 +1909,10 @@
     return S.notes.notes.slice().sort(function (a, b) { return (b.pinned - a.pinned) || (b.updated - a.updated); });
   }
   function renderNotes(main) {
-    add(main, topBar(h('h1', { class: 'title', text: t('notes.title') })), helperCards('notes'));
+    add(main, topBar(h('h1', { class: 'title', text: t('notes.title') })));
+    var fewN = S.notes.notes.length < 3;
+    renderCover('notes', main, fewN);
+    if (!renderStarter('notes', main)) add(main, helperCards('notes'));
     var qn = h('input', { class: 'input', id: 'notes-quick', type: 'text', maxlength: 2000, autocomplete: 'off', placeholder: t('notes.quickPh'), 'aria-label': t('notes.quickPh') });
     qn.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' || e.isComposing || !qn.value.trim()) return;
@@ -1956,7 +1965,8 @@
         h('label', { class: 'check' }, h('input', { type: 'checkbox', id: 'desk-snap', checked: snapOn(), on: { change: function (e) { lsSet(SNAP_KEY, e.target.checked ? null : 'off'); } } }), h('span', { text: t('desk.snap') }))));
       add(main, h('div', { class: 'notes-search' }, input), grid);
       draw();
-    } else add(main, empty('🗒️', t('notes.empty'), t('notes.emptyHint')));
+    } else if (!fewN) add(main, empty('🗒️', t('notes.empty'), t('notes.emptyHint')));
+    if (fewN && !S.notesSearch) renderSamples('notes', main);
     add(main, fab(t('notes.new'), function () {
       var n = { id: B.uid(), text: '', color: 'yellow', pinned: false, created: Date.now(), updated: Date.now() };
       S.notes.notes.push(n); noteLocal[n.id] = 1;
@@ -2024,7 +2034,7 @@
       ndeco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: { deco: n.deco || null, date: ndate }, page: npage, ta: ta,
         parts: ['page', 'paper', 'stickers'], noTint: true, lookClass: function () { return 'note-page ' + noteLook(n); },
         commit: function (d) { var v = noteDeco(d); if (JSON.stringify(v) === JSON.stringify(n.deco || null)) return; n.deco = v; n.updated = Date.now(); markNote(n); saveNotes(); },
-        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf });
+        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf, feelDict: openFeelDict });
       function drawEditor() {
         wrap.textContent = '';
         if (n.list) { cl = checklistEditor(n, function () { ta.value = n.text; }); cl.className = 'checklist ' + noteLook(n); cl.id = 'note-list'; add(wrap, cl); }
@@ -2452,12 +2462,16 @@
     add(main, topBar(nav, h('button', { type: 'button', class: 'icon-btn', id: 'diary-search-btn', 'aria-label': t('top.search'), title: t('top.search'), on: { click: function () { S.diarySearch = true; render(); } } }, icon('search'))));
     if (ym !== thisMonth()) add(main, h('button', { type: 'button', class: 'link today-link', text: t('month.today'), on: { click: function () { S.diaryYm = thisMonth(); render(); } } }));
 
+    var fewD = S.diary.entries.length < 3;
+    renderCover('diary', main, fewD);
+    var starterOn = renderStarter('diary', main);
+    if (fewD && ym === thisMonth()) renderSamples('diary', main);
     var streak = DY.streak(S.diary, todayS), st = DY.monthStats(S.diary, ym);
     add(main, h('section', { class: 'card diary-sum' },
       h('div', { class: 'streak', id: 'diary-streak' }, h('span', { class: 'streak-ico', 'aria-hidden': 'true', text: streak ? '🔥' : '✏️' }),
         h('strong', { text: streak ? t('diary.streak', { n: streak }) : t('diary.streak0') })),
       h('p', { class: 'hint', id: 'diary-stats' }, t('diary.stats', { n: st.count }) + (st.avgMood ? ' · ' + t('diary.avgMood') + ' ' : ''), st.avgMood ? h('span', { class: 'mood-inline' }, moodFace(st.avgMood)) : null)),
-      helperCards('diary'));
+      starterOn ? null : helperCards('diary'));
 
     var otd = DY.onThisDay(S.diary, todayS);
     if (otd.length && ym === thisMonth()) {
@@ -2481,7 +2495,7 @@
     if (S.diaryView === 'calendar') add(main, calendar(ym));
     else {
       var list = DY.byMonth(S.diary, ym);
-      if (!list.length) add(main, empty('📔', t('diary.empty'), t('diary.emptyHint')));
+      if (!list.length && !(fewD && ym === thisMonth())) add(main, empty('📔', t('diary.empty'), t('diary.emptyHint')));
       else {
         var days = []; list.forEach(function (e) { var d = days[days.length - 1]; if (!d || d.date !== e.date) days.push(d = { date: e.date, items: [] }); d.items.push(e); });
         add(main, h('div', { class: 'days', id: 'diary-list' }, days.map(function (d) {
@@ -2664,7 +2678,7 @@
       var deco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: e, page: page, ta: ta,
         commit: function (d) { if (!S.diary) return; DY.updateEntry(S.diary, e.id, { deco: d }); saveDiary(); },
         blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function (msg, err) { setMsg(dmsg, msg, !err); },
-        seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf });
+        seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf, feelDict: openFeelDict });
       setTimeout(function () { maybeIntro('entry', true); }, 700);
       openDeco = deco;
       var tagLine = h('p', { class: 'hint entry-tagline', id: 'entry-tags' });
@@ -3779,6 +3793,16 @@
       }
       draw();
       add(body, h('p', { class: 'hint', text: t('sheet.hint') }), grid);
+      if (CV) {                                      // the covers of each part, and the start cards someone closed
+        var parts = ONLY ? [ONLY] : ['diary', 'notes', 'budget'];
+        add(body, h('h3', { class: 'field-label cv-set-title', text: t('cv.settings') }), h('p', { class: 'hint', text: t('cv.settingsHint') }),
+          h('div', { class: 'cv-set-row' }, parts.map(function (k) {
+            var c = coverOf(k), mini = h('span', { class: 'cv-mini' }, CV.element(c.art));
+            return h('button', { type: 'button', class: 'cv-art cv-set', id: 'cv-set-' + k, on: { click: function () { openCoverEditor(k); } } }, mini, h('span', { class: 'cv-name', text: t('cv.for.' + k) + (c.hide ? ' · ' + t('cv.show') : '') }));
+          })),
+          parts.some(function (k) { return S.settings.starterHide[k]; }) ? h('button', { type: 'button', class: 'btn block', id: 'starter-again', text: t('st0.again'),
+            on: { click: function (ev) { S.settings.starterHide = {}; saveSettings(); ev.target.remove(); toast(t('st0.againDone')); render(); } } }) : null);
+      }
     });
   }
   // what the diary's "today's money" page shows for a day
@@ -3814,6 +3838,225 @@
     render(); openNote(n.id);
   }
   function insertNotes(tpls) { return (S.notes ? S.notes.notes : []).filter(function (n) { return !n.locked && n.deco && tpls.indexOf(n.deco.tpl.on) >= 0; }); }
+
+
+
+  // ===== the emotion dictionary: 24 feelings in four groups, each with its face and what it means =====
+  function openFeelDict(onPick) {
+    sheet(t('fd.title'), function (body, close) {
+      add(body, h('p', { class: 'hint', text: onPick ? t('fd.hintPick') : t('fd.hint') }));
+      Object.keys(DY.FEELS).forEach(function (g) {
+        var grid = h('div', { class: 'fd-grid' });
+        DY.FEELS[g].forEach(function (key) {
+          var face = ST.element('a:em' + key); if (face) { face.setAttribute('width', 46); face.setAttribute('height', 46); }
+          add(grid, h('button', { type: 'button', class: 'fd-card', 'data-feel': key, id: 'fd-' + key, disabled: !onPick,
+            on: { click: function () { if (!onPick) return; onPick(key); toast(t('fd.added', { w: t('tf.feel.' + key) })); close(); } } },
+            face, h('strong', { text: t('tf.feel.' + key) }), h('span', { class: 'fd-mean', text: t('fd.m.' + key) })));
+        });
+        add(body, h('h3', { class: 'fl-group fl-' + g, text: t('tf.feelg.' + g) }), grid);
+      });
+    });
+  }
+
+  // ===== first look: an illustrated cover, "where to start" cards and ready-decorated examples =====
+  // A new person sees something pretty straight away and three big buttons for the first things worth doing;
+  // everything ready-made can be changed — the cover's picture, colour mood, title and stickers, and every example
+  // becomes an ordinary entry or note, decorated, that they can restyle like any other.
+  var CV = window.VaultCovers;
+  function coverOf(kind) { return CV ? (S.settings.covers && S.settings.covers[kind]) || CV.clean(null, kind, DY.cleanSticker) : null; }
+  function coverBox(c, slim) {
+    var pos = c.pos === 'auto' ? CV.pos(c.art) : c.pos;
+    var box = h('div', { class: 'cover-box cover-' + c.art + ' pos-' + pos + (slim ? ' slim' : ''), 'data-art': c.art });
+    var art = CV.element(c.art); art.style.filter = CV.TONES[c.tone] || '';
+    var title = h('div', { class: 'cover-title' }, h('p', { class: 'cover-main', text: c.title }), h('p', { class: 'cover-sub', text: c.sub || t('cv.inYear', { y: String(new Date().getFullYear()) }) }));
+    title.style.color = CV.ink(c.art);
+    add(box, art, title);
+    return box;
+  }
+  function renderCover(kind, main, few) {
+    if (!CV || !S.settings) return;
+    var c = coverOf(kind); if (c.hide) return;
+    var box = coverBox(c, !few);
+    if (c.stickers.length) add(box, DC.still(c.stickers, h));
+    add(box, h('button', { type: 'button', class: 'cover-edit', id: 'cover-edit-' + kind, 'aria-label': t('cv.edit'), title: t('cv.edit'),
+      on: { click: function () { openCoverEditor(kind); } } }, icon('dsticker', 15), h('span', { text: t('cv.editShort') })));
+    add(main, h('section', { class: 'cover', id: 'cover-' + kind, 'aria-label': t('cv.label') }, box));
+  }
+  function openCoverEditor(kind) {
+    var c = JSON.parse(JSON.stringify(coverOf(kind))), timer = null;
+    function save() { clearTimeout(timer); timer = setTimeout(function () { S.settings.covers[kind] = CV.clean(c, kind, DY.cleanSticker); saveSettings(); }, 250); }
+    sheet(t('cv.title'), function (body) {
+      var pg = h('div', { class: 'page cover-page', id: 'cover-page' }), box = coverBox(c, false);
+      add(pg, box);
+      var dc = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: { deco: DY.cleanDeco({ stickers: c.stickers }), date: today() }, page: pg,
+        parts: ['stickers'], noTint: true, lookClass: function () { return 'cover-page'; },
+        commit: function (d) { c.stickers = d.stickers.map(function (x) { return { k: x.k, x: Math.min(1, Math.max(0, x.x)), y: Math.min(0.62, Math.max(0, x.y)), s: x.s, r: x.r }; }); save(); },
+        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); } });
+      function refresh() {               // picture, colour, words and position change in place; the stickers stay put
+        var nb = coverBox(c, false); pg.replaceChild(nb, box); box = nb;
+        drawArts(); drawTones(); drawPos();
+      }
+      var arts = h('div', { class: 'cv-arts', role: 'radiogroup', id: 'cv-arts', 'aria-label': t('cv.pic') });
+      function drawArts() {
+        arts.textContent = '';
+        CV.IDS.forEach(function (id) {
+          var on = c.art === id, mini = h('span', { class: 'cv-mini' }, CV.element(id));
+          add(arts, h('button', { type: 'button', role: 'radio', class: 'cv-art' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-art': id, id: 'cv-art-' + id,
+            on: { click: function () { c.art = id; save(); refresh(); } } }, mini, h('span', { class: 'cv-name', text: t('cv.a.' + id) })));
+        });
+      }
+      var tones = h('div', { class: 'chips wrap', role: 'radiogroup', id: 'cv-tones', 'aria-label': t('cv.tone') });
+      function drawTones() {
+        tones.textContent = '';
+        CV.TONE_IDS.forEach(function (id) {
+          var on = c.tone === id, sw = h('span', { class: 'cv-tone-sw' }, CV.element(c.art)); sw.firstChild.style.filter = CV.TONES[id];
+          add(tones, h('button', { type: 'button', role: 'radio', class: 'chip cv-tone' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-tone': id, id: 'cv-tone-' + id,
+            on: { click: function () { c.tone = id; save(); refresh(); } } }, sw, h('span', { text: t('cv.t.' + id) })));
+        });
+      }
+      var posBox = h('div', { class: 'chips wrap', role: 'radiogroup', id: 'cv-pos', 'aria-label': t('cv.pos') });
+      function drawPos() {
+        posBox.textContent = '';
+        CV.POS.forEach(function (id) {
+          var on = c.pos === id;
+          add(posBox, h('button', { type: 'button', role: 'radio', class: 'chip' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-pos': id, id: 'cv-pos-' + id, text: t('cv.p.' + id),
+            on: { click: function () { c.pos = id; save(); refresh(); } } }));
+        });
+      }
+      var title = h('input', { class: 'input', id: 'cv-title', type: 'text', maxlength: 24, value: c.title, placeholder: CV.DEFAULTS[kind].title, 'aria-label': t('cv.titleLabel') });
+      var sub = h('input', { class: 'input', id: 'cv-sub', type: 'text', maxlength: 24, value: c.sub, placeholder: t('cv.inYear', { y: String(new Date().getFullYear()) }), 'aria-label': t('cv.subLabel') });
+      title.addEventListener('input', function () { c.title = title.value; box.querySelector('.cover-main').textContent = c.title; save(); });
+      sub.addEventListener('input', function () { c.sub = sub.value; box.querySelector('.cover-sub').textContent = c.sub || sub.placeholder; save(); });
+      var hide = h('button', { type: 'button', class: 'btn', id: 'cv-hide', 'aria-pressed': c.hide ? 'true' : 'false', text: c.hide ? t('cv.show') : t('cv.hide'),
+        on: { click: function () { c.hide = !c.hide; hide.textContent = c.hide ? t('cv.show') : t('cv.hide'); hide.setAttribute('aria-pressed', c.hide ? 'true' : 'false'); save(); toast(c.hide ? t('cv.hidden') : t('cv.shown')); } } });
+      var reset = h('button', { type: 'button', class: 'btn', id: 'cv-reset', text: t('cv.reset'), on: { click: function () {
+        var keep = c; c = CV.clean(null, kind, DY.cleanSticker); save(); title.value = c.title; sub.value = '';
+        // the stickers live in the decorating tool: start a fresh editor so they go too
+        var d = dc.deco(); d.stickers.length = 0; dc.look(); refresh(); pg.querySelectorAll('.st-layer .sticker').forEach(function (x) { x.remove(); });
+        toast(t('cv.resetDone'), { label: t('btn.undo'), fn: function () { S.settings.covers[kind] = CV.clean(keep, kind, DY.cleanSticker); saveSettings(); render(); } });
+      } } });
+      drawArts(); drawTones(); drawPos();
+      add(body, pg, h('p', { class: 'hint', text: t('cv.stHint') }), dc.bar, dc.panel,
+        h('p', { class: 'field-label', text: t('cv.pic') }), arts,
+        h('p', { class: 'field-label', text: t('cv.tone') }), tones,
+        h('label', { class: 'field' }, h('span', { class: 'field-label', text: t('cv.titleLabel') }), title),
+        h('label', { class: 'field' }, h('span', { class: 'field-label', text: t('cv.subLabel') }), sub),
+        h('p', { class: 'field-label', text: t('cv.pos') }), posBox,
+        h('div', { class: 'row cv-actions' }, hide, reset));
+    }, { onClose: function () { clearTimeout(timer); S.settings.covers[kind] = CV.clean(c, kind, DY.cleanSticker); saveSettings(); render(); } });
+  }
+
+  // "Where to start": three big buttons per part, ticked off as they are done; the row goes once all three are
+  var STARTERS = {
+    diary: [['write', 'a:pencil'], ['mood', 'a:smile'], ['deco', 'a:ribbon']],
+    notes: [['grocery', 'a:fdcarrot'], ['todo', 'a:check'], ['saving', 'a:gift']],
+    budget: [['first', 'a:coffee'], ['plan', 'a:note'], ['saving', 'a:balloon']]
+  };
+  function starterDone(kind, k) {
+    if (kind === 'diary') {
+      var es = S.diary ? S.diary.entries : [];
+      if (k === 'write') return es.some(function (e) { return e.text.trim(); });
+      if (k === 'mood') return es.some(function (e) { return e.mood; });
+      return es.some(function (e) { return e.deco && (e.deco.stickers.length || e.deco.paper !== 'plain'); });
+    }
+    if (kind === 'notes') {
+      var ns = S.notes ? S.notes.notes : [];
+      if (k === 'grocery') return ns.some(function (n) { return n.deco && n.deco.tpl.on === 'grocery'; });
+      if (k === 'todo') return ns.some(function (n) { return n.list; });
+      return ns.some(function (n) { return n.deco && /^saving/.test(n.deco.tpl.on || ''); });
+    }
+    if (k === 'first') return S.budget.tx.length > 0;
+    if (k === 'plan') return !!B.summary(S.budget, thisMonth()).budget;
+    return insertNotes(['saving24', 'saving52']).length > 0 || (S.budget.goals || []).length > 0;
+  }
+  function starterGo(kind, k) {
+    if (kind === 'diary') {
+      if (k === 'write') return newEntry(today());
+      if (k === 'mood') return openCheckin();
+      var smp = document.getElementById('samples-diary');
+      if (smp) { smp.scrollIntoView({ behavior: 'smooth', block: 'center' }); smp.classList.remove('flash'); void smp.offsetWidth; smp.classList.add('flash'); }
+      return;
+    }
+    if (kind === 'notes') {
+      if (k === 'grocery') return newInsertNote('grocery', 'green');
+      if (k === 'todo') { var n = noteFromTpl('todo'); saveNotes(); return openNote(n.id, true); }
+      return newInsertNote('saving24', 'yellow');
+    }
+    if (k === 'first') { if (GUIDE && FLOWS.add) return startGuide('add'); var q = document.getElementById('quick-input'); if (q) { q.scrollIntoView({ behavior: 'smooth', block: 'center' }); q.focus(); } return toast(t('st0.firstHint')); }
+    if (k === 'plan') return openMonthlyBudget();
+    var g = document.getElementById('view-goals'); if (g) g.click();
+  }
+  function renderStarter(kind, main) {
+    if (!S.settings || S.settings.starterHide[kind]) return false;
+    var list = STARTERS[kind], done = list.map(function (x) { return starterDone(kind, x[0]); });
+    if (done.every(Boolean)) return false;
+    var row = h('div', { class: 'starter-row' });
+    list.forEach(function (x, i) {
+      var art = ST.element(x[1]);
+      add(row, h('button', { type: 'button', class: 'starter-card' + (done[i] ? ' done' : ''), id: 'start-' + kind + '-' + x[0], 'data-k': x[0],
+        on: { click: function () { starterGo(kind, x[0]); } } },
+        h('span', { class: 'starter-art', 'aria-hidden': 'true' }, art), h('strong', { text: t('st0.' + kind + '.' + x[0]) }), h('span', { class: 'starter-hint', text: done[i] ? t('st0.done') : t('st0.' + kind + '.' + x[0] + 'Hint') }),
+        done[i] ? h('span', { class: 'starter-check', 'aria-hidden': 'true', text: '✓' }) : null));
+    });
+    add(main, h('section', { class: 'starter', id: 'starter-' + kind, 'aria-label': t('st0.title') },
+      h('div', { class: 'starter-head' }, h('h2', { text: t('st0.title') }), h('span', { class: 'starter-count', text: t('st0.count', { n: done.filter(Boolean).length, all: list.length }) }),
+        h('button', { type: 'button', class: 'icon-btn xs', id: 'starter-hide-' + kind, 'aria-label': t('st0.hide'), title: t('st0.hide'),
+          on: { click: function () { S.settings.starterHide[kind] = true; saveSettings(); render(); toast(t('st0.hidden')); } } }, icon('x', 14))),
+      row));
+    return true;
+  }
+
+  // Ready-decorated examples: a page you can look at, then "use this design" makes it yours (an ordinary entry / note)
+  var DIARY_SAMPLES = [
+    { id: 'silver', mood: 4, deco: { paper: 'plain', tint: 'none', font: 'hand', stickers: [
+      { k: 't:chrome', x: 0.55, y: 0.03, s: 0.44, r: -3 }, { k: 'a:chromeheart', x: 0.08, y: 0.06, s: 0.15, r: -12 }, { k: 'a:twinklesilver', x: 0.27, y: 0.06, s: 0.08, r: 0 },
+      { k: 'a:moon', x: 0.8, y: 0.96, s: 0.24, r: 8 }, { k: 'a:bowsilver', x: 0.2, y: 1.15, s: 0.2, r: -8 }, { k: 'a:butterfly', x: 0.88, y: 0.66, s: 0.12, r: 10 }, { k: 'a:puffblue', x: 0.56, y: 1.2, s: 0.1, r: 0 }] } },
+    { id: 'pinkweek', mood: 5, tpl: 'week', deco: { paper: 'hearts', tint: 'pink', font: 'cute', stickers: [
+      { k: 't:ribbonpink', x: 0.55, y: 0.03, s: 0.46, r: 2 }, { k: 'a:sparkle', x: 0.1, y: 0.06, s: 0.08, r: 0 }, { k: 'a:bunny', x: 0.8, y: 1.0, s: 0.25, r: 6 },
+      { k: 'a:heart', x: 0.14, y: 1.12, s: 0.14, r: -14 }, { k: 'a:cloud', x: 0.5, y: 1.2, s: 0.17, r: 0 }, { k: 'a:puffpink', x: 0.9, y: 0.7, s: 0.1, r: 12 }] } },
+    { id: 'skyday', mood: 3, deco: { paper: 'clouds', tint: 'sky', font: 'gamja', stickers: [
+      { k: 't:ginghamblue', x: 0.55, y: 0.03, s: 0.44, r: -2 }, { k: 'a:sun', x: 0.82, y: 0.97, s: 0.23, r: 0 }, { k: 'a:rainbow', x: 0.2, y: 1.12, s: 0.22, r: -6 },
+      { k: 'a:pencil', x: 0.88, y: 0.68, s: 0.12, r: 24 }, { k: 'a:smile', x: 0.5, y: 1.18, s: 0.11, r: -8 }, { k: 'a:note', x: 0.1, y: 0.07, s: 0.1, r: -6 }] } }
+  ];
+  var NOTE_SAMPLES = [
+    { id: 'shop', color: 'green', list: true, deco: { paper: 'daisy', stickers: [{ k: 'a:fdmilk', x: 0.84, y: 0.16, s: 0.18, r: 8 }, { k: 'a:fdstrawberry', x: 0.86, y: 0.62, s: 0.16, r: -10 }, { k: 't:daisy', x: 0.5, y: 0.03, s: 0.5, r: -2 }] } },
+    { id: 'todo', color: 'pink', list: true, deco: { paper: 'polka', stickers: [{ k: 'a:bowpink', x: 0.84, y: 0.14, s: 0.2, r: 10 }, { k: 'a:check', x: 0.86, y: 0.66, s: 0.14, r: 0 }, { k: 't:ribbonpink', x: 0.5, y: 0.03, s: 0.5, r: 2 }] } },
+    { id: 'idea', color: 'purple', list: false, deco: { paper: 'starnight', stickers: [{ k: 'a:planet', x: 0.84, y: 0.16, s: 0.18, r: 0 }, { k: 'a:wand', x: 0.86, y: 0.66, s: 0.16, r: -14 }, { k: 'a:sparkle', x: 0.12, y: 0.82, s: 0.1, r: 0 }] } }
+  ];
+  function samplePage(cls, text, stickers, extra) {
+    var pg = h('div', { class: 'page sample-page ' + cls, 'aria-hidden': 'true' }, h('div', { class: 'sample-inner' }, extra || null, h('p', { class: 'sample-text', text: text })));
+    add(pg, DC.still(stickers, h));
+    return pg;
+  }
+  function renderSamples(kind, main) {
+    var isD = kind === 'diary', list = isD ? DIARY_SAMPLES : NOTE_SAMPLES;
+    var strip = h('div', { class: 'sample-strip', role: 'list' });
+    list.forEach(function (x) {
+      var text = t('smp.' + kind + '.' + x.id), pg;
+      if (isD) pg = samplePage('paper-' + x.deco.paper + ' tint-' + x.deco.tint + ' font-' + x.deco.font, text, x.deco.stickers,
+        h('div', { class: 'sample-date' }, h('span', { text: I.dayLabel ? I.dayLabel(today()) : today() }), h('span', { class: 'sample-mood' }, moodFace(x.mood))));
+      else pg = samplePage('note-page nc-' + x.color + ' paper-' + x.deco.paper, text.replace(/^- \[ \] /gm, '☐ ').replace(/^- \[x\] /gm, '☑ '), x.deco.stickers);
+      add(strip, h('div', { class: 'sample', role: 'listitem', 'data-id': x.id },
+        pg, h('p', { class: 'sample-name', text: t('smp.' + kind + '.' + x.id + 'Name') }),
+        h('button', { type: 'button', class: 'btn small primary sample-use', id: 'sample-' + kind + '-' + x.id, text: t('smp.use'),
+          on: { click: function () { useSample(kind, x); } } })));
+    });
+    add(main, h('section', { class: 'samples', id: 'samples-' + kind, 'aria-label': t('smp.title.' + kind) },
+      h('div', { class: 'starter-head' }, h('h2', { text: t('smp.title.' + kind) }), h('span', { class: 'starter-count', text: t('smp.hint') })), strip));
+  }
+  function useSample(kind, x) {
+    if (kind === 'diary') {
+      var e = DY.addEntry(S.diary, { date: today(), time: nowTime(), text: '' });
+      e.deco = DY.cleanDeco({ paper: x.deco.paper, tint: x.deco.tint, font: x.deco.font, stickers: x.deco.stickers, tpl: { on: x.tpl || null } });
+      if (e.deco && x.tpl) e.deco.tpl.on = x.tpl;
+      saveDiary(); return openEntry(e.id, { isNew: true, prompt: t('smp.diary.' + x.id + 'Ph') });
+    }
+    var n = { id: B.uid(), text: t('smp.notes.' + x.id), color: x.color, pinned: false, created: Date.now(), updated: Date.now(),
+      deco: noteDeco({ paper: x.deco.paper, tint: 'none', font: 'base', stickers: x.deco.stickers, tpl: { on: null } }) };
+    if (x.list) n.list = true;
+    S.notes.notes.unshift(n); noteLocal[n.id] = 1; markNote(n); saveNotes();
+    openNote(n.id, true);
+  }
 
   // ===== notes: a ready-made start for a new note =====
   var NOTE_TPLS = [['blank', '📝', 'yellow', false], ['list', '☑️', 'green', true], ['shop', '🛒', 'blue', true], ['todo', '✅', 'pink', true],
