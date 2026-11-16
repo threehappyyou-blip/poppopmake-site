@@ -20,7 +20,7 @@
     function flush() { if (timer) { clearTimeout(timer); timer = null; ctx.commit(deco); } }
 
     // ----- the page itself -----
-    var INSERTS = { saving24: 1, saving52: 1, grocery: 1, recipe: 1, pricebook: 1, feeling: 1, comic4: 1 };
+    var INSERTS = { saving24: 1, saving52: 1, grocery: 1, recipe: 1, pricebook: 1, feeling: 1, comic4: 1, envelope100: 1, letter: 1, pilsa: 1 };
     var tplBox = h('div', { class: 'tpl', id: 'entry-tpl' });
     var drawImg = h('img', { class: 'draw-img', id: 'entry-drawing', alt: '', hidden: true });
     var layer = h('div', { class: 'st-layer', id: 'st-layer' });
@@ -76,23 +76,70 @@
         function (b, v) { b.classList.add('font-chip', 'font-' + v); add(b, h('span', { class: 'font-name', text: t('font.' + v) }), h('span', { class: 'font-sample', text: t('font.sample') })); }));
     }
     var stTab = 'deco';
+    function seasonKeys() {             // the pack for this time of year comes first
+      var m = new Date().getMonth() + 1, order = (m === 12 || m <= 2) ? ['newyear', 'winter'] : ['winter', 'newyear'];
+      if (m === 12 && new Date().getDate() <= 26) order = ['winter', 'newyear'];
+      var out = []; order.forEach(function (sn) { (ST.SEASONS[sn] || []).forEach(function (k) { out.push('a:ss' + k); }); });
+      return out.concat((ST.SEASON_TAPES || []).map(function (k) { return 't:' + k; }));
+    }
+    function photoSticker() {           // cut a sticker from one of your photos: a circle, a rounded square or a heart, with a white edge
+      var inp = h('input', { type: 'file', accept: 'image/*', hidden: true });
+      inp.addEventListener('change', function () {
+        var file = inp.files && inp.files[0]; if (!file) return;
+        var url = URL.createObjectURL(file), im = new root.Image();
+        im.onload = function () {
+          var shape = 'circle', box = h('div', { class: 'ps-maker', id: 'ps-maker' }), cv = h('canvas', { width: 512, height: 512, class: 'ps-canvas' });
+          function draw() {
+            var c = cv.getContext('2d'), S = 512, pad = 26; c.clearRect(0, 0, S, S);
+            function path(inset) {
+              var a = inset, b = S - inset; c.beginPath();
+              if (shape === 'circle') c.arc(S / 2, S / 2, S / 2 - inset, 0, Math.PI * 2);
+              else if (shape === 'round') { var r = 90; c.moveTo(a + r, a); c.arcTo(b, a, b, b, r); c.arcTo(b, b, a, b, r); c.arcTo(a, b, a, a, r); c.arcTo(a, a, b, a, r); }
+              else { var w = b - a; c.moveTo(S / 2, a + w * .92); c.bezierCurveTo(a - w * .1, a + w * .5, a + w * .05, a - w * .05, S / 2, a + w * .26); c.bezierCurveTo(b - w * .05, a - w * .05, b + w * .1, a + w * .5, S / 2, a + w * .92); }
+              c.closePath();
+            }
+            c.save(); c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 14; c.shadowOffsetY = 4; path(pad - 14); c.fillStyle = '#fff'; c.fill(); c.restore();
+            c.save(); path(pad); c.clip(); var sc = Math.max((S - 2 * pad) / im.width, (S - 2 * pad) / im.height), w2 = im.width * sc, h2 = im.height * sc; c.drawImage(im, (S - w2) / 2, (S - h2) / 2, w2, h2); c.restore();
+          }
+          var shapes = h('div', { class: 'chips', id: 'ps-shapes' });
+          [['circle', '●'], ['round', '▢'], ['heart', '♥']].forEach(function (x) { add(shapes, h('button', { type: 'button', class: 'chip' + (shape === x[0] ? ' on' : ''), 'data-shape': x[0], id: 'ps-' + x[0], text: x[1] + ' ' + t('ps.' + x[0]),
+            on: { click: function () { shape = x[0]; shapes.querySelectorAll('button').forEach(function (b2) { b2.classList.toggle('on', b2.getAttribute('data-shape') === shape); }); draw(); } } })); });
+          var go = h('button', { type: 'button', class: 'btn primary small', id: 'ps-add', text: t('ps.add'), on: { click: function () {
+            go.disabled = true;
+            cv.toBlob(function (blob) { blob.arrayBuffer().then(function (buf) { var id = 'ps' + ctx.uid(); return ctx.putBlob(id, new Uint8Array(buf), 'image/png').then(function () { box.remove(); addSticker('p:' + id); }); }).catch(function () { go.disabled = false; ctx.toast(t('ps.err')); }); }, 'image/png');
+          } } });
+          add(box, cv, shapes, h('div', { class: 'row' }, go, h('button', { type: 'button', class: 'btn small', text: t('btn.cancel'), on: { click: function () { box.remove(); } } })), h('p', { class: 'hint', text: t('ps.private') }));
+          var old = panel.querySelector('#ps-maker'); if (old) old.remove(); panel.insertBefore(box, panel.firstChild); draw(); URL.revokeObjectURL(url);
+        };
+        im.onerror = function () { ctx.toast(t('ps.err')); URL.revokeObjectURL(url); };
+        im.src = url;
+      });
+      document.body.appendChild(inp); inp.click(); setTimeout(function () { inp.remove(); }, 60000);
+    }
+    function stickerArt(k) {             // drawn stickers are SVG; photo stickers are a picture read from the encrypted store
+      if (k.slice(0, 2) !== 'p:') return ST.element(k);
+      var img = h('img', { class: 'st-photo', alt: '' }); if (ctx.blobUrl) ctx.blobUrl(k.slice(2)).then(function (u) { if (u) img.src = u; }).catch(function () {}); return img;
+    }
     function panelStickers() {
       var tabs = h('div', { class: 'seg small', role: 'tablist' });
-      [['deco', 'st.tabDeco'], ['aes', 'st.tabAes'], ['feel', 'st.tabFeel'], ['food', 'st.tabFood'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
+      [['season', 'st.tabSeason'], ['deco', 'st.tabDeco'], ['aes', 'st.tabAes'], ['feel', 'st.tabFeel'], ['food', 'st.tabFood'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
         add(tabs, h('button', { type: 'button', role: 'tab', id: 'st-tab-' + x[0], 'aria-selected': stTab === x[0] ? 'true' : 'false', class: stTab === x[0] ? 'on' : '', text: t(x[1]),
           on: { click: function () { stTab = x[0]; toggle('stickers'); toggle('stickers'); } } }));
       });
       var grid = h('div', { class: 'st-grid' + (stTab === 'tape' ? ' tapes' : ''), id: 'st-grid' });
-      var keys = stTab === 'food' ? (ST.FOOD || []).map(function (k) { return 'a:fd' + k; }) : stTab === 'feel' ? (ST.FEEL || []).map(function (k) { return 'a:em' + k; }) : stTab === 'aes' ? (ST.AES || []).map(function (k) { return 'a:ae' + k; }).concat((ST.AES_TAPES || []).map(function (k) { return 't:' + k; })) : stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
+      var keys = stTab === 'food' ? (ST.FOOD || []).map(function (k) { return 'a:fd' + k; }) : stTab === 'feel' ? (ST.FEEL || []).map(function (k) { return 'a:em' + k; }) : stTab === 'season' ? seasonKeys() : stTab === 'aes' ? (ST.AES || []).map(function (k) { return 'a:ae' + k; }).concat((ST.AES_TAPES || []).map(function (k) { return 't:' + k; })) : stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
         stTab === 'seal' ? (ctx.seals ? ctx.seals() : []).map(function (k) { return 's:' + k; }) : ST.EMOJI.map(function (k) { return 'e:' + k; });
       keys.forEach(function (k) {
         var el = ST.element(k); if (!el) return;
         add(grid, h('button', { type: 'button', class: 'st-pick', 'data-k': k, 'aria-label': nameOf(k), title: nameOf(k), on: { click: function () { addSticker(k); } } }, el));
       });
-      add(panel, tabs, h('p', { class: 'hint', text: stTab === 'seal' ? (keys.length ? t('st.sealHint') : t('st.sealNone')) : t('st.hint') }), grid);
+      var photoBtn = ctx.putBlob && ctx.uid ? h('button', { type: 'button', class: 'mini ps-open', id: 'ps-open', text: '📷 ' + t('ps.open'), on: { click: photoSticker } }) : null;
+      add(panel, tabs, h('p', { class: 'hint', text: stTab === 'seal' ? (keys.length ? t('st.sealHint') : t('st.sealNone')) : stTab === 'season' ? t('st.seasonHint') : t('st.hint') }), photoBtn, grid);
     }
     function nameOf(k) {
       if (k.slice(0, 4) === 'a:em') return t('tf.feel.' + k.slice(4));
+      if (k.slice(0, 4) === 'a:ss') return t('ss.' + k.slice(4));
+      if (k.slice(0, 2) === 'p:') return t('ps.name');
       if (k.slice(0, 4) === 'a:ae') return t('aes.' + k.slice(4));
       if (k.slice(0, 2) === 'a:') return t('st.' + k.slice(2));
       if (k.slice(0, 2) === 't:') return t('tape.' + k.slice(2));
@@ -293,6 +340,54 @@
             ctx.toBudget(sum, t('tpl.grocery'));
           } } }, '💸 ', t('tf.gr.toBudget')));
           draw();
+        } else if (kind === 'quote') {
+          // a sentence to copy out by hand: pick one from PopPopMake's own sentences or write your own
+          var qN = 30, qta = h('textarea', { class: 'tpl-in tf-in px-quote', id: 'px-quote', rows: 2, maxlength: 400, value: f[name], 'aria-label': L(name), placeholder: L(name + 'Ph') });
+          var setQ = function (v) { f[name] = v; qta.value = v; grow(qta); commit(true); };
+          if (!f[name]) { var day = Math.floor(Date.now() / 86400000); f[name] = t('px.q.' + (day % qN)); qta.value = f[name]; setTimeout(function () { commit(true); }, 0); }
+          qta.addEventListener('input', function () { f[name] = qta.value; grow(qta); commit(); });
+          var qi = 0;
+          add(row, label, qta, h('div', { class: 'gr-actions' },
+            h('button', { type: 'button', class: 'mini', id: 'px-next', text: '↻ ' + L('another'), on: { click: function () { var cur = -1; for (var z = 0; z < qN; z++) if (t('px.q.' + z) === f[name]) cur = z; qi = (cur + 1 + Math.floor(Math.random() * (qN - 1))) % qN; setQ(t('px.q.' + qi)); } } }),
+            h('button', { type: 'button', class: 'mini', id: 'px-own', text: '✎ ' + L('own'), on: { click: function () { setQ(''); qta.focus(); } } })));
+          setTimeout(function () { grow(qta); }, 0);
+        } else if (kind === 'date') {
+          // when a letter opens: pick a date or a quick choice; until then the page stays sealed
+          var dv = h('input', { type: 'date', class: 'input tf-in', id: 'tf-open', value: f[name], 'aria-label': L(name) });
+          var tmr = new Date(); tmr.setDate(tmr.getDate() + 1); dv.min = tmr.toISOString().slice(0, 10);
+          var setD = function (v) { f[name] = DY.cleanField('date', 0, v); dv.value = f[name]; paintQ(); commit(true); };
+          dv.addEventListener('change', function () { setD(dv.value); });
+          var qs = h('div', { class: 'chips wrap', id: 'tf-open-quick' });
+          var plus = function (days, months) { var d = new Date(); d.setMonth(d.getMonth() + (months || 0)); d.setDate(d.getDate() + (days || 0)); return new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10); };
+          var ny = (new Date().getFullYear() + 1) + '-01-01', bd = null;
+          var opts = [['m1', plus(0, 1)], ['d100', plus(100)], ['y1', plus(0, 12)], ['ny', ny]];
+          var paintQ = function () { qs.querySelectorAll('button').forEach(function (b) { b.classList.toggle('on', b.getAttribute('data-d') === f[name]); }); note.textContent = f[name] ? L('sealNote').replace('{d}', f[name]) : L('noSeal'); };
+          opts.forEach(function (o2) { add(qs, h('button', { type: 'button', class: 'chip small', 'data-d': o2[1], id: 'tf-open-' + o2[0], text: L('q.' + o2[0]), on: { click: function () { setD(f[name] === o2[1] ? '' : o2[1]); } } })); });
+          var note = h('p', { class: 'hint', id: 'tf-seal-note' });
+          add(row, label, dv, qs, note); paintQ();
+          if (ctx.letterCard) add(row, h('button', { type: 'button', class: 'mini', id: 'letter-card', text: '💌 ' + L('card'), on: { click: function () { ctx.letterCard(f); } } }));
+        } else if (kind === 'envelopes') {
+          // 100 envelopes: envelope n holds n × the base amount; fill them in any order — or let the app pick today's
+          var eb = ctx.challengeBase ? ctx.challengeBase() : 1, en = fd[2], etot = eb * en * (en + 1) / 2;
+          var esum = h('p', { class: 'ch-sum', id: 'env-sum' }), ebar = h('span', { class: 'ch-bar-in' }), egrid = h('div', { class: 'env-grid', id: 'env-grid' }), pickTxt = h('p', { class: 'env-pick-txt', id: 'env-pick-txt', 'aria-live': 'polite' });
+          var paintE = function () {
+            var sv = 0; f[name].forEach(function (on, i) { if (on) sv += eb * (i + 1); });
+            esum.textContent = t('tf.env.saved', { saved: ctx.money(sv), total: ctx.money(etot), n: f[name].filter(Boolean).length, all: en }); ebar.style.width = Math.round(sv / etot * 100) + '%';
+          };
+          f[name].forEach(function (on, i) {
+            var b = h('button', { type: 'button', class: 'env' + (on ? ' on' : ''), 'data-n': i + 1, 'aria-pressed': on ? 'true' : 'false', 'aria-label': (i + 1) + ' · ' + ctx.money(eb * (i + 1)),
+              on: { click: function () { f[name][i] = !f[name][i]; b.classList.toggle('on', f[name][i]); b.classList.remove('pick'); b.setAttribute('aria-pressed', f[name][i] ? 'true' : 'false'); paintE(); commit(true); } } }, h('span', { text: String(i + 1) }));
+            add(egrid, b);
+          });
+          var pickBtn = h('button', { type: 'button', class: 'btn small', id: 'env-pick', text: '✉️ ' + t('tf.env.pick'), on: { click: function () {
+            var left = []; f[name].forEach(function (on, i) { if (!on) left.push(i); }); if (!left.length) { pickTxt.textContent = t('tf.env.all'); return; }
+            var r = new Uint32Array(1); (root.crypto || window.crypto).getRandomValues(r); var i = left[r[0] % left.length];
+            egrid.querySelectorAll('.env.pick').forEach(function (x) { x.classList.remove('pick'); }); var el = egrid.querySelector('[data-n="' + (i + 1) + '"]'); if (el) { el.classList.add('pick'); el.scrollIntoView({ block: 'nearest' }); }
+            pickTxt.textContent = t('tf.env.today', { n: i + 1, amt: ctx.money(eb * (i + 1)) });
+          } } });
+          add(row, h('div', { class: 'ch-top' }, h('span', { class: 'ch-num', text: String(en) }), h('span', { class: 'ch-unit', text: t('tf.env.unit') }), h('span', { class: 'ch-total', text: t('tf.ch.total', { total: ctx.money(etot) }) })),
+            h('div', { class: 'ch-bar' }, ebar), esum, h('div', { class: 'env-actions' }, pickBtn), pickTxt, egrid);
+          paintE();
         } else if (kind === 'temp') {
           // the feeling thermometer: slide from 0° (frozen) to 100° (bursting); the face follows the temperature
           var tv = f[name], faceBox = h('span', { class: 'tm-face', 'aria-hidden': 'true' }), deg = h('strong', { class: 'tm-deg', id: 'tm-deg' });
@@ -399,7 +494,7 @@
       layer.textContent = ''; tools = null;
       var W = width();
       deco.stickers.forEach(function (st, i) {
-        var art = ST.element(st.k); if (!art) return;
+        var art = stickerArt(st.k); if (!art) return;
         var tape = st.k.charAt(0) === 't', size = st.s * W;
         var el = h('div', { class: 'sticker' + (tape ? ' tape' : '') + (i === selected ? ' sel' : ''), 'data-i': i, 'data-k': st.k, tabindex: 0, role: 'button', 'aria-label': t('st.label', { name: nameOf(st.k) }) }, art);
         el.style.width = size + 'px'; el.style.height = (tape ? size / 4 : size) + 'px';

@@ -118,6 +118,7 @@
     var fontReady = root.document.fonts && root.document.fonts.load ? root.document.fonts.load('40px ' + family, (d.text || '') + '가나다').catch(function () {}) : Promise.resolve();
     var stickers = Promise.all((deco.stickers || []).map(function (st) {
       if (st.k.charAt(0) === 'e') return Promise.resolve({ st: st, emoji: st.k.slice(2) });
+      if (st.k.slice(0, 2) === 'p:') return (env.photo ? env.photo(st.k.slice(2)).then(loadImg).catch(function () { return null; }) : Promise.resolve(null)).then(function (im) { return { st: st, img: im }; });
       return svgImg(env.ST.element(st.k), 512).then(function (im) { return { st: st, img: im }; });
     }));
     var mood = d.mood && env.ST.mood ? svgImg(env.ST.mood(d.mood), 256) : Promise.resolve(null);
@@ -197,9 +198,24 @@
     });
     ctx.restore();
     // a quiet mark at the bottom
-    ctx.textAlign = 'center'; ctx.textBaseline = 'alphabetic'; ctx.fillStyle = 'rgba(43,39,48,.38)';
-    ctx.font = '600 30px -apple-system, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif';
-    ctx.fillText(d.brand || 'PopPopMake', W / 2, H - 90); ctx.textAlign = 'left';
+    mark(ctx, H - 96);
+  }
+  // "made with PopPopMake · poppopmake.com" — a small frosted pill at the bottom of every shared picture, video and poster
+  function mark(ctx, y) {
+    var fam = '-apple-system, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif', a = 'made with ', b = 'PopPopMake', c = '  ·  poppopmake.com';
+    ctx.save(); ctx.textBaseline = 'middle'; ctx.textAlign = 'left';
+    ctx.font = '500 26px ' + fam; var wa = ctx.measureText(a).width, wc = ctx.measureText(c).width;
+    ctx.font = '800 26px ' + fam; var wb = ctx.measureText(b).width;
+    var star = 30, w = star + wa + wb + wc + 56, h = 54, x = (W - w) / 2;
+    ctx.fillStyle = 'rgba(255,255,255,.78)'; rr(ctx, x, y - h / 2, w, h, h / 2); ctx.fill();
+    ctx.strokeStyle = 'rgba(43,39,48,.08)'; ctx.lineWidth = 2; ctx.stroke();
+    var sx = x + 28, sy = y, r = 11;                       // a little four-point sparkle
+    ctx.fillStyle = '#F2789A'; ctx.beginPath(); ctx.moveTo(sx, sy - r); ctx.quadraticCurveTo(sx + 2, sy - 2, sx + r, sy); ctx.quadraticCurveTo(sx + 2, sy + 2, sx, sy + r); ctx.quadraticCurveTo(sx - 2, sy + 2, sx - r, sy); ctx.quadraticCurveTo(sx - 2, sy - 2, sx, sy - r); ctx.fill();
+    var tx = x + 28 + star - 6;
+    ctx.fillStyle = 'rgba(43,39,48,.62)'; ctx.font = '500 26px ' + fam; ctx.fillText(a, tx, y + 1);
+    ctx.fillStyle = '#2B2730'; ctx.font = '800 26px ' + fam; ctx.fillText(b, tx + wa, y + 1);
+    ctx.fillStyle = 'rgba(43,39,48,.62)'; ctx.font = '500 26px ' + fam; ctx.fillText(c, tx + wa + wb, y + 1);
+    ctx.restore();
   }
   function paperCanvas(P) {
     var c = root.document.createElement('canvas'); c.width = CARD.w; c.height = CARD.h;
@@ -292,7 +308,7 @@
         ctx.fillStyle = 'rgba(43,39,48,.5)'; ctx.font = '600 28px ' + SANS; ctx.fillText(s[0], x, sy);
         ctx.fillStyle = '#2B2730'; ctx.font = '800 54px ' + SANS; ctx.fillText(s[1], x, sy + 62);
       });
-      ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.35)'; ctx.font = '600 30px ' + SANS; ctx.fillText(o.brand || 'PopPopMake', W / 2, H - 80);
+      mark(ctx, H - 86);
       return toBlob(p.c);
     });
   }
@@ -328,9 +344,143 @@
       ctx.fillStyle = 'rgba(43,39,48,.5)'; ctx.font = '600 28px ' + SANS; ctx.fillText(s[0], x, y);
       ctx.fillStyle = '#2B2730'; ctx.font = '800 54px ' + SANS; ctx.fillText(s[1], x, y + 62);
     });
-    ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.35)'; ctx.font = '600 30px ' + SANS; ctx.fillText(o.brand || 'PopPopMake', W / 2, H - 80);
+    mark(ctx, H - 86);
     return toBlob(p.c);
   }
 
-  root.VaultShare = { entryImage: entryImage, entryVideo: entryVideo, videoType: videoType, monthPoster: monthPoster, yearPoster: yearPoster, MOOD_COL: MOOD_COL, size: { w: W, h: H } };
+
+  // ---------- year in review ("Wrapped"): a set of 9:16 cards made from numbers only (never the words written) ----------
+  // o: { year, title, scene (cover id), L: {labels…}, cards: [{ kind, … }] } — see vault-app.js wrappedData()
+  function wrapped(o, env) {
+    var CVm = root.VaultCovers, sceneJob = Promise.resolve(null);
+    // a cover scene drawn as a tall background: render the svg at a size that covers 1080×1920
+    var bgJob = CVm ? new Promise(function (res) {
+      var e = CVm.element(o.scene || 'galaxy'); e.setAttribute('xmlns', 'http://www.w3.org/2000/svg'); e.setAttribute('width', 3200); e.setAttribute('height', 1920); e.setAttribute('preserveAspectRatio', 'none');
+      loadImg('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new root.XMLSerializer().serializeToString(e))).then(res);
+    }) : Promise.resolve(null);
+    var faces = Promise.all([1, 2, 3, 4, 5].map(function (m) { return svgImg(env.ST.mood(m), 220); }));
+    var stickerKeys = {}; o.cards.forEach(function (c) { (c.stickers || []).forEach(function (k) { stickerKeys[k] = 1; }); (c.feels || []).forEach(function (f) { stickerKeys['a:em' + f.k] = 1; }); });
+    var stickers = Promise.all(Object.keys(stickerKeys).map(function (k) { return svgImg(env.ST.element(k), 300).then(function (im) { return [k, im]; }); }));
+    return Promise.all([sceneJob, bgJob, faces, stickers]).then(function (r) {
+      var bg = r[1], F = r[2], SI = {}; r[3].forEach(function (x) { SI[x[0]] = x[1]; });
+      function base(dark) {
+        var c = canvas(), ctx = c.getContext('2d');
+        if (bg) { ctx.drawImage(bg, -(3200 - W) / 2, 0, 3200, 1920); }
+        else { var g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#2B2A5E'); g.addColorStop(1, '#E9A6C2'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H); }
+        var v = ctx.createLinearGradient(0, 0, 0, H);
+        if (dark) { v.addColorStop(0, 'rgba(20,16,40,.15)'); v.addColorStop(1, 'rgba(20,16,40,.45)'); } else { v.addColorStop(0, 'rgba(255,255,255,.35)'); v.addColorStop(.35, 'rgba(255,255,255,.78)'); v.addColorStop(1, 'rgba(255,255,255,.9)'); }
+        ctx.fillStyle = v; ctx.fillRect(0, 0, W, H);
+        return { c: c, ctx: ctx };
+      }
+      function head(ctx, kicker, title, y) {
+        ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.55)'; ctx.font = '600 34px ' + SANS; ctx.fillText(kicker.toUpperCase().split('').join(' '), W / 2, y);
+        ctx.fillStyle = '#2B2730'; ctx.font = '800 72px ' + SANS; wrap(ctx, title, W - 160).slice(0, 2).forEach(function (l, i) { ctx.fillText(l, W / 2, y + 100 + i * 86); });
+      }
+      function big(ctx, value, label, x, y, size) {
+        ctx.textAlign = 'center'; ctx.fillStyle = '#2B2730'; ctx.font = '800 ' + (size || 150) + 'px ' + SANS; ctx.fillText(value, x, y);
+        ctx.fillStyle = 'rgba(43,39,48,.58)'; ctx.font = '600 36px ' + SANS; ctx.fillText(label, x, y + 64);
+      }
+      function panel(ctx, x, y, w, h) { ctx.save(); ctx.shadowColor = 'rgba(40,30,60,.12)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 14; rr(ctx, x, y, w, h, 56); ctx.fillStyle = 'rgba(255,255,255,.86)'; ctx.fill(); ctx.restore(); }
+      var L = o.L, out = [];
+      o.cards.forEach(function (cd) {
+        var p, ctx;
+        if (cd.kind === 'cover') {
+          p = base(true); ctx = p.ctx; ctx.textAlign = 'center'; ctx.fillStyle = '#FFFFFF'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 30;
+          ctx.font = '280px "PPM Script", Georgia, serif'; ctx.fillText(L.my, W / 2, 760);
+          ctx.font = '200 260px ' + SANS; ctx.fillText(String(o.year), W / 2, 1030);
+          ctx.shadowBlur = 0; ctx.font = '500 44px ' + SANS; ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.fillText(cd.line, W / 2, 1160);
+          ctx.font = '600 34px ' + SANS; ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fillText(L.swipe, W / 2, 1300);
+        } else if (cd.kind === 'writing') {
+          p = base(false); ctx = p.ctx; head(ctx, L.kWriting, cd.title, 300);
+          panel(ctx, 80, 560, W - 160, 900);
+          big(ctx, String(cd.entries), L.entries, W / 2, 790);
+          big(ctx, String(cd.days), L.days, W / 4 + 40, 1130, 110); big(ctx, String(cd.streak), L.streak, W * 3 / 4 - 40, 1130, 110);
+          if (cd.photos) { ctx.fillStyle = 'rgba(43,39,48,.6)'; ctx.font = '600 38px ' + SANS; ctx.fillText(L.photos.replace('{n}', cd.photos), W / 2, 1360); }
+        } else if (cd.kind === 'mood') {
+          p = base(false); ctx = p.ctx; head(ctx, L.kMood, cd.title, 300);
+          if (F[cd.top - 1]) ctx.drawImage(F[cd.top - 1], W / 2 - 170, 520, 340, 340);
+          ctx.textAlign = 'center'; ctx.fillStyle = '#2B2730'; ctx.font = '800 64px ' + SANS; ctx.fillText(cd.topName, W / 2, 940);
+          var tot = cd.counts.reduce(function (a, b) { return a + b; }, 0) || 1; panel(ctx, 80, 1010, W - 160, 470); ctx.textAlign = 'left';
+          cd.counts.forEach(function (n, i) {
+            var y = 1060 + i * 80; if (F[i]) ctx.drawImage(F[i], 130, y, 60, 60);
+            rr(ctx, 220, y + 16, 600, 30, 15); ctx.fillStyle = 'rgba(43,39,48,.07)'; ctx.fill();
+            if (n) { rr(ctx, 220, y + 16, Math.max(30, 600 * n / tot), 30, 15); ctx.fillStyle = MOOD_COL[i]; ctx.fill(); }
+            ctx.fillStyle = '#2B2730'; ctx.font = '700 34px ' + SANS; ctx.fillText(String(n), 850, y + 44);
+          });
+          if (cd.bestMonth) { ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.65)'; ctx.font = '600 38px ' + SANS; ctx.fillText(cd.bestMonth, W / 2, 1560); }
+        } else if (cd.kind === 'feelings') {
+          p = base(false); ctx = p.ctx; head(ctx, L.kFeel, cd.title, 300);
+          cd.feels.slice(0, 3).forEach(function (f, i) {
+            var y = 560 + i * 330; panel(ctx, 100, y, W - 200, 280);
+            var im = SI['a:em' + f.k]; if (im) ctx.drawImage(im, 150, y + 40, 200, 200);
+            ctx.textAlign = 'left'; ctx.fillStyle = '#2B2730'; ctx.font = '800 66px ' + SANS; ctx.fillText(f.name, 400, y + 140);
+            ctx.fillStyle = 'rgba(43,39,48,.55)'; ctx.font = '600 36px ' + SANS; ctx.fillText(L.times.replace('{n}', f.n), 400, y + 200);
+            ctx.textAlign = 'right'; ctx.fillStyle = 'rgba(43,39,48,.18)'; ctx.font = '800 120px ' + SANS; ctx.fillText(String(i + 1), W - 150, y + 180);
+          });
+        } else if (cd.kind === 'deco') {
+          p = base(false); ctx = p.ctx; head(ctx, L.kDeco, cd.title, 300);
+          var fav = cd.stickers && SI[cd.stickers[0]]; if (fav) { ctx.save(); ctx.translate(W / 2, 760); ctx.rotate(-0.08); ctx.drawImage(fav, -190, -190, 380, 380); ctx.restore(); }
+          ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.6)'; ctx.font = '600 36px ' + SANS; ctx.fillText(L.favSticker, W / 2, 1010);
+          panel(ctx, 80, 1080, W - 160, 380);
+          big(ctx, String(cd.used), L.stickersUsed, W / 4 + 40, 1260, 100); big(ctx, String(cd.pages), L.pagesUsed, W * 3 / 4 - 40, 1260, 100);
+          (cd.stickers || []).slice(1, 5).forEach(function (k, i) { var im = SI[k]; if (im) ctx.drawImage(im, 160 + i * 200, 1500, 140, 140); });
+        } else if (cd.kind === 'money') {
+          p = base(false); ctx = p.ctx; head(ctx, L.kMoney, cd.title, 300);
+          var rows = [], yy = 0; if (cd.noSpend != null) rows.push('ns'); if (cd.saved) rows.push('sv'); if (cd.topCat) rows.push('tc');
+          var ph = 120 + rows.length * 250 + (cd.entries ? 80 : 0); panel(ctx, 80, 560, W - 160, ph); yy = 560 + 200;
+          rows.forEach(function (r) {
+            if (r === 'ns') big(ctx, String(cd.noSpend), L.noSpend, W / 2, yy);
+            else if (r === 'sv') big(ctx, cd.saved, L.saved, W / 2, yy - 20, 96);
+            else { ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.6)'; ctx.font = '600 34px ' + SANS; ctx.fillText(L.topCat, W / 2, yy - 70); ctx.fillStyle = '#2B2730'; ctx.font = '800 64px ' + SANS; ctx.fillText(cd.topCat, W / 2, yy + 14); }
+            yy += 250;
+          });
+          if (cd.entries) { ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.55)'; ctx.font = '600 32px ' + SANS; ctx.fillText(L.logged.replace('{n}', cd.entries), W / 2, yy - 90); }
+        } else if (cd.kind === 'pixels') {
+          p = base(false); ctx = p.ctx; head(ctx, L.kPixels, cd.title, 260);
+          panel(ctx, 70, 470, W - 140, 1170); var gx = 190, gy = 560, cell = 22, gap = 4;
+          ctx.textAlign = 'right';
+          for (var mo = 0; mo < 12; mo++) {
+            var yy = gy + mo * 86; ctx.fillStyle = 'rgba(43,39,48,.55)'; ctx.font = '700 26px ' + SANS; ctx.fillText(cd.months[mo], gx - 18, yy + 40);
+            var dm = new Date(Date.UTC(o.year, mo + 1, 0)).getUTCDate();
+            for (var dd = 1; dd <= dm; dd++) { var key = (mo < 9 ? '0' : '') + (mo + 1) + '-' + (dd < 10 ? '0' : '') + dd, m = cd.moods[key]; rr(ctx, gx + (dd - 1) * (cell + gap), yy + 14, cell, 38, 8); ctx.fillStyle = m ? MOOD_COL[m - 1] : 'rgba(43,39,48,.07)'; ctx.fill(); }
+          }
+        } else if (cd.kind === 'end') {
+          p = base(true); ctx = p.ctx; ctx.textAlign = 'center'; ctx.fillStyle = '#FFFFFF'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 30;
+          ctx.font = '170px "PPM Script", Georgia, serif'; ctx.fillText(L.thanks, W / 2, 780);
+          ctx.shadowBlur = 0; ctx.font = '700 64px ' + SANS; wrap(ctx, cd.line, W - 200).slice(0, 3).forEach(function (l, i) { ctx.fillText(l, W / 2, 960 + i * 84); });
+          ctx.font = '500 40px ' + SANS; ctx.fillStyle = 'rgba(255,255,255,.88)'; ctx.fillText(cd.next, W / 2, 1260);
+        } else return;
+        mark(ctx, H - 96);
+        out.push({ kind: cd.kind, canvas: p.c });
+      });
+      return Promise.all(out.map(function (x) { return toBlob(x.canvas).then(function (b) { return { kind: x.kind, blob: b }; }); }));
+    });
+  }
+
+  // ---------- a letter as a 9:16 card: stationery, the words, a wax seal (only when the writer chooses to share it) ----------
+  function letterCard(o, env) {
+    var seal = svgImg(env.ST.element('a:aeglassheart'), 200), cherry = svgImg(env.ST.element('a:aetulip'), 220);
+    var font = root.document.fonts && root.document.fonts.load ? root.document.fonts.load('60px "PPM Script"').catch(function () {}) : Promise.resolve();
+    return Promise.all([seal, cherry, font]).then(function (r) {
+      var c = canvas(), ctx = c.getContext('2d'), g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#FBE6EC'); g.addColorStop(1, '#F1E2F3'); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+      ctx.save(); ctx.translate(W / 2, H / 2); ctx.rotate(-0.025); ctx.shadowColor = 'rgba(80,40,70,.18)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 18;
+      var pw = 880, ph = 1360; rr(ctx, -pw / 2, -ph / 2, pw, ph, 18); ctx.fillStyle = '#FFFDF8'; ctx.fill(); ctx.shadowColor = 'transparent';
+      ctx.strokeStyle = 'rgba(220,150,170,.28)'; ctx.lineWidth = 2; for (var y = -ph / 2 + 300; y < ph / 2 - 160; y += 66) { ctx.beginPath(); ctx.moveTo(-pw / 2 + 70, y); ctx.lineTo(pw / 2 - 70, y); ctx.stroke(); }
+      ctx.fillStyle = '#B4566F'; ctx.textAlign = 'left'; ctx.font = '96px "PPM Script", Georgia, serif'; ctx.fillText('Dear', -pw / 2 + 70, -ph / 2 + 160);
+      ctx.fillStyle = '#2B2730'; ctx.font = '700 48px ' + SANS; ctx.fillText(String(o.to || '').slice(0, 30), -pw / 2 + 290, -ph / 2 + 160);
+      ctx.font = '400 42px ' + SANS; ctx.fillStyle = '#3B3340';
+      var lines = wrap(ctx, String(o.body || ''), pw - 160), max = 15;
+      lines.slice(0, max).forEach(function (l, i) { ctx.fillText(i === max - 1 && lines.length > max ? l.slice(0, Math.max(0, l.length - 2)) + '…' : l, -pw / 2 + 80, -ph / 2 + 288 + i * 66); });
+      ctx.textAlign = 'right'; ctx.fillStyle = '#B4566F'; ctx.font = '84px "PPM Script", Georgia, serif'; ctx.fillText('with love', pw / 2 - 70, ph / 2 - 150);
+      ctx.fillStyle = '#2B2730'; ctx.font = '700 44px ' + SANS; ctx.fillText(String(o.from || '').slice(0, 30), pw / 2 - 70, ph / 2 - 80);
+      ctx.textAlign = 'left'; ctx.fillStyle = 'rgba(43,39,48,.5)'; ctx.font = '500 30px ' + SANS; ctx.fillText(o.date || '', -pw / 2 + 70, ph / 2 - 80);
+      ctx.restore();
+      if (r[0]) ctx.drawImage(r[0], W - 300, 150, 190, 190);
+      if (r[1]) { ctx.save(); ctx.translate(140, 240); ctx.rotate(-0.25); ctx.drawImage(r[1], -100, -100, 220, 220); ctx.restore(); }
+      if (o.open) { ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.6)'; ctx.font = '600 34px ' + SANS; ctx.fillText(o.open, W / 2, H - 180); }
+      mark(ctx, H - 96);
+      return toBlob(c);
+    });
+  }
+  root.VaultShare = { letterCard: letterCard, wrapped: wrapped, mark: mark, W: W, H: H, entryImage: entryImage, entryVideo: entryVideo, videoType: videoType, monthPoster: monthPoster, yearPoster: yearPoster, MOOD_COL: MOOD_COL, size: { w: W, h: H } };
 })(typeof window !== 'undefined' ? window : globalThis);

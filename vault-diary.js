@@ -8,11 +8,11 @@
   'use strict';
   var MAX_PHOTOS = 4, PROMPTS = 16, MAX_STICKERS = 60;
   var PAPERS = ['plain', 'lines', 'grid', 'dots', 'gingham', 'hearts', 'flowers', 'stars', 'clouds', 'manuscript', 'loveblue', 'chrome', 'ballet', 'strawberry', 'cherry', 'daisy', 'polka', 'stripe', 'pastelgrid', 'rainbow', 'lemon', 'clover', 'bear', 'starnight', 'waves'], TINTS = ['none', 'cream', 'pink', 'mint', 'sky', 'lavender', 'kraft', 'peach', 'lemon', 'coral', 'sage', 'ice'], FONTS = ['base', 'hand', 'pen', 'gamja', 'poor', 'single', 'yeon', 'dongle', 'dodum', 'batang', 'jua', 'dohyeon', 'cute', 'kirang', 'dokdo'];
-  var TPLS = ['time', 'week', 'todo', 'thanks', 'money', 'reading', 'movie', 'workout', 'meal', 'sleep', 'travel', 'bucket', 'wish', 'review', 'praise', 'selfcare', 'goals', 'saving24', 'saving52', 'grocery', 'recipe', 'pricebook', 'feeling', 'comic4'], HOURS = [];
+  var TPLS = ['time', 'week', 'todo', 'thanks', 'money', 'reading', 'movie', 'workout', 'meal', 'sleep', 'travel', 'bucket', 'wish', 'review', 'praise', 'selfcare', 'goals', 'saving24', 'saving52', 'grocery', 'recipe', 'pricebook', 'feeling', 'comic4', 'envelope100', 'letter', 'pilsa'], HOURS = [];
   // Ready-made pages filled in by tapping and typing: each field is [name, kind, extra]. Kinds: line, area (several lines),
   // stars (0–5), num, time (hh:mm), cups (0–8 glasses), checks (named tick boxes), list (up to n lines with a tick each).
-  var FORMS = {"reading": [["title", "line"], ["author", "line"], ["stars", "stars"], ["quote", "area"], ["thoughts", "area"]], "movie": [["title", "line"], ["where", "line"], ["stars", "stars"], ["review", "area"]], "workout": [["what", "line"], ["minutes", "num"], ["effort", "stars"], ["note", "area"]], "meal": [["breakfast", "line"], ["lunch", "line"], ["dinner", "line"], ["snack", "line"], ["water", "cups"]], "sleep": [["bed", "time"], ["wake", "time"], ["quality", "stars"], ["condition", "stars"], ["note", "line"]], "travel": [["where", "line"], ["with", "line"], ["best", "area"], ["food", "area"], ["again", "stars"]], "bucket": [["items", "list", 10]], "wish": [["items", "list", 8]], "review": [["keep", "area"], ["problem", "area"], ["try", "area"]], "praise": [["p1", "line"], ["p2", "line"], ["p3", "line"]], "selfcare": [["care", "checks", ["water", "walk", "stretch", "sleep", "fun", "tidy"]], ["word", "line"]], "goals": [["items", "list", 6], ["promise", "area"]], "saving24": [["weeks", "challenge", 24]], "saving52": [["weeks", "challenge", 52]], "grocery": [["items", "groceries", 20], ["memo", "line"]], "recipe": [["dish", "line"], ["ingr", "ingredients", 16], ["steps", "area"], ["made", "checks", ["made"]], ["stars", "stars"]], "pricebook": [["items", "groceries", 30]], "feeling": [["temp", "temp"], ["feel", "feelings", 3], ["did", "line"], ["note", "area"]], "comic4": [["title", "line"], ["weather", "weather"], ["panels", "panels", 4], ["memo", "line"]]};
-  var FORM_ICON = {"reading": "📚", "movie": "🎬", "workout": "🏃", "meal": "🍱", "sleep": "🌙", "travel": "✈️", "bucket": "🌠", "wish": "🎁", "review": "🔁", "praise": "👏", "selfcare": "🫧", "goals": "🎯", "saving24": "🐷", "saving52": "🐷", "grocery": "🛒", "recipe": "🍳", "pricebook": "🏷️", "feeling": "🌡️", "comic4": "🖍️"};
+  var FORMS = {"reading": [["title", "line"], ["author", "line"], ["stars", "stars"], ["quote", "area"], ["thoughts", "area"]], "movie": [["title", "line"], ["where", "line"], ["stars", "stars"], ["review", "area"]], "workout": [["what", "line"], ["minutes", "num"], ["effort", "stars"], ["note", "area"]], "meal": [["breakfast", "line"], ["lunch", "line"], ["dinner", "line"], ["snack", "line"], ["water", "cups"]], "sleep": [["bed", "time"], ["wake", "time"], ["quality", "stars"], ["condition", "stars"], ["note", "line"]], "travel": [["where", "line"], ["with", "line"], ["best", "area"], ["food", "area"], ["again", "stars"]], "bucket": [["items", "list", 10]], "wish": [["items", "list", 8]], "review": [["keep", "area"], ["problem", "area"], ["try", "area"]], "praise": [["p1", "line"], ["p2", "line"], ["p3", "line"]], "selfcare": [["care", "checks", ["water", "walk", "stretch", "sleep", "fun", "tidy"]], ["word", "line"]], "goals": [["items", "list", 6], ["promise", "area"]], "saving24": [["weeks", "challenge", 24]], "saving52": [["weeks", "challenge", 52]], "grocery": [["items", "groceries", 20], ["memo", "line"]], "recipe": [["dish", "line"], ["ingr", "ingredients", 16], ["steps", "area"], ["made", "checks", ["made"]], ["stars", "stars"]], "pricebook": [["items", "groceries", 30]], "feeling": [["temp", "temp"], ["feel", "feelings", 3], ["did", "line"], ["note", "area"]], "comic4": [["title", "line"], ["weather", "weather"], ["panels", "panels", 4], ["memo", "line"]], "envelope100": [["env", "envelopes", 100]], "letter": [["to", "line"], ["body", "area"], ["from", "line"], ["open", "date"]], "pilsa": [["quote", "quote"], ["copy", "area"], ["source", "line"], ["thought", "area"]]};
+  var FORM_ICON = {"reading": "📚", "movie": "🎬", "workout": "🏃", "meal": "🍱", "sleep": "🌙", "travel": "✈️", "bucket": "🌠", "wish": "🎁", "review": "🔁", "praise": "👏", "selfcare": "🫧", "goals": "🎯", "saving24": "🐷", "saving52": "🐷", "grocery": "🛒", "recipe": "🍳", "pricebook": "🏷️", "feeling": "🌡️", "comic4": "🖍️", "envelope100": "✉️", "letter": "💌", "pilsa": "🖋️"};
   for (var hh = 6; hh <= 24; hh++) HOURS.push((hh < 10 ? '0' : '') + hh);
 
   function uid() {
@@ -50,7 +50,8 @@
     if (!x || typeof x !== 'object' || typeof x.k !== 'string') return null;
     var k = x.k;
     if (/^[at]:[a-z0-9]{1,16}$/.test(k)) {}                                               // drawn sticker or tape, by name
-    else if (/^s:[a-z0-9-]{1,16}$/.test(k)) {}                                            // a reward seal the person earned
+    else if (/^s:[a-z0-9-]{1,16}$/.test(k)) {}
+    else if (/^p:[a-z0-9]{1,40}$/.test(k)) {}                                            // a sticker cut from the person's own photo (an encrypted picture)                                            // a reward seal the person earned
     else if (/^e:/.test(k) && k.length <= 18 && EMOJI_RE.test(k.slice(2)) && !ASCII_WORD_RE.test(k.slice(2))) {}   // one emoji
     else return null;
     return { k: k, x: num(x.x, 0, 1, 0.5), y: num(x.y, 0, 40, 0), s: num(x.s, 0.05, 0.8, 0.16), r: Math.round(num(x.r, -180, 180, 0)) };
@@ -86,6 +87,9 @@
     if (kind === 'num') return v === '' || v == null ? '' : Math.round(num(v, 0, 100000, 0));
     if (kind === 'time') return typeof v === 'string' && /^\d{2}:\d{2}$/.test(v) ? v : '';
     if (kind === 'checks') return extra.map(function (x, i) { return Array.isArray(v) && v[i] === true; });
+    if (kind === 'quote') return str(v, 400);
+    if (kind === 'date') return typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : '';
+    if (kind === 'envelopes') { var ev = []; for (var q2 = 0; q2 < extra; q2++) ev.push(Array.isArray(v) && v[q2] === true); return ev; }
     if (kind === 'challenge') { var ch = []; for (var c = 0; c < extra; c++) ch.push(Array.isArray(v) && v[c] === true); return ch; }
     if (kind === 'groceries' || kind === 'ingredients') {        // rows: a food drawing (or none), words, a price (groceries only), a tick
       var rows = [];
@@ -120,9 +124,10 @@
       var v = f[fd[0]];
       if (fd[1] === 'checks') return v.some(Boolean);
       if (fd[1] === 'list') return v.some(function (it) { return it.text.trim() || it.done; });
-      if (fd[1] === 'challenge') return v.some(Boolean);
+      if (fd[1] === 'challenge' || fd[1] === 'envelopes') return v.some(Boolean);
       if (fd[1] === 'groceries' || fd[1] === 'ingredients' || fd[1] === 'feelings') return v.length > 0;
       if (fd[1] === 'temp') return v !== '';
+      if (fd[1] === 'date') return false;          // a date alone is not a letter
       if (fd[1] === 'panels') return v.some(function (x) { return x.trim(); });
       return typeof v === 'number' ? v > 0 : !!String(v || '').trim();
     });
@@ -133,7 +138,7 @@
       var v = f[fd[0]], name = label ? label(k, fd[0]) : fd[0];
       if (fd[1] === 'checks') { var on = fd[2].filter(function (x, i) { return v[i]; }); if (on.length) out.push(name + ': ' + on.map(function (x) { return label ? label(k, 'o.' + x) : x; }).join(', ')); }
       else if (fd[1] === 'list') v.forEach(function (it) { if (it.text.trim()) out.push((it.done ? '[x] ' : '[ ] ') + it.text); });
-      else if (fd[1] === 'challenge') { var dn = v.filter(Boolean).length; if (dn) out.push(name + ': ' + dn + '/' + v.length); }
+      else if (fd[1] === 'challenge' || fd[1] === 'envelopes') { var dn = v.filter(Boolean).length; if (dn) out.push(name + ': ' + dn + '/' + v.length); }
       else if (fd[1] === 'groceries' || fd[1] === 'ingredients') v.forEach(function (it) { var w = it.text || (label ? label('food', it.f) : it.f); out.push((fd[1] === 'groceries' || it.done ? (it.done ? '[x] ' : '[ ] ') : '') + w + (it.price ? ' ' + it.price : '')); });
       else if (fd[1] === 'temp') { if (v !== '') out.push(name + ': ' + v + '°'); }
       else if (fd[1] === 'feelings') { if (v.length) out.push(name + ': ' + v.map(function (x) { return label ? label('feel', x) : x; }).join(', ')); }
@@ -180,13 +185,14 @@
     var d = e.deco; if (!d) return false;
     return d.stickers.length > 0 || !!d.drawing || tplHasContent(d.tpl);
   }
-  function blobsOf(e) { var out = (e.photos || []).slice(); if (e.deco && e.deco.drawing) out.push(e.deco.drawing.id); return out; }
+  function blobsOf(e) { var out = (e.photos || []).slice(); if (e.deco && e.deco.drawing) out.push(e.deco.drawing.id); if (e.deco) (e.deco.stickers || []).forEach(function (x) { if (x.k.slice(0, 2) === 'p:') out.push(x.k.slice(2)); }); return out; }
 
-  function newDoc() { return { v: 1, entries: [] }; }
+  function newDoc() { return { v: 1, entries: [], books: [] }; }
   function addEntry(doc, e) {
     var now = Date.now();
     var en = { id: uid(), date: e.date, time: /^\d{2}:\d{2}$/.test(e.time || '') ? e.time : '', text: String(e.text || '').slice(0, 20000),
       mood: cleanMood(e.mood), tags: [], photos: (e.photos || []).slice(0, MAX_PHOTOS), deco: cleanDeco(e.deco), created: now, updated: now };
+    if (BOOK_ID.test(e.book || '')) en.book = e.book;
     en.tags = tagsOf(en.text);
     doc.entries.push(en);
     return en;
@@ -200,6 +206,7 @@
     if (patch.time !== undefined) e.time = /^\d{2}:\d{2}$/.test(patch.time) ? patch.time : '';
     if (patch.photos !== undefined) e.photos = patch.photos.slice(0, MAX_PHOTOS);
     if (patch.deco !== undefined) e.deco = cleanDeco(patch.deco);
+    if (patch.book !== undefined) { if (BOOK_ID.test(patch.book || '')) e.book = patch.book; else delete e.book; }
     e.updated = Date.now();
     return true;
   }
@@ -225,6 +232,8 @@
     while (days[d]) { n++; d = addDays(d, -1); }
     return n;
   }
+  // a letter to the future stays sealed until its date: no preview, no search, no sharing
+  function sealedUntil(e, today) { var f = e.deco && e.deco.tpl && e.deco.tpl.on === 'letter' && e.deco.tpl.forms && e.deco.tpl.forms.letter; return f && f.open && f.open > today ? f.open : null; }
   function search(doc, q) {
     q = String(q || '').trim().toLowerCase();
     if (!q) return [];
@@ -232,7 +241,8 @@
       var tag = q.slice(1);
       return doc.entries.filter(function (e) { return e.tags.some(function (t) { return t.indexOf(tag) === 0; }); }).sort(order);
     }
-    return doc.entries.filter(function (e) { return e.text.toLowerCase().indexOf(q) >= 0 || tplText(e, ' ').toLowerCase().indexOf(q) >= 0; }).sort(order);
+    var td = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+    return doc.entries.filter(function (e) { return !sealedUntil(e, td) && (e.text.toLowerCase().indexOf(q) >= 0 || tplText(e, ' ').toLowerCase().indexOf(q) >= 0); }).sort(order);
   }
   function moodByDay(doc, ym) {
     var sum = {}, cnt = {};
@@ -267,19 +277,31 @@
       return head + '\n\n' + e.text.trim() + (extra ? '\n\n' + extra : '') + (e.photos.length && fmt.photos ? '\n\n' + fmt.photos(e.photos.length) : '') + '\n';
     }).join('\n');
   }
+  // notebooks: separate diaries (reading, exercise …), each with its own name, cover scene, emoji and usual page
+  var BOOK_ID = /^[a-z0-9]{1,12}$/;
+  function cleanBooks(raw) {
+    var out = [];
+    (Array.isArray(raw) ? raw : []).forEach(function (b) {
+      if (out.length >= 8 || !b || !BOOK_ID.test(b.id || '') || out.some(function (x) { return x.id === b.id; })) return;
+      out.push({ id: b.id, name: str(b.name, 20) || 'Notebook', emoji: str(b.emoji, 8), art: /^[a-z]{1,20}$/.test(b.art || '') ? b.art : 'moonsea', tpl: TPLS.indexOf(b.tpl) >= 0 ? b.tpl : null });
+    });
+    return out;
+  }
   function validate(raw) {
     var d = newDoc();
     if (!raw || !Array.isArray(raw.entries)) return d;
     d.entries = raw.entries.filter(function (e) { return e && typeof e.id === 'string' && validDate(e.date) && typeof e.text === 'string'; }).map(function (e) {
       return { id: e.id, date: e.date, time: /^\d{2}:\d{2}$/.test(e.time || '') ? e.time : '', text: e.text, mood: cleanMood(e.mood),
         tags: tagsOf(e.text), photos: Array.isArray(e.photos) ? e.photos.filter(function (p) { return typeof p === 'string' && /^[a-z0-9]{1,40}$/.test(p); }).slice(0, MAX_PHOTOS) : [],
-        deco: cleanDeco(e.deco), created: +e.created || Date.now(), updated: +e.updated || Date.now() };
-    });
+        deco: cleanDeco(e.deco), created: +e.created || Date.now(), updated: +e.updated || Date.now(), book: BOOK_ID.test(e.book || '') ? e.book : undefined };
+    }).map(function (e) { if (!e.book) delete e.book; return e; });
+    d.books = cleanBooks(raw.books);
+    d.entries.forEach(function (e) { if (e.book && !d.books.some(function (b) { return b.id === e.book; })) delete e.book; });
     return d;
   }
 
   var api = { FORMS: FORMS, FORM_ICON: FORM_ICON, cleanField: cleanField, formLabel: null, MAX_PHOTOS: MAX_PHOTOS, PROMPTS: PROMPTS, MAX_STICKERS: MAX_STICKERS, PAPERS: PAPERS, TINTS: TINTS, FONTS: FONTS, TPLS: TPLS, HOURS: HOURS,
-    cleanDeco: cleanDeco, cleanSticker: cleanSticker, FEELS: FEELS, FEEL_KEYS: FEEL_KEYS, WEATHER: WEATHER, hasContent: hasContent, blobsOf: blobsOf, tplText: tplText, newDoc: newDoc, validate: validate, addEntry: addEntry, updateEntry: updateEntry, deleteEntry: deleteEntry,
+    cleanDeco: cleanDeco, cleanSticker: cleanSticker, cleanBooks: cleanBooks, sealedUntil: sealedUntil, FEELS: FEELS, FEEL_KEYS: FEEL_KEYS, WEATHER: WEATHER, hasContent: hasContent, blobsOf: blobsOf, tplText: tplText, newDoc: newDoc, validate: validate, addEntry: addEntry, updateEntry: updateEntry, deleteEntry: deleteEntry,
     byMonth: byMonth, byDate: byDate, onThisDay: onThisDay, streak: streak, search: search, moodByDay: moodByDay, monthStats: monthStats,
     allTags: allTags, tagsOf: tagsOf, promptIndex: promptIndex, toText: toText, addDays: addDays, uid: uid };
   root.VaultDiary = api;
