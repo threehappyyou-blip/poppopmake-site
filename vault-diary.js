@@ -8,11 +8,11 @@
   'use strict';
   var MAX_PHOTOS = 4, PROMPTS = 16, MAX_STICKERS = 60;
   var PAPERS = ['plain', 'lines', 'grid', 'dots', 'gingham', 'hearts', 'flowers', 'stars', 'clouds', 'manuscript', 'loveblue', 'chrome', 'ballet', 'strawberry', 'cherry', 'daisy', 'polka', 'stripe', 'pastelgrid', 'rainbow', 'lemon', 'clover', 'bear', 'starnight', 'waves'], TINTS = ['none', 'cream', 'pink', 'mint', 'sky', 'lavender', 'kraft', 'peach', 'lemon', 'coral', 'sage', 'ice'], FONTS = ['base', 'hand', 'pen', 'gamja', 'poor', 'single', 'yeon', 'dongle', 'dodum', 'batang', 'jua', 'dohyeon', 'cute', 'kirang', 'dokdo'];
-  var TPLS = ['time', 'week', 'todo', 'thanks', 'money', 'reading', 'movie', 'workout', 'meal', 'sleep', 'travel', 'bucket', 'wish', 'review', 'praise', 'selfcare', 'goals', 'saving24', 'saving52', 'grocery', 'recipe', 'pricebook'], HOURS = [];
+  var TPLS = ['time', 'week', 'todo', 'thanks', 'money', 'reading', 'movie', 'workout', 'meal', 'sleep', 'travel', 'bucket', 'wish', 'review', 'praise', 'selfcare', 'goals', 'saving24', 'saving52', 'grocery', 'recipe', 'pricebook', 'feeling', 'comic4'], HOURS = [];
   // Ready-made pages filled in by tapping and typing: each field is [name, kind, extra]. Kinds: line, area (several lines),
   // stars (0–5), num, time (hh:mm), cups (0–8 glasses), checks (named tick boxes), list (up to n lines with a tick each).
-  var FORMS = {"reading": [["title", "line"], ["author", "line"], ["stars", "stars"], ["quote", "area"], ["thoughts", "area"]], "movie": [["title", "line"], ["where", "line"], ["stars", "stars"], ["review", "area"]], "workout": [["what", "line"], ["minutes", "num"], ["effort", "stars"], ["note", "area"]], "meal": [["breakfast", "line"], ["lunch", "line"], ["dinner", "line"], ["snack", "line"], ["water", "cups"]], "sleep": [["bed", "time"], ["wake", "time"], ["quality", "stars"], ["condition", "stars"], ["note", "line"]], "travel": [["where", "line"], ["with", "line"], ["best", "area"], ["food", "area"], ["again", "stars"]], "bucket": [["items", "list", 10]], "wish": [["items", "list", 8]], "review": [["keep", "area"], ["problem", "area"], ["try", "area"]], "praise": [["p1", "line"], ["p2", "line"], ["p3", "line"]], "selfcare": [["care", "checks", ["water", "walk", "stretch", "sleep", "fun", "tidy"]], ["word", "line"]], "goals": [["items", "list", 6], ["promise", "area"]], "saving24": [["weeks", "challenge", 24]], "saving52": [["weeks", "challenge", 52]], "grocery": [["items", "groceries", 20], ["memo", "line"]], "recipe": [["dish", "line"], ["ingr", "ingredients", 16], ["steps", "area"], ["made", "checks", ["made"]], ["stars", "stars"]], "pricebook": [["items", "groceries", 30]]};
-  var FORM_ICON = {"reading": "📚", "movie": "🎬", "workout": "🏃", "meal": "🍱", "sleep": "🌙", "travel": "✈️", "bucket": "🌠", "wish": "🎁", "review": "🔁", "praise": "👏", "selfcare": "🫧", "goals": "🎯", "saving24": "🐷", "saving52": "🐷", "grocery": "🛒", "recipe": "🍳", "pricebook": "🏷️"};
+  var FORMS = {"reading": [["title", "line"], ["author", "line"], ["stars", "stars"], ["quote", "area"], ["thoughts", "area"]], "movie": [["title", "line"], ["where", "line"], ["stars", "stars"], ["review", "area"]], "workout": [["what", "line"], ["minutes", "num"], ["effort", "stars"], ["note", "area"]], "meal": [["breakfast", "line"], ["lunch", "line"], ["dinner", "line"], ["snack", "line"], ["water", "cups"]], "sleep": [["bed", "time"], ["wake", "time"], ["quality", "stars"], ["condition", "stars"], ["note", "line"]], "travel": [["where", "line"], ["with", "line"], ["best", "area"], ["food", "area"], ["again", "stars"]], "bucket": [["items", "list", 10]], "wish": [["items", "list", 8]], "review": [["keep", "area"], ["problem", "area"], ["try", "area"]], "praise": [["p1", "line"], ["p2", "line"], ["p3", "line"]], "selfcare": [["care", "checks", ["water", "walk", "stretch", "sleep", "fun", "tidy"]], ["word", "line"]], "goals": [["items", "list", 6], ["promise", "area"]], "saving24": [["weeks", "challenge", 24]], "saving52": [["weeks", "challenge", 52]], "grocery": [["items", "groceries", 20], ["memo", "line"]], "recipe": [["dish", "line"], ["ingr", "ingredients", 16], ["steps", "area"], ["made", "checks", ["made"]], ["stars", "stars"]], "pricebook": [["items", "groceries", 30]], "feeling": [["temp", "temp"], ["feel", "feelings", 3], ["did", "line"], ["note", "area"]], "comic4": [["title", "line"], ["weather", "weather"], ["panels", "panels", 4], ["memo", "line"]]};
+  var FORM_ICON = {"reading": "📚", "movie": "🎬", "workout": "🏃", "meal": "🍱", "sleep": "🌙", "travel": "✈️", "bucket": "🌠", "wish": "🎁", "review": "🔁", "praise": "👏", "selfcare": "🫧", "goals": "🎯", "saving24": "🐷", "saving52": "🐷", "grocery": "🛒", "recipe": "🍳", "pricebook": "🏷️", "feeling": "🌡️", "comic4": "🖍️"};
   for (var hh = 6; hh <= 24; hh++) HOURS.push((hh < 10 ? '0' : '') + hh);
 
   function uid() {
@@ -74,6 +74,10 @@
     });
     return out;
   }
+  // the emotion words a feeling page can hold, in four groups (bright and lively / calm / tense / heavy)
+  var FEELS = { up: ['excited', 'flutter', 'proud', 'happy', 'fun', 'thankful'], calm: ['calm', 'content', 'relieved', 'cozy', 'steady', 'assured'],
+    hot: ['angry', 'annoyed', 'anxious', 'worried', 'flustered', 'stuffy'], low: ['sad', 'lonely', 'tired', 'empty', 'down', 'hurt'] };
+  var FEEL_KEYS = [].concat(FEELS.up, FEELS.calm, FEELS.hot, FEELS.low), WEATHER = ['sun', 'cloud', 'rain', 'snow', 'rainbow'];
   function cleanField(kind, extra, v) {
     if (kind === 'line') return str(v, 200);
     if (kind === 'area') return str(v, 1000);
@@ -93,6 +97,10 @@
       });
       return rows;
     }
+    if (kind === 'temp') return v === '' || v == null || !isFinite(+v) ? '' : Math.round(num(v, 0, 100, 0));
+    if (kind === 'feelings') { var fs = []; (Array.isArray(v) ? v : []).forEach(function (x) { if (FEEL_KEYS.indexOf(x) >= 0 && fs.indexOf(x) < 0 && fs.length < extra) fs.push(x); }); return fs; }
+    if (kind === 'weather') return WEATHER.indexOf(v) >= 0 ? v : '';
+    if (kind === 'panels') { var ps = []; for (var q = 0; q < extra; q++) ps.push(str(Array.isArray(v) ? v[q] : '', 80)); return ps; }
     if (kind === 'list') { var out = []; for (var i = 0; i < extra; i++) { var it = Array.isArray(v) ? v[i] : null; out.push({ text: str(it && it.text, 200), done: !!(it && it.done === true) }); } return out; }
     return '';
   }
@@ -113,7 +121,9 @@
       if (fd[1] === 'checks') return v.some(Boolean);
       if (fd[1] === 'list') return v.some(function (it) { return it.text.trim() || it.done; });
       if (fd[1] === 'challenge') return v.some(Boolean);
-      if (fd[1] === 'groceries' || fd[1] === 'ingredients') return v.length > 0;
+      if (fd[1] === 'groceries' || fd[1] === 'ingredients' || fd[1] === 'feelings') return v.length > 0;
+      if (fd[1] === 'temp') return v !== '';
+      if (fd[1] === 'panels') return v.some(function (x) { return x.trim(); });
       return typeof v === 'number' ? v > 0 : !!String(v || '').trim();
     });
   }
@@ -125,6 +135,10 @@
       else if (fd[1] === 'list') v.forEach(function (it) { if (it.text.trim()) out.push((it.done ? '[x] ' : '[ ] ') + it.text); });
       else if (fd[1] === 'challenge') { var dn = v.filter(Boolean).length; if (dn) out.push(name + ': ' + dn + '/' + v.length); }
       else if (fd[1] === 'groceries' || fd[1] === 'ingredients') v.forEach(function (it) { var w = it.text || (label ? label('food', it.f) : it.f); out.push((fd[1] === 'groceries' || it.done ? (it.done ? '[x] ' : '[ ] ') : '') + w + (it.price ? ' ' + it.price : '')); });
+      else if (fd[1] === 'temp') { if (v !== '') out.push(name + ': ' + v + '°'); }
+      else if (fd[1] === 'feelings') { if (v.length) out.push(name + ': ' + v.map(function (x) { return label ? label('feel', x) : x; }).join(', ')); }
+      else if (fd[1] === 'weather') { if (v) out.push(name + ': ' + (label ? label('weather', v) : v)); }
+      else if (fd[1] === 'panels') v.forEach(function (x, i) { if (x.trim()) out.push((i + 1) + '. ' + x); });
       else if (fd[1] === 'stars') { if (v) out.push(name + ': ' + '★★★★★'.slice(0, v) + '☆☆☆☆☆'.slice(0, 5 - v)); }
       else if (fd[1] === 'cups') { if (v) out.push(name + ': ' + v); }
       else if (v !== '' && v != null && String(v).trim()) out.push(name + ': ' + v);
@@ -265,7 +279,7 @@
   }
 
   var api = { FORMS: FORMS, FORM_ICON: FORM_ICON, cleanField: cleanField, formLabel: null, MAX_PHOTOS: MAX_PHOTOS, PROMPTS: PROMPTS, MAX_STICKERS: MAX_STICKERS, PAPERS: PAPERS, TINTS: TINTS, FONTS: FONTS, TPLS: TPLS, HOURS: HOURS,
-    cleanDeco: cleanDeco, cleanSticker: cleanSticker, hasContent: hasContent, blobsOf: blobsOf, tplText: tplText, newDoc: newDoc, validate: validate, addEntry: addEntry, updateEntry: updateEntry, deleteEntry: deleteEntry,
+    cleanDeco: cleanDeco, cleanSticker: cleanSticker, FEELS: FEELS, FEEL_KEYS: FEEL_KEYS, WEATHER: WEATHER, hasContent: hasContent, blobsOf: blobsOf, tplText: tplText, newDoc: newDoc, validate: validate, addEntry: addEntry, updateEntry: updateEntry, deleteEntry: deleteEntry,
     byMonth: byMonth, byDate: byDate, onThisDay: onThisDay, streak: streak, search: search, moodByDay: moodByDay, monthStats: monthStats,
     allTags: allTags, tagsOf: tagsOf, promptIndex: promptIndex, toText: toText, addDays: addDays, uid: uid };
   root.VaultDiary = api;

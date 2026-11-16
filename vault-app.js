@@ -2034,7 +2034,7 @@
       ndeco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: { deco: n.deco || null, date: ndate }, page: npage, ta: ta,
         parts: ['page', 'paper', 'stickers'], noTint: true, lookClass: function () { return 'note-page ' + noteLook(n); },
         commit: function (d) { var v = noteDeco(d); if (JSON.stringify(v) === JSON.stringify(n.deco || null)) return; n.deco = v; n.updated = Date.now(); markNote(n); saveNotes(); },
-        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf });
+        blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf, feelDict: openFeelDict });
       function drawEditor() {
         wrap.textContent = '';
         if (n.list) { cl = checklistEditor(n, function () { ta.value = n.text; }); cl.className = 'checklist ' + noteLook(n); cl.id = 'note-list'; add(wrap, cl); }
@@ -2678,7 +2678,7 @@
       var deco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: e, page: page, ta: ta,
         commit: function (d) { if (!S.diary) return; DY.updateEntry(S.diary, e.id, { deco: d }); saveDiary(); },
         blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function (msg, err) { setMsg(dmsg, msg, !err); },
-        seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf });
+        seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf, feelDict: openFeelDict });
       setTimeout(function () { maybeIntro('entry', true); }, 700);
       openDeco = deco;
       var tagLine = h('p', { class: 'hint entry-tagline', id: 'entry-tags' });
@@ -3839,6 +3839,24 @@
   }
   function insertNotes(tpls) { return (S.notes ? S.notes.notes : []).filter(function (n) { return !n.locked && n.deco && tpls.indexOf(n.deco.tpl.on) >= 0; }); }
 
+
+
+  // ===== the emotion dictionary: 24 feelings in four groups, each with its face and what it means =====
+  function openFeelDict(onPick) {
+    sheet(t('fd.title'), function (body, close) {
+      add(body, h('p', { class: 'hint', text: onPick ? t('fd.hintPick') : t('fd.hint') }));
+      Object.keys(DY.FEELS).forEach(function (g) {
+        var grid = h('div', { class: 'fd-grid' });
+        DY.FEELS[g].forEach(function (key) {
+          var face = ST.element('a:em' + key); if (face) { face.setAttribute('width', 46); face.setAttribute('height', 46); }
+          add(grid, h('button', { type: 'button', class: 'fd-card', 'data-feel': key, id: 'fd-' + key, disabled: !onPick,
+            on: { click: function () { if (!onPick) return; onPick(key); toast(t('fd.added', { w: t('tf.feel.' + key) })); close(); } } },
+            face, h('strong', { text: t('tf.feel.' + key) }), h('span', { class: 'fd-mean', text: t('fd.m.' + key) })));
+        });
+        add(body, h('h3', { class: 'fl-group fl-' + g, text: t('tf.feelg.' + g) }), grid);
+      });
+    });
+  }
 
   // ===== first look: an illustrated cover, "where to start" cards and ready-decorated examples =====
   // A new person sees something pretty straight away and three big buttons for the first things worth doing;
