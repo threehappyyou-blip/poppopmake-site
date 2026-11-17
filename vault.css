@@ -1450,3 +1450,36 @@ button.pl-line { width: 100%; border: 0; text-align: left; font: inherit; cursor
 .pl-foot { position: sticky; bottom: 0; gap: 8px; padding: 12px 0 4px; background: var(--card); margin-top: 12px; }
 .pl-foot .grow { flex: 1; }
 @media (max-width: 380px) { .pl-list li { grid-template-columns: 1fr 6.5em; } .pl-list li .pl-day { grid-column: 1; } }
+
+/* ===== built-in guide (사용 설명서) ===== */
+.gd-link { display: block; width: 100%; margin: 18px 0 8px; padding: 12px 14px; border: 1px dashed var(--line); border-radius: 14px; background: transparent; color: var(--ink-soft); font: inherit; font-size: .9rem; font-weight: 600; text-align: center; cursor: pointer; }
+.gd-link:hover { background: var(--teal-soft); color: var(--teal); }
+.gd-set { display: flex; flex-direction: column; gap: 4px; width: 100%; text-align: left; font: inherit; color: var(--ink); cursor: pointer; background: linear-gradient(160deg, var(--teal-soft), var(--card) 70%); }
+.gd-set .hint { margin: 0; }
+.gd-tabs { margin-bottom: 10px; }
+#gd-q { margin-bottom: 8px; }
+.gd-prog { margin: 6px 0 4px; font-size: .88rem; font-weight: 600; color: var(--teal); }
+.gd-prog .goal-bar { margin-top: 6px; }
+.gd-h { margin: 18px 0 8px; font-size: 1.02rem; }
+.gd-pros { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.gd-pro { padding: 12px; border-radius: 14px; background: var(--paper); }
+.gd-pro .gd-emo { display: block; font-size: 1.4rem; }
+.gd-pro strong { display: block; margin: 4px 0 2px; font-size: .92rem; line-height: 1.3; }
+.gd-pro p { margin: 0; font-size: .82rem; color: var(--ink-soft); line-height: 1.45; }
+.gd-routines { display: grid; gap: 8px; }
+.gd-rt { padding: 12px 14px; border: 1px solid var(--line); border-radius: 14px; }
+.gd-rt .hint { margin: 2px 0 6px; }
+.gd-rt ol { margin: 0; padding-left: 1.3em; display: grid; gap: 4px; font-size: .9rem; }
+.gd-rt li span { margin-right: 6px; }
+.gd-step { font-size: .84rem; white-space: nowrap; }
+.gd-allhead { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.gd-g { margin: 12px 0 4px; }
+.gd-list { list-style: none; margin: 0; padding: 0; }
+.gd-f { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.gd-f .gd-emo { font-size: 1.3rem; width: 1.6em; text-align: center; }
+.gd-ft strong { font-size: .94rem; }
+.gd-ft p { margin: 2px 0 0; font-size: .84rem; color: var(--ink-soft); line-height: 1.45; }
+.gd-state { display: inline-block; margin-top: 4px; padding: 1px 8px; border-radius: 999px; background: var(--paper); font-size: .74rem; color: var(--ink-soft); }
+.gd-state.on { background: var(--teal-soft); color: var(--teal); font-weight: 700; }
+.gd-foot { margin-top: 16px; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 360px) { .gd-pros { grid-template-columns: 1fr; } }
