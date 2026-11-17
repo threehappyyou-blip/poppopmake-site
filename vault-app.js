@@ -738,6 +738,7 @@
     else if (S.tab === 'notes') renderNotes(main);
     else if (S.tab === 'diary') renderDiary(main);
     else renderSettings(main);
+    if (S.tab !== 'settings' && !(S.tab === 'budget' && S.searchOpen)) add(main, guideLink(S.tab));
     var tabs = h('nav', { class: 'tabbar', 'aria-label': t('app.name') });
     [['budget', 'wallet'], ['notes', 'note'], ['diary', 'book'], ['settings', 'gear']].filter(function (x) { return !ONLY || x[0] === ONLY || x[0] === 'settings' || x[0] === S.tab; }).forEach(function (x) {
       add(tabs, h('button', { type: 'button', class: 'tab' + (S.tab === x[0] ? ' on' : ''), 'aria-current': S.tab === x[0] ? 'page' : null, 'data-tab': x[0],
@@ -3443,6 +3444,7 @@
         on: { change: function (e) { lsSet(PK_AUTO_KEY, e.target.checked ? null : 'off'); } } }), h('span', { text: t('pk.auto') })));
     });
     add(main, topBar(h('h1', { class: 'title', text: t('set.title') })));
+    if (GD) { var gp = gProgress(null); add(main, h('button', { type: 'button', class: 'card gd-set', id: 'set-guide', on: { click: function () { openGuide(); } } }, h('strong', { text: gText().ui.setRow }), h('span', { class: 'hint', text: gText().ui.progress.replace('{n}', gp.n).replace('{all}', gp.all) }))); }
     var cur = currencySelect(S.budget.currency); cur.id = 'set-currency';
     cur.addEventListener('change', function () { S.budget.currency = cur.value; saveBudget(); render(); });
     var theme = h('select', { class: 'input', id: 'set-theme' });
@@ -4896,7 +4898,7 @@
   function introBtn() {
     return HP && !DESK ? h('button', { type: 'button', class: 'icon-btn', id: 'intro-btn', 'aria-label': t('in.btn'), title: t('in.btn'), on: { click: function () { var k = introKey(); if (k) startIntro(k); } } }, icon('help')) : null;
   }
-  var ACT_LABEL = { 'plan-save': 'pl.do.save', 'plan-open': 'pl.do.open', 'plan-make': 'pl.do.make', add: 'hp.do.add', recurring: 'hp.do.recurring', note: 'hp.do.note', charts: 'hp.do.charts', 'monthly-budget': 'hp.do.budget',
+  var ACT_LABEL = { 'guide-try': 'gd.try', 'plan-save': 'pl.do.save', 'plan-open': 'pl.do.open', 'plan-make': 'pl.do.make', add: 'hp.do.add', recurring: 'hp.do.recurring', note: 'hp.do.note', charts: 'hp.do.charts', 'monthly-budget': 'hp.do.budget',
     recap: 'hp.do.recap', 'make-recurring': 'hp.do.makeRec', diary: 'hp.do.diary', guide: 'hp.do.guide', 'add-income': 'hp.do.income', goal: 'hp.do.goal', passkey: 'hp.do.passkey', 'quick-add': 'hp.do.quickAdd', 'make-weekly': 'hp.do.makeWeekly', checkin: 'ci.start' };
   function hpText(x) {
     var v = {}, src = x[1] || {};
@@ -4911,6 +4913,136 @@
     return t(x[0], v);
   }
   // Up to three cards on Budget (two on Notes and Diary, only about that tab). Safety notices keep their own card above.
+  // ===== the built-in guide: strengths, routines and every feature with a "Try it" button (vault-guide.js holds the words) =====
+  var GD = window.VaultGuide;
+  function gText() { return GD.text(I.get()); }
+  function gApps() { return ONLY ? [ONLY, 'common'] : GD.APPS; }
+  function gFeatures(app) {
+    return GD.F.filter(function (f) {
+      if (app && f[1] !== app) return false;
+      if (ONLY && f[1] !== ONLY && f[1] !== 'common') return false;
+      if (f[0] === 'n-desk' && (isPhone() || TOSS)) return false;
+      if ((f[0] === 'c-install' || f[0] === 'c-lang') && TOSS) return false;
+      if (f[0] === 'b-notify' && !ntSupported()) return false;
+      return true;
+    });
+  }
+  function gUsed(id) { return GD.used(id, { budget: S.budget, notes: S.notes, diary: S.diary, settings: S.settings }); }
+  function gProgress(app) {
+    var list = gFeatures(app).map(function (f) { return gUsed(f[0]); }).filter(function (u) { return u !== null; });
+    return { all: list.length, n: list.filter(Boolean).length, total: gFeatures(app).length };
+  }
+  // where each "Try it" goes
+  function gView(v) { return function () { goTab('budget'); S.budgetView = v; render(); }; }
+  function gFocus(tab, sel, pre) { return function () { goTab(tab); if (tab === 'budget' && S.budgetView !== 'list') { S.budgetView = 'list'; render(); } setTimeout(function () { var el = document.getElementById(sel); if (el) { if (pre) el.value = pre; el.scrollIntoView({ block: 'center' }); el.focus(); } }, 60); }; }
+  function gNewNote() { goTab('notes'); setTimeout(function () { var b = document.getElementById('new-note'); if (b) b.click(); }, 60); }
+  var GRUN = {
+    'b-add': function () { runAct('add'); }, 'b-quick': gFocus('budget', 'quick-input'),
+    'b-tiles': function () { gFocus('budget', 'quick-input')(); setTimeout(function () { var t0 = document.querySelector('.tiles-card'); if (t0) t0.scrollIntoView({ block: 'center' }); }, 120); },
+    'b-receipt': function () { goTab('budget'); openAdd(); }, 'b-recurring': function () { openRecurring(); }, 'b-import': function () { openImport(); }, 'b-methods': function () { openMethods(); },
+    'b-plan': function () { goTab('budget'); S.budgetView = 'plan'; render(); openPlan(S.budget.plan ? 'income' : null); }, 'b-budget': function () { openMonthlyBudget(); }, 'b-catbudget': function () { openCatBudgets(); },
+    'b-goal': function () { gView('goals')(); editGoal(null); }, 'b-nobuy': function () { gView('goals')(); if (S.settings.nobuy && S.settings.nobuy.start) openNobuy(); else openNobuyStart(); },
+    'b-challenge': function () { gView('goals')(); setTimeout(function () { var x = document.getElementById('ins-shelf'); if (x) x.scrollIntoView({ block: 'start' }); }, 80); },
+    'b-checkin': function () { openCheckin(); }, 'b-worth': function () { openCheckin(); }, 'b-notify': function () { openNotify(); }, 'b-seals': function () { openSealBook(); },
+    'b-calendar': gView('cal'), 'b-charts': gView('charts'), 'b-year': gView('year'), 'b-search': function () { runAct('search'); },
+    'n-quick': gFocus('notes', 'notes-quick'), 'n-check': gFocus('notes', 'notes-quick', '[] '), 'n-tpl': function () { goTab('notes'); openNoteTpls(); },
+    'n-tobudget': gNewNote, 'n-remind': gNewNote, 'n-pin': gNewNote, 'n-photo': gNewNote, 'n-deco': gNewNote, 'n-lock': gNewNote, 'n-desk': function () { goTab('notes'); },
+    'd-write': function () { runAct('diary'); }, 'd-mood': function () { runAct('diary'); }, 'd-feel': function () { goTab('diary'); openFeelDict(); }, 'd-tpl': function () { runAct('diary'); },
+    'd-letter': function () { goTab('diary'); newLetter(); }, 'd-search': function () { goTab('diary'); S.diarySearch = true; render(); },
+    'd-deco': function () { runAct('diary'); }, 'd-photo': function () { runAct('diary'); }, 'd-draw': function () { runAct('diary'); },
+    'd-cover': function () { goTab('diary'); openCoverEditor('diary'); }, 'd-books': function () { goTab('diary'); editBook(null); },
+    'd-weekly': function () { goTab('diary'); openWeekly(); }, 'd-five': function () { goTab('diary'); openFiveYears(); }, 'd-wrapped': function () { goTab('diary'); openWrapped(); },
+    'd-wall': function () { goTab('diary'); openWallpaper(); }, 'd-share': function () { goTab('diary'); }, 'd-pdf': function () { openDiaryPrint(); }, 'd-pet': function () { openPet(); },
+    'c-backup': function () { openBackup(); }, 'c-lock': function () { openPasskey(); }, 'c-transfer': function () { openTransfer(true); }, 'c-helper': function () { openAsk(); },
+    'c-theme': function () { openSheets(); }, 'c-install': function () { openInstall(); }, 'c-reminder': function () { openReminder(); },
+    'c-lang': function () { goTab('settings'); setTimeout(function () { var el = document.getElementById('set-lang'); if (el) { el.scrollIntoView({ block: 'center' }); el.focus(); } }, 60); }
+  };
+  function gTry(id) {
+    var f = GRUN[id]; if (!f) return;
+    S.settings.helper.done['g-' + id] = Math.min(99, (S.settings.helper.done['g-' + id] || 0) + 1); saveSettings();
+    try { f(); } catch (e) {}
+  }
+  function openGuide(app, q0) {
+    if (!GD) return;
+    var T = gText(), apps = gApps(), cur = app && apps.indexOf(app) >= 0 ? app : apps.indexOf(S.tab) >= 0 ? S.tab : apps[0], unused = false;
+    sheet('📖 ' + T.ui.title, function (body, close) {
+      var tabs = h('div', { class: 'seg gd-tabs', role: 'tablist', id: 'gd-tabs' });
+      var q = h('input', { class: 'input', id: 'gd-q', type: 'search', autocomplete: 'off', placeholder: T.ui.search, 'aria-label': T.ui.search, value: q0 || '' });
+      var out = h('div', { id: 'gd-body' });
+      function go(id) { close(); setTimeout(function () { gTry(id); }, 0); }
+      function fRow(f) {
+        var tx = T.f[f[0]], u = gUsed(f[0]);
+        return h('li', { class: 'gd-f', 'data-id': f[0] }, h('span', { class: 'gd-emo', 'aria-hidden': 'true', text: f[2] }),
+          h('div', { class: 'gd-ft' }, h('strong', { text: tx[0] }), h('p', { text: tx[1] }),
+            u === null ? null : h('span', { class: 'gd-state' + (u ? ' on' : ''), text: u ? T.ui.used : T.ui.notYet })),
+          GRUN[f[0]] ? h('button', { type: 'button', class: 'btn small gd-try', 'data-try': f[0], text: T.ui.try, on: { click: function () { go(f[0]); } } }) : null);
+      }
+      function tabsDraw() {
+        tabs.textContent = '';
+        apps.forEach(function (a) {
+          add(tabs, h('button', { type: 'button', role: 'tab', id: 'gd-tab-' + a, 'aria-selected': a === cur ? 'true' : 'false', class: a === cur ? 'on' : '', text: T.ui.tabs[a],
+            on: { click: function () { cur = a; q.value = ''; unused = false; tabsDraw(); draw(); } } }));
+        });
+      }
+      function draw() {
+        out.textContent = '';
+        var qs = q.value.trim().toLowerCase();
+        if (qs) {
+          var pool = gFeatures(null), hits = pool.filter(function (f) { var x = T.f[f[0]]; return (x[0] + ' ' + x[1] + ' ' + (x[2] || '')).toLowerCase().indexOf(qs) >= 0; });
+          if (!hits.length && HP && HP.match) {
+            var list = pool.map(function (f) { var x = T.f[f[0]]; return { id: f[0], kw: [x[0]].concat((x[2] || '').split(' ')) }; });
+            var m = HP.match(q.value, list, 6), ids = m.map(function (r) { return r.id; });
+            hits = pool.filter(function (f) { return ids.indexOf(f[0]) >= 0; });
+          }
+          if (!hits.length) add(out, h('p', { class: 'hint', id: 'gd-none', text: T.ui.none }));
+          else add(out, h('ul', { class: 'gd-list', id: 'gd-hits' }, hits.map(fRow)));
+          return;
+        }
+        var pr = gProgress(cur);
+        if (pr.all) add(out, h('div', { class: 'gd-prog', id: 'gd-prog' }, h('span', { text: T.ui.progress.replace('{n}', pr.n).replace('{all}', pr.all) }),
+          h('div', { class: 'goal-bar' }, h('span', { style: 'width:' + Math.round(pr.n / pr.all * 100) + '%' }))));
+        add(out, h('h3', { class: 'gd-h', text: T.ui.pros }), h('div', { class: 'gd-pros', id: 'gd-pros' }, (T.pros[cur] || []).map(function (p) {
+          return h('div', { class: 'gd-pro' }, h('span', { class: 'gd-emo', 'aria-hidden': 'true', text: p[0] }), h('strong', { text: p[1] }), h('p', { text: p[2] }));
+        })));
+        var rs = T.routines[cur] || [];
+        if (rs.length) add(out, h('h3', { class: 'gd-h', text: T.ui.routines }), h('div', { class: 'gd-routines', id: 'gd-routines' }, rs.map(function (r) {
+          return h('div', { class: 'gd-rt' }, h('strong', { text: r.t }), h('p', { class: 'hint', text: T.ui.who + ': ' + r.who }),
+            h('ol', {}, r.s.map(function (s) {
+              return h('li', {}, h('span', { text: s[0] }), s[1] && GRUN[s[1]] ? h('button', { type: 'button', class: 'link gd-step', 'data-try': s[1], text: T.ui.try + ' →', on: { click: function () { go(s[1]); } } }) : null);
+            })));
+        })));
+        add(out, h('div', { class: 'gd-allhead' }, h('h3', { class: 'gd-h', text: T.ui.all + ' (' + gFeatures(cur).length + ')' }),
+          pr.all ? h('button', { type: 'button', class: 'chip' + (unused ? ' on' : ''), id: 'gd-unused', 'aria-pressed': unused ? 'true' : 'false', text: unused ? T.ui.showAll : T.ui.unusedOnly, on: { click: function () { unused = !unused; draw(); } } }) : null));
+        var groups = {}, order = [];
+        gFeatures(cur).forEach(function (f) { if (unused && gUsed(f[0]) === true) return; if (!groups[f[3]]) { groups[f[3]] = []; order.push(f[3]); } groups[f[3]].push(f); });
+        order.forEach(function (g) { add(out, h('p', { class: 'field-label gd-g', text: T.ui.groups[g] || g }), h('ul', { class: 'gd-list' }, groups[g].map(fRow))); });
+        add(out, h('div', { class: 'row gd-foot' }, h('button', { type: 'button', class: 'btn small', id: 'gd-tour', text: T.ui.tour, on: { click: function () { close(); setTimeout(openTour, 0); } } }),
+          TOSS ? null : h('a', { class: 'btn small', href: '/manual-vault', target: '_blank', rel: 'noopener', text: T.ui.web })));
+      }
+      q.addEventListener('input', draw);
+      tabsDraw(); add(body, apps.length > 1 ? tabs : null, q, out); draw();
+    }, { wide: true });
+  }
+  // one feature a week the person hasn't tried yet, from the app they are looking at — only once they have settled in
+  function guideTip(tab) {
+    if (!GD || !S.settings || S.settings.helper.mute.gtip) return null;
+    var days = {}; S.budget.tx.forEach(function (x) { days[x.date] = 1; }); (S.diary.entries || []).forEach(function (e) { days[e.date] = 1; });
+    (S.notes.notes || []).forEach(function (n) { days[new Date(n.created).toISOString().slice(0, 10)] = 1; });
+    if (Object.keys(days).length < 3) return null;
+    var app = tab === 'settings' ? null : tab, cand = gFeatures(app).filter(function (f) { return f[1] !== 'common' && gUsed(f[0]) === false && GRUN[f[0]]; });
+    if (!cand.length) return null;
+    var d = new Date(today() + 'T00:00:00'), wk = Math.floor((d - new Date(d.getFullYear(), 0, 1)) / 6048e5), f = cand[wk % cand.length];
+    var id = 'gtip-' + f[0] + '-' + d.getFullYear() + 'w' + wk;
+    if (S.settings.helper.snooze[id] === today()) return null;
+    var T = gText();
+    return { id: id, type: 'gtip', emoji: f[2], tab: f[1], titleText: T.ui.tipT.replace('{f}', T.f[f[0]][0]), bodyText: T.f[f[0]][1], act: 'guide-try', args: { id: f[0] }, extra: { act: 'guide-open', label: 'gd.more' } };
+  }
+  function guideLink(tab) {
+    if (!GD) return null;
+    var T = gText(), n = gFeatures(tab === 'settings' ? null : tab).length;
+    return h('button', { type: 'button', class: 'gd-link', id: 'guide-link-' + tab, on: { click: function () { openGuide(tab); } } }, T.ui.link.replace('{all}', n));
+  }
+
   // what the plan wants to say today: the saving went in? how last week went? (and, after a payday, making one)
   function planHelp() {
     var hs = S.settings.helper, out = [], p = S.budget.plan, td = today();
@@ -4937,6 +5069,7 @@
       list.unshift({ id: 'checkin', type: 'checkin', emoji: '✅', title: ['hp.s.checkinT'], body: cs >= 1 ? ['hp.s.checkinStreak', { n: cs }] : ['hp.s.checkinB'], act: 'checkin' });
     }
     if (tab === 'budget') planHelp().forEach(function (x) { list.unshift(x); });
+    var gtp = guideTip(tab); if (gtp) list.push(gtp);
     if (pkCardDue()) list.unshift({ id: 'passkey', type: 'passkey', emoji: '👆', title: ['hp.pk.t'], body: ['hp.pk.b'], act: 'passkey', alt: 'hp.pk.later' });
     list = list.slice(0, tab === 'budget' ? 3 : 2);
     if (!list.length) return null;
@@ -4949,7 +5082,7 @@
     list.forEach(function (x) {
       add(wrap, h('article', { class: 'helper-card', 'data-sid': x.id, 'data-type': x.type },
         h('span', { class: 'helper-ico', 'aria-hidden': 'true', text: x.emoji }),
-        h('div', { class: 'helper-text' }, h('strong', { text: hpText(x.title) }), h('p', { text: hpText(x.body) }),
+        h('div', { class: 'helper-text' }, h('strong', { text: x.titleText || hpText(x.title) }), h('p', { text: x.bodyText || hpText(x.body) }),
           h('div', { class: 'helper-actions' },
             h('button', { type: 'button', class: 'btn small primary', 'data-act': x.act, text: t(ACT_LABEL[x.act] || 'hp.do.open'), on: { click: function () { runAct(x.act, x.args || {}); } } }),
             x.extra ? h('button', { type: 'button', class: 'btn small', 'data-extra': x.extra.act, text: t(x.extra.label), on: { click: function () { runAct(x.extra.act, x.args || {}); } } }) : null,
@@ -4979,6 +5112,8 @@
   function runAct(act, a) {
     a = a || {};
     if (act === 'passkey') { openPasskey(); return; }
+    if (act === 'guide-try') { gTry(a.id); return; }
+    if (act === 'guide-open') { openGuide(); return; }
     if (act === 'plan-make') { goTab('budget'); openPlan(); return; }
     if (act === 'plan-open') { if (S.budget.plan && a.seen) { S.budget.plan.seen = a.seen; saveBudget(); } goTab('budget'); S.budgetView = 'plan'; render(); return; }
     if (act === 'plan-save') {
@@ -5167,7 +5302,7 @@
       { id: 'reminder', kw: ['매일 알림', '기록 알림', '잊어버려', '매일', 'daily reminder', 'every day', '毎日'], run: go(openReminder) },
       { id: 'shortcuts', kw: ['키보드', 'keyboard', 'キーボード'], run: go(openShortcuts), hide: isPhone },
       { id: 'tour', kw: ['사용법', '처음', '어떻게 써', '도움말', '설명', 'how to use', 'help', 'tutorial', 'intro', '使い方', 'ヘルプ'], run: go(openTour) },
-      { id: 'manual', kw: ['설명서', '매뉴얼', 'manual', 'guide', 'マニュアル', '説明書'], run: function () { window.open('/manual-vault', '_blank', 'noopener'); } },
+      { id: 'manual', kw: ['설명서', '매뉴얼', '사용 설명서', '장점', '기능', 'manual', 'guide', 'features', 'マニュアル', '説明書', 'ガイド', '機能'], run: function () { openGuide(); } },
       { id: 'erase', kw: ['전부 삭제', '모두 삭제', '초기화', '다 지우', 'erase', 'reset', 'delete everything', '全部削除', '初期化'], run: go(openErase) }
     ];
     return L.filter(function (a) { return !a.hide || !a.hide(); });
@@ -5208,7 +5343,8 @@
         e.preventDefault();
         var m = HP.match(q.value, LIST, 1); if (m.length) go(byId[m[0].id]);
       });
-      add(body, h('p', { class: 'hint', text: t('hp.askHint') }), q, chips, res, none, h('p', { class: 'fine', text: t('hp.setNote') }));
+      add(body, GD ? h('button', { type: 'button', class: 'gd-link', id: 'hp-guide', on: { click: function () { close(); setTimeout(function () { openGuide(null, q.value.trim()); }, 0); } } }, gText().ui.link.replace('{all}', gFeatures(null).length)) : null,
+        h('p', { class: 'hint', text: t('hp.askHint') }), q, chips, res, none, h('p', { class: 'fine', text: t('hp.setNote') }));
     });
   }
   function openHelperSettings() {
