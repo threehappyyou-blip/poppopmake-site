@@ -318,8 +318,160 @@
       created: +g.created || Date.now(), done: +g.done > 0 ? +g.done : null, moves: moves };
   }
 
+  // ---------- pay yourself first: save on payday, then spend what is left, a week at a time ----------
+  // plan: { income, payday (1-31; 31 = last day), fixed: [{ id, name, amt, day, cat, rid }], sink: [{ id, name, yearly }],
+  //         save: { amt, day, goal, auto }, incomeRid, created: 'YYYY-MM-DD', done: { 'YYYY-MM': amount saved }, seen }
+  function dayDiff(a, b) { return Math.round((Date.UTC(+b.slice(0, 4), +b.slice(5, 7) - 1, +b.slice(8, 10)) - Date.UTC(+a.slice(0, 4), +a.slice(5, 7) - 1, +a.slice(8, 10))) / 864e5); }
+  function clampDay(d) { d = Math.round(+d || 1); return Math.min(31, Math.max(1, d)); }
+  function posInt(v) { return Number.isInteger(v) && v > 0 && v < MAX_MINOR ? v : 0; }
+  function cleanPlan(p) {
+    if (!p || typeof p !== 'object' || !posInt(p.income)) return null;
+    var name = function (s) { return String(s || '').replace(/[\u0000-\u001f]/g, '').slice(0, 40); };
+    var fixed = (Array.isArray(p.fixed) ? p.fixed : []).filter(function (f) { return f && posInt(f.amt); }).slice(0, 40).map(function (f) {
+      return { id: typeof f.id === 'string' && /^[a-z0-9]{1,20}$/.test(f.id) ? f.id : uid(), name: name(f.name), amt: f.amt, day: clampDay(f.day),
+        cat: typeof f.cat === 'string' ? f.cat.slice(0, 40) : 'other', rid: typeof f.rid === 'string' ? f.rid : null };
+    });
+    var sink = (Array.isArray(p.sink) ? p.sink : []).filter(function (s) { return s && posInt(s.yearly); }).slice(0, 30).map(function (s) {
+      return { id: typeof s.id === 'string' && /^[a-z0-9]{1,20}$/.test(s.id) ? s.id : uid(), name: name(s.name), yearly: s.yearly };
+    });
+    var sv = p.save && typeof p.save === 'object' ? p.save : {};
+    var done = {}; if (p.done && typeof p.done === 'object') Object.keys(p.done).sort().slice(-36).forEach(function (k) { if (/^\d{4}-\d{2}$/.test(k) && posInt(p.done[k])) done[k] = p.done[k]; });
+    return { income: p.income, payday: clampDay(p.payday), fixed: fixed, sink: sink,
+      save: { amt: Number.isInteger(sv.amt) && sv.amt >= 0 && sv.amt < MAX_MINOR ? sv.amt : 0, day: clampDay(sv.day), goal: typeof sv.goal === 'string' ? sv.goal : null, auto: sv.auto === true },
+      incomeRid: typeof p.incomeRid === 'string' ? p.incomeRid : null, created: validDate(p.created) ? p.created : null, done: done,
+      seen: validDate(p.seen) ? p.seen : null };
+  }
+  function planMath(p) {
+    var fixed = 0, sinkY = 0; (p.fixed || []).forEach(function (f) { fixed += f.amt; }); (p.sink || []).forEach(function (s) { sinkY += s.yearly; });
+    var sink = Math.ceil(sinkY / 12), save = (p.save && p.save.amt) || 0, left = p.income - fixed - sink - save;
+    return { income: p.income, fixed: fixed, sink: sink, save: save, left: left, weekly: left > 0 ? Math.floor(left / 4) : 0, short: left < 0 ? -left : 0,
+      savePct: p.income ? Math.round(save * 100 / p.income) : 0 };
+  }
+  function payDate(ym, day) { return ym + '-' + pad(Math.min(day, daysInMonth(ym))); }
+  // the pay cycle around `today`: payday → the day before the next payday, as four weeks (the fourth runs to the end)
+  function planCycle(p, today) {
+    var ym = ymOf(today), pd = payDate(ym, p.payday), start = today >= pd ? pd : payDate(addMonths(ym, -1), p.payday);
+    var end = addDays(payDate(addMonths(ymOf(start), 1), p.payday), -1), weeks = [];
+    for (var i = 0; i < 4; i++) weeks.push({ start: addDays(start, i * 7), end: i < 3 ? addDays(start, i * 7 + 6) : end });
+    var idx = Math.min(3, Math.floor(dayDiff(start, today) / 7));
+    return { start: start, end: end, weeks: weeks, idx: idx, week: weeks[idx] };
+  }
+  function planSkip(doc) {                // entries that are part of the plan, not everyday spending
+    var p = doc.plan, skip = {}; if (!p) return skip;
+    p.fixed.forEach(function (f) { if (f.rid) skip[f.rid] = 1; }); if (p.incomeRid) skip[p.incomeRid] = 1;
+    return skip;
+  }
+  function spentBetween(doc, a, b) {
+    var skip = planSkip(doc), s = 0;
+    doc.tx.forEach(function (t) { if (t.type === 'expense' && t.cur === doc.currency && t.date >= a && t.date <= b && !(t.rid && skip[t.rid])) s += t.amt; });
+    return s;
+  }
+  function planWeek(doc, today) {
+    var p = doc.plan; if (!p) return null;
+    var c = planCycle(p, today), lim = planMath(p).weekly, spent = spentBetween(doc, c.week.start, today), daysLeft = dayDiff(today, c.week.end) + 1;
+    return { idx: c.idx, start: c.week.start, end: c.week.end, limit: lim, spent: spent, left: lim - spent, daysLeft: daysLeft,
+      perDay: lim - spent > 0 ? Math.floor((lim - spent) / daysLeft) : 0, extra: dayDiff(c.week.start, c.week.end) + 1 - 7, cycle: c };
+  }
+  function planSaveDue(doc, today) {
+    var p = doc.plan; if (!p || !(p.save.amt > 0)) return null;
+    var ym = ymOf(today), date = payDate(ym, p.save.day);
+    if (p.done[ym]) return { state: 'done', date: date, amt: p.done[ym] };
+    if (today < date || (p.created && p.created > date)) {
+      var nd = today < date ? date : payDate(addMonths(ym, 1), p.save.day);
+      return { state: 'soon', date: nd, amt: p.save.amt, days: dayDiff(today, nd) };
+    }
+    return { state: 'due', date: date, amt: p.save.amt, late: dayDiff(date, today) };
+  }
+  // on the first two days of a new week: how the week before went
+  function planWeekReport(doc, today) {
+    var p = doc.plan; if (!p) return null;
+    var c = planCycle(p, today), cur = c.week;
+    if (dayDiff(cur.start, today) > 1) return null;
+    var prev = c.idx > 0 ? c.weeks[c.idx - 1] : planCycle(p, addDays(c.start, -1)).weeks[3];
+    if (p.created && p.created >= prev.end) return null;          // the plan has to have lived in that week
+    var lim = planMath(p).weekly, spent = spentBetween(doc, prev.start, prev.end);
+    return { start: prev.start, end: prev.end, spent: spent, limit: lim, diff: lim - spent, idx: c.idx > 0 ? c.idx - 1 : 3 };
+  }
+  var EVERYDAY = { food: 1, cafe: 1, groceries: 1, transport: 1, shopping: 1, fun: 1, travel: 1, gifts: 1 };   // never a monthly bill
+  function normNote(s) { return String(s || '').trim().toLowerCase().replace(/\s+/g, ' '); }
+  // what the last months already say: the take-home pay and the payments that come back every month
+  function planSuggest(doc, today) {
+    var from = addDays(today, -95), income = null, fixed = [], seen = {};
+    doc.tx.forEach(function (t) {
+      if (t.type === 'income' && t.cur === doc.currency && t.cat === 'salary' && t.date >= addDays(today, -62) && t.date <= today && (!income || t.date > income.date)) income = { amt: t.amt, day: +t.date.slice(8, 10), date: t.date };
+    });
+    (doc.recurring || []).forEach(function (r) {
+      if (!r.active || (r.cur || doc.currency) !== doc.currency) return;
+      if (r.type === 'income') { if (!income) income = { amt: r.amt, day: r.day, rid: r.id }; return; }
+      if (r.freq === 'week') return;
+      seen[normNote(r.note)] = 1;
+      fixed.push({ name: r.note, amt: r.amt, day: r.day, cat: r.cat, rid: r.id, from: 'rec' });
+    });
+    var groups = {};
+    doc.tx.forEach(function (t) {
+      if (t.type !== 'expense' || t.cur !== doc.currency || t.rid || t.date < from || t.date > today) return;
+      var k = normNote(t.note); if (!k || seen[k] || EVERYDAY[t.cat]) return;
+      (groups[k + '\u0000' + t.cat] = groups[k + '\u0000' + t.cat] || []).push(t);
+    });
+    var cand = [];
+    Object.keys(groups).forEach(function (k) {
+      var g = groups[k].sort(function (a, b) { return a.date < b.date ? -1 : 1; }), months = {}, mn = Infinity, mx = 0;
+      g.forEach(function (t) { months[ymOf(t.date)] = (months[ymOf(t.date)] || 0) + 1; mn = Math.min(mn, t.amt); mx = Math.max(mx, t.amt); });
+      var nm = Object.keys(months).length, perMonth = g.length / nm;
+      if (nm < 2 || perMonth > 1.5 || mx > mn * 1.15) return;                 // once a month, about the same amount
+      var last = g[g.length - 1];
+      cand.push({ name: last.note.trim(), amt: last.amt, day: +last.date.slice(8, 10), cat: last.cat, rid: null, from: 'seen', n: nm });
+    });
+    cand.sort(function (a, b) { return b.n - a.n || b.amt - a.amt; });
+    if (income) delete income.date;
+    return { income: income, fixed: fixed.concat(cand).slice(0, 16) };
+  }
+  // Saves the plan and makes it run by itself: fixed payments and the salary repeat every month, the saving has a goal,
+  // and the monthly budget becomes "income − saving − occasional fund". Entries the plan made itself go when they leave the plan.
+  function applyPlan(doc, input, o) {
+    o = o || {}; var today = o.today, ym = ymOf(today), old = doc.plan;
+    var p = cleanPlan(Object.assign({}, input, { done: old ? old.done : {}, created: old && old.created ? old.created : today, incomeRid: old ? old.incomeRid : input.incomeRid, seen: old ? old.seen : null }));
+    if (!p) return null;
+    var startFor = function (day) { return Math.min(day, daysInMonth(ym)) > +today.slice(8, 10) ? ym : addMonths(ym, 1); };
+    var keep = {};
+    p.fixed.forEach(function (f) {
+      var r = f.rid && doc.recurring.find(function (x) { return x.id === f.rid; });
+      if (r) { updateRecurring(doc, r.id, { amt: f.amt, day: f.day, note: f.name || r.note, active: true }); }
+      else { r = addRecurring(doc, { type: 'expense', amt: f.amt, cat: f.cat, note: f.name, day: f.day, start: startFor(f.day) }); r.plan = 1; f.rid = r.id; }
+      keep[r.id] = 1;
+    });
+    doc.recurring = doc.recurring.filter(function (r) { return !r.plan || keep[r.id] || r.type === 'income'; });
+    var ir = p.incomeRid && doc.recurring.find(function (x) { return x.id === p.incomeRid; });
+    if (o.incomeAuto) {
+      if (ir) updateRecurring(doc, ir.id, { amt: p.income, day: p.payday, active: true });
+      else { ir = addRecurring(doc, { type: 'income', amt: p.income, cat: 'salary', note: o.incomeNote || '', day: p.payday, start: startFor(p.payday) }); ir.plan = 1; p.incomeRid = ir.id; }
+    } else if (ir) {
+      if (ir.plan) deleteRecurring(doc, ir.id); p.incomeRid = null;
+    }
+    if (p.save.goal && !(doc.goals || []).some(function (g) { return g.id === p.save.goal; })) p.save.goal = null;
+    if (!p.save.goal && o.goalNew && p.save.amt > 0) { var g = addGoal(doc, { name: o.goalNew.name, emoji: o.goalNew.emoji, target: p.save.amt * 12 }); if (g) p.save.goal = g.id; }
+    var m = planMath(p);
+    if (o.setBudget && m.income - m.save - m.sink > 0) doc.budgets.total = m.income - m.save - m.sink;
+    doc.plan = p;
+    return p;
+  }
+  // the saving went in: recorded once a month (on the goal, when there is one)
+  function planSaved(doc, today, amt) {
+    var p = doc.plan; if (!p) return null;
+    var ym = ymOf(today); amt = Math.round(amt || p.save.amt); if (!(amt > 0)) return null;
+    p.done[ym] = amt;
+    var res = p.save.goal ? goalMove(doc, p.save.goal, amt, today, '') : null;
+    return { amt: amt, goal: res };
+  }
+  function planUnsave(doc, today) {
+    var p = doc.plan; if (!p) return;
+    var ym = ymOf(today), amt = p.done[ym]; delete p.done[ym];
+    var g = p.save.goal && (doc.goals || []).find(function (x) { return x.id === p.save.goal; });
+    if (g && amt) { for (var i = g.moves.length - 1; i >= 0; i--) if (g.moves[i].amt === amt && ymOf(g.moves[i].date) === ym) { g.moves.splice(i, 1); break; } if (goalSaved(g) < g.target) g.done = null; }
+  }
+
   function newDoc(lang, currency) {
-    return { v: 1, currency: currency || 'USD', cats: defaultCats(), tx: [], budgets: { total: null, cats: {} }, recurring: [], goals: [], methods: [] };
+    return { v: 1, currency: currency || 'USD', cats: defaultCats(), tx: [], budgets: { total: null, cats: {} }, recurring: [], goals: [], methods: [], plan: null };
   }
 
   function addCategory(doc, c) {
@@ -770,6 +922,7 @@
     });
     if (Array.isArray(raw.goals)) d.goals = raw.goals.map(cleanGoal).filter(Boolean).slice(0, 50);
     d.recurring.forEach(function (r) { if (r.pm !== undefined && !mids[r.pm]) delete r.pm; });
+    d.plan = cleanPlan(raw.plan);
     return d;
   }
 
@@ -784,7 +937,8 @@
     addMonths: addMonths, daysInMonth: daysInMonth, validDate: validDate, uid: uid,
     calcAmount: calcAmount, dueSchedule: dueSchedule, recurringIcs: recurringIcs, quickParse: quickParse, guessQuick: guessQuick, tiles: tiles, tileAmounts: tileAmounts, shortAmount: shortAmount, addDays: addDays, weekday: weekday, dailyAllowance: dailyAllowance, upcomingFixed: upcomingFixed, yearSummary: yearSummary, yearsWithData: yearsWithData,
     addMethod: addMethod, updateMethod: updateMethod, removeMethod: removeMethod, methodTotals: methodTotals, photosOf: photosOf,
-    addGoal: addGoal, updateGoal: updateGoal, deleteGoal: deleteGoal, goalMove: goalMove, goalProgress: goalProgress, goalSaved: goalSaved, goalsSavedIn: goalsSavedIn
+    addGoal: addGoal, updateGoal: updateGoal, deleteGoal: deleteGoal, goalMove: goalMove, goalProgress: goalProgress, goalSaved: goalSaved, goalsSavedIn: goalsSavedIn,
+    planSuggest: planSuggest, planMath: planMath, planCycle: planCycle, planWeek: planWeek, planSaveDue: planSaveDue, planWeekReport: planWeekReport, applyPlan: applyPlan, planSaved: planSaved, planUnsave: planUnsave, cleanPlan: cleanPlan
   };
   root.VaultBudget = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
