@@ -451,6 +451,11 @@
     }, 30);
     return m;
   }
+  // keep sheets above the on-screen keyboard: the visible height (and its top, on phones that scroll it) as CSS variables
+  if (window.visualViewport) {
+    var vvSet = function () { var vv = window.visualViewport; document.documentElement.style.setProperty('--vvh', Math.round(vv.height) + 'px'); document.documentElement.style.setProperty('--vvt', Math.round(vv.offsetTop) + 'px'); };
+    window.visualViewport.addEventListener('resize', vvSet); window.visualViewport.addEventListener('scroll', vvSet); vvSet();
+  }
   function closeAllModals() { modals.slice().reverse().forEach(function (m) { m.close(); }); }
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape' && modals.length) { e.preventDefault(); modals[modals.length - 1].close(); }
@@ -2888,14 +2893,14 @@
           h('span', { class: 'book-preset-ico', text: pz[1] }), h('span', { text: t('nb2.p.' + pz[0]) })));
       });
       var arts = h('div', { class: 'cv-arts', id: 'book-arts' });
-      function drawArts() { arts.textContent = ''; CV.IDS.forEach(function (aid) { add(arts, h('button', { type: 'button', class: 'cv-art' + (d.art === aid ? ' on' : ''), 'data-art': aid, on: { click: function () { d.art = aid; drawArts(); } } }, h('span', { class: 'cv-mini' }, CV.element(aid)), h('span', { class: 'cv-name', text: t('cv.a.' + aid) }))); }); }
+      function drawArts() { arts.textContent = ''; sceneIds().forEach(function (aid) { add(arts, h('button', { type: 'button', class: 'cv-art' + (d.art === aid ? ' on' : ''), 'data-art': aid, on: { click: function () { d.art = aid; drawArts(); } } }, h('span', { class: 'cv-mini' }, CV.element(aid)), h('span', { class: 'cv-name', text: t('cv.a.' + aid) }))); }); }
       var tpls = h('div', { class: 'chips wrap', id: 'book-tpls' });
       function drawTpls() { tpls.textContent = ''; [null, 'reading', 'workout', 'thanks', 'travel', 'money', 'feeling', 'letter', 'pilsa', 'comic4', 'meal', 'sleep'].forEach(function (k) { add(tpls, h('button', { type: 'button', class: 'chip small' + (d.tpl === k ? ' on' : ''), 'data-tpl': k || 'none', text: t('tpl.' + (k || 'none')), on: { click: function () { d.tpl = k; drawTpls(); } } })); }); }
       var emo = h('input', { class: 'input', id: 'book-emoji', maxlength: 4, value: d.emoji, 'aria-label': t('nb2.emoji'), style: 'max-width:5em;text-align:center' });
       drawArts(); drawTpls();
       add(body, b ? null : h('p', { class: 'field-label', text: t('nb2.presets') }), b ? null : presets,
         h('div', { class: 'two' }, h('label', { class: 'field' }, h('span', { class: 'field-label', text: t('nb2.name') }), name), h('label', { class: 'field' }, h('span', { class: 'field-label', text: t('nb2.emoji') }), emo)),
-        h('p', { class: 'field-label', text: t('nb2.cover') }), arts, h('p', { class: 'field-label', text: t('nb2.tpl') }), tpls,
+        h('p', { class: 'field-label', text: t('nb2.cover') }), sceneTabs('book-arts', drawArts), arts, h('p', { class: 'field-label', text: t('nb2.tpl') }), tpls,
         h('button', { type: 'button', class: 'btn primary block', id: 'book-save', text: b ? t('btn.save') : t('nb2.create'), on: { click: function () {
           d.name = name.value.trim() || t('nb2.p.free'); d.emoji = emo.value.trim().slice(0, 4);
           var clean = DY.cleanBooks([d])[0]; if (!clean) return;
@@ -3002,7 +3007,7 @@
       var arts = h('div', { class: 'cv-arts', id: 'cw-app-arts' });
       function drawArts() {
         arts.textContent = '';
-        CV.IDS.forEach(function (id) { var mini = h('span', { class: 'cv-mini' }, CV.element(id)); add(arts, h('button', { type: 'button', class: 'cv-art' + (st.art === id ? ' on' : ''), 'data-art': id, id: 'cw-app-art-' + id,
+        sceneIds().forEach(function (id) { var mini = h('span', { class: 'cv-mini' }, CV.element(id)); add(arts, h('button', { type: 'button', class: 'cv-art' + (st.art === id ? ' on' : ''), 'data-art': id, id: 'cw-app-art-' + id,
           on: { click: function () { st.art = id; st.fx = 0.5; fx.value = 50; drawArts(); soon(); } } }, mini, h('span', { class: 'cv-name', text: t('cv.a.' + id) }))); });
       }
       var fx = h('input', { type: 'range', min: 0, max: 100, value: 50, id: 'cw-app-fx', 'aria-label': t('cw.pos') }); fx.addEventListener('input', function () { st.fx = +fx.value / 100; soon(); });
@@ -3016,7 +3021,7 @@
           CW.render(o()).then(CW.toBlob).then(function (b) { shareResult({ blob: b, name: 'wallpaper-' + ym + '-' + st.size + '.png' }); }, function () { toast(t('share.err')); });
         } } }, t('cw.save'))),
         h('label', { class: 'check' }, moodsCb, ' ', t('cw.moods')),
-        h('p', { class: 'field-label', text: t('cv.pic') }), arts, h('label', { class: 'field' }, h('span', { class: 'field-label', text: t('cw.pos') }), fx),
+        h('p', { class: 'field-label', text: t('cv.pic') }), sceneTabs('cw-app-arts', drawArts), arts, h('label', { class: 'field' }, h('span', { class: 'field-label', text: t('cw.pos') }), fx),
         h('p', { class: 'field-label', text: t('cw.size') }), chipRow('cw-app-size', Object.keys(CW.SIZES).map(function (k) { return [k, t('cw.s.' + k)]; }), 'size'),
         layoutRow,
         h('p', { class: 'field-label', text: t('cw.card') }), chipRow('cw-app-card', [['glass', t('cw.glass')], ['clear', t('cw.clear')]], 'card'),
@@ -3518,31 +3523,58 @@
     return box;
   }
 
-  function amountSheet(title, bodyText, current, onSave) {
+  // amounts from the person's own months: what a month (or a category) usually costs, rounded up to a tidy figure
+  function niceUp(v) { var cur = S.budget.currency, d = B.digits(cur), unit = d === 0 ? (cur === 'JPY' ? 1000 : 10000) : 10 * Math.pow(10, d); return v > 0 ? Math.ceil(v / unit) * unit : 0; }
+  function spentIn(ym, cat) { var cur = S.budget.currency, s0 = 0; S.budget.tx.forEach(function (x) { if (x.type === 'expense' && x.cur === cur && x.date.slice(0, 7) === ym && (!cat || x.cat === cat)) s0 += x.amt; }); return s0; }
+  function avgSpent(cat, n) { var tot = 0, k = 0; for (var i = 1; i <= n; i++) { var v = spentIn(B.addMonths(thisMonth(), -i), cat); if (v) { tot += v; k++; } } return k ? Math.round(tot / k) : 0; }
+  function amountSheet(title, bodyText, current, onSave, sugg) {
     sheet(title, function (body, close) {
-      var inp = h('input', { class: 'input amount', inputmode: 'decimal', id: 'amount-input', value: current ? B.majorString(current, S.budget.currency) : '', 'data-autofocus': '1', autocomplete: 'off', placeholder: '0' });
+      var cur = S.budget.currency;
+      var inp = h('input', { class: 'input amount', inputmode: 'decimal', id: 'amount-input', value: current ? B.majorString(current, cur) : '', 'data-autofocus': '1', autocomplete: 'off', placeholder: '0', enterkeyhint: 'done' });
       var prev = h('p', { class: 'amount-preview' });
-      inp.addEventListener('input', function () { var v = B.parseAmount(inp.value, S.budget.currency); prev.textContent = v ? money(v) : ''; });
-      add(body, h('p', { class: 'hint', text: bodyText }), field(t('add.amount') + ' (' + S.budget.currency + ')', inp), prev,
-        h('div', { class: 'row end' }, h('button', { type: 'button', class: 'btn primary', id: 'amount-save', text: t('btn.save'), on: { click: function () {
-          onSave(B.parseAmount(inp.value, S.budget.currency) || null); saveBudget(); close(); render();
-        } } })));
+      inp.addEventListener('input', function () { var v = B.parseAmount(inp.value, cur); prev.textContent = v ? money(v) : ''; });
+      function save() { onSave(B.parseAmount(inp.value, cur) || null); saveBudget(); close(); render(); }
+      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); save(); } });
+      var seen = {}, list = (sugg || []).filter(function (x) { if (!(x[1] > 0) || seen[x[1]]) return false; seen[x[1]] = 1; return true; });
+      var chips = list.length ? h('div', { class: 'chips wrap amt-sugg', id: 'amount-sugg' }, list.map(function (x) {
+        return h('button', { type: 'button', class: 'chip', 'data-v': x[1], text: x[0] + ' ' + money(x[1]), on: { click: function () { inp.value = B.majorString(x[1], cur); inp.dispatchEvent(new Event('input')); inp.focus(); } } });
+      })) : null;
+      add(body, h('p', { class: 'hint', text: bodyText }), field(t('add.amount') + ' (' + cur + ')', inp), prev, chips,
+        h('button', { type: 'button', class: 'btn primary block', id: 'amount-save', text: t('btn.save'), on: { click: save } }));
     });
   }
-  function openMonthlyBudget() { amountSheet(t('monthly.title'), t('monthly.body'), S.budget.budgets.total, function (v) { S.budget.budgets.total = v; if (v) helperDone('budget', 'm'); }); }
+  function openMonthlyBudget() {
+    var sg = [[t('bs.last'), niceUp(spentIn(B.addMonths(thisMonth(), -1)))], [t('bs.avg3'), niceUp(avgSpent(null, 3))]];
+    if (S.budget.plan) { var pm = B.planMath(S.budget.plan); sg.unshift([t('bs.plan'), pm.income - pm.save - pm.sink]); }
+    amountSheet(t('monthly.title'), t('monthly.body'), S.budget.budgets.total, function (v) { S.budget.budgets.total = v; if (v) helperDone('budget', 'm'); }, sg);
+  }
+  // category budgets: compact rows with what each category cost lately; one tap fills them from your last three months
   function openCatBudgets() {
     sheet(t('catb.title'), function (body, close) {
-      var inputs = {};
-      add(body, h('p', { class: 'hint', text: t('catb.body') }), h('ul', { class: 'catb' }, S.budget.cats.filter(function (c) { return c.type === 'expense' && !c.hidden; }).map(function (c) {
-        var v = S.budget.budgets.cats[c.id];
-        var inp = h('input', { class: 'input', inputmode: 'decimal', 'data-cat': c.id, value: v ? B.majorString(v, S.budget.currency) : '', placeholder: '—', autocomplete: 'off' });
-        inputs[c.id] = inp;
-        return h('li', {}, field(c.emoji + ' ' + catName(c.id), inp));
-      })), h('div', { class: 'row end' }, h('button', { type: 'button', class: 'btn primary', id: 'catb-save', text: t('btn.save'), on: { click: function () {
-        var out = {};
-        Object.keys(inputs).forEach(function (id) { var v = B.parseAmount(inputs[id].value, S.budget.currency); if (v) out[id] = v; });
-        S.budget.budgets.cats = out; saveBudget(); close(); render();
-      } } })));
+      var cur = S.budget.currency, inputs = {}, ym = thisMonth(), lm = B.addMonths(ym, -1);
+      var cats = S.budget.cats.filter(function (c) { return c.type === 'expense' && !c.hidden; }).map(function (c) { return { c: c, a3: avgSpent(c.id, 3), lm: spentIn(lm, c.id), tm: spentIn(ym, c.id) }; });
+      cats.sort(function (a, b) { return (b.a3 + b.tm) - (a.a3 + a.tm); });
+      var sum = h('p', { class: 'catb-sum', id: 'catb-sum' });
+      function total() { var s0 = 0; Object.keys(inputs).forEach(function (id) { s0 += B.parseAmount(inputs[id].value, cur) || 0; }); sum.textContent = s0 ? t('catb.total', { amt: money(s0) }) + (S.budget.budgets.total ? ' · ' + t('catb.ofMonth', { amt: money(S.budget.budgets.total) }) : '') : ''; }
+      var list = h('ul', { class: 'catb', id: 'catb-list' }, cats.map(function (x) {
+        var v = S.budget.budgets.cats[x.c.id];
+        var inp = h('input', { class: 'input', inputmode: 'decimal', 'data-cat': x.c.id, value: v ? B.majorString(v, cur) : '', placeholder: '—', autocomplete: 'off', 'aria-label': catName(x.c.id) });
+        inp.addEventListener('input', total); inputs[x.c.id] = inp;
+        var sub = x.lm && x.tm ? t('catb.sub', { last: money(x.lm), now: money(x.tm) }) : x.lm ? t('catb.subLast', { amt: money(x.lm) }) : x.tm ? t('catb.subNow', { amt: money(x.tm) }) : t('catb.none');
+        return h('li', { class: 'catb-row' }, h('span', { class: 'catb-emo', 'aria-hidden': 'true', text: x.c.emoji }), h('span', {}, h('span', { class: 'catb-name', text: catName(x.c.id) }), h('span', { class: 'catb-sub', text: sub })), inp);
+      }));
+      var any = cats.some(function (x) { return x.a3 > 0; });
+      add(body, h('p', { class: 'hint', text: t('catb.body') }),
+        any ? h('div', { class: 'catb-tools' }, h('button', { type: 'button', class: 'btn small', id: 'catb-fill', text: '✨ ' + t('catb.fill'), on: { click: function () {
+          var n = 0; cats.forEach(function (x) { if (x.a3 > 0 && !inputs[x.c.id].value.trim()) { inputs[x.c.id].value = B.majorString(niceUp(x.a3), cur); n++; } }); total(); toast(t('catb.filled', { n: n }));
+        } } }), h('button', { type: 'button', class: 'btn small ghost', id: 'catb-clear', text: t('catb.clear'), on: { click: function () { Object.keys(inputs).forEach(function (id) { inputs[id].value = ''; }); total(); } } })) : null,
+        list, sum,
+        h('div', { class: 'sheet-foot' }, h('button', { type: 'button', class: 'btn primary block', id: 'catb-save', text: t('btn.save'), on: { click: function () {
+          var out = {};
+          Object.keys(inputs).forEach(function (id) { var v = B.parseAmount(inputs[id].value, cur); if (v) out[id] = v; });
+          S.budget.budgets.cats = out; saveBudget(); close(); render();
+        } } })));
+      total();
     });
   }
   function openCategories() {
@@ -4367,7 +4399,8 @@
         var walls = h('div', { class: 'wall-grid', role: 'radiogroup', id: 'wall-grid', 'aria-label': t('wall.title') });
         var drawWalls = function () {
           walls.textContent = '';
-          CV.WALLS.forEach(function (w) {
+          var only = sceneCat === 'all' ? null : sceneIds();
+          CV.WALLS.filter(function (w) { return !only || w === 'none' || (w.indexOf('scene:') === 0 && only.indexOf(w.slice(6)) >= 0); }).forEach(function (w) {
             var on = (S.settings.wall || 'none') === w, kind = w.split(':')[0], key = w.split(':')[1];
             var pv = h('span', { class: 'wall-pv' }); var el = CV.wall(w, ST, true); if (el) pv.appendChild(el); else pv.classList.add('wall-none');
             add(walls, h('button', { type: 'button', role: 'radio', class: 'wall-sw' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-wall': w, id: 'wall-' + w.replace(':', '-'),
@@ -4376,7 +4409,7 @@
           });
         };
         drawWalls();
-        add(body, h('h3', { class: 'field-label cv-set-title', text: t('wall.title') }), h('p', { class: 'hint', text: t('wall.hint') }), walls);
+        add(body, h('h3', { class: 'field-label cv-set-title', text: t('wall.title') }), h('p', { class: 'hint', text: t('wall.hint') }), sceneTabs('wall-grid', drawWalls), walls);
       }
       if (CV) {                                      // the covers of each part, and the start cards someone closed
         var parts = ONLY ? [ONLY] : ['diary', 'notes', 'budget'];
@@ -4616,6 +4649,21 @@
   // everything ready-made can be changed — the cover's picture, colour mood, title and stickers, and every example
   // becomes an ordinary entry or note, decorated, that they can restyle like any other.
   var CV = window.VaultCovers;
+  // scene pickers: a row of styles above the pictures (pastel, dark & gold, minimal, nature, pattern, city & retro); the choice is shared by every picker
+  var sceneCat = 'all';
+  function sceneIds() { var c = CV && CV.CATS ? CV.CATS.find(function (x) { return x[0] === sceneCat; }) : null; return c ? c[1] : CV.IDS; }
+  function sceneTabs(idp, redraw) {
+    var box = h('div', { class: 'chips scene-cats', id: idp + '-cats', role: 'tablist' });
+    function draw() {
+      box.textContent = '';
+      [['all']].concat(CV.CATS || []).forEach(function (c) {
+        var on = sceneCat === c[0];
+        add(box, h('button', { type: 'button', role: 'tab', class: 'chip small' + (on ? ' on' : ''), 'aria-selected': on ? 'true' : 'false', 'data-cat': c[0], id: idp + '-cat-' + c[0], text: t('cv.cat.' + c[0]),
+          on: { click: function () { sceneCat = c[0]; draw(); redraw(); } } }));
+      });
+    }
+    draw(); return box;
+  }
   function coverOf(kind) { return CV ? (S.settings.covers && S.settings.covers[kind]) || CV.clean(null, kind, DY.cleanSticker) : null; }
   function coverBox(c, slim) {
     var pos = c.pos === 'auto' ? CV.pos(c.art) : c.pos;
@@ -4652,7 +4700,7 @@
       var arts = h('div', { class: 'cv-arts', role: 'radiogroup', id: 'cv-arts', 'aria-label': t('cv.pic') });
       function drawArts() {
         arts.textContent = '';
-        CV.IDS.forEach(function (id) {
+        sceneIds().forEach(function (id) {
           var on = c.art === id, mini = h('span', { class: 'cv-mini' }, CV.element(id));
           add(arts, h('button', { type: 'button', role: 'radio', class: 'cv-art' + (on ? ' on' : ''), 'aria-checked': on ? 'true' : 'false', 'data-art': id, id: 'cv-art-' + id,
             on: { click: function () { c.art = id; save(); refresh(); } } }, mini, h('span', { class: 'cv-name', text: t('cv.a.' + id) })));
@@ -4690,7 +4738,7 @@
       } } });
       drawArts(); drawTones(); drawPos();
       add(body, pg, h('p', { class: 'hint', text: t('cv.stHint') }), dc.bar, dc.panel,
-        h('p', { class: 'field-label', text: t('cv.pic') }), arts,
+        h('p', { class: 'field-label', text: t('cv.pic') }), sceneTabs('cv-arts', drawArts), arts,
         h('p', { class: 'field-label', text: t('cv.tone') }), tones,
         h('label', { class: 'field' }, h('span', { class: 'field-label', text: t('cv.titleLabel') }), title),
         h('label', { class: 'field' }, h('span', { class: 'field-label', text: t('cv.subLabel') }), sub),

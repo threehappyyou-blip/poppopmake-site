@@ -18,9 +18,18 @@
     });
     box.setAttribute('aria-label', label);
   }
+  var cat = 'all';
+  function drawCats() {
+    var box = $('cw-cats'); if (!box || !CV.CATS) return; box.textContent = '';
+    [['all']].concat(CV.CATS).forEach(function (c) {
+      box.appendChild(el('button', { type: 'button', role: 'tab', class: 'cw-chip' + (cat === c[0] ? ' on' : ''), 'aria-selected': cat === c[0] ? 'true' : 'false', 'data-cat': c[0], text: (I.cats && I.cats[c[0]]) || c[0],
+        on: function () { cat = c[0]; drawCats(); drawScenes(); } }));
+    });
+  }
   function drawScenes() {
     var box = $('cw-scenes'); box.textContent = '';
-    CV.IDS.forEach(function (id) {
+    var found = CV.CATS ? CV.CATS.filter(function (c) { return c[0] === cat; })[0] : null;
+    (found ? found[1] : CV.IDS).forEach(function (id) {
       var on = st.art === id, mini = el('span', { class: 'cw-mini' }); mini.appendChild(CV.element(id));
       box.appendChild(el('button', { type: 'button', class: 'cw-scene' + (on ? ' on' : ''), 'aria-pressed': on ? 'true' : 'false', 'data-art': id, title: I.scenes[id] || id,
         on: function () { st.art = id; st.fx = 0.5; $('cw-fx').value = 50; remember(); drawScenes(); schedule(); } }, [mini, el('span', { class: 'cw-sname', text: I.scenes[id] || id })]));
@@ -65,5 +74,5 @@
   var start = new URLSearchParams(location.search);
   if (start.get('m') === 'next') { st.month++; if (st.month > 11) { st.month = 0; st.year++; } }
   if (CV.IDS.indexOf(start.get('scene')) >= 0) st.art = start.get('scene');
-  drawScenes(); drawControls(); draw();
+  drawCats(); drawScenes(); drawControls(); draw();
 })();
