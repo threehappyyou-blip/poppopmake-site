@@ -78,12 +78,12 @@
     var stTab = 'deco';
     function panelStickers() {
       var tabs = h('div', { class: 'seg small', role: 'tablist' });
-      [['deco', 'st.tabDeco'], ['feel', 'st.tabFeel'], ['food', 'st.tabFood'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
+      [['deco', 'st.tabDeco'], ['aes', 'st.tabAes'], ['feel', 'st.tabFeel'], ['food', 'st.tabFood'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
         add(tabs, h('button', { type: 'button', role: 'tab', id: 'st-tab-' + x[0], 'aria-selected': stTab === x[0] ? 'true' : 'false', class: stTab === x[0] ? 'on' : '', text: t(x[1]),
           on: { click: function () { stTab = x[0]; toggle('stickers'); toggle('stickers'); } } }));
       });
       var grid = h('div', { class: 'st-grid' + (stTab === 'tape' ? ' tapes' : ''), id: 'st-grid' });
-      var keys = stTab === 'food' ? (ST.FOOD || []).map(function (k) { return 'a:fd' + k; }) : stTab === 'feel' ? (ST.FEEL || []).map(function (k) { return 'a:em' + k; }) : stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
+      var keys = stTab === 'food' ? (ST.FOOD || []).map(function (k) { return 'a:fd' + k; }) : stTab === 'feel' ? (ST.FEEL || []).map(function (k) { return 'a:em' + k; }) : stTab === 'aes' ? (ST.AES || []).map(function (k) { return 'a:ae' + k; }).concat((ST.AES_TAPES || []).map(function (k) { return 't:' + k; })) : stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
         stTab === 'seal' ? (ctx.seals ? ctx.seals() : []).map(function (k) { return 's:' + k; }) : ST.EMOJI.map(function (k) { return 'e:' + k; });
       keys.forEach(function (k) {
         var el = ST.element(k); if (!el) return;
@@ -93,6 +93,7 @@
     }
     function nameOf(k) {
       if (k.slice(0, 4) === 'a:em') return t('tf.feel.' + k.slice(4));
+      if (k.slice(0, 4) === 'a:ae') return t('aes.' + k.slice(4));
       if (k.slice(0, 2) === 'a:') return t('st.' + k.slice(2));
       if (k.slice(0, 2) === 't:') return t('tape.' + k.slice(2));
       if (k.slice(0, 2) === 's:') return t('seal.' + k.slice(2));
