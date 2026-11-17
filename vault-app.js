@@ -4949,7 +4949,7 @@
     'n-tobudget': gNewNote, 'n-remind': gNewNote, 'n-pin': gNewNote, 'n-photo': gNewNote, 'n-deco': gNewNote, 'n-lock': gNewNote, 'n-desk': function () { goTab('notes'); },
     'd-write': function () { runAct('diary'); }, 'd-mood': function () { runAct('diary'); }, 'd-feel': function () { goTab('diary'); openFeelDict(); }, 'd-tpl': function () { runAct('diary'); },
     'd-letter': function () { goTab('diary'); newLetter(); }, 'd-search': function () { goTab('diary'); S.diarySearch = true; render(); },
-    'd-deco': function () { runAct('diary'); }, 'd-photo': function () { runAct('diary'); }, 'd-draw': function () { runAct('diary'); },
+    'd-deco': function () { runAct('diary'); }, 'd-auto': function () { runAct('diary'); }, 'd-photo': function () { runAct('diary'); }, 'd-draw': function () { runAct('diary'); },
     'd-cover': function () { goTab('diary'); openCoverEditor('diary'); }, 'd-books': function () { goTab('diary'); editBook(null); },
     'd-weekly': function () { goTab('diary'); openWeekly(); }, 'd-five': function () { goTab('diary'); openFiveYears(); }, 'd-wrapped': function () { goTab('diary'); openWrapped(); },
     'd-wall': function () { goTab('diary'); openWallpaper(); }, 'd-share': function () { goTab('diary'); }, 'd-pdf': function () { openDiaryPrint(); }, 'd-pet': function () { openPet(); },

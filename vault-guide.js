@@ -16,7 +16,7 @@
     ['n-deco', 'notes', '🎀', 'deco'], ['n-lock', 'notes', '🔐', 'deco'], ['n-desk', 'notes', '🖥️', 'deco'],
     ['d-write', 'diary', '📝', 'write'], ['d-mood', 'diary', '😊', 'write'], ['d-feel', 'diary', '🌡️', 'write'], ['d-tpl', 'diary', '📄', 'write'],
     ['d-letter', 'diary', '💌', 'write'], ['d-search', 'diary', '#️⃣', 'write'],
-    ['d-deco', 'diary', '🌷', 'deco'], ['d-photo', 'diary', '🖼️', 'deco'], ['d-draw', 'diary', '🖍️', 'deco'], ['d-cover', 'diary', '📔', 'deco'], ['d-books', 'diary', '📚', 'deco'],
+    ['d-deco', 'diary', '🌷', 'deco'], ['d-auto', 'diary', '✨', 'deco'], ['d-photo', 'diary', '🖼️', 'deco'], ['d-draw', 'diary', '🖍️', 'deco'], ['d-cover', 'diary', '📔', 'deco'], ['d-books', 'diary', '📚', 'deco'],
     ['d-weekly', 'diary', '🌿', 'look'], ['d-five', 'diary', '🖐️', 'look'], ['d-wrapped', 'diary', '🎁', 'look'], ['d-wall', 'diary', '📱', 'look'],
     ['d-share', 'diary', '📸', 'look'], ['d-pdf', 'diary', '📖', 'look'], ['d-pet', 'diary', '🌱', 'look'],
     ['c-backup', 'common', '💾', 'safe'], ['c-lock', 'common', '👆', 'safe'], ['c-transfer', 'common', '📲', 'safe'],
@@ -56,6 +56,7 @@
       case 'd-letter': return any(e, function (x) { return tplOf(x) === 'letter'; });
       case 'd-search': return any(e, function (x) { return (x.tags || []).length > 0; });
       case 'd-deco': return any(e, function (x) { return !!(x.deco && x.deco.stickers && x.deco.stickers.length); });
+      case 'd-auto': return any(e, function (x) { return !!(x.deco && x.deco.stickers && x.deco.stickers.some(function (k) { return /^a:lb/.test(k.k); })); });
       case 'd-photo': return any(e, function (x) { return (x.photos || []).length > 0; });
       case 'd-draw': return any(e, function (x) { return !!(x.deco && x.deco.drawing); });
       case 'd-cover': return !!(s.covers && s.covers.diary);          // only saved once someone changes it
@@ -142,6 +143,7 @@
       'd-tpl': ['속지 27가지', '하루 회고, 감사 세 줄, 독서·운동·식단, 4컷 그림일기, 필사 등.', '속지 템플릿'],
       'd-letter': ['미래의 나에게 편지', '열 날짜를 정해 봉인하면 그날 맨 위에 도착해요.', '편지 봉인'],
       'd-search': ['#태그·검색', '#여행처럼 쓰면 태그로 모아 보고 검색해요.', '태그 검색'],
+      'd-auto': ['한 번에 꾸미기', '스티커 창 맨 위 ✨ 버튼 한 번이면 테이프·라벨·스티커가 어울리게 붙어요. 또 누르면 다른 조합. 라벨·낙서·메모지·돈 스티커도 있어요.', '자동 꾸미기 라벨 낙서'],
       'd-deco': ['스티커·마스킹테이프·종이', '시즌·감성·음식 스티커와 테이프를 끌어다 붙여요.', '다꾸 스티커'],
       'd-photo': ['사진·사진 스티커', '사진 4장, 또는 내 사진을 동그라미·하트 스티커로.', '사진'],
       'd-draw': ['그리기', '손가락으로 그리고 지우개·되돌리기.', '그림'],
@@ -240,6 +242,7 @@
       'd-tpl': ['27 ready-made pages', 'Day review, three good things, reading, workout, meals, 4-panel comic, copy a sentence…', 'page template'],
       'd-letter': ['Letter to your future self', 'Seal it with an opening date; it arrives at the top that day.', 'letter seal'],
       'd-search': ['#tags & search', 'Write #travel to group entries and find them.', 'tag search'],
+      'd-auto': ['Decorate in one tap', 'The ✨ button at the top of Stickers puts a matching tape, label and stickers on the page; tap again for another set. There are word labels, doodles, memo paper and money stickers too.', 'auto decorate label doodle'],
       'd-deco': ['Stickers, washi tape, paper', 'Season, mood and food stickers and tapes — drag them anywhere.', 'sticker tape'],
       'd-photo': ['Photos & photo stickers', 'Four photos, or your photo cut into a circle or heart sticker.', 'photo'],
       'd-draw': ['Draw', 'Draw with your finger; eraser and undo.', 'draw'],
@@ -338,6 +341,7 @@
       'd-tpl': ['ページ27種', '1日の振り返り、感謝の3行、読書・運動・食事、4コマ、書き写しなど。', 'テンプレート'],
       'd-letter': ['未来の自分への手紙', '開く日を決めて封印。その日に一番上へ届きます。', '手紙'],
       'd-search': ['#タグ・検索', '#旅行 のように書くとタグでまとめて探せます。', 'タグ'],
+      'd-auto': ['ワンタップでデコ', 'シール画面の一番上の ✨ を押すと、テープ・ラベル・シールが合う組み合わせで貼られます。もう一度で別の組み合わせ。ラベル・落書き・メモ紙・お金のシールも。', '自動 デコ ラベル'],
       'd-deco': ['シール・マスキングテープ・紙', '季節・気分・食べ物のシールとテープをドラッグ。', 'デコ'],
       'd-photo': ['写真・写真シール', '写真4枚、または自分の写真を丸・ハートのシールに。', '写真'],
       'd-draw': ['お絵かき', '指で描いて、消しゴムと元に戻す。', '絵'],
