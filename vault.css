@@ -1483,3 +1483,7 @@ button.pl-line { width: 100%; border: 0; text-align: left; font: inherit; cursor
 .gd-state.on { background: var(--teal-soft); color: var(--teal); font-weight: 700; }
 .gd-foot { margin-top: 16px; gap: 8px; flex-wrap: wrap; }
 @media (max-width: 360px) { .gd-pros { grid-template-columns: 1fr; } }
+
+/* one-tap decorating */
+.st-auto-row { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; flex-wrap: wrap; }
+.st-auto { box-shadow: 0 2px 8px rgba(232,96,126,.25); }

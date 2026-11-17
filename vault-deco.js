@@ -122,25 +122,33 @@
     }
     function panelStickers() {
       var tabs = h('div', { class: 'seg small', role: 'tablist' });
-      [['season', 'st.tabSeason'], ['deco', 'st.tabDeco'], ['aes', 'st.tabAes'], ['feel', 'st.tabFeel'], ['food', 'st.tabFood'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']].forEach(function (x) {
+      var rec = recentKeys();
+      (rec.length ? [['recent', 'st.tabRecent']] : []).concat([['season', 'st.tabSeason'], ['deco', 'st.tabDeco'], ['aes', 'st.tabAes'], ['label', 'st.tabLabel'], ['doodle', 'st.tabDoodle'], ['paper', 'st.tabPaper'], ['feel', 'st.tabFeel'], ['food', 'st.tabFood'], ['money', 'st.tabMoney'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']]).forEach(function (x) {
         add(tabs, h('button', { type: 'button', role: 'tab', id: 'st-tab-' + x[0], 'aria-selected': stTab === x[0] ? 'true' : 'false', class: stTab === x[0] ? 'on' : '', text: t(x[1]),
           on: { click: function () { stTab = x[0]; toggle('stickers'); toggle('stickers'); } } }));
       });
       var grid = h('div', { class: 'st-grid' + (stTab === 'tape' ? ' tapes' : ''), id: 'st-grid' });
-      var keys = stTab === 'food' ? (ST.FOOD || []).map(function (k) { return 'a:fd' + k; }) : stTab === 'feel' ? (ST.FEEL || []).map(function (k) { return 'a:em' + k; }) : stTab === 'season' ? seasonKeys() : stTab === 'aes' ? (ST.AES || []).map(function (k) { return 'a:ae' + k; }).concat((ST.AES_TAPES || []).map(function (k) { return 't:' + k; })) : stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
+      if (stTab === 'recent' && !rec.length) stTab = 'deco';
+      var pre = { recent: rec, label: (ST.LABEL || []).map(function (k) { return 'a:lb' + k; }), doodle: (ST.DOODLE || []).map(function (k) { return 'a:dd' + k; }),
+        paper: (ST.PAPER || []).map(function (k) { return 'a:pp' + k; }), money: (ST.MONEY || []).map(function (k) { return 'a:mn' + k; }) }[stTab];
+      var keys = pre ? pre : stTab === 'food' ? (ST.FOOD || []).map(function (k) { return 'a:fd' + k; }) : stTab === 'feel' ? (ST.FEEL || []).map(function (k) { return 'a:em' + k; }) : stTab === 'season' ? seasonKeys() : stTab === 'aes' ? (ST.AES || []).map(function (k) { return 'a:ae' + k; }).concat((ST.AES_TAPES || []).map(function (k) { return 't:' + k; })) : stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
         stTab === 'seal' ? (ctx.seals ? ctx.seals() : []).map(function (k) { return 's:' + k; }) : ST.EMOJI.map(function (k) { return 'e:' + k; });
       keys.forEach(function (k) {
         var el = ST.element(k); if (!el) return;
         add(grid, h('button', { type: 'button', class: 'st-pick', 'data-k': k, 'aria-label': nameOf(k), title: nameOf(k), on: { click: function () { addSticker(k); } } }, el));
       });
       var photoBtn = ctx.putBlob && ctx.uid ? h('button', { type: 'button', class: 'mini ps-open', id: 'ps-open', text: '📷 ' + t('ps.open'), on: { click: photoSticker } }) : null;
-      add(panel, tabs, h('p', { class: 'hint', text: stTab === 'seal' ? (keys.length ? t('st.sealHint') : t('st.sealNone')) : stTab === 'season' ? t('st.seasonHint') : t('st.hint') }), photoBtn, grid);
+      var auto = h('div', { class: 'st-auto-row' }, h('button', { type: 'button', class: 'btn small primary st-auto', id: 'st-auto', text: '✨ ' + t(autoSet.length ? 'st.autoAgain' : 'st.auto'), on: { click: autoDecorate } }),
+        autoSet.length ? h('button', { type: 'button', class: 'mini', id: 'st-auto-clear', text: t('st.autoClear'), on: { click: function () { clearAuto(); placeStickers(); commit(true); toggle('stickers'); toggle('stickers'); } } }) : null);
+      add(panel, auto, tabs, h('p', { class: 'hint', text: stTab === 'recent' ? t('st.recentHint') : stTab === 'label' ? t('st.labelHint') : stTab === 'seal' ? (keys.length ? t('st.sealHint') : t('st.sealNone')) : stTab === 'season' ? t('st.seasonHint') : t('st.hint') }), photoBtn, grid);
     }
     function nameOf(k) {
       if (k.slice(0, 4) === 'a:em') return t('tf.feel.' + k.slice(4));
       if (k.slice(0, 4) === 'a:ss') return t('ss.' + k.slice(4));
       if (k.slice(0, 2) === 'p:') return t('ps.name');
       if (k.slice(0, 4) === 'a:ae') return t('aes.' + k.slice(4));
+      if (k.slice(0, 4) === 'a:lb') return k.slice(4).toUpperCase();
+      if (/^a:(dd|mn|pp)/.test(k)) return t('st2.' + k.slice(4));
       if (k.slice(0, 2) === 'a:') return t('st.' + k.slice(2));
       if (k.slice(0, 2) === 't:') return t('tape.' + k.slice(2));
       if (k.slice(0, 2) === 's:') return t('seal.' + k.slice(2));
@@ -479,7 +487,49 @@
     }
 
     // ----- stickers -----
-    var selected = -1, tools = null;
+    var selected = -1, tools = null, autoSet = [], autoTurn = -1;
+    // the stickers used lately, newest first (kept on this device; names of drawn stickers only — never photos)
+    var REC_KEY = 'ppm-st-recent';
+    function recentKeys() { try { var a = JSON.parse(root.localStorage.getItem(REC_KEY) || '[]'); return Array.isArray(a) ? a.filter(function (k) { return typeof k === 'string' && /^[ate]:/.test(k) && ST.element(k); }).slice(0, 24) : []; } catch (er) { return []; } }
+    function remember(k) { if (!/^[ate]:/.test(k)) return; try { var a = recentKeys().filter(function (x) { return x !== k; }); a.unshift(k); root.localStorage.setItem(REC_KEY, JSON.stringify(a.slice(0, 24))); } catch (er) {} }
+    // one tap: a tape across the top, a word label, one big sticker and two little ones that go together; tap again for another set
+    var AUTO = [
+      ['t:cherry', 'a:lbtoday', 'a:aeglasscherry', 'a:heart', 'a:ddsparkles'], ['t:skycloud', 'a:lbgoodday', 'a:aerainbowcloud', 'a:ddclouddoodle', 'a:star'],
+      ['t:daisy', 'a:lbhappy', 'a:aedaisyvase', 'a:daisy', 'a:ddflowerdoodle'], ['t:kraft', 'a:lbsaved', 'a:mnpiggy', 'a:mncoin', 'a:ddstardoodle'],
+      ['t:navystar', 'a:lbmetime', 'a:moon', 'a:ddsparkles', 'a:aecandle'], ['t:ribbonpink', 'a:lblove', 'a:aeglassheart', 'a:ddheartdoodle', 'a:bowpink'],
+      ['t:lemon', 'a:lbwow', 'a:fdlemon', 'a:ddsunrays', 'a:sun'], ['t:grid', 'a:lbstudy', 'a:ppstickyyellow', 'a:pencil', 'a:ddcheck'],
+      ['t:ginghamblue', 'a:lbweekend', 'a:aepolaroid', 'a:camera', 'a:ddarrowcurve'], ['t:mint', 'a:lbthanks', 'a:aetulipwrap', 'a:clover', 'a:ddsparkles']
+    ];
+    function autoSets() {
+      var m = new Date().getMonth() + 1, sets = AUTO.slice();
+      if (m === 12 || m <= 1) sets.unshift(['t:xmasplaid', 'a:lbweekend', 'a:ssxtree', 'a:sssnowman', 'a:snow']);
+      return sets.map(function (x) { return x.filter(function (k) { return ST.element(k); }); }).filter(function (x) { return x.length >= 3; });
+    }
+    function textEnd(pr, W) {             // where the writing ends (the box itself may be taller than what is written)
+      var ta = ctx.ta; if (!ta || !ta.offsetParent) return 0.1;
+      var r = ta.getBoundingClientRect(), cs = root.getComputedStyle(ta), fs = parseFloat(cs.fontSize) || 16, lh = parseFloat(cs.lineHeight) || fs * 1.6;
+      var per = Math.max(8, Math.floor((ta.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0)) / (fs * 0.62))), lines = 0;
+      String(ta.value || '').split('\n').forEach(function (l) { var w = 0; for (var i = 0; i < l.length; i++) w += l.charCodeAt(i) > 0x2E80 ? 1.6 : 1; lines += Math.max(1, Math.ceil(w / per)); });
+      var bottom = r.top + (parseFloat(cs.paddingTop) || 0) + Math.max(1, lines) * lh;
+      return Math.max(0.1, (Math.min(r.bottom, bottom) - pr.top) / W);
+    }
+    function clearAuto() { deco.stickers = deco.stickers.filter(function (st) { return autoSet.indexOf(st) < 0; }); autoSet = []; selected = -1; }
+    function autoDecorate() {
+      clearAuto();
+      var sets = autoSets(); if (!sets.length) return;
+      autoTurn = autoTurn < 0 ? Math.floor(Math.random() * sets.length) : (autoTurn + 1) % sets.length;
+      var set = sets[autoTurn], W = width(), pr = page.getBoundingClientRect(), H = Math.max(page.scrollHeight || 0, page.clientHeight || 0, W * 0.9) / W;
+      // keep the writing readable: a tape on the top-right corner, everything else below where the text ends
+      var tb = textEnd(pr, W);
+      var spots = [{ x: 0.86, y: 0.035, s: 0.36, r: 38 }, { x: 0.25, y: tb + 0.17, s: 0.3, r: -6 }, { x: 0.78, y: Math.max(tb + 0.36, H - 0.17), s: 0.26, r: 6 },
+        { x: 0.52, y: tb + 0.1, s: 0.1, r: 12 }, { x: 0.12, y: Math.max(tb + 0.44, H - 0.08), s: 0.12, r: -12 }];
+      set.forEach(function (k, i) {
+        if (deco.stickers.length >= DY.MAX_STICKERS) return;
+        var sp = spots[i] || spots[spots.length - 1], st = { k: k, x: sp.x, y: sp.y, s: sp.s, r: sp.r };
+        deco.stickers.push(st); autoSet.push(st);
+      });
+      selected = -1; placeStickers(); commit(true); toggle('stickers'); toggle('stickers');
+    }
     function addSticker(k) {
       if (deco.stickers.length >= DY.MAX_STICKERS) { ctx.toast(t('st.limit', { n: DY.MAX_STICKERS })); return; }
       var W = width(), r = page.getBoundingClientRect(), vh = root.innerHeight || 800;
@@ -487,6 +537,7 @@
       var n = deco.stickers.length % 6, xs = [0.78, 0.26, 0.6, 0.18, 0.7, 0.42];   // spread new stickers so they don't pile up
       deco.stickers.push({ k: k, x: k.charAt(0) === 't' ? 0.5 : xs[n], y: Math.max(0.12, mid / W + (n % 3) * 0.07), s: k.charAt(0) === 't' ? 0.42 : 0.18, r: k.charAt(0) === 't' ? -8 : 0 });
       selected = deco.stickers.length - 1;
+      remember(k);
       placeStickers(); commit(true);
       var el = layer.querySelector('[data-i="' + selected + '"]'); if (el) el.focus();
     }
