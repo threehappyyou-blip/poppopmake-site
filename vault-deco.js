@@ -123,14 +123,14 @@
     function panelStickers() {
       var tabs = h('div', { class: 'seg small', role: 'tablist' });
       var rec = recentKeys();
-      (rec.length ? [['recent', 'st.tabRecent']] : []).concat([['season', 'st.tabSeason'], ['friends', 'st.tabFriends'], ['daily', 'st.tabDaily'], ['deco', 'st.tabDeco'], ['aes', 'st.tabAes'], ['label', 'st.tabLabel'], ['doodle', 'st.tabDoodle'], ['paper', 'st.tabPaper'], ['feel', 'st.tabFeel'], ['food', 'st.tabFood'], ['money', 'st.tabMoney'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']]).forEach(function (x) {
+      (rec.length ? [['recent', 'st.tabRecent']] : []).concat([['season', 'st.tabSeason'], ['xmas', 'st.tabXmas'], ['friends', 'st.tabFriends'], ['daily', 'st.tabDaily'], ['fancy', 'st.tabFancy'], ['dates', 'st.tabDates'], ['deco', 'st.tabDeco'], ['aes', 'st.tabAes'], ['label', 'st.tabLabel'], ['doodle', 'st.tabDoodle'], ['paper', 'st.tabPaper'], ['feel', 'st.tabFeel'], ['food', 'st.tabFood'], ['money', 'st.tabMoney'], ['art', 'st.tabArt'], ['tape', 'st.tabTape'], ['emoji', 'st.tabEmoji'], ['seal', 'st.tabSeal']]).forEach(function (x) {
         add(tabs, h('button', { type: 'button', role: 'tab', id: 'st-tab-' + x[0], 'aria-selected': stTab === x[0] ? 'true' : 'false', class: stTab === x[0] ? 'on' : '', text: t(x[1]),
           on: { click: function () { stTab = x[0]; toggle('stickers'); toggle('stickers'); } } }));
       });
       var grid = h('div', { class: 'st-grid' + (stTab === 'tape' ? ' tapes' : ''), id: 'st-grid' });
       if (stTab === 'recent' && !rec.length) stTab = 'deco';
       var pre = { recent: rec, label: (ST.LABEL || []).map(function (k) { return 'a:lb' + k; }), doodle: (ST.DOODLE || []).map(function (k) { return 'a:dd' + k; }),
-        paper: (ST.PAPER || []).map(function (k) { return 'a:pp' + k; }), friends: (ST.FRIENDS || []).map(function (k) { return 'a:ld' + k; }).concat((ST.FRIEND_TAPES || []).map(function (k) { return 't:' + k; })), daily: (ST.DAILY || []).map(function (k) { return 'a:dy' + k; }).concat((ST.DAILY_TAPES || []).map(function (k) { return 't:' + k; })), money: (ST.MONEY || []).map(function (k) { return 'a:mn' + k; }) }[stTab];
+        paper: (ST.PAPER || []).map(function (k) { return 'a:pp' + k; }), friends: (ST.FRIENDS || []).map(function (k) { return 'a:ld' + k; }).concat((ST.FRIEND_TAPES || []).map(function (k) { return 't:' + k; })), daily: (ST.DAILY || []).map(function (k) { return 'a:dy' + k; }).concat((ST.DAILY_TAPES || []).map(function (k) { return 't:' + k; })), fancy: (ST.FANCY || []).map(function (k) { return 'a:dy' + k; }).concat((ST.FANCY_TAPES || []).map(function (k) { return 't:' + k; })), dates: (ST.DATES || []).map(function (k) { return 'a:dy' + k; }), xmas: (ST.XMAS || []).map(function (k) { return 'a:xm' + k; }).concat((ST.XMAS_TAPES || []).map(function (k) { return 't:' + k; })), money: (ST.MONEY || []).map(function (k) { return 'a:mn' + k; }) }[stTab];
       var keys = pre ? pre : stTab === 'food' ? (ST.FOOD || []).map(function (k) { return 'a:fd' + k; }) : stTab === 'feel' ? (ST.FEEL || []).map(function (k) { return 'a:em' + k; }) : stTab === 'season' ? seasonKeys() : stTab === 'aes' ? (ST.AES || []).map(function (k) { return 'a:ae' + k; }).concat((ST.AES_TAPES || []).map(function (k) { return 't:' + k; })) : stTab === 'deco' ? ST.DECO.map(function (k) { return 'a:' + k; }).concat(ST.DECO_TAPES.map(function (k) { return 't:' + k; })) : stTab === 'art' ? ST.ART.map(function (k) { return 'a:' + k; }) : stTab === 'tape' ? ST.TAPES.map(function (k) { return 't:' + k; }) :
         stTab === 'seal' ? (ctx.seals ? ctx.seals() : []).map(function (k) { return 's:' + k; }) : ST.EMOJI.map(function (k) { return 'e:' + k; });
       keys.forEach(function (k) {
@@ -149,7 +149,8 @@
       if (k.slice(0, 4) === 'a:ae') return t('aes.' + k.slice(4));
       if (k.slice(0, 4) === 'a:lb') return k.slice(4).toUpperCase();
       if (/^a:(dd|mn|pp)/.test(k)) return t('st2.' + k.slice(4));
-      if (/^a:(ld|dy)/.test(k)) return t('st3.' + k.slice(4));
+      if (/^a:dydate\d/.test(k)) return t('st3.date') + ' ' + k.slice(8);
+      if (/^a:(ld|dy|xm)/.test(k)) return t('st3.' + k.slice(4));
       if (k.slice(0, 2) === 'a:') return t('st.' + k.slice(2));
       if (k.slice(0, 2) === 't:') return t('tape.' + k.slice(2));
       if (k.slice(0, 2) === 's:') return t('seal.' + k.slice(2));
