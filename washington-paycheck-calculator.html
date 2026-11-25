@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
-<meta name="robots" content="noindex, follow">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Washington Paycheck Calculator (2026) &mdash; PopPopMake</title>
 <meta name="description" content="Free 2026 Washington paycheck calculator. See your take-home pay after federal tax, FICA, and Washington state tax. No sign-up, no advisor referrals &mdash; runs entirely in your browser.">
@@ -236,6 +235,7 @@
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+<style>.st-table{width:100%;border-collapse:collapse;font-size:0.9rem;margin:12px 0;}.st-table th,.st-table td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;}.st-table th:first-child,.st-table td:first-child{text-align:left;}.st-table th{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}</style>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -337,6 +337,37 @@
     <h2>Worked example</h2>
     <p style="margin:0;color:var(--ink-soft);">A single filer in Washington earning <strong style="color:var(--ink);">$65,000/year</strong>, paid biweekly: federal income tax is about $5,620, FICA (Social Security + Medicare) is about $4,973, and Washington does not withhold anything for a state income tax line, so the only deductions below are federal tax and FICA plus Washington's two payroll programs (WA Cares and Paid Family &amp; Medical Leave, about $902/year together). That leaves roughly <strong style="color:var(--ink);">$53,505/year</strong> take-home (about $2,058 per biweekly paycheck) &mdash; an effective tax rate of about 17.7%. Change the salary above to see your own number.</p>
   </div>
+
+  <div class="panel" id="state-facts">
+    <h2>Washington take-home pay at common salaries (2026)</h2>
+    <p style="color:var(--ink-soft);">Yearly take-home after federal income tax and FICA and WA Cares + PFML &mdash; there is no state income tax line. Standard deduction, no 401(k) or other deductions; married figures assume one earner filing jointly.</p>
+      <div style="overflow-x:auto;"><table class="st-table">
+        <thead><tr><th>Salary</th><th>Take-home (single)</th><th>Take-home (married, one income)</th><th>Federal tax (single)</th><th>FICA</th><th>WA Cares + PFML</th></tr></thead>
+        <tbody>
+        <tr><td>$30,000</td><td>$25,869</td><td>$27,289</td><td>$1,420</td><td>$2,295</td><td>$416</td></tr>
+        <tr><td>$40,000</td><td>$33,765</td><td>$35,605</td><td>$2,620</td><td>$3,060</td><td>$555</td></tr>
+        <tr><td>$50,000</td><td>$41,661</td><td>$43,701</td><td>$3,820</td><td>$3,825</td><td>$694</td></tr>
+        <tr><td>$65,000</td><td>$53,506</td><td>$55,686</td><td>$5,620</td><td>$4,973</td><td>$902</td></tr>
+        <tr><td>$80,000</td><td>$64,000</td><td>$67,530</td><td>$8,770</td><td>$6,120</td><td>$1,110</td></tr>
+        <tr><td>$100,000</td><td>$77,793</td><td>$83,323</td><td>$13,170</td><td>$7,650</td><td>$1,387</td></tr>
+        <tr><td>$150,000</td><td>$111,710</td><td>$121,104</td><td>$24,734</td><td>$11,475</td><td>$2,081</td></tr>
+        </tbody>
+      </table></div>
+    <h2 style="margin-top:22px;">Washington take-home vs. neighbouring states</h2>
+    <p style="color:var(--ink-soft);">The same salary, single filer, standard deduction, no 401(k), after federal tax, FICA and each state's own income and payroll taxes:</p>
+      <div style="overflow-x:auto;"><table class="st-table">
+        <thead><tr><th>State</th><th>Take-home at $65,000</th><th>Difference</th><th>Take-home at $100,000</th><th>Difference</th></tr></thead>
+        <tbody>
+        <tr><td><strong style="color:var(--ink);">Washington</strong></td><td>$53,506</td><td>&mdash;</td><td>$77,793</td><td>&mdash;</td></tr>
+        <tr><td>Oregon</td><td>$49,593</td><td>&minus;$3,912</td><td>$71,332</td><td>&minus;$6,461</td></tr>
+        <tr><td>Idaho</td><td>$52,216</td><td>&minus;$1,290</td><td>$75,133</td><td>&minus;$2,660</td></tr>
+        <tr><td>California</td><td>$51,588</td><td>&minus;$1,918</td><td>$72,825</td><td>&minus;$4,968</td></tr>
+        </tbody>
+      </table></div>
+    <p style="color:var(--ink-soft);">Washington's two payroll programs are small but not equal. <strong style="color:var(--ink);">WA Cares</strong> (0.58%) has no wage cap, while the employee share of <strong style="color:var(--ink);">Paid Family &amp; Medical Leave</strong> (about 71% of the 1.13% total premium for 2026, roughly 0.81%) stops at the Social Security wage base of $184,500. At $65,000 they total $902 a year. Some people are exempt from WA Cares &mdash; for example those who live outside Washington, military spouses and holders of certain temporary work visas &mdash; but only after an approved application.</p>
+    <p style="color:var(--ink-soft);margin-bottom:0;">Sources: <a href="https://esd.wa.gov/node/1109" target="_blank" rel="noopener">Employment Security Department &mdash; PFML 2026 rate</a>; <a href="https://wacaresfund.wa.gov/" target="_blank" rel="noopener">WA Cares Fund</a>.</p>
+  </div>
+
 
   <div class="panel">
     <h2>Why Washington has no state income tax</h2>

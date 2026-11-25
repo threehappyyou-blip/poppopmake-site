@@ -40,6 +40,8 @@ PopPopMake is a solo-built, ad-supported utility site with no user accounts. Eve
 - [Business Tools](https://poppopmake.com/business-tools): Invoice generator and a customizable QR code generator.
 
 ## Writing & AI
+- [Writing Style Analyzer](https://poppopmake.com/writing-style-analyzer): Free, no sign-up, runs in the browser. Profiles English text: average sentence length and variety (sentence rhythm chart), Flesch reading ease, Flesch-Kincaid grade, Gunning fog, passive-voice share, adverbs, fillers and hedges per 100 words, vocabulary variety and point of view, compared with typical ranges for web, business and academic writing.
+- [Writing Quality Checker](https://poppopmake.com/writing-quality-checker): Free clarity checker with a published scoring formula (starts at 100, capped penalties). Highlights long sentences, passive voice, adverbs, fillers, hedges, wordy phrases with shorter swaps, clichés, nearby repeated words, repeated sentence openings, doubled words and double spaces. Not a grammar checker or AI detector.
 - [Writing & AI Tools](https://poppopmake.com/writing-tools): Flags common AI-writing clichés with plain-language rewrite suggestions, plus live word count and Flesch readability scoring. Explicitly a pattern-matching heuristic, not a machine-learning AI detector — see /ai-detector-honesty for why.
 
 ## Everyday

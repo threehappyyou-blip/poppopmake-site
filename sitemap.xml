@@ -76,6 +76,16 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://poppopmake.com/writing-style-analyzer</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/writing-quality-checker</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://poppopmake.com/writing-tools</loc>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
@@ -132,6 +142,51 @@
   </url>
   <url>
     <loc>https://poppopmake.com/mississippi-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/florida-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/texas-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/washington-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/georgia-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/north-carolina-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/pennsylvania-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/illinois-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/new-york-paycheck-calculator</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://poppopmake.com/california-paycheck-calculator</loc>
     <changefreq>yearly</changefreq>
     <priority>0.6</priority>
   </url>

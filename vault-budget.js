@@ -197,6 +197,19 @@
     return out.join('\r\n') + '\r\n';
   }
 
+  // ---------- a daily reminder as a calendar event (works on every phone, no server, nothing private in it) ----------
+  // o: { today, time 'HH:MM', title, body, url } → one repeating event every day at that local time, with an alert.
+  function dailyIcs(o) {
+    var stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z', d = o.today.replace(/-/g, ''), hm = String(o.time || '21:00').replace(':', '');
+    var end = ('0' + Math.min(23, +hm.slice(0, 2))).slice(-2) + ('0' + Math.min(59, +hm.slice(2) + 10)).slice(-2);
+    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//PopPopMake//Daily//EN', 'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT', 'UID:ppm-daily-' + d + hm + '@poppopmake.com', 'DTSTAMP:' + stamp,
+      'DTSTART:' + d + 'T' + hm + '00', 'DTEND:' + d + 'T' + end + '00', 'RRULE:FREQ=DAILY',
+      'SUMMARY:' + icsText(o.title), 'DESCRIPTION:' + icsText((o.body || '') + (o.url ? ' ' + o.url : '')), o.url ? 'URL:' + o.url : null,
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText(o.title), 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR']
+      .filter(Boolean).join('\r\n') + '\r\n';
+  }
+
   // ---------- a year at a glance ----------
   function yearSummary(doc, year, today) {
     var months = [], byCat = {}, income = 0, expense = 0;
@@ -470,8 +483,96 @@
     if (g && amt) { for (var i = g.moves.length - 1; i >= 0; i--) if (g.moves[i].amt === amt && ymOf(g.moves[i].date) === ym) { g.moves.splice(i, 1); break; } if (goalSaved(g) < g.target) g.done = null; }
   }
 
+  // ---------- side gigs: real hourly pay = (money in − money out) ÷ hours, per gig ----------
+  var MAX_GIGS = 20, MAX_WORK_MIN = 1440, TIMER_CAP = 960;
+  function gigOf(doc, id) { return (doc.gigs || []).find(function (g) { return g.id === id; }) || null; }
+  function cleanGig(g) {
+    if (!g || typeof g.id !== 'string' || !/^[a-z0-9]{1,40}$/.test(g.id)) return null;
+    var name = String(g.name || '').trim().slice(0, 30); if (!name) return null;
+    var o = { id: g.id, name: name, emoji: String(g.emoji || '🧰').slice(0, 8) || '🧰' };
+    if (g.off) o.off = true;
+    return o;
+  }
+  function addGig(doc, o) {
+    doc.gigs = doc.gigs || [];
+    if (doc.gigs.length >= MAX_GIGS) return null;
+    var g = cleanGig({ id: uid(), name: o && o.name, emoji: o && o.emoji });
+    if (g) doc.gigs.push(g);
+    return g;
+  }
+  function updateGig(doc, id, p) {
+    var g = gigOf(doc, id); if (!g) return false;
+    if (p.name !== undefined) { var n = String(p.name).trim().slice(0, 30); if (n) g.name = n; }
+    if (p.emoji !== undefined) g.emoji = String(p.emoji).slice(0, 8) || '🧰';
+    if (p.off !== undefined) { if (p.off) g.off = true; else delete g.off; }
+    return true;
+  }
+  function removeGig(doc, id) {
+    var n = { work: 0, tx: 0 };
+    doc.work = (doc.work || []).filter(function (w) { if (w.g === id) { n.work++; return false; } return true; });
+    doc.tx.forEach(function (t) { if (t.g === id) { delete t.g; n.tx++; } });
+    doc.gigs = (doc.gigs || []).filter(function (g) { return g.id !== id; });
+    if (doc.gigRun && doc.gigRun.g === id) doc.gigRun = null;
+    return n;
+  }
+  function cleanWork(w, doc) {
+    if (!w || typeof w.id !== 'string' || !gigOf(doc, w.g) || !validDate(w.date) || !Number.isInteger(w.min) || w.min < 1 || w.min > MAX_WORK_MIN) return null;
+    var o = { id: w.id, g: w.g, date: w.date, min: w.min };
+    if (w.note) o.note = String(w.note).slice(0, 100);
+    return o;
+  }
+  function logWork(doc, o) {
+    var w = cleanWork({ id: uid(), g: o.g, date: o.date, min: Math.round(+o.min), note: o.note }, doc);
+    if (w) { doc.work = doc.work || []; doc.work.push(w); }
+    return w;
+  }
+  function deleteWork(doc, id) {
+    var i = (doc.work || []).findIndex(function (w) { return w.id === id; });
+    return i < 0 ? null : doc.work.splice(i, 1)[0];
+  }
+  function workOn(doc, g, date) {
+    return (doc.work || []).reduce(function (s, w) { return s + (w.date === date && (!g || w.g === g) ? w.min : 0); }, 0);
+  }
+  function gigStats(doc, from, to) {
+    var by = {};
+    (doc.gigs || []).forEach(function (g) { by[g.id] = { id: g.id, name: g.name, emoji: g.emoji, off: !!g.off, income: 0, cost: 0, net: 0, min: 0, hourly: null, last: null }; });
+    doc.tx.forEach(function (t) {
+      var s = t.g && by[t.g]; if (!s || t.date < from || t.date > to || t.cur !== doc.currency) return;
+      if (t.type === 'income') s.income += t.amt; else s.cost += t.amt;
+    });
+    (doc.work || []).forEach(function (w) {
+      var s = by[w.g]; if (!s) return;
+      if (!s.last || w.date > s.last) s.last = w.date;
+      if (w.date >= from && w.date <= to) s.min += w.min;
+    });
+    var list = Object.keys(by).map(function (k) { var s = by[k]; s.net = s.income - s.cost; if (s.min) s.hourly = Math.round(s.net * 60 / s.min); return s; });
+    return list.sort(function (a, b) {
+      if (a.hourly === null || b.hourly === null) return a.hourly === null ? (b.hourly === null ? 0 : 1) : -1;
+      return b.hourly - a.hourly;
+    });
+  }
+  function gigStart(doc, g, now) {
+    if (!gigOf(doc, g)) return false;
+    doc.gigRun = { g: g, t: Math.floor(now) };
+    return true;
+  }
+  function gigStop(doc, now, date) {
+    var r = doc.gigRun; if (!r) return null;
+    doc.gigRun = null;
+    var min = Math.max(1, Math.round((now - r.t) / 60000)), clipped = min > TIMER_CAP;
+    var entry = logWork(doc, { g: r.g, date: date, min: Math.min(min, TIMER_CAP) });
+    return entry ? { entry: entry, clipped: clipped } : null;
+  }
+  // Korean minimum hourly wage (고용노동부 고시): 2026 ₩10,320, 2027 ₩10,700
+  var MIN_WAGE = { KRW: [[2026, 10320], [2027, 10700]] };
+  function minWage(cur, year) {
+    var rows = MIN_WAGE[cur]; if (!rows) return null;
+    var hit = null; rows.forEach(function (r) { if (r[0] <= year) hit = r; });
+    return hit ? { amt: hit[1], year: hit[0] } : null;
+  }
+
   function newDoc(lang, currency) {
-    return { v: 1, currency: currency || 'USD', cats: defaultCats(), tx: [], budgets: { total: null, cats: {} }, recurring: [], goals: [], methods: [], plan: null };
+    return { v: 1, currency: currency || 'USD', cats: defaultCats(), tx: [], budgets: { total: null, cats: {} }, recurring: [], goals: [], methods: [], plan: null, gigs: [], work: [], gigRun: null };
   }
 
   function addCategory(doc, c) {
@@ -505,6 +606,7 @@
     if (t.photo && PHOTO_RE.test(t.photo)) tx.photo = t.photo;
     if (Number.isInteger(t.at) && t.at >= 0 && t.at < 1440) tx.at = t.at;      // minute of the day it was written (only when written that day)
     if (RATE_RE.test(t.rate)) tx.rate = t.rate;                                 // the person's own verdict: 'g' worth it, 'w' a waste
+    if (typeof t.g === 'string' && gigOf(doc, t.g)) tx.g = t.g;                 // which side gig this money belongs to
     doc.tx.push(tx);
     return tx;
   }
@@ -519,6 +621,8 @@
     });
     if (patch.rate === null || patch.rate === '') delete t.rate;
     else if (RATE_RE.test(patch.rate)) t.rate = patch.rate;
+    if (patch.g === null || patch.g === '') delete t.g;
+    else if (typeof patch.g === 'string' && gigOf(doc, patch.g)) t.g = patch.g;
     return true;
   }
   function deleteTx(doc, id) {
@@ -923,6 +1027,10 @@
     if (Array.isArray(raw.goals)) d.goals = raw.goals.map(cleanGoal).filter(Boolean).slice(0, 50);
     d.recurring.forEach(function (r) { if (r.pm !== undefined && !mids[r.pm]) delete r.pm; });
     d.plan = cleanPlan(raw.plan);
+    if (Array.isArray(raw.gigs)) { var gseen = {}; d.gigs = raw.gigs.map(cleanGig).filter(function (g) { if (!g || gseen[g.id]) return false; gseen[g.id] = 1; return true; }).slice(0, MAX_GIGS); }
+    if (Array.isArray(raw.work)) d.work = raw.work.map(function (w) { return cleanWork(w, d); }).filter(Boolean);
+    d.tx.forEach(function (t) { if (t.g !== undefined && !gigOf(d, t.g)) delete t.g; });
+    if (raw.gigRun && gigOf(d, raw.gigRun.g) && Number.isFinite(raw.gigRun.t) && raw.gigRun.t >= 0) d.gigRun = { g: raw.gigRun.g, t: Math.floor(raw.gigRun.t) };
     return d;
   }
 
@@ -935,10 +1043,11 @@
     addRecurring: addRecurring, updateRecurring: updateRecurring, deleteRecurring: deleteRecurring, applyRecurring: applyRecurring,
     toCSV: toCSV, parseCSV: parseCSV, parseDate: parseDate, guessColumns: guessColumns, importRows: importRows,
     addMonths: addMonths, daysInMonth: daysInMonth, validDate: validDate, uid: uid,
-    calcAmount: calcAmount, dueSchedule: dueSchedule, recurringIcs: recurringIcs, quickParse: quickParse, guessQuick: guessQuick, tiles: tiles, tileAmounts: tileAmounts, shortAmount: shortAmount, addDays: addDays, weekday: weekday, dailyAllowance: dailyAllowance, upcomingFixed: upcomingFixed, yearSummary: yearSummary, yearsWithData: yearsWithData,
+    calcAmount: calcAmount, dueSchedule: dueSchedule, recurringIcs: recurringIcs, dailyIcs: dailyIcs, quickParse: quickParse, guessQuick: guessQuick, tiles: tiles, tileAmounts: tileAmounts, shortAmount: shortAmount, addDays: addDays, weekday: weekday, dailyAllowance: dailyAllowance, upcomingFixed: upcomingFixed, yearSummary: yearSummary, yearsWithData: yearsWithData,
     addMethod: addMethod, updateMethod: updateMethod, removeMethod: removeMethod, methodTotals: methodTotals, photosOf: photosOf,
     addGoal: addGoal, updateGoal: updateGoal, deleteGoal: deleteGoal, goalMove: goalMove, goalProgress: goalProgress, goalSaved: goalSaved, goalsSavedIn: goalsSavedIn,
-    planSuggest: planSuggest, planMath: planMath, planCycle: planCycle, planWeek: planWeek, planSaveDue: planSaveDue, planWeekReport: planWeekReport, applyPlan: applyPlan, planSaved: planSaved, planUnsave: planUnsave, cleanPlan: cleanPlan
+    planSuggest: planSuggest, planMath: planMath, planCycle: planCycle, planWeek: planWeek, planSaveDue: planSaveDue, planWeekReport: planWeekReport, applyPlan: applyPlan, planSaved: planSaved, planUnsave: planUnsave, cleanPlan: cleanPlan,
+    addGig: addGig, updateGig: updateGig, removeGig: removeGig, logWork: logWork, deleteWork: deleteWork, workOn: workOn, gigStats: gigStats, gigStart: gigStart, gigStop: gigStop, minWage: minWage, gigOf: gigOf
   };
   root.VaultBudget = api;
   if (typeof module !== 'undefined' && module.exports) module.exports = api;

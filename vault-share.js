@@ -387,7 +387,9 @@
         if (cd.kind === 'cover') {
           p = base(true); ctx = p.ctx; ctx.textAlign = 'center'; ctx.fillStyle = '#FFFFFF'; ctx.shadowColor = 'rgba(0,0,0,.25)'; ctx.shadowBlur = 30;
           ctx.font = '280px "PPM Script", Georgia, serif'; ctx.fillText(L.my, W / 2, 760);
-          ctx.font = '200 260px ' + SANS; ctx.fillText(String(o.year), W / 2, 1030);
+          var bigTxt = o.coverBig || String(o.year), fs = 260; ctx.font = '200 ' + fs + 'px ' + SANS;
+          while (ctx.measureText(bigTxt).width > W - 140 && fs > 120) { fs -= 10; ctx.font = '200 ' + fs + 'px ' + SANS; }
+          ctx.fillText(bigTxt, W / 2, 1030);
           ctx.shadowBlur = 0; ctx.font = '500 44px ' + SANS; ctx.fillStyle = 'rgba(255,255,255,.92)'; ctx.fillText(cd.line, W / 2, 1160);
           ctx.font = '600 34px ' + SANS; ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fillText(L.swipe, W / 2, 1300);
         } else if (cd.kind === 'writing') {
@@ -435,6 +437,25 @@
             yy += 250;
           });
           if (cd.entries) { ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.55)'; ctx.font = '600 32px ' + SANS; ctx.fillText(L.logged.replace('{n}', cd.entries), W / 2, yy - 90); }
+        } else if (cd.kind === 'spend') {                 // a month in money: spent, compared with last month, per day, no-spend days
+          p = base(false); ctx = p.ctx; head(ctx, L.kSpend, cd.title, 300);
+          panel(ctx, 80, 560, W - 160, 980);
+          big(ctx, cd.spent, L.spent, W / 2, 800, cd.spent.length > 9 ? 104 : 130);
+          if (cd.diff) { ctx.textAlign = 'center'; ctx.font = '700 40px ' + SANS; ctx.fillStyle = cd.diffUp ? '#C2456A' : '#1E8A6B'; ctx.fillText(cd.diff, W / 2, 950); }
+          big(ctx, cd.perDay, L.perDay, W / 4 + 40, 1200, cd.perDay.length > 8 ? 64 : 84); big(ctx, String(cd.noSpend), L.noSpend, W * 3 / 4 - 40, 1200, 110);
+          if (cd.income) { ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.6)'; ctx.font = '600 36px ' + SANS; ctx.fillText(cd.income, W / 2, 1440); }
+        } else if (cd.kind === 'cats') {                  // where it went: the top categories as bars
+          p = base(false); ctx = p.ctx; head(ctx, L.kCats, cd.title, 300);
+          var rowsC = cd.rows.slice(0, 6), ph2 = 120 + rowsC.length * 150; panel(ctx, 80, 540, W - 160, ph2);
+          var maxv = Math.max.apply(null, rowsC.map(function (r) { return r.v; }).concat([1]));
+          rowsC.forEach(function (r, i) {
+            var y = 620 + i * 150; ctx.textAlign = 'left'; ctx.font = '64px ' + SANS; ctx.fillStyle = '#2B2730'; ctx.fillText(r.emoji, 130, y + 60);
+            ctx.font = '700 40px ' + SANS; ctx.fillText(r.name, 230, y + 30);
+            ctx.textAlign = 'right'; ctx.font = '700 38px ' + SANS; ctx.fillText(r.label, W - 130, y + 30);
+            rr(ctx, 230, y + 56, W - 360, 26, 13); ctx.fillStyle = 'rgba(43,39,48,.07)'; ctx.fill();
+            rr(ctx, 230, y + 56, Math.max(26, (W - 360) * r.v / maxv), 26, 13); ctx.fillStyle = MOOD_COL[(4 - i % 5 + 5) % 5]; ctx.fill();
+          });
+          if (cd.tip) { ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(43,39,48,.65)'; ctx.font = '600 36px ' + SANS; wrap(ctx, cd.tip, W - 200).slice(0, 2).forEach(function (l, i) { ctx.fillText(l, W / 2, 540 + ph2 + 90 + i * 50); }); }
         } else if (cd.kind === 'pixels') {
           p = base(false); ctx = p.ctx; head(ctx, L.kPixels, cd.title, 260);
           panel(ctx, 70, 470, W - 140, 1170); var gx = 190, gy = 560, cell = 22, gap = 4;

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Writing Quality Checker — Free Score + Fix-It List, No Sign-Up | PopPopMake</title>
+<meta name="description" content="Free writing quality checker: a score out of 100 and highlighted fixes for long sentences, passive voice, fillers, wordy phrases, clichés and repetition. The scoring formula is public. No account; your text stays in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/writing-quality-checker">
+<link rel="canonical" href="https://poppopmake.com/writing-quality-checker">
+<meta property="og:title" content="Writing Quality Checker — Free Score + Fix-It List, No Sign-Up | PopPopMake">
+<meta property="og:description" content="Free writing quality checker: a score out of 100 and highlighted fixes for long sentences, passive voice, fillers, wordy phrases, clichés and repetition. The scoring formula is public. No account; your text stays in your browser.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Writing Quality Checker — Free Score + Fix-It List, No Sign-Up | PopPopMake">
+<meta name="twitter:description" content="Free writing quality checker: a score out of 100 and highlighted fixes for long sentences, passive voice, fillers, wordy phrases, clichés and repetition. The scoring formula is public. No account; your text stays in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}.skip-link:focus{left:0;}
+
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:62ch;margin:0 0 28px;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:0.82rem;font-weight:600;margin-bottom:5px;}
+  .field textarea{
+    width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;background:#fff;color:var(--ink);resize:vertical;min-height:190px;
+  }
+
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.98rem;padding:12px 24px;border-radius:999px;cursor:pointer;margin-top:4px;}
+  .action-btn:hover{opacity:0.92;}
+  .action-btn.teal{background:var(--teal);}
+
+  .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .status.error{background:rgba(242,84,45,0.08);color:var(--orange);}
+
+  .tabs{display:flex;gap:8px;margin:24px 0 20px;flex-wrap:wrap;}
+  .tab-btn{font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
+  .tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .tab-btn:hover:not(.active){border-color:var(--teal);color:var(--ink);}
+
+  .empty-note{color:var(--ink-soft);font-size:0.9rem;padding:28px 4px;text-align:center;}
+
+  .legend{font-size:0.8rem;color:var(--ink-soft);margin:0 0 14px;}
+  .tier-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .tier-dot.t1{background:var(--orange);}
+  .tier-dot.t2{background:var(--yellow);}
+  .tier-dot.t3{background:var(--teal);}
+
+  .highlighted-text{background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:16px 18px;font-size:0.94rem;line-height:1.75;white-space:pre-wrap;margin-bottom:18px;max-height:360px;overflow-y:auto;}
+  .highlighted-text mark{padding:1px 3px;border-radius:3px;cursor:help;}
+  .highlighted-text mark.t1{background:rgba(242,84,45,0.22);}
+  .highlighted-text mark.t2{background:rgba(244,183,64,0.4);}
+  .highlighted-text mark.t3{background:rgba(15,139,141,0.18);}
+
+  .stats-row{display:flex;gap:18px;flex-wrap:wrap;font-size:0.86rem;color:var(--ink-soft);margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+  .stats-row strong{color:var(--ink);}
+
+  .notes-list{margin:0 0 16px;padding-left:20px;font-size:0.88rem;color:var(--ink-soft);}
+  .notes-list li{margin-bottom:5px;}
+
+  .phrase-list, .suggestion-list{list-style:none;padding:0;margin:0;}
+  .phrase-list li, .suggestion-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:0.92rem;}
+  .phrase-list li:last-child, .suggestion-list li:last-child{border-bottom:none;}
+  .count{color:var(--ink-soft);font-size:0.85rem;}
+  .arrow{color:var(--ink-soft);margin:0 3px;}
+
+  .smooth-note{font-size:0.86rem;color:var(--ink-soft);margin-top:18px;padding-top:16px;border-top:1px solid var(--line);}
+
+  .stale-note{display:none;background:rgba(244,183,64,0.18);border:1px solid var(--yellow);border-radius:8px;padding:10px 14px;font-size:0.86rem;color:var(--ink);margin-bottom:16px;}
+  .stale-note.show{display:block;}
+  .is-stale{opacity:0.5;transition:opacity .15s ease;}
+
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.86rem;color:var(--ink-soft);}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+<style>
+  .keyfacts{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:10px;padding:16px 20px;margin:0 0 26px;}
+  .keyfacts h2{font-family:'Space Grotesk',sans-serif;font-size:1rem;margin:0 0 8px;letter-spacing:.01em;}
+  .keyfacts ul{margin:0;padding-left:20px;font-size:.93rem;}
+  .keyfacts li{margin:4px 0;}
+  article.guide h2{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;margin:38px 0 10px;letter-spacing:-.01em;}
+  article.guide h3{font-size:1.02rem;margin:22px 0 6px;}
+  article.guide p, article.guide li{color:var(--ink-soft);}
+  article.guide table{width:100%;border-collapse:collapse;font-size:.9rem;margin:10px 0 18px;background:var(--card);border-radius:10px;overflow:hidden;}
+  article.guide th, article.guide td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);}
+  article.guide th{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);background:var(--paper-2);}
+  article.guide td.num, article.guide th.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .faq-item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .faq-q{font-weight:600;margin:0 0 6px;color:var(--ink);}
+  .faq-a{margin:0;color:var(--ink-soft);}
+  .tbl-wrap{overflow-x:auto;}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Writing Quality Checker", "url": "https://poppopmake.com/writing-quality-checker", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (runs in the browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Free writing quality checker: a score out of 100 and highlighted fixes for long sentences, passive voice, fillers, wordy phrases, clichés and repetition. The scoring formula is public. No account; your text stays in your browser."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How do I check the quality of my writing for free?", "acceptedAnswer": {"@type": "Answer", "text": "Paste your draft into the box above and press “Check quality”. You get a score out of 100 and every issue highlighted in your text with a suggested fix. There’s no sign-up or word limit, and your text stays in your browser."}}, {"@type": "Question", "name": "What makes writing high quality?", "acceptedAnswer": {"@type": "Answer", "text": "Clear writing says one idea per sentence, uses active verbs, cuts words that add no meaning, varies sentence length, and avoids stock phrases. Those are exactly the things this checker measures; correct grammar and spelling are the other half."}}, {"@type": "Question", "name": "Is a writing quality checker the same as a grammar checker?", "acceptedAnswer": {"@type": "Answer", "text": "No. A grammar checker looks for errors (agreement, spelling, punctuation). A quality checker looks at clarity and style — sentence length, passive voice, filler, clichés and repetition. Error-free text can still be hard to read, so it helps to use both."}}, {"@type": "Question", "name": "What is a good writing quality score?", "acceptedAnswer": {"@type": "Answer", "text": "On this checker, 80 or above reads well and 90+ is polished. Academic and technical writing often lands lower because of longer sentences and more passive voice, which is normal for that genre."}}, {"@type": "Question", "name": "Can I use it for essays, emails and blog posts?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. It works on any English text. For essays, also check the Writing Style Analyzer’s academic column; for emails and blog posts, aim for 80+ and short paragraphs."}}]}</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Writing · free · no sign-up</span>
+  <h1>Writing Quality Checker</h1>
+  <p class="lede">Paste your draft and get a quality score out of 100 with a fix-it list: long sentences, passive voice, filler and hedge words, wordy phrases, clichés, repeated words and typos like “the the”. Every issue is highlighted in your text with a suggested fix. No account, no limits, and your text never leaves your browser.</p>
+
+  <section class="keyfacts" aria-labelledby="kf">
+    <h2 id="kf">Key facts</h2>
+    <ul>
+      <li><strong>Free, unlimited, private</strong> — no sign-up and no upload; the checker runs on this page.</li>
+      <li><strong>12 checks</strong>: very long and long sentences, passive voice, adverbs, fillers, hedges, wordy phrases (with shorter swaps), clichés, repeated words, repeated sentence openings, doubled words and double spaces.</li>
+      <li><strong>Transparent score</strong>: starts at 100; each problem type has a published cap, so one habit can’t sink an otherwise clean draft. 80+ reads well; 90+ is polished.</li>
+      <li>It is a clarity and style checker, not a grammar or spelling checker — use both before you send something important.</li>
+      <li>Want a profile of how you write rather than a to-do list? Try the <a href="/writing-style-analyzer">Writing Style Analyzer</a>.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <div class="field">
+      <label for="qc-input">Your draft</label>
+      <textarea id="qc-input" placeholder="Paste an email, essay, blog post or report."></textarea>
+    </div>
+    <button class="action-btn" id="qc-go" type="button">Check quality</button>
+    <button class="action-btn teal" id="qc-sample" type="button" style="margin-left:8px;">Try a sample</button>
+    <div class="status" id="qc-status"></div>
+  </section>
+
+  <section id="qc-out" hidden>
+    <div class="qc-head">
+      <div class="qc-score"><div class="qc-num" id="qc-num">—</div><div class="qc-lab" id="qc-lab"></div></div>
+      <ul class="qc-sum" id="qc-sum"></ul>
+    </div>
+    <div class="tabs" id="qc-tabs" role="tablist"></div>
+    <div class="highlighted-text" id="qc-text"></div>
+    <ul class="phrase-list" id="qc-list"></ul>
+  </section>
+
+<article class="guide">
+  <h2>How the quality score is worked out</h2>
+  <p>Most checkers give a score without saying where it comes from. Here is the whole formula. The score starts at 100 and loses points for each problem type, up to a cap, so a draft with one bad habit still scores fairly on everything else.</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Problem</th><th>Points lost</th><th class="num">Cap</th></tr></thead>
+    <tbody>
+      <tr><td>Sentence over 35 words / 26–35 words</td><td>6 each / 2.5 each</td><td class="num">18</td></tr>
+      <tr><td>Passive sentences above 10% of all sentences</td><td>0.6 per percentage point</td><td class="num">14</td></tr>
+      <tr><td>Adverbs above 2 per 100 words</td><td>2.5 per extra adverb per 100 words</td><td class="num">10</td></tr>
+      <tr><td>Fillers and hedges</td><td>2 per instance per 100 words</td><td class="num">10</td></tr>
+      <tr><td>Clichés / wordy phrases</td><td>4 each / 2 each</td><td class="num">10</td></tr>
+      <tr><td>Same word repeated within 12 words</td><td>2 per instance per 100 words</td><td class="num">8</td></tr>
+      <tr><td>Three sentences starting alike, doubled words, double spaces</td><td>2 / 3 / 0.5 each</td><td class="num">6</td></tr>
+      <tr><td>Monotone rhythm (sentence variety under 0.3)</td><td>flat</td><td class="num">6</td></tr>
+      <tr><td>Grade level above 14</td><td>2 per grade</td><td class="num">8</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>What the score means:</strong> 90–100 polished, 80–89 reads well, 65–79 worth one more pass, under 65 needs a rewrite of the flagged sentences. Texts under 20 words aren’t scored.</p>
+
+  <h2>Each issue, and the fastest fix</h2>
+  <h3>Long sentences</h3>
+  <p>Readers lose the thread after about 25 words. Split at the first “and”, “which” or comma that starts a new idea. Keep one long sentence if it builds to a point; don’t keep three in a row.</p>
+  <h3>Passive voice</h3>
+  <p>“The report was approved by Sam” → “Sam approved the report.” Put the person doing the action first. Leave passive voice when the doer truly doesn’t matter (“the store opens at 9” style facts, lab methods).</p>
+  <h3>Fillers and hedges</h3>
+  <p>Words like <em>very, really, just, basically</em> add length but not meaning; <em>maybe, probably, I think</em> make you sound unsure. Delete them and read the sentence again — it almost always gets stronger.</p>
+  <h3>Wordy phrases</h3>
+  <p>The checker suggests the short form: <em>in order to → to</em>, <em>due to the fact that → because</em>, <em>at this point in time → now</em>, <em>has the ability to → can</em>, <em>prior to → before</em>.</p>
+  <h3>Clichés</h3>
+  <p>“At the end of the day”, “think outside the box”, “game changer” — readers skim past them. Replace each with the specific thing you mean.</p>
+  <h3>Repeated words and sentence openings</h3>
+  <p>The same content word twice within a dozen words, or three sentences in a row starting with “The”, makes prose feel clumsy. Use a pronoun, a synonym, or reorder one sentence.</p>
+
+  <h2>A 60-second checklist before you hit send</h2>
+  <ol>
+    <li>Run the checker and fix every orange (very long) sentence.</li>
+    <li>Turn passive sentences active wherever you know who did it.</li>
+    <li>Delete fillers; keep hedges only where you genuinely aren’t sure.</li>
+    <li>Swap each wordy phrase for its short form.</li>
+    <li>Read the first sentence of each paragraph alone — together they should tell the whole story.</li>
+    <li>Run your spell-check last.</li>
+  </ol>
+
+  <h2>Where this checker stops</h2>
+  <ul>
+    <li><strong>Not a grammar or spelling checker.</strong> It won’t catch “their/there” or a missing comma.</li>
+    <li><strong>Pattern-based, not AI.</strong> Rules are simple and visible, so it can’t understand context — a flagged passive or repeat is a prompt to look, not an order to change.</li>
+    <li><strong>English only.</strong></li>
+    <li><strong>Not an AI detector.</strong> It doesn’t judge who or what wrote the text (<a href="/ai-detector-honesty">why</a>).</li>
+  </ul>
+<h2 id="faq">Frequently asked questions</h2>
+<div class="faq-item"><p class="faq-q">How do I check the quality of my writing for free?</p><p class="faq-a">Paste your draft into the box above and press “Check quality”. You get a score out of 100 and every issue highlighted in your text with a suggested fix. There’s no sign-up or word limit, and your text stays in your browser.</p></div>
+<div class="faq-item"><p class="faq-q">What makes writing high quality?</p><p class="faq-a">Clear writing says one idea per sentence, uses active verbs, cuts words that add no meaning, varies sentence length, and avoids stock phrases. Those are exactly the things this checker measures; correct grammar and spelling are the other half.</p></div>
+<div class="faq-item"><p class="faq-q">Is a writing quality checker the same as a grammar checker?</p><p class="faq-a">No. A grammar checker looks for errors (agreement, spelling, punctuation). A quality checker looks at clarity and style — sentence length, passive voice, filler, clichés and repetition. Error-free text can still be hard to read, so it helps to use both.</p></div>
+<div class="faq-item"><p class="faq-q">What is a good writing quality score?</p><p class="faq-a">On this checker, 80 or above reads well and 90+ is polished. Academic and technical writing often lands lower because of longer sentences and more passive voice, which is normal for that genre.</p></div>
+<div class="faq-item"><p class="faq-q">Can I use it for essays, emails and blog posts?</p><p class="faq-a">Yes. It works on any English text. For essays, also check the Writing Style Analyzer’s academic column; for emails and blog posts, aim for 80+ and short paragraphs.</p></div>
+</article>
+<div class="disclaimer"><strong>Related:</strong> <a href="/writing-style-analyzer">Writing Style Analyzer</a> (rhythm, readability and style profile) · <a href="/writing-tools">Writing &amp; AI Tools</a> (cliché finder, word count) · <a href="/manual-writing">How to use the writing tools</a></div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms">Terms</a><a href="/privacy">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script src="/writing-analyzer.js"></script>
+<style>
+  .qc-head{display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin:24px 0 4px;}
+  .qc-score{width:128px;height:128px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card);border:6px solid var(--teal);}
+  .qc-num{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:2.4rem;line-height:1;}
+  .qc-lab{font-size:.78rem;color:var(--ink-soft);margin-top:4px;}
+  .qc-sum{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:6px 14px;flex:1;font-size:.9rem;color:var(--ink-soft);}
+  .qc-sum strong{color:var(--ink);}
+  .highlighted-text mark.w-verylong{background:rgba(242,84,45,.16);} .highlighted-text mark.w-long{background:rgba(244,183,64,.25);}
+  .highlighted-text mark.w-passive{background:rgba(124,92,214,.22);} .highlighted-text mark.w-adverb,.highlighted-text mark.w-filler,.highlighted-text mark.w-hedge{background:rgba(15,139,141,.2);}
+  .highlighted-text mark.w-wordy,.highlighted-text mark.w-cliche{background:rgba(242,84,45,.28);} .highlighted-text mark.w-echo,.highlighted-text mark.w-starts{background:rgba(244,183,64,.45);}
+  .highlighted-text mark.w-double,.highlighted-text mark.w-space{background:rgba(242,84,45,.45);}
+</style>
+<script>
+(function () {
+  var W = window.PPMWriting, $ = function (id) { return document.getElementById(id); }, SAMPLE = "In order to improve our results, it is important to note that the new process was designed by the team very carefully. The process was tested over a period of time and it was found that the process really works. Basically, at the end of the day, the the new workflow saves time. We believe it will probably be adopted by every department in the near future, which would be a game changer for the company and would allow every department to finally move faster and focus on the things that actually matter to customers.", last = null, cur = 'all';
+  var GROUPS = [
+    ['all', 'All issues', ['verylong', 'long', 'passive', 'adverb', 'filler', 'hedge', 'wordy', 'cliche', 'echo', 'starts', 'double', 'space']],
+    ['length', 'Long sentences', ['verylong', 'long']], ['passive', 'Passive voice', ['passive']], ['filler', 'Fillers & hedges', ['adverb', 'filler', 'hedge']],
+    ['wordy', 'Wordy & clichés', ['wordy', 'cliche']], ['repeat', 'Repetition & typos', ['echo', 'starts', 'double', 'space']]
+  ];
+  var TITLES = { verylong: 'Very long sentence (over 35 words) — split it', long: 'Long sentence (26–35 words)', passive: 'Passive voice — who did it?', adverb: 'Adverb — a stronger verb?', filler: 'Filler — try deleting', hedge: 'Hedge — sounds unsure', wordy: 'Wordy phrase', cliche: 'Cliché — say the specific thing', echo: 'Repeated word nearby', starts: 'Third sentence in a row starting this way', double: 'Doubled word', space: 'Double space' };
+  function label(s) { return s >= 90 ? 'Polished' : s >= 80 ? 'Reads well' : s >= 65 ? 'One more pass' : 'Needs a rewrite'; }
+  function color(s) { return s >= 80 ? 'var(--teal)' : s >= 65 ? 'var(--yellow)' : 'var(--orange)'; }
+  function draw() {
+    var g = GROUPS.find(function (x) { return x[0] === cur; }), txt = $('qc-input').value, r = last;
+    $('qc-text').innerHTML = W.highlight(txt, r.issues, g[2], TITLES);
+    var list = r.issues.filter(function (x) { return g[2].indexOf(x.kind) >= 0; });
+    var seen = {}, items = [];
+    list.forEach(function (x) {
+      var key = x.kind + '|' + x.text.toLowerCase().slice(0, 60); if (seen[key]) { seen[key].n++; return; }
+      seen[key] = { x: x, n: 1 }; items.push(seen[key]);
+    });
+    $('qc-list').innerHTML = items.slice(0, 60).map(function (it) {
+      var x = it.x, t = x.kind === 'long' || x.kind === 'verylong' ? '“' + W.esc(x.text.slice(0, 90)) + (x.text.length > 90 ? '…' : '') + '” <span class="count">(' + x.n + ' words)</span>' : '<strong>' + W.esc(x.text) + '</strong>' + (it.n > 1 ? ' <span class="count">×' + it.n + '</span>' : '');
+      return '<li>' + t + ' <span class="arrow">→</span> ' + W.esc(x.fix ? (x.fix.charAt(0) === '(' ? x.fix.slice(1, -1) : 'use “' + x.fix + '”') : TITLES[x.kind]) + '</li>';
+    }).join('') || '<li class="count">Nothing to fix in this group.</li>';
+    document.querySelectorAll('#qc-tabs .tab-btn').forEach(function (b) { b.classList.toggle('active', b.getAttribute('data-g') === cur); b.setAttribute('aria-selected', b.getAttribute('data-g') === cur ? 'true' : 'false'); });
+  }
+  function run() {
+    var txt = $('qc-input').value, st = $('qc-status'), r = W.analyze(txt);
+    if (r.score === null) { st.className = 'status show error'; st.textContent = 'Paste at least 20 words to get a score.'; $('qc-out').hidden = true; return; }
+    last = r; st.className = 'status show success'; st.textContent = 'Checked ' + r.counts.words + ' words — ' + r.issues.length + ' things to look at.';
+    $('qc-num').textContent = r.score; $('qc-lab').textContent = label(r.score); document.querySelector('.qc-score').style.borderColor = color(r.score);
+    var t = r.tally;
+    $('qc-sum').innerHTML = [['Long sentences', t.long + t.verylong], ['Passive voice', t.passive], ['Adverbs', t.adverb], ['Fillers & hedges', t.filler + t.hedge], ['Wordy phrases', t.wordy], ['Clichés', t.cliche], ['Repeated words', t.echo], ['Typos (doubled / spaces)', t.double + t.space], ['Reading ease', r.readability.fre + ' · ' + W.freLabel(r.readability.fre)]].map(function (x) { return '<li>' + x[0] + ': <strong>' + x[1] + '</strong></li>'; }).join('');
+    $('qc-tabs').innerHTML = GROUPS.map(function (g) { var n = r.issues.filter(function (x) { return g[2].indexOf(x.kind) >= 0; }).length; return '<button type="button" role="tab" class="tab-btn" data-g="' + g[0] + '">' + g[1] + ' (' + n + ')</button>'; }).join('');
+    document.querySelectorAll('#qc-tabs .tab-btn').forEach(function (b) { b.addEventListener('click', function () { cur = b.getAttribute('data-g'); draw(); }); });
+    cur = 'all'; draw(); $('qc-out').hidden = false;
+  }
+  $('qc-go').addEventListener('click', run);
+  $('qc-sample').addEventListener('click', function () { $('qc-input').value = SAMPLE; run(); });
+})();
+</script>
+</body>
+</html>

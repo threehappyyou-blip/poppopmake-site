@@ -140,7 +140,8 @@
       var photoBtn = ctx.putBlob && ctx.uid ? h('button', { type: 'button', class: 'mini ps-open', id: 'ps-open', text: '📷 ' + t('ps.open'), on: { click: photoSticker } }) : null;
       var auto = h('div', { class: 'st-auto-row' }, h('button', { type: 'button', class: 'btn small primary st-auto', id: 'st-auto', text: '✨ ' + t(autoSet.length ? 'st.autoAgain' : 'st.auto'), on: { click: autoDecorate } }),
         autoSet.length ? h('button', { type: 'button', class: 'mini', id: 'st-auto-clear', text: t('st.autoClear'), on: { click: function () { clearAuto(); placeStickers(); commit(true); toggle('stickers'); toggle('stickers'); } } }) : null);
-      add(panel, auto, tabs, h('p', { class: 'hint', text: stTab === 'recent' ? t('st.recentHint') : stTab === 'label' ? t('st.labelHint') : stTab === 'seal' ? (keys.length ? t('st.sealHint') : t('st.sealNone')) : stTab === 'season' ? t('st.seasonHint') : t('st.hint') }), photoBtn, grid);
+      add(panel, auto, tabs, h('p', { class: 'hint', text: stTab === 'recent' ? t('st.recentHint') : stTab === 'label' ? t('st.labelHint') : stTab === 'seal' ? (keys.length ? t('st.sealHint') : t('st.sealNone')) : stTab === 'season' ? t('st.seasonHint') : t('st.hint') }), photoBtn, grid,
+        ctx.shopUrl ? h('a', { class: 'st-shop', id: 'st-shop', href: ctx.shopUrl, target: '_blank', rel: 'noopener', text: '🎀 ' + t('st.shop') }) : null);
     }
     function nameOf(k) {
       if (k.slice(0, 4) === 'a:em') return t('tf.feel.' + k.slice(4));

@@ -4,7 +4,7 @@
 (function () {
   'use strict';
 
-  var SE = window.VaultSeals, CO = window.VaultCoach, HP = window.VaultHelper, C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, ST = window.VaultStickers, t = I.t;
+  var SE = window.VaultSeals, CO = window.VaultCoach, HP = window.VaultHelper, C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, ST = window.VaultStickers, VP = window.VaultPaste, t = I.t;
   var NOTE_FONTS = ['base', 'hand', 'pen', 'gamja', 'poor', 'single', 'yeon', 'dongle', 'dodum', 'batang', 'jua', 'dohyeon', 'cute', 'kirang', 'dokdo'], NOTE_SIZES = ['s', 'm', 'l'];
   var app = document.getElementById('app');
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray', 'loveblue', 'chrome', 'ballet'];
@@ -31,14 +31,15 @@
   // Inside the Toss app (the bundle's toss-bridge.js sets window.PPMToss): the same app, with Toss's rules —
   // one part only, light only, no install prompts, no desktop windows, no service worker, no links out, its own storage copy.
   var TOSS = window.PPMToss && window.PPMToss.platform === 'toss' ? window.PPMToss : null;
-  if (TOSS) { ONLY = /^(diary|notes|budget)$/.test(TOSS.app || '') ? TOSS.app : 'budget'; document.documentElement.classList.add('toss'); }
+  var SHOP_URL = TOSS ? null : 'https://happyyou6.gumroad.com/?utm_source=poppopmake&utm_medium=app';   // PopPopMake's own sticker & planner packs (never inside Toss)
+  if (TOSS) { ONLY = /^(diary|notes|budget)$/.test(TOSS.app || '') ? TOSS.app : 'budget'; document.documentElement.classList.add('toss'); }     // 'gigs' = the budget, opened on 부업별 진짜 시급
   if (DY) DY.formLabel = function (k, x) { return t('tf.' + k + '.' + x); };    // names for a ready-made page in lists and the text file
   var TAB_KEY = 'ppm-vault-tab', INSTALL_KEY = 'ppm-vault-install-later', PK_AUTO_KEY = 'ppm-vault-pk-auto';   // only the tab name and two on/off choices, never content
   // A desktop note window (/vault?w=note&id=…) shows one note on its own; everything else is the full app.
   var DESK = (location.search.match(/[?&]w=note&id=([A-Za-z0-9_-]{4,40})(?:&|$)/) || [])[1] || null;
 
   var S = {
-    phase: 'loading', budget: null, notes: null, settings: null, tab: 'budget', ym: null, budgetView: 'list',
+    phase: 'loading', budget: null, notes: null, settings: null, tab: 'budget', ym: null, budgetView: TOSS && TOSS.app === 'gigs' ? 'gigs' : 'list',
     searchOpen: false, query: '', notesQuery: '', diary: null, diaryYm: null, diaryView: 'list', diarySearch: false, diaryQuery: '', tip: Math.floor(Math.random() * TIPS.length), tipHidden: false,
     installEvt: null, pendingCode: null, lastActive: Date.now(), hiddenAt: null,
     pkArm: true, pkBtn: null, shared: null
@@ -223,7 +224,7 @@
       if (raw && raw.covers && raw.covers[k] && window.VaultCovers) s.covers[k] = window.VaultCovers.clean(raw.covers[k], k, DY.cleanSticker);
       if (raw && raw.starterHide && raw.starterHide[k] === true) s.starterHide[k] = true;
     });
-    if (raw && raw.starterHide) Object.keys(raw.starterHide).forEach(function (k) { if ((/^wr20\d\d$/.test(k) || /^wk\d{4}-\d{2}-\d{2}$/.test(k)) && raw.starterHide[k] === true) s.starterHide[k] = true; });
+    if (raw && raw.starterHide) Object.keys(raw.starterHide).forEach(function (k) { if ((/^wr20\d\d$/.test(k) || /^wk\d{4}-\d{2}-\d{2}$/.test(k) || /^mr\d{4}-\d{2}$/.test(k)) && raw.starterHide[k] === true) s.starterHide[k] = true; });
     s.ownPass = !raw || raw.ownPass !== false;           // false only in the Toss version until a passcode is chosen
     s.seals = {};
     if (raw && raw.seals && typeof raw.seals === 'object' && SE) SE.IDS.forEach(function (id) { var v = raw.seals[id]; if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v)) s.seals[id] = v; });
@@ -792,7 +793,7 @@
       return h('button', { type: 'button', role: 'tab', 'aria-selected': on ? 'true' : 'false', class: on ? 'on' : '', id: id, text: t(key), on: { click: function () { S.budgetView = v; render(); } } });
     };
     add(main, h('div', { class: 'seg bview', role: 'tablist', id: 'budget-views' }, vtab('list', 'view-list', 'view.list'), vtab('cal', 'view-cal', 'view.calendar'),
-      vtab('plan', 'view-plan', 'view.plan'), vtab('charts', 'view-charts', 'view.charts'), vtab('goals', 'view-goals', 'view.goals')));
+      vtab('plan', 'view-plan', 'view.plan'), vtab('charts', 'view-charts', 'view.charts'), vtab('goals', 'view-goals', 'view.goals'), vtab('gigs', 'view-gigs', 'view.gigs')));
     themeHost(main);
     if (S.budgetView !== 'list' && S.budgetView !== 'year' && !stOnB) add(main, helperCards('budget'));      // what the app wants to ask stays in view everywhere
 
@@ -801,8 +802,9 @@
     else if (S.budgetView === 'charts') add(main, charts(sum));
     else if (S.budgetView === 'year') { main.textContent = ''; renderYear(main); }
     else if (S.budgetView === 'goals') renderGoals(main);
+    else if (S.budgetView === 'gigs') renderGigs(main);
     else {
-      add(main, card, coachCard(), quickLine(), tilesCard(), notice(), stOnB ? null : helperCards('budget'));
+      add(main, gigRunBar(), monthReportBanner(), stOnB && !S.budget.tx.length ? null : todayCard(), card, coachCard(), quickLine(), tilesCard(), notice(), stOnB ? null : helperCards('budget'));
       var days = B.days(S.budget, ym);
       if (!days.length) add(main, empty('🧾', t('empty.month'), t('empty.monthHint')));
       else add(main, h('div', { class: 'days', id: 'tx-list' }, days.map(function (d) {
@@ -813,10 +815,39 @@
     }
     add(main, fab(t('add.title'), function () { openAdd(); }, 'add-btn'));
   }
+  // ----- 오늘의 한 장: the day on one card, the first thing seen when the app opens (closes for the day) -----
+  function todayCard() {
+    if (S.ym !== thisMonth() || !S.budget) return null;
+    var d = today(), key = 'ppm-today-card';
+    if (lsGet(key) === d) return null;
+    var rows = [], al = B.dailyAllowance(S.budget, d), y = B.addDays(d, -1), ySpent = 0, yCount = 0;
+    if (al) rows.push(['💰', al.over ? t('td.over', { amt: money(al.over) }) : al.todayLeft >= 0 ? t('td.left', { amt: money(al.todayLeft), spent: money(al.todaySpent) }) : t('td.leftOver', { amt: money(-al.todayLeft) })]);
+    var tomorrow = B.addDays(d, 1), due = tomorrow.slice(0, 7) === d.slice(0, 7) ? B.upcomingFixed(S.budget, d).items.filter(function (x) { return x.day === +tomorrow.slice(8, 10); }) : [];
+    if (due.length) rows.push(['📅', t('td.due', { what: due.slice(0, 2).map(function (x) { return (x.note || catName(x.cat)) + ' ' + money(x.amt); }).join(', ') + (due.length > 2 ? ' +' + (due.length - 2) : '') })]);
+    S.budget.tx.forEach(function (x) { if (x.date === y && x.type === 'expense' && x.cur === S.budget.currency) { ySpent += x.amt; yCount++; } });
+    if (S.budget.tx.length) rows.push(['🧾', yCount ? t('td.yday', { amt: money(ySpent), n: yCount }) : t('td.ydayNone')]);
+    var diaryOk = S.diary && (!ONLY || ONLY === 'diary') && !TOSS;
+    var wrote = diaryOk && S.diary.entries.some(function (e) { return e.date === d; });
+    if (diaryOk && !wrote) rows.push(['📝', t('td.diary')]);
+    var gAct = gigActive(), gAsk = gAct.length && !S.budget.gigRun && !B.workOn(S.budget, null, d) && new Date().getHours() >= 17;
+    if (gAsk) rows.push(['⏱', t('gig.td', { name: gAct.slice(0, 2).map(function (g) { return g.name; }).join('·') })]);
+    if (!rows.length) return null;
+    var hr = new Date().getHours(), hello = hr < 11 ? t('td.morning') : hr < 17 ? t('td.day') : t('td.evening');
+    var box = h('section', { class: 'card today-card', id: 'today-card', 'aria-label': t('td.title') },
+      h('div', { class: 'td-head' }, h('span', { class: 'td-hello', text: hello }), h('span', { class: 'td-date', text: I.dayLabel(d) + ' · ' + t('td.title') })),
+      h('ul', { class: 'td-rows' }, rows.map(function (r) { return h('li', {}, h('span', { class: 'td-ico', 'aria-hidden': 'true', text: r[0] }), h('span', { text: r[1] })); })),
+      h('div', { class: 'td-actions' },
+        h('button', { type: 'button', class: 'btn small primary', id: 'td-add', text: '+ ' + t('td.add'), on: { click: function () { openAdd(); } } }),
+        gAsk ? h('button', { type: 'button', class: 'btn small', id: 'td-gig', text: '⏱ ' + t('gig.tdBtn'), on: { click: function () { openWorkLog(null); } } }) : null,
+        diaryOk && !wrote ? h('button', { type: 'button', class: 'btn small', id: 'td-diary', text: '📝 ' + t('td.write'), on: { click: function () { S.tab = 'diary'; render(); newEntry(today()); } } }) : null,
+        h('button', { type: 'button', class: 'link td-close', id: 'td-close', text: t('td.close'), on: { click: function () { lsSet(key, d); render(); } } })),
+      !TOSS && !lsGet(NT_KEY) && !lsGet('ppm-daily-ics') ? h('button', { type: 'button', class: 'link td-remind', id: 'td-remind', text: '🔔 ' + t('td.remind'), on: { click: openNotify } }) : null);
+    return box;
+  }
   // ----- one line: "점심 9000" + Enter. The category is guessed (what you chose before, then everyday words);
   // when it can't be guessed, the category buttons appear right there and one tap saves.
   function quickLine() {
-    if (S.ym !== thisMonth() || S.budgetView === 'goals') return null;
+    if (S.ym !== thisMonth() || S.budgetView === 'goals' || S.budgetView === 'gigs') return null;
     return quickBox();
   }
   function quickBox(onSaved) {
@@ -859,9 +890,14 @@
     input.addEventListener('input', function () { st.picked = false; draw(); });
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); save(); } });
     go.addEventListener('click', save);
+    if (!onSaved && VP) input.addEventListener('paste', function (e) {        // a pasted card / bank text goes to the payment reader
+      var txt = e.clipboardData && e.clipboardData.getData('text') || '';
+      if (txt.length > 15 && VP.looksLikePayment(txt)) { e.preventDefault(); openPayPaste(txt); }
+    });
     draw();
     if (!onSaved && S.quickFocus) { S.quickFocus = false; setTimeout(function () { if (document.contains(input)) input.focus(); }, 0); }
-    return h('section', { class: 'card quick', id: px + 'quick', 'aria-label': t('q.label') }, h('div', { class: 'quick-row' }, input, go), prev, cats);
+    var payLink = !onSaved && VP ? h('button', { type: 'button', class: 'link quick-pay', id: 'pay-paste-open', text: '📋 ' + t('pp.open'), on: { click: function () { openPayPaste(''); } } }) : null;
+    return h('section', { class: 'card quick', id: px + 'quick', 'aria-label': t('q.label') }, h('div', { class: 'quick-row' }, input, go), prev, cats, payLink);
   }
 
   // ----- the money coach (vault-coach.js): says it before the money goes; "why?" shows the numbers -----
@@ -1223,6 +1259,7 @@
       tx.photo ? h('span', { class: 'tx-rep tx-photo', title: t('rc.has'), 'aria-label': t('rc.has'), text: '🧾' }) : null,
       tx.rate === 'w' ? h('span', { class: 'tx-rep tx-waste', title: t('rate.w'), 'aria-label': t('rate.w'), text: '💸' }) : null,
       methodOf(tx.pm) ? h('span', { class: 'tx-pm', title: methodOf(tx.pm).name, text: methodOf(tx.pm).emoji || '💳' }) : null,
+      tx.g && B.gigOf(S.budget, tx.g) ? h('span', { class: 'tx-pm tx-gig', title: t('gig.tag') + ': ' + B.gigOf(S.budget, tx.g).name, 'aria-label': t('gig.tag') + ': ' + B.gigOf(S.budget, tx.g).name, text: B.gigOf(S.budget, tx.g).emoji }) : null,
       h('span', { class: 'tx-amt' + (inc ? ' pos' : ''), text: (inc ? '+' : '−') + money(tx.amt, tx.cur).replace(/^[-−]/, '') })));
   }
   function empty(emoji, title, hint) {
@@ -1303,7 +1340,8 @@
           h('span', { class: 'trend-label', text: I.shortMonth(m.ym) }));
       })),
       h('p', { class: 'legend' }, h('span', { class: 'key exp' }), t('sum.spent'), ' ', h('span', { class: 'key inc' }), t('sum.income')),
-      h('button', { type: 'button', class: 'btn block', id: 'open-year', on: { click: function () { S.year = S.ym.slice(0, 4); S.budgetView = 'year'; render(); window.scrollTo(0, 0); } } }, '📅 ', t('year.open'))));
+      h('button', { type: 'button', class: 'btn block', id: 'open-year', on: { click: function () { S.year = S.ym.slice(0, 4); S.budgetView = 'year'; render(); window.scrollTo(0, 0); } } }, '📅 ', t('year.open')),
+      SH && SH.wrapped && sum.expense ? h('button', { type: 'button', class: 'btn block', id: 'open-month-report', on: { click: function () { openMonthReport(S.ym); } } }, '🗓 ', t('mr.btn', { m: I.monthLabel(S.ym) })) : null));
     var mt = (S.budget.methods || []).length ? B.methodTotals(S.budget, S.ym) : [];
     if (mt.length) {
       var mmax = Math.max.apply(null, mt.map(function (x) { return x.amt; }));
@@ -1429,7 +1467,8 @@
     var editing = !!existing;
     var lastPm = lsGet(PM_KEY), hasPm = function (id) { return !!methodOf(id); };
     var st = { type: existing ? existing.type : preset && preset.type === 'income' ? 'income' : 'expense', cat: existing ? existing.cat : preset && preset.cat && catOf(preset.cat) ? preset.cat : null,
-      pm: existing ? existing.pm || null : (hasPm(lastPm) ? lastPm : null), photo: existing ? existing.photo || null : null };
+      pm: existing ? existing.pm || null : (hasPm(lastPm) ? lastPm : null), photo: existing ? existing.photo || null : null,
+      g: existing ? existing.g || null : preset && preset.g && B.gigOf(S.budget, preset.g) ? preset.g : null };
     var cur = existing ? existing.cur : S.budget.currency;
     var defDate = existing ? existing.date : preset && preset.date && B.validDate(preset.date) ? preset.date : (S.ym === thisMonth() ? today() : S.ym + '-' + pad(Math.min(new Date().getDate(), B.daysInMonth(S.ym))));
     var slips = 0;
@@ -1453,6 +1492,17 @@
         S.budget.methods.forEach(function (m) {
           add(pmRow, h('button', { type: 'button', role: 'radio', class: 'chip' + (st.pm === m.id ? ' on' : ''), 'data-pm': m.id, 'aria-checked': st.pm === m.id ? 'true' : 'false',
             on: { click: function () { st.pm = st.pm === m.id ? null : m.id; drawPm(); } } }, h('span', { 'aria-hidden': 'true', text: (m.emoji || '💳') + ' ' }), m.name));
+        });
+      }
+      var gigRow = h('div', { class: 'chips gig-row', id: 'gig-row', role: 'radiogroup', 'aria-label': t('gig.tag') });
+      function drawGig() {
+        gigRow.textContent = '';
+        var list = (S.budget.gigs || []).filter(function (g) { return !g.off || g.id === st.g; });
+        if (!list.length) return;
+        add(gigRow, h('span', { class: 'gig-row-label', text: '⏱ ' + t('gig.tag') }));
+        list.forEach(function (g) {
+          add(gigRow, h('button', { type: 'button', role: 'radio', class: 'chip' + (st.g === g.id ? ' on' : ''), 'data-gig': g.id, 'aria-checked': st.g === g.id ? 'true' : 'false',
+            on: { click: function () { st.g = st.g === g.id ? null : g.id; drawGig(); } } }, h('span', { 'aria-hidden': 'true', text: g.emoji + ' ' }), g.name));
         });
       }
       var rcBox = h('div', { class: 'receipt', id: 'receipt' }), rcMsg = msg;        // one message line for the whole sheet
@@ -1499,7 +1549,7 @@
         if (!list.length) return;
         add(freq, h('p', { class: 'hint', text: t('add.frequent') }), h('div', { class: 'chips' }, list.map(function (f) {
           return h('button', { type: 'button', class: 'chip', on: { click: function () {
-            var tx = B.addTx(S.budget, { type: f.type, amt: f.amt, cur: f.cur, cat: f.cat, date: today(), note: f.note, pm: st.pm, photo: st.photo, at: nowMin() });
+            var tx = B.addTx(S.budget, { type: f.type, amt: f.amt, cur: f.cur, cat: f.cat, date: today(), note: f.note, pm: st.pm, photo: st.photo, at: nowMin(), g: st.g });
             finish(tx);
           } } }, h('span', { 'aria-hidden': 'true', text: catEmoji(f.cat) + ' ' }), (f.note || catName(f.cat)) + ' ' + money(f.amt, f.cur));
         })));
@@ -1523,11 +1573,12 @@
         if (!st.cat) { setMsg(msg, t('add.pick')); if (++slips === 2 && !editing) helperOffer('add'); return; }
         var d = B.validDate(date.value) ? date.value : today();
         if (editing) {
-          B.updateTx(S.budget, existing.id, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim(), pm: st.pm || null, photo: st.photo || null });
+          B.updateTx(S.budget, existing.id, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim(), pm: st.pm || null, photo: st.photo || null, g: st.g || null });
           saveBudget(); close(); render(); toast(t('add.saved', { what: catEmoji(st.cat) + ' ' + catName(st.cat) + ' ' + money(amt, cur) }));
           return;
         }
-        var tx = B.addTx(S.budget, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim(), pm: st.pm, photo: st.photo, at: d === today() ? nowMin() : undefined });
+        var tx = B.addTx(S.budget, { type: st.type, amt: amt, cat: st.cat, date: d, note: note.value.trim(), pm: st.pm, photo: st.photo, at: d === today() ? nowMin() : undefined, g: st.g });
+        if (tx.g) helperDone('budget', 'gig');
         lsSet(PM_KEY, st.pm || null);
         if (repeat.checked && repFreq.value === 'week') {
           var rw = B.addRecurring(S.budget, { type: st.type, amt: amt, cat: st.cat, note: tx.note, freq: 'week', startDate: d, pm: st.pm });
@@ -1538,13 +1589,13 @@
         }
         finish(tx);
       }
-      drawType(); drawCats(); drawFreq(); drawPm(); drawRc(); updPreview();
+      drawType(); drawCats(); drawFreq(); drawPm(); drawGig(); drawRc(); updPreview();
       add(body, typeSeg,
         h('div', { class: 'field' }, h('label', { for: 'amount', text: t('add.amount') + ' (' + cur + ')' }), amount, abox.ops, preview),
         freq,
         h('div', { class: 'two' }, field(t('add.note'), note), field(t('add.date'), date)),
         editing ? null : h('div', { class: 'check repeat-row' }, repeat, h('label', { for: 'repeat', text: t('add.repeat') }), repFreq),
-        pmRow, rcBox, rcFile,
+        pmRow, gigRow, rcBox, rcFile,
         editing && existing.type === 'expense' ? h('div', { class: 'rate-row', id: 'rate-row' }, h('span', { class: 'field-label', text: t('rate.q') }), rateButtons(existing, render)) : null,
         h('p', { class: 'hint pick-hint', text: editing ? t('add.category') : t('add.pick') }),
         grid, msg);
@@ -1908,6 +1959,155 @@
     add(main, box);
   }
 
+  // ===== 부업별 진짜 시급: (money in − money out) ÷ hours, per side gig. The app asks for the hours; one tap saves. =====
+  var GIG_EMOJI = ['🛵', '✍️', '🛍️', '📚', '💻', '📦', '🎬', '🕒'];
+  function gigDur(min) {
+    var hh = Math.floor(min / 60), mm = min % 60;
+    return [hh ? t('gig.h', { h: hh }) : '', mm || !hh ? t('gig.m', { m: mm }) : ''].filter(Boolean).join(' ');
+  }
+  function gigActive() { return (S.budget.gigs || []).filter(function (g) { return !g.off; }); }
+  function gigMonthRange(ym) { return [ym + '-01', ym + '-' + pad(B.daysInMonth(ym))]; }
+  var gigTick = null;
+  function gigRunBar() {
+    var r = S.budget && S.budget.gigRun, g = r && B.gigOf(S.budget, r.g);
+    if (!g) return null;
+    var txt = h('span', { class: 'gig-run-txt', id: 'gig-run-txt' });
+    function upd() { txt.textContent = t('gig.running', { name: g.emoji + ' ' + g.name, time: gigDur(Math.max(0, Math.floor((Date.now() - r.t) / 60000))) }); }
+    upd(); clearInterval(gigTick);
+    gigTick = setInterval(function () { if (!document.contains(txt)) { clearInterval(gigTick); return; } upd(); }, 20000);
+    return h('div', { class: 'card gig-run', id: 'gig-run', role: 'status' }, h('span', { class: 'gig-dot', 'aria-hidden': 'true' }), txt,
+      h('button', { type: 'button', class: 'btn small primary', id: 'gig-stop', text: '⏹ ' + t('gig.stop'), on: { click: gigStopNow } }));
+  }
+  function gigStopNow() {
+    var res = B.gigStop(S.budget, Date.now(), today()); if (!res) return;
+    var g = B.gigOf(S.budget, res.entry.g);
+    helperDone('budget', 'gig'); saveBudget(); render();
+    toast(res.clipped ? t('gig.clipped') : t('gig.saved', { name: g ? g.name : '', time: gigDur(res.entry.min) }), { label: t('btn.undo'), fn: function () { B.deleteWork(S.budget, res.entry.id); saveBudget(); render(); } });
+  }
+  function renderGigs(main) {
+    var gigs = S.budget.gigs || [], box = h('div', { id: 'gigs' }), cur = S.budget.currency;
+    add(box, gigRunBar());
+    if (!gigs.length) {
+      var presets = t('gig.presets').split(',');
+      add(box, h('section', { class: 'card gig-intro', id: 'gig-intro' },
+        h('h2', { class: 'gig-title', text: '⏱ ' + t('gig.title') }), h('p', { class: 'hint', text: t('gig.lede') }),
+        h('p', { class: 'field-label', text: t('gig.pick') }),
+        h('div', { class: 'chips wrap', id: 'gig-presets' }, presets.map(function (p, i) {
+          return h('button', { type: 'button', class: 'chip', 'data-preset': i, on: { click: function () {
+            var g = B.addGig(S.budget, { name: p.trim(), emoji: GIG_EMOJI[i] || '🧰' }); if (!g) return;
+            helperDone('budget', 'gig'); saveBudget(); render(); toast(t('gig.addedHint', { name: g.name }));
+          } } }, h('span', { 'aria-hidden': 'true', text: (GIG_EMOJI[i] || '🧰') + ' ' }), p.trim());
+        }), h('button', { type: 'button', class: 'chip', id: 'gig-own', text: t('gig.own'), on: { click: function () { editGig(null); } } }))));
+      add(main, box); return;
+    }
+    var rg = gigMonthRange(S.ym), stats = B.gigStats(S.budget, rg[0], rg[1]), mw = B.minWage(cur, +S.ym.slice(0, 4));
+    var timed = stats.filter(function (s) { return s.hourly !== null && !s.off; });
+    var tip = null;
+    if (timed.length >= 2 && timed[0].hourly > 0 && timed[timed.length - 1].hourly > 0 && timed[0].hourly >= timed[timed.length - 1].hourly * 1.3)
+      tip = t('gig.compare', { a: timed[0].name, b: timed[timed.length - 1].name, x: (timed[0].hourly / timed[timed.length - 1].hourly).toFixed(1) });
+    else if (timed.length) tip = t(timed.length === 1 ? 'gig.one' : 'gig.best', { name: timed[0].name, amt: money(timed[0].hourly) });
+    add(box, h('section', { class: 'card gig-head' }, h('h2', { class: 'gig-title', text: '⏱ ' + t('gig.title') + ' · ' + I.monthLabel(S.ym) }),
+      h('p', { class: tip ? 'gig-tip' : 'hint', id: 'gig-tip', text: tip || t('gig.startHint') })));
+    var running = S.budget.gigRun && S.budget.gigRun.g;
+    stats.forEach(function (s) {
+      var below = mw && s.hourly !== null && s.hourly < mw.amt, loss = s.hourly !== null && s.hourly < 0;
+      var big = s.hourly === null ? h('span', { class: 'gig-none', text: t('gig.noTime') })
+        : h('strong', { class: 'gig-rate' + (loss ? ' neg' : ''), text: t('gig.hourly', { amt: money(s.hourly) }) });
+      add(box, h('section', { class: 'card gig-card' + (s.off ? ' off' : ''), 'data-id': s.id },
+        h('div', { class: 'gig-top' },
+          h('span', { class: 'gig-emoji', 'aria-hidden': 'true', text: s.emoji }),
+          h('span', { class: 'gig-name', text: s.name }), s.off ? h('span', { class: 'gig-tag', text: t('gig.paused') }) : null,
+          h('button', { type: 'button', class: 'icon-btn gig-edit', 'aria-label': t('gig.edit') + ': ' + s.name, on: { click: function () { editGig(s.id); } } }, icon('edit', 18))),
+        big,
+        loss ? h('p', { class: 'gig-warn', text: t('gig.loss') }) : below ? h('p', { class: 'gig-warn', text: t('gig.belowMin', { year: mw.year, amt: money(mw.amt) }) }) : null,
+        h('div', { class: 'gig-nums' },
+          h('span', {}, h('em', { text: t('gig.in') }), h('b', { class: 'pos', text: money(s.income) })),
+          h('span', {}, h('em', { text: t('gig.out') }), h('b', { text: money(s.cost) })),
+          h('span', {}, h('em', { text: t('gig.time') }), h('b', { text: gigDur(s.min) }))),
+        h('div', { class: 'gig-actions' },
+          running === s.id ? h('button', { type: 'button', class: 'btn small primary gig-timer', text: '⏹ ' + t('gig.stop'), on: { click: gigStopNow } })
+            : h('button', { type: 'button', class: 'btn small gig-timer', text: '▶ ' + t('gig.start'), disabled: !!running, on: { click: function () { B.gigStart(S.budget, s.id, Date.now()); saveBudget(); render(); } } }),
+          h('button', { type: 'button', class: 'btn small gig-log', text: t('gig.logTime'), on: { click: function () { openWorkLog(s.id); } } }),
+          h('button', { type: 'button', class: 'btn small gig-in', text: t('gig.addIn'), on: { click: function () { openAdd(null, { type: 'income', cat: 'side', g: s.id }); } } }),
+          h('button', { type: 'button', class: 'btn small gig-out', text: t('gig.addOut'), on: { click: function () { openAdd(null, { type: 'expense', g: s.id }); } } }))));
+    });
+    add(box, h('button', { type: 'button', class: 'btn block', id: 'gig-new', on: { click: function () { editGig(null); } } }, '+ ', t('gig.add')),
+      h('p', { class: 'hint gig-formula', text: t('gig.formula', { month: I.monthLabel(S.ym) }) + (mw ? ' ' + t('gig.mwSource') : '') }));
+    add(main, box);
+  }
+  function openWorkLog(gid) {
+    var act = gigActive(); if (!act.length) { S.budgetView = 'gigs'; render(); return; }
+    var st = { g: gid || (act.length === 1 ? act[0].id : null) };
+    sheet(t('gig.logTitle'), function (body, close) {
+      var gigRow = h('div', { class: 'chips wrap', id: 'wl-gigs', role: 'radiogroup', 'aria-label': t('gig.which') });
+      var date = h('input', { class: 'input', id: 'wl-date', type: 'date', value: S.ym === thisMonth() ? today() : S.ym + '-01' });
+      var own = h('input', { class: 'input', id: 'wl-own', inputmode: 'decimal', autocomplete: 'off', placeholder: '2.5', 'aria-label': t('gig.hoursOwn') });
+      var msg = msgEl();
+      function drawGigs() {
+        gigRow.textContent = '';
+        act.forEach(function (g) {
+          add(gigRow, h('button', { type: 'button', role: 'radio', class: 'chip' + (st.g === g.id ? ' on' : ''), 'aria-checked': st.g === g.id ? 'true' : 'false', 'data-gig': g.id,
+            on: { click: function () { st.g = g.id; setMsg(msg, ''); drawGigs(); } } }, h('span', { 'aria-hidden': 'true', text: g.emoji + ' ' }), g.name));
+        });
+      }
+      function saveMin(min) {
+        if (!st.g) { setMsg(msg, t('gig.which')); return; }
+        var w = B.logWork(S.budget, { g: st.g, date: B.validDate(date.value) ? date.value : today(), min: min });
+        if (!w) { setMsg(msg, t('gig.badHours')); return; }
+        var g = B.gigOf(S.budget, w.g);
+        helperDone('budget', 'gig'); saveBudget(); close(); render();
+        toast(t('gig.saved', { name: g.name, time: gigDur(w.min) }), { label: t('btn.undo'), fn: function () { B.deleteWork(S.budget, w.id); saveBudget(); render(); } });
+      }
+      drawGigs();
+      add(body, act.length > 1 ? h('p', { class: 'field-label', text: t('gig.which') }) : null, act.length > 1 ? gigRow : null,
+        h('p', { class: 'field-label', text: t('gig.howLong') }),
+        h('div', { class: 'chips wrap', id: 'wl-mins' }, [30, 60, 90, 120, 180, 240, 360, 480].map(function (m) {
+          return h('button', { type: 'button', class: 'chip', 'data-min': m, text: gigDur(m), on: { click: function () { saveMin(m); } } });
+        })),
+        h('div', { class: 'two' }, field(t('gig.hoursOwn'), own), field(t('add.date'), date)), msg,
+        h('div', { class: 'row end' }, h('button', { type: 'button', class: 'btn primary', id: 'wl-save', text: t('btn.save'), on: { click: function () {
+          var v = parseFloat(String(own.value).replace(',', '.')); if (!(v > 0)) { setMsg(msg, t('gig.badHours')); own.focus(); return; } saveMin(Math.round(v * 60));
+        } } })));
+    });
+  }
+  function editGig(id) {
+    var g = id ? B.gigOf(S.budget, id) : null, emo = g ? g.emoji : '🧰';
+    sheet(g ? t('gig.edit') : t('gig.add'), function (body, close) {
+      var eb = emojiButton(emo, 'gig-emoji', function (e) { emo = e; });
+      var name = h('input', { class: 'input', id: 'gig-name', maxlength: 30, placeholder: t('gig.namePh'), value: g ? g.name : '', 'data-autofocus': g ? null : '1' });
+      var off = h('input', { type: 'checkbox', id: 'gig-off' }); if (g && g.off) off.checked = true;
+      var msg = msgEl();
+      add(body, h('div', { class: 'row' }, eb, h('div', { class: 'grow' }, field(t('gig.name'), name))),
+        g ? h('div', { class: 'check' }, off, h('label', { for: 'gig-off', text: t('gig.pause') })) : null);
+      if (g) {
+        var rg = gigMonthRange(S.ym), ws = (S.budget.work || []).filter(function (w) { return w.g === g.id && w.date >= rg[0] && w.date <= rg[1]; }).sort(function (a, b) { return a.date < b.date ? 1 : -1; });
+        add(body, h('p', { class: 'field-label', text: t('gig.workList', { month: I.monthLabel(S.ym) }) }),
+          ws.length ? h('ul', { class: 'gig-work', id: 'gig-work' }, ws.map(function (w) {
+            return h('li', {}, h('span', { text: I.dayLabel(w.date) }), h('b', { text: gigDur(w.min) }),
+              h('button', { type: 'button', class: 'icon-btn small', 'aria-label': t('btn.delete'), on: { click: function (e) { B.deleteWork(S.budget, w.id); saveBudget(); e.currentTarget.closest('li').remove(); render(); } } }, icon('x', 14)));
+          })) : h('p', { class: 'hint', text: t('gig.noWork') }));
+      }
+      add(body, msg, h('div', { class: 'row end' },
+        g ? h('button', { type: 'button', class: 'btn danger', id: 'gig-delete', text: t('btn.delete'), on: { click: function () {
+          var keep = JSON.stringify({ gigs: S.budget.gigs, work: S.budget.work, run: S.budget.gigRun }), tagged = S.budget.tx.filter(function (x) { return x.g === g.id; }).map(function (x) { return x.id; });
+          B.removeGig(S.budget, g.id); saveBudget(); close(); render();
+          toast(t('gig.deleted', { name: g.name }), { label: t('btn.undo'), fn: function () {
+            var k = JSON.parse(keep); S.budget.gigs = k.gigs; S.budget.work = k.work; S.budget.gigRun = k.run;
+            S.budget.tx.forEach(function (x) { if (tagged.indexOf(x.id) >= 0) x.g = g.id; }); saveBudget(); render();
+          } });
+        } } }) : null,
+        h('button', { type: 'button', class: 'btn primary', id: 'gig-save', text: t('btn.save'), on: { click: function () {
+          var n = name.value.trim(); if (!n) { setMsg(msg, t('gig.needName')); name.focus(); return; }
+          if (g) B.updateGig(S.budget, g.id, { name: n, emoji: emo, off: off.checked });
+          else {
+            if (emo === '🧰') t('gig.presets').split(',').some(function (p, i) { if (p.trim() && n.toLowerCase().indexOf(p.trim().toLowerCase()) >= 0) { emo = GIG_EMOJI[i] || emo; return true; } return false; });
+            if (!B.addGig(S.budget, { name: n, emoji: emo })) { setMsg(msg, t('gig.full')); return; }
+          }
+          helperDone('budget', 'gig'); saveBudget(); close(); S.budgetView = 'gigs'; render();
+        } } })));
+    });
+  }
+
   // ===== no-spend challenge: the days come from what's actually written down; essentials you choose don't break a day =====
   var NB_ESSENTIAL = ['groceries', 'transport', 'housing', 'utilities', 'phone', 'health', 'education', 'pets'];
   function nobuyStatus(nb) {
@@ -2153,10 +2353,23 @@
     return navigator.serviceWorker.ready.then(function (reg) { return reg.periodicSync && reg.periodicSync.unregister('ppm-due'); }).catch(function () {})
       .then(function () { return window.caches ? caches.open(NT_CACHE).then(function (c) { return c.delete(NT_URL); }) : null; }).catch(function () {});
   }
+  // a daily calendar alarm: the one reminder that works on iPhones and every phone, with no server and nothing private
+  function dailyRemindCard(msg) {
+    var tm = h('input', { type: 'time', class: 'input', id: 'daily-time', value: lsGet('ppm-daily-ics') || '21:00', 'aria-label': t('dr.time') });
+    return h('div', { class: 'card daily-remind', id: 'daily-remind' },
+      h('p', { class: 'field-label', text: '📅 ' + t('dr.title') }), h('p', { class: 'hint', text: t('dr.body') }),
+      h('div', { class: 'row' }, tm, h('button', { type: 'button', class: 'btn primary', id: 'daily-ics', text: t('dr.add'), on: { click: function () {
+        var url = location.origin + (ONLY ? '/' + ONLY + '-app' : '/vault') + '?start=checkin';
+        var text = B.dailyIcs({ today: today(), time: tm.value || '21:00', title: t('dr.evTitle'), body: t('dr.evBody'), url: url });
+        download(text, 'poppopmake-daily-reminder.ics', 'text/calendar;charset=utf-8'); lsSet('ppm-daily-ics', tm.value || '21:00'); setMsg(msg, t('dr.done'), true);
+      } } })));
+  }
   function openNotify() {
     sheet(t('nt.title'), function (body, close) {
       var msg = msgEl(), on = !!lsGet(NT_KEY);
-      add(body, h('p', { text: t('nt.body') }), h('p', { class: 'hint', text: t('nt.private') }));
+      add(body, dailyRemindCard(msg));
+      if (!ntSupported() && !on) { add(body, msg, h('p', { class: 'hint', text: t('nt.other') })); return; }
+      add(body, h('p', { class: 'field-label', text: '🔔 ' + t('dr.android') }), h('p', { text: t('nt.body') }), h('p', { class: 'hint', text: t('nt.private') }));
       if (on) {
         add(body,
           h('button', { type: 'button', class: 'btn block', id: 'notify-test', text: t('nt.test'), on: { click: function () {
@@ -2170,7 +2383,7 @@
         setMsg(msg, '');
         ntOn().then(function () { close(); render(); toast(t('nt.onDone')); }, function (e) { setMsg(msg, e && e.code === 'denied' ? t('nt.denied') : t('nt.needInstall')); });
       } } }), msg, h('p', { class: 'hint', text: t('nt.other') }));
-    });
+    }, { onClose: function () { if (S.phase === 'app') render(); } });
   }
 
   // Open without the passcode on this device: the owner's choice, with the trade-off said plainly before it is on.
@@ -2372,7 +2585,7 @@
       var wrap = h('div', { class: 'note-wrap' }), cl = null;
       var npage = h('div', { class: 'page note-page', id: 'note-page' }, wrap), ndeco = null;
       var nd = new Date(n.created || Date.now()), ndate = nd.getFullYear() + '-' + pad(nd.getMonth() + 1) + '-' + pad(nd.getDate());
-      ndeco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: { deco: n.deco || null, date: ndate }, page: npage, ta: ta,
+      ndeco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, shopUrl: SHOP_URL, entry: { deco: n.deco || null, date: ndate }, page: npage, ta: ta,
         parts: ['page', 'paper', 'stickers'], noTint: true, lookClass: function () { return 'note-page ' + noteLook(n); },
         commit: function (d) { var v = noteDeco(d); if (JSON.stringify(v) === JSON.stringify(n.deco || null)) return; n.deco = v; n.updated = Date.now(); markNote(n); saveNotes(); },
         blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf, feelDict: openFeelDict, letterCard: letterCard });
@@ -2550,6 +2763,7 @@
   }
   function saveShared() {
     var text = S.shared; S.shared = null;
+    if (text && VP && S.budget && VP.looksLikePayment(text)) { S.tab = 'budget'; render(); openPayPaste(text); return; }
     if (!text || !S.notes) return;
     var n = { id: B.uid(), text: text, color: 'yellow', pinned: false, created: Date.now(), updated: Date.now() };
     S.notes.notes.push(n); noteLocal[n.id] = 1; markNote(n); saveNotes();
@@ -3097,6 +3311,68 @@
       }, { onClose: function () { setTimeout(function () { urls.forEach(function (u) { URL.revokeObjectURL(u); }); }, 1000); } });
     }, function () { wait.close(); toast(t('share.err')); });
   }
+  // ===== the month in review: 9:16 cards (spending, where it went, diary and mood), offered in the first days of a month =====
+  function monthReportData(ym, hide) {
+    var cur = S.budget.currency, sum = B.summary(S.budget, ym), prev = B.summary(S.budget, B.addMonths(ym, -1));
+    var days = +B.addDays(B.addMonths(ym, 1) + '-01', -1).slice(8, 10), last = ym === thisMonth() ? +today().slice(8, 10) : days;
+    var spentDays = {}; S.budget.tx.forEach(function (x) { if (x.type === 'expense' && x.date.slice(0, 7) === ym) spentDays[x.date] = 1; });
+    var first = S.budget.tx.map(function (x) { return x.date; }).sort()[0] || ym + '-01', free = 0;
+    for (var d = 1; d <= last; d++) { var ds = ym + '-' + (d < 10 ? '0' : '') + d; if (ds >= first && !spentDays[ds]) free++; }
+    var pct = function (v) { return sum.expense ? Math.round(v / sum.expense * 100) + '%' : ''; };
+    var mName = I.monthLabel(ym), cards = [{ kind: 'cover', line: t('mr.coverLine', { n: S.budget.tx.filter(function (x) { return x.date.slice(0, 7) === ym; }).length }) }];
+    if (sum.expense || sum.income) {
+      var diff = prev.expense ? Math.round((sum.expense - prev.expense) / prev.expense * 100) : null;
+      cards.push({ kind: 'spend', title: t('mr.spendTitle', { m: mName }), spent: hide ? '—' : money(sum.expense, cur), perDay: hide ? '—' : money(Math.round(sum.expense / Math.max(1, last)), cur), noSpend: free,
+        diff: diff === null || !isFinite(diff) ? '' : diff === 0 ? t('mr.same') : t(diff > 0 ? 'mr.up' : 'mr.down', { p: Math.abs(diff) }), diffUp: diff > 0,
+        income: sum.income && !hide ? t('mr.income', { amt: money(sum.income, cur) }) : '' });
+    }
+    if (sum.byCat.length) {
+      var top = sum.byCat[0], prevTop = prev.byCat.find(function (x) { return x.cat === top.cat; });
+      var tip = prevTop && prevTop.amt ? (top.amt > prevTop.amt * 1.2 ? t('mr.tipUp', { what: catName(top.cat) }) : top.amt < prevTop.amt * 0.8 ? t('mr.tipDown', { what: catName(top.cat) }) : '') : '';
+      cards.push({ kind: 'cats', title: t('mr.catsTitle'), tip: tip, rows: sum.byCat.slice(0, 6).map(function (x) { return { emoji: catEmoji(x.cat), name: catName(x.cat), v: x.amt, label: hide ? pct(x.amt) : money(x.amt, cur) + ' · ' + pct(x.amt) }; }) });
+    }
+    if (S.diary && !TOSS) {
+      var es = S.diary.entries.filter(function (e) { return e.date.slice(0, 7) === ym && DY.hasContent(e); }), dd = {}, counts = [0, 0, 0, 0, 0], photos = 0;
+      es.forEach(function (e) { dd[e.date] = 1; photos += e.photos.length; if (e.mood) counts[e.mood - 1]++; });
+      var run = 0, best = 0, pv = null; Object.keys(dd).sort().forEach(function (x) { run = pv && B.addDays(pv, 1) === x ? run + 1 : 1; best = Math.max(best, run); pv = x; });
+      if (es.length) cards.push({ kind: 'writing', title: t('mr.diaryTitle'), entries: es.length, days: Object.keys(dd).length, streak: best, photos: photos });
+      if (counts.some(Boolean)) { var tp = 0; counts.forEach(function (n, i) { if (n >= counts[tp]) tp = i; }); cards.push({ kind: 'mood', title: t('mr.moodTitle'), top: tp + 1, topName: t('mood.' + (tp + 1)), counts: counts, bestMonth: '' }); }
+    }
+    cards.push({ kind: 'end', line: t('mr.endLine', { m: mName }), next: t('mr.next') });
+    return { year: +ym.slice(0, 4), coverBig: mName, scene: coverOf('budget') ? coverOf('budget').art : null, cards: cards, empty: cards.length <= 2,
+      L: { my: t('mr.my'), swipe: t('wr.swipe'), kWriting: t('wr.kWriting'), kMood: t('wr.kMood'), kSpend: t('mr.kSpend'), kCats: t('mr.kCats'), entries: t('wr.entries'), days: t('wr.days'), streak: t('wr.streak'), photos: t('wr.photos'),
+        spent: t('sum.spent'), perDay: t('mr.perDay'), noSpend: t('wr.noSpend'), thanks: t('mr.thanks') } };
+  }
+  function openMonthReport(ym, hide) {
+    if (!SH || !SH.wrapped || !S.budget) return;
+    var data = monthReportData(ym, hide), urls = [];
+    if (data.empty) { toast(t('mr.empty')); return; }
+    var wait = sheet(t('mr.title', { m: I.monthLabel(ym) }), function (body) { add(body, h('div', { class: 'share-wait' }, h('div', { class: 'spinner', 'aria-hidden': 'true' }), h('p', { text: t('wr.making') }))); });
+    SH.wrapped(data, { ST: ST }).then(function (cards) {
+      wait.close();
+      sheet(t('mr.title', { m: I.monthLabel(ym) }), function (body, close) {
+        var strip = h('div', { class: 'wr-strip', id: 'mr-strip' }), dots = h('div', { class: 'wr-dots', 'aria-hidden': 'true' });
+        cards.forEach(function (c, i) { var u = URL.createObjectURL(c.blob); urls.push(u); add(strip, h('img', { src: u, class: 'wr-card', 'data-kind': c.kind, alt: t('wr.cardAlt', { n: i + 1, all: cards.length }) })); add(dots, h('span', { class: i ? '' : 'on' })); });
+        var cur = 0;
+        strip.addEventListener('scroll', function () { var i = Math.round(strip.scrollLeft / Math.max(1, strip.clientWidth * 0.8)); i = Math.max(0, Math.min(cards.length - 1, i)); if (i !== cur) { cur = i; dots.querySelectorAll('span').forEach(function (d, k) { d.classList.toggle('on', k === i); }); } });
+        var hideCb = h('input', { type: 'checkbox', id: 'mr-hide', checked: !!hide, on: { change: function () { close(); openMonthReport(ym, hideCb.checked); } } });
+        add(body, strip, dots, h('label', { class: 'check' }, hideCb, ' ', t('mr.hide')), h('p', { class: 'hint wr-note', text: t('mr.private') }),
+          h('div', { class: 'row wr-actions' },
+            h('button', { type: 'button', class: 'btn primary', id: 'mr-share', on: { click: function () { shareResult({ blob: cards[cur].blob, name: 'month-' + ym + '-' + (cur + 1) + '.png' }); } } }, icon('dshare', 18), ' ', t('wr.shareThis')),
+            h('button', { type: 'button', class: 'btn', id: 'mr-saveall', on: { click: function () { cards.forEach(function (c, i) { setTimeout(function () { saveBlob(c.blob, 'month-' + ym + '-' + (i + 1) + '.png'); }, i * 400); }); } } }, t('wr.saveAll'))));
+      }, { onClose: function () { setTimeout(function () { urls.forEach(function (u) { URL.revokeObjectURL(u); }); }, 1000); } });
+    }, function () { wait.close(); toast(t('share.err')); });
+  }
+  // days 1–7 of a month: last month's report waits at the top of the budget (once it has entries)
+  function monthReportBanner() {
+    if (!SH || !SH.wrapped || S.ym !== thisMonth() || +today().slice(8, 10) > 7) return null;
+    var pm = B.addMonths(thisMonth(), -1);
+    if (S.settings.starterHide['mr' + pm] || S.budget.tx.filter(function (x) { return x.date.slice(0, 7) === pm; }).length < 3) return null;
+    return h('section', { class: 'wr-banner mr-banner', id: 'mr-banner' },
+      h('button', { type: 'button', class: 'wr-banner-go', id: 'mr-open', on: { click: function () { openMonthReport(pm); } } },
+        h('span', { class: 'wr-banner-y', text: String(+pm.slice(5, 7)) }), h('span', { class: 'wr-banner-t' }, h('strong', { text: t('mr.bannerTitle', { m: I.monthLabel(pm) }) }), h('span', { text: t('mr.bannerSub') }))),
+      h('button', { type: 'button', class: 'icon-btn xs', id: 'mr-banner-hide', 'aria-label': t('st0.hide'), on: { click: function () { S.settings.starterHide['mr' + pm] = true; saveSettings(); render(); } } }, icon('x', 14)));
+  }
   // December and January: a card at the top of the diary invites the recap once the year has something in it
   function wrappedBanner(main) {
     var m = +today().slice(5, 7); if (m !== 12 && m !== 1) return;
@@ -3244,7 +3520,7 @@
       function growText() { ta.style.height = 'auto'; ta.style.height = Math.max(ta.scrollHeight + 2, 168) + 'px'; }
       ta.addEventListener('input', growText); setTimeout(growText, 0);
       var dmsg = msgEl();
-      var deco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: e, page: page, ta: ta,
+      var deco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, shopUrl: SHOP_URL, entry: e, page: page, ta: ta,
         commit: function (d) { if (!S.diary) return; DY.updateEntry(S.diary, e.id, { deco: d }); saveDiary(); },
         blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function (msg, err) { setMsg(dmsg, msg, !err); },
         seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf, feelDict: openFeelDict, letterCard: letterCard });
@@ -3431,8 +3707,8 @@
   }
   function group(title, items) { return h('section', { class: 'set-group' }, h('h2', { text: title }), h('ul', { class: 'set-list card' }, items)); }
   function renderSettings(main) {
-    var ntRow = ntSupported() ? h('li', { id: 'notify-row' }, h('button', { type: 'button', class: 'set-row', id: 'set-notify', on: { click: openNotify } },
-      h('span', { class: 'set-label', text: t('nt.title') }), h('span', { class: 'set-value', text: lsGet(NT_KEY) ? t('pk.stateOn') : t('pk.stateOff') }), icon('chev', 18))) : null;
+    var ntRow = !TOSS && !DESK ? h('li', { id: 'notify-row' }, h('button', { type: 'button', class: 'set-row', id: 'set-notify', on: { click: openNotify } },
+      h('span', { class: 'set-label', text: t('nt.title') }), h('span', { class: 'set-value', text: lsGet(NT_KEY) || lsGet('ppm-daily-ics') ? t('pk.stateOn') : t('pk.stateOff') }), icon('chev', 18))) : null;
     var devRow = h('li', { id: 'devopen-row' });
     C.deviceOpenOn().then(function (on) {
       if (!document.contains(devRow)) return;
@@ -4689,7 +4965,7 @@
     sheet(t('cv.title'), function (body) {
       var pg = h('div', { class: 'page cover-page', id: 'cover-page' }), box = coverBox(c, false);
       add(pg, box);
-      var dc = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: { deco: DY.cleanDeco({ stickers: c.stickers }), date: today() }, page: pg,
+      var dc = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, shopUrl: SHOP_URL, entry: { deco: DY.cleanDeco({ stickers: c.stickers }), date: today() }, page: pg,
         parts: ['stickers'], noTint: true, lookClass: function () { return 'cover-page'; },
         commit: function (d) { c.stickers = d.stickers.map(function (x) { return { k: x.k, x: Math.min(1, Math.max(0, x.x)), y: Math.min(0.62, Math.max(0, x.y)), s: x.s, r: x.r }; }); save(); },
         blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); } });
@@ -4910,6 +5186,58 @@
     });
   }
 
+  // ===== payment messages (card / bank / pay-app texts) pasted or shared → budget entries, after a look =====
+  function payDup(r) {
+    var w = r.note.trim().toLowerCase().split(/\s+/)[0] || '';
+    return S.budget.tx.some(function (x) { return x.date === r.date && x.amt === r.amt && x.cur === r.cur && x.type === r.type && (!w || x.note.trim().toLowerCase().split(/\s+/)[0] === w); });
+  }
+  function openPayPaste(text) {
+    if (!VP || !S.budget) return;
+    sheet(t('pp.title'), function (body, close) {
+      var ta = h('textarea', { class: 'input pp-text', id: 'pp-text', rows: 4, placeholder: t('pp.ph'), 'aria-label': t('pp.title') });
+      ta.value = text || '';
+      var list = h('ul', { class: 'ntb-list pp-list', id: 'pp-list', 'aria-live': 'polite' });
+      var none = h('p', { class: 'hint', id: 'pp-none', hidden: true, text: t('pp.none') });
+      var save = h('button', { type: 'button', class: 'btn primary block', id: 'pp-save', disabled: true });
+      var rows = [], picks = [];
+      function count() { var n = picks.filter(Boolean).length; save.textContent = t('ntb.save', { n: n }); save.disabled = !n; }
+      function draw() {
+        rows = VP.parse(ta.value, { today: today(), currency: S.budget.currency, lang: I.get() });
+        list.textContent = '';
+        picks = rows.map(function (r) { r.dup = payDup(r); return !r.dup; });
+        rows.forEach(function (r, i) {
+          r.cat = B.guessQuick(S.budget, r.note, r.type) || (r.type === 'income' ? (r.cancel ? 'refund' : 'other_income') : 'other');
+          if (!catOf(r.cat)) r.cat = r.type === 'income' ? 'other_income' : 'other';
+          var cb = h('input', { type: 'checkbox', checked: picks[i], 'data-i': i, on: { change: function (e) { picks[i] = e.target.checked; count(); } } });
+          var when = +r.date.slice(5, 7) + '/' + +r.date.slice(8, 10) + (r.time ? ' ' + r.time : '');
+          add(list, h('li', { class: r.dup ? 'pp-dup' : '' }, h('label', { class: 'check' }, cb, h('span', {},
+            h('span', { class: 'pp-when', text: when + ' · ' }), (r.type === 'income' ? '+ ' : '') + catEmoji(r.cat) + ' ' + (r.note || catName(r.cat)) + ' · ' + money(r.amt, r.cur),
+            r.dup ? h('em', { class: 'pp-dup-tag', text: ' ' + t('pp.dup') }) : null))));
+        });
+        none.hidden = !ta.value.trim() || rows.length > 0;
+        count();
+      }
+      ta.addEventListener('input', draw);
+      var pasteBtn = navigator.clipboard && navigator.clipboard.readText ? h('button', { type: 'button', class: 'btn small', id: 'pp-paste', text: '📋 ' + t('pp.paste'), on: { click: function () {
+        navigator.clipboard.readText().then(function (x) { if (x) { ta.value = (ta.value ? ta.value + '\n\n' : '') + x; draw(); } }).catch(function () { ta.focus(); toast(t('pp.pasteHand')); });
+      } } }) : null;
+      save.addEventListener('click', function () {
+        var made = [];
+        rows.forEach(function (r, i) {
+          if (!picks[i]) return;
+          var at = r.time && r.date === today() ? +r.time.slice(0, 2) * 60 + +r.time.slice(3, 5) : undefined;
+          made.push(B.addTx(S.budget, { type: r.type, amt: r.amt, cur: r.cur, cat: r.cat, date: r.date, note: r.note, at: at }));
+        });
+        if (!made.length) return;
+        saveBudget(); close(); S.tab = 'budget'; render(); seals.check();
+        toast(t('ntb.done', { n: made.length }), { label: t('btn.undo'), fn: function () { made.forEach(function (x) { B.deleteTx(S.budget, x.id); }); saveBudget(); render(); } });
+      });
+      add(body, h('p', { class: 'hint', text: t('pp.hint') }), ta, h('div', { class: 'row' }, pasteBtn), none, list, TOSS ? null : h('p', { class: 'hint pp-tip', text: t('pp.tip') }), save);
+      draw();
+      if (!text) setTimeout(function () { ta.focus(); }, 50);
+    });
+  }
+
   // ===== first visit of each screen: what it is and what each button does (replay: the ? button) =====
   function introKey() {
     if (S.phase !== 'app') return null;
@@ -4987,7 +5315,7 @@
   var GRUN = {
     'b-add': function () { runAct('add'); }, 'b-quick': gFocus('budget', 'quick-input'),
     'b-tiles': function () { gFocus('budget', 'quick-input')(); setTimeout(function () { var t0 = document.querySelector('.tiles-card'); if (t0) t0.scrollIntoView({ block: 'center' }); }, 120); },
-    'b-receipt': function () { goTab('budget'); openAdd(); }, 'b-recurring': function () { openRecurring(); }, 'b-import': function () { openImport(); }, 'b-methods': function () { openMethods(); },
+    'b-receipt': function () { goTab('budget'); openAdd(); }, 'b-recurring': function () { openRecurring(); }, 'b-import': function () { openImport(); }, 'b-paste': function () { goTab('budget'); openPayPaste(''); }, 'b-today': function () { lsSet('ppm-today-card', null); goTab('budget'); }, 'b-report': function () { goTab('budget'); openMonthReport(B.addMonths(thisMonth(), -1)); }, 'b-methods': function () { openMethods(); }, 'b-gigs': function () { goTab('budget'); S.budgetView = 'gigs'; render(); },
     'b-plan': function () { goTab('budget'); S.budgetView = 'plan'; render(); openPlan(S.budget.plan ? 'income' : null); }, 'b-budget': function () { openMonthlyBudget(); }, 'b-catbudget': function () { openCatBudgets(); },
     'b-goal': function () { gView('goals')(); editGoal(null); }, 'b-nobuy': function () { gView('goals')(); if (S.settings.nobuy && S.settings.nobuy.start) openNobuy(); else openNobuyStart(); },
     'b-challenge': function () { gView('goals')(); setTimeout(function () { var x = document.getElementById('ins-shelf'); if (x) x.scrollIntoView({ block: 'start' }); }, 80); },
@@ -5319,7 +5647,7 @@
       { id: 'goals', flow: 'goal', kw: ['저축', '목표', '모으기', '모으', '적금', 'goal', 'saving', 'save up', '目標', '貯金', '貯め'], run: function () { runAct('goals'); } },
       { id: 'charts', kw: ['그래프', '차트', '통계', '분석', '어디에 많이', '어디에 썼', 'chart', 'graph', 'stats', 'where did', 'グラフ', '分析'], run: function () { runAct('charts'); } },
       { id: 'checkin', boost: 1, kw: ['체크인', '하루 정리', '오늘 정리', '정리할', '물어봐', '오늘 하루', 'check in', 'check-in', 'wrap up', 'my day', 'チェックイン', '振り返'], run: function () { openCheckin(); } },
-      { id: 'notify', kw: ['결제 알림', '미리 알려', '결제일', '푸시', '알림 받', 'payment reminder', 'notification', 'notify', 'due date', '支払い通知', 'お知らせ', '支払日'], run: function () { if (ntSupported()) openNotify(); else openRecurring(); } },
+      { id: 'notify', kw: ['결제 알림', '미리 알려', '결제일', '푸시', '알림 받', 'payment reminder', 'notification', 'notify', 'due date', '支払い通知', 'お知らせ', '支払日'], run: function () { if (!TOSS) openNotify(); else openRecurring(); } },
       { id: 'seals', kw: ['씰', '띠부', '스티커 모음', '보상', '배지', 'seal', 'badge', 'reward', 'シール', 'ご褒美'], run: function () { openSealBook(); } },
       { id: 'sheet', kw: ['속지', '테마', '배경', '꾸미기', '예쁘게', 'paper', 'theme', 'background', '中紙', 'テーマ', '背景'], run: function () { openSheets(); } },
       { id: 'plan', kw: ['예산 막대', '분류별 예산', '예산 보기', 'budget bars', 'category budget', '予算の表示'], run: function () { goTab('budget'); S.budgetView = 'plan'; render(); } },

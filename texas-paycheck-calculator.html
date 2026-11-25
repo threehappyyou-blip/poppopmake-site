@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
-<meta name="robots" content="noindex, follow">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Texas Paycheck Calculator (2026) &mdash; PopPopMake</title>
 <meta name="description" content="Free 2026 Texas paycheck calculator. See your take-home pay after federal tax, FICA, and Texas state tax. No sign-up, no advisor referrals &mdash; runs entirely in your browser.">
@@ -236,6 +235,7 @@
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+<style>.st-table{width:100%;border-collapse:collapse;font-size:0.9rem;margin:12px 0;}.st-table th,.st-table td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;}.st-table th:first-child,.st-table td:first-child{text-align:left;}.st-table th{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}</style>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -337,6 +337,38 @@
     <h2>Worked example</h2>
     <p style="margin:0;color:var(--ink-soft);">A single filer in Texas earning <strong style="color:var(--ink);">$65,000/year</strong>, paid biweekly: federal income tax is about $5,620, FICA (Social Security + Medicare) is about $4,973, and Texas does not withhold anything for a state income tax line. That leaves roughly <strong style="color:var(--ink);">$54,407/year</strong> take-home (about $2,093 per biweekly paycheck) &mdash; an effective tax rate of about 16.3%. Change the salary above to see your own number.</p>
   </div>
+
+  <div class="panel" id="state-facts">
+    <h2>Texas take-home pay at common salaries (2026)</h2>
+    <p style="color:var(--ink-soft);">Yearly take-home after federal income tax and FICA &mdash; there is no state income tax line. Standard deduction, no 401(k) or other deductions; married figures assume one earner filing jointly.</p>
+      <div style="overflow-x:auto;"><table class="st-table">
+        <thead><tr><th>Salary</th><th>Take-home (single)</th><th>Take-home (married, one income)</th><th>Federal tax (single)</th><th>FICA</th></tr></thead>
+        <tbody>
+        <tr><td>$30,000</td><td>$26,285</td><td>$27,705</td><td>$1,420</td><td>$2,295</td></tr>
+        <tr><td>$40,000</td><td>$34,320</td><td>$36,160</td><td>$2,620</td><td>$3,060</td></tr>
+        <tr><td>$50,000</td><td>$42,355</td><td>$44,395</td><td>$3,820</td><td>$3,825</td></tr>
+        <tr><td>$65,000</td><td>$54,408</td><td>$56,588</td><td>$5,620</td><td>$4,973</td></tr>
+        <tr><td>$80,000</td><td>$65,110</td><td>$68,640</td><td>$8,770</td><td>$6,120</td></tr>
+        <tr><td>$100,000</td><td>$79,180</td><td>$84,710</td><td>$13,170</td><td>$7,650</td></tr>
+        <tr><td>$150,000</td><td>$113,791</td><td>$123,185</td><td>$24,734</td><td>$11,475</td></tr>
+        </tbody>
+      </table></div>
+    <h2 style="margin-top:22px;">Texas take-home vs. neighbouring states</h2>
+    <p style="color:var(--ink-soft);">The same salary, single filer, standard deduction, no 401(k), after federal tax, FICA and each state's own income tax:</p>
+      <div style="overflow-x:auto;"><table class="st-table">
+        <thead><tr><th>State</th><th>Take-home at $65,000</th><th>Difference</th><th>Take-home at $100,000</th><th>Difference</th></tr></thead>
+        <tbody>
+        <tr><td><strong style="color:var(--ink);">Texas</strong></td><td>$54,408</td><td>&mdash;</td><td>$79,180</td><td>&mdash;</td></tr>
+        <tr><td>Oklahoma</td><td>$52,028</td><td>&minus;$2,380</td><td>$75,226</td><td>&minus;$3,955</td></tr>
+        <tr><td>Louisiana</td><td>$52,844</td><td>&minus;$1,564</td><td>$76,566</td><td>&minus;$2,614</td></tr>
+        <tr><td>New Mexico</td><td>$52,518</td><td>&minus;$1,889</td><td>$75,611</td><td>&minus;$3,569</td></tr>
+        <tr><td>Arkansas</td><td>$52,490</td><td>&minus;$1,917</td><td>$75,690</td><td>&minus;$3,490</td></tr>
+        </tbody>
+      </table></div>
+    <p style="color:var(--ink-soft);">Federal tax and FICA are the same in every state, so the difference column is exactly what each neighbour's state income tax costs at that salary. In 2019 voters went further and approved Proposition 4, which writes a ban on a personal income tax into the Texas Constitution, so this gap is not likely to close soon.</p>
+    <p style="color:var(--ink-soft);margin-bottom:0;">Sources: <a href="https://comptroller.texas.gov/" target="_blank" rel="noopener">Texas Comptroller of Public Accounts</a>; Texas Constitution, Article 8, Section 24-a.</p>
+  </div>
+
 
   <div class="panel">
     <h2>Why Texas has no state income tax &mdash; and what that means for payroll</h2>
