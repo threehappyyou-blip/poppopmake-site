@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1C2321">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
+<title>Writing Style Analyzer — Free, No Sign-Up, Nothing Uploaded | PopPopMake</title>
+<meta name="description" content="Free writing style analyzer: sentence rhythm, readability grade, passive voice, adverbs, vocabulary variety and repeated words, with target ranges. No account, no word limit, runs in your browser.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="PopPopMake">
+<meta property="og:url" content="https://poppopmake.com/writing-style-analyzer">
+<link rel="canonical" href="https://poppopmake.com/writing-style-analyzer">
+<meta property="og:title" content="Writing Style Analyzer — Free, No Sign-Up, Nothing Uploaded | PopPopMake">
+<meta property="og:description" content="Free writing style analyzer: sentence rhythm, readability grade, passive voice, adverbs, vocabulary variety and repeated words, with target ranges. No account, no word limit, runs in your browser.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Writing Style Analyzer — Free, No Sign-Up, Nothing Uploaded | PopPopMake">
+<meta name="twitter:description" content="Free writing style analyzer: sentence rhythm, readability grade, passive voice, adverbs, vocabulary variety and repeated words, with target ranges. No account, no word limit, runs in your browser.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF; --paper-2:#E4E9E6; --ink:#1C2321; --ink-soft:#4B534F;
+    --orange:#C14324; --teal:#0D7A7C; --yellow:#F4B740; --card:#FFFFFF;
+    --line:rgba(28,35,33,0.12); --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+  a{color:var(--teal);}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px;}
+  :focus-visible{outline:3px solid var(--teal);outline-offset:3px;}
+  .skip-link{position:absolute;left:-9999px;top:0;background:var(--ink);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:10001;text-decoration:none;font-weight:600;font-size:0.9rem;}.skip-link:focus{left:0;}
+
+  header{padding:22px 0;border-bottom:1px solid var(--line);}
+  header .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;gap:24px;}
+  .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.3rem;letter-spacing:-0.01em;text-decoration:none;color:var(--ink);display:flex;align-items:center;gap:8px;}
+  .logo-mark{flex-shrink:0;display:block;}
+  nav a{font-size:0.95rem;font-weight:500;text-decoration:none;color:var(--ink-soft);}
+  main{padding:48px 0 88px;}
+  .eyebrow{font-family:'IBM Plex Mono',monospace;font-size:0.78rem;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--teal);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.9rem,4vw,2.5rem);letter-spacing:-0.02em;margin:10px 0 8px;}
+  .lede{color:var(--ink-soft);max-width:62ch;margin:0 0 28px;}
+
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;}
+
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:0.82rem;font-weight:600;margin-bottom:5px;}
+  .field textarea{
+    width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.95rem;background:#fff;color:var(--ink);resize:vertical;min-height:190px;
+  }
+
+  .action-btn{background:var(--orange);color:#fff;border:none;font-weight:600;font-size:0.98rem;padding:12px 24px;border-radius:999px;cursor:pointer;margin-top:4px;}
+  .action-btn:hover{opacity:0.92;}
+  .action-btn.teal{background:var(--teal);}
+
+  .status{margin-top:16px;font-size:0.9rem;padding:12px 14px;border-radius:8px;display:none;}
+  .status.show{display:block;}
+  .status.success{background:rgba(15,139,141,0.1);color:var(--ink);}
+  .status.error{background:rgba(242,84,45,0.08);color:var(--orange);}
+
+  .tabs{display:flex;gap:8px;margin:24px 0 20px;flex-wrap:wrap;}
+  .tab-btn{font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:600;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink-soft);cursor:pointer;}
+  .tab-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+  .tab-btn:hover:not(.active){border-color:var(--teal);color:var(--ink);}
+
+  .empty-note{color:var(--ink-soft);font-size:0.9rem;padding:28px 4px;text-align:center;}
+
+  .legend{font-size:0.8rem;color:var(--ink-soft);margin:0 0 14px;}
+  .tier-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+  .tier-dot.t1{background:var(--orange);}
+  .tier-dot.t2{background:var(--yellow);}
+  .tier-dot.t3{background:var(--teal);}
+
+  .highlighted-text{background:var(--paper-2);border:1px solid var(--line);border-radius:8px;padding:16px 18px;font-size:0.94rem;line-height:1.75;white-space:pre-wrap;margin-bottom:18px;max-height:360px;overflow-y:auto;}
+  .highlighted-text mark{padding:1px 3px;border-radius:3px;cursor:help;}
+  .highlighted-text mark.t1{background:rgba(242,84,45,0.22);}
+  .highlighted-text mark.t2{background:rgba(244,183,64,0.4);}
+  .highlighted-text mark.t3{background:rgba(15,139,141,0.18);}
+
+  .stats-row{display:flex;gap:18px;flex-wrap:wrap;font-size:0.86rem;color:var(--ink-soft);margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+  .stats-row strong{color:var(--ink);}
+
+  .notes-list{margin:0 0 16px;padding-left:20px;font-size:0.88rem;color:var(--ink-soft);}
+  .notes-list li{margin-bottom:5px;}
+
+  .phrase-list, .suggestion-list{list-style:none;padding:0;margin:0;}
+  .phrase-list li, .suggestion-list li{padding:9px 0;border-bottom:1px solid var(--line);font-size:0.92rem;}
+  .phrase-list li:last-child, .suggestion-list li:last-child{border-bottom:none;}
+  .count{color:var(--ink-soft);font-size:0.85rem;}
+  .arrow{color:var(--ink-soft);margin:0 3px;}
+
+  .smooth-note{font-size:0.86rem;color:var(--ink-soft);margin-top:18px;padding-top:16px;border-top:1px solid var(--line);}
+
+  .stale-note{display:none;background:rgba(244,183,64,0.18);border:1px solid var(--yellow);border-radius:8px;padding:10px 14px;font-size:0.86rem;color:var(--ink);margin-bottom:16px;}
+  .stale-note.show{display:block;}
+  .is-stale{opacity:0.5;transition:opacity .15s ease;}
+
+  .disclaimer{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:8px;padding:16px 18px;margin-top:24px;font-size:0.86rem;color:var(--ink-soft);}
+
+  footer{border-top:1px solid var(--line);padding:32px 0;margin-top:20px;}
+  footer .inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .brand{font-family:'Space Grotesk',sans-serif;font-weight:700;}
+  footer .fine{font-size:0.85rem;color:var(--ink-soft);}
+  footer .links a{margin-left:16px;font-size:0.85rem;color:var(--ink-soft);text-decoration:none;}
+</style>
+<style>
+  .keyfacts{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--teal);border-radius:10px;padding:16px 20px;margin:0 0 26px;}
+  .keyfacts h2{font-family:'Space Grotesk',sans-serif;font-size:1rem;margin:0 0 8px;letter-spacing:.01em;}
+  .keyfacts ul{margin:0;padding-left:20px;font-size:.93rem;}
+  .keyfacts li{margin:4px 0;}
+  article.guide h2{font-family:'Space Grotesk',sans-serif;font-size:1.35rem;margin:38px 0 10px;letter-spacing:-.01em;}
+  article.guide h3{font-size:1.02rem;margin:22px 0 6px;}
+  article.guide p, article.guide li{color:var(--ink-soft);}
+  article.guide table{width:100%;border-collapse:collapse;font-size:.9rem;margin:10px 0 18px;background:var(--card);border-radius:10px;overflow:hidden;}
+  article.guide th, article.guide td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);}
+  article.guide th{font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);background:var(--paper-2);}
+  article.guide td.num, article.guide th.num{text-align:right;font-variant-numeric:tabular-nums;}
+  .faq-item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 18px;margin:10px 0;}
+  .faq-q{font-weight:600;margin:0 0 6px;color:var(--ink);}
+  .faq-a{margin:0;color:var(--ink-soft);}
+  .tbl-wrap{overflow-x:auto;}
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Writing Style Analyzer", "url": "https://poppopmake.com/writing-style-analyzer", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (runs in the browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Free writing style analyzer: sentence rhythm, readability grade, passive voice, adverbs, vocabulary variety and repeated words, with target ranges. No account, no word limit, runs in your browser."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "How can I analyze my writing style for free?", "acceptedAnswer": {"@type": "Answer", "text": "Paste your text into the box above and press “Analyze my style”. You get sentence rhythm, readability, passive voice, adverbs, vocabulary variety and your most repeated words instantly, with no account and no word limit, because everything runs in your browser."}}, {"@type": "Question", "name": "What is a good Flesch reading ease score?", "acceptedAnswer": {"@type": "Answer", "text": "For most web pages and business writing, 60–70 is the plain-English sweet spot — roughly what a 13- to 15-year-old reads comfortably. Above 80 is very easy (good for fiction and casual posts); below 50 is hard going and typical of academic papers and legal text."}}, {"@type": "Question", "name": "How long should a sentence be?", "acceptedAnswer": {"@type": "Answer", "text": "Aim for an average of about 15–20 words, but vary it. A mix of short and long sentences reads better than every sentence sitting at 18 words. Any sentence over 35 words is worth splitting."}}, {"@type": "Question", "name": "Is passive voice always wrong?", "acceptedAnswer": {"@type": "Answer", "text": "No. Passive voice is useful when the doer is unknown or unimportant (“the bridge was built in 1932”) and is normal in scientific methods sections. It becomes a problem when it hides who did what or appears in more than about one in ten sentences of everyday writing."}}, {"@type": "Question", "name": "Is my text saved or sent anywhere?", "acceptedAnswer": {"@type": "Answer", "text": "No. The analyzer is a small script that runs on this page in your browser. Nothing you paste is uploaded, logged or stored, and it keeps working offline once the page has loaded."}}]}</script>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+</head>
+<body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<header>
+  <div class="inner">
+    <a class="logo" href="/"><svg class="logo-mark" width="24" height="24" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1C2321"/><circle cx="32" cy="24" r="11" fill="#F2542D"/><circle cx="18" cy="44" r="7" fill="#0F8B8D"/><circle cx="46" cy="44" r="7" fill="#F4B740"/></svg>PopPopMake</a>
+    <nav><a href="/">Back to home</a></nav>
+  </div>
+</header>
+
+<main class="wrap" id="main-content">
+  <span class="eyebrow">Writing · free · no sign-up</span>
+  <h1>Writing Style Analyzer</h1>
+  <p class="lede">Paste any English text and see how you write: sentence rhythm, readability grade, passive voice, adverbs, vocabulary variety and your most repeated words — with the target ranges for blogs, business and academic writing. No account, no word limit, and nothing you paste leaves this page.</p>
+
+  <section class="keyfacts" aria-labelledby="kf">
+    <h2 id="kf">Key facts</h2>
+    <ul>
+      <li><strong>Free, no sign-up, no word limit</strong> — runs entirely in your browser; your text is never uploaded or stored.</li>
+      <li><strong>11 style measurements</strong>: sentence length and variety, Flesch reading ease, grade level, Gunning fog, passive voice, adverbs, filler and hedge words, vocabulary variety, word length and point of view.</li>
+      <li><strong>Plain-English targets</strong>: around 15–20 words per sentence, a Flesch score of 60–70 and under 10% passive sentences suit most web and business writing.</li>
+      <li><strong>Sentence rhythm chart</strong> shows the length of every sentence, so a monotone stretch is easy to spot.</li>
+      <li>Want a fix-it list instead of a profile? Use the <a href="/writing-quality-checker">Writing Quality Checker</a>.</li>
+    </ul>
+  </section>
+
+  <section class="panel">
+    <div class="field">
+      <label for="sa-input">Your text</label>
+      <textarea id="sa-input" placeholder="Paste a few paragraphs — 150 words or more gives the most reliable profile."></textarea>
+    </div>
+    <button class="action-btn" id="sa-go" type="button">Analyze my style</button>
+    <button class="action-btn teal" id="sa-sample" type="button" style="margin-left:8px;">Try a sample</button>
+    <div class="status" id="sa-status"></div>
+  </section>
+
+  <section id="sa-out" hidden>
+    <div class="stats-row" id="sa-counts" style="margin-top:22px;"></div>
+    <div class="sa-grid" id="sa-cards"></div>
+    <section class="panel" style="margin-top:18px;">
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;margin:0 0 6px;">Sentence rhythm</h2>
+      <p class="legend">Each bar is one sentence, in order. <span class="tier-dot t3"></span>under 12 words <span class="tier-dot" style="background:#7C8B86"></span>12–25 <span class="tier-dot t2"></span>26–35 <span class="tier-dot t1"></span>over 35</p>
+      <div id="sa-rhythm" class="sa-rhythm" role="img" aria-label="Sentence lengths"></div>
+      <p class="smooth-note" id="sa-rhythm-note" style="margin-top:12px;"></p>
+    </section>
+    <section class="panel" style="margin-top:18px;">
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;margin:0 0 10px;">How your style compares</h2>
+      <div class="tbl-wrap"><table class="sa-cmp" id="sa-cmp"></table></div>
+      <p class="legend" style="margin-top:10px;">✅ inside the usual range for that kind of writing · ⚠️ outside it. Ranges are common editing guidance, not rules.</p>
+    </section>
+    <section class="panel" style="margin-top:18px;">
+      <h2 style="font-family:'Space Grotesk',sans-serif;font-size:1.1rem;margin:0 0 10px;">Words you lean on</h2>
+      <p id="sa-top" style="margin:0;color:var(--ink-soft);"></p>
+    </section>
+  </section>
+
+<article class="guide">
+  <h2>How to analyze your writing style in 3 steps</h2>
+  <ol>
+    <li><strong>Paste at least 150 words.</strong> A single paragraph gives a noisy average; a few paragraphs from the same piece show your real habits.</li>
+    <li><strong>Read the rhythm chart first.</strong> It answers the question most style reports skip: does your writing have a pulse, or does every sentence run the same length?</li>
+    <li><strong>Compare against the column that matches your goal.</strong> A blog post, a cover letter and a term paper have different healthy ranges, so the same number can be fine in one and a problem in another.</li>
+  </ol>
+
+  <h2>What each measurement means — and the numbers to aim for</h2>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Measurement</th><th>What it tells you</th><th>Usual target (web / business)</th></tr></thead>
+    <tbody>
+      <tr><td>Average sentence length</td><td>How much the reader must hold in mind at once.</td><td>15–20 words</td></tr>
+      <tr><td>Sentence variety</td><td>Standard deviation ÷ average length. Low means monotone; high means a lively mix.</td><td>0.4 or higher</td></tr>
+      <tr><td>Flesch reading ease</td><td>0–100 score from words per sentence and syllables per word. Higher is easier.</td><td>60–70 (“plain English”)</td></tr>
+      <tr><td>Flesch–Kincaid grade</td><td>The US school grade that could follow the text.</td><td>Grade 7–9</td></tr>
+      <tr><td>Gunning fog index</td><td>Years of schooling needed, weighting words of 3+ syllables.</td><td>Under 12</td></tr>
+      <tr><td>Passive sentences</td><td>Share of sentences with a “was written by”-type construction.</td><td>Under 10%</td></tr>
+      <tr><td>Adverbs per 100 words</td><td>-ly words that often prop up a weak verb (“ran quickly” → “sprinted”).</td><td>Under 2</td></tr>
+      <tr><td>Fillers and hedges</td><td>“very, really, just, basically”, “maybe, I think, probably”.</td><td>Under 2 per 100 words</td></tr>
+      <tr><td>Vocabulary variety</td><td>Unique words per 50-word window (a fairer version of type–token ratio).</td><td>0.70 or higher</td></tr>
+      <tr><td>Average word length</td><td>Letters per word; long words slow reading more than long sentences do.</td><td>4.2–5.0 letters</td></tr>
+      <tr><td>Point of view</td><td>Whether the text speaks to “you”, from “I/we”, or neither.</td><td>Matches your purpose</td></tr>
+    </tbody>
+  </table></div>
+  <p>The readability formulas are the published ones (Flesch 1948, Kincaid 1975, Gunning 1952). Syllables are counted with a standard rule-based method, so an unusual word can be off by one, but over a few paragraphs those misses average out.</p>
+
+  <h2>Reading the sentence rhythm chart</h2>
+  <p>Good prose usually looks like a skyline, not a fence. A run of five or more bars at almost the same height is where readers start to drift, even if every sentence is grammatical. The fix is rarely to rewrite everything: split one long sentence, or merge two short ones, inside the flat stretch. A single very tall orange bar is a sentence that probably needs to become two.</p>
+
+  <h2>Healthy ranges by kind of writing</h2>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Kind of writing</th><th class="num">Words / sentence</th><th class="num">Flesch</th><th class="num">Passive</th></tr></thead>
+    <tbody>
+      <tr><td>Blog post, newsletter, product page</td><td class="num">12–18</td><td class="num">60–80</td><td class="num">&lt; 10%</td></tr>
+      <tr><td>Business email, report, cover letter</td><td class="num">15–22</td><td class="num">50–70</td><td class="num">&lt; 15%</td></tr>
+      <tr><td>Academic or technical paper</td><td class="num">18–28</td><td class="num">30–50</td><td class="num">&lt; 25%</td></tr>
+      <tr><td>Fiction</td><td class="num">10–18</td><td class="num">70–90</td><td class="num">&lt; 10%</td></tr>
+    </tbody>
+  </table></div>
+  <p>These are editing conventions drawn from plain-language guidance and style guides, not hard rules. Science writing legitimately uses more passive voice (“the samples were heated”), and a novel’s dialogue can sit far above 90.</p>
+
+  <h2>A quick before-and-after</h2>
+  <p><strong>Before (Flesch 38, 31 words, passive):</strong> “It was decided by the committee that, due to the fact that attendance had been very low, the event would basically be postponed until a later date could be determined.”</p>
+  <p><strong>After (Flesch 78, two sentences, active):</strong> “Attendance was low, so the committee postponed the event. They’ll set a new date soon.”</p>
+  <p>Paste either version into the analyzer to watch the numbers move: the passive construction, the filler (“basically”), the wordy phrase (“due to the fact that”) and the single long sentence all disappear in the rewrite.</p>
+
+  <h2>What this analyzer does not do</h2>
+  <ul>
+    <li>It doesn’t check grammar or spelling — your browser’s spell-check or a grammar tool does that better.</li>
+    <li>It doesn’t guess whether text was written by AI. (<a href="/ai-detector-honesty">Here’s why we don’t sell that.</a>)</li>
+    <li>It measures English. Other languages will give meaningless readability scores.</li>
+  </ul>
+  <p>Everything runs in the page you’re looking at; you can switch off your internet connection after it loads and it still works. <a href="/how-it-works">How to check that yourself.</a></p>
+<h2 id="faq">Frequently asked questions</h2>
+<div class="faq-item"><p class="faq-q">How can I analyze my writing style for free?</p><p class="faq-a">Paste your text into the box above and press “Analyze my style”. You get sentence rhythm, readability, passive voice, adverbs, vocabulary variety and your most repeated words instantly, with no account and no word limit, because everything runs in your browser.</p></div>
+<div class="faq-item"><p class="faq-q">What is a good Flesch reading ease score?</p><p class="faq-a">For most web pages and business writing, 60–70 is the plain-English sweet spot — roughly what a 13- to 15-year-old reads comfortably. Above 80 is very easy (good for fiction and casual posts); below 50 is hard going and typical of academic papers and legal text.</p></div>
+<div class="faq-item"><p class="faq-q">How long should a sentence be?</p><p class="faq-a">Aim for an average of about 15–20 words, but vary it. A mix of short and long sentences reads better than every sentence sitting at 18 words. Any sentence over 35 words is worth splitting.</p></div>
+<div class="faq-item"><p class="faq-q">Is passive voice always wrong?</p><p class="faq-a">No. Passive voice is useful when the doer is unknown or unimportant (“the bridge was built in 1932”) and is normal in scientific methods sections. It becomes a problem when it hides who did what or appears in more than about one in ten sentences of everyday writing.</p></div>
+<div class="faq-item"><p class="faq-q">Is my text saved or sent anywhere?</p><p class="faq-a">No. The analyzer is a small script that runs on this page in your browser. Nothing you paste is uploaded, logged or stored, and it keeps working offline once the page has loaded.</p></div>
+</article>
+<div class="disclaimer"><strong>Related:</strong> <a href="/writing-quality-checker">Writing Quality Checker</a> (a fix-it list with a score) · <a href="/writing-tools">Writing &amp; AI Tools</a> (cliché finder, word count) · <a href="/manual-writing">How to use the writing tools</a></div>
+</main>
+
+<footer>
+  <div class="inner">
+    <span class="brand">PopPopMake</span>
+    <span class="fine">&copy; 2026 PopPopMake. All tools, no accounts.</span>
+    <span class="links"><a href="/terms">Terms</a><a href="/privacy">Privacy</a></span>
+  </div>
+</footer>
+
+<script src="/cookie-consent.js"></script>
+<script src="/command-palette.js"></script>
+<script src="/thanks-card.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js').catch(function () {});
+  });
+}
+</script>
+<script src="/writing-analyzer.js"></script>
+<style>
+  .sa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px;}
+  .sa-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;}
+  .sa-card .v{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.6rem;color:var(--ink);}
+  .sa-card .k{font-size:.82rem;color:var(--ink-soft);}
+  .sa-card .n{font-size:.8rem;color:var(--ink-soft);margin-top:4px;}
+  .sa-rhythm{display:flex;align-items:flex-end;gap:2px;height:140px;padding:6px 0;border-bottom:1px solid var(--line);overflow-x:auto;}
+  .sa-rhythm span{flex:1 0 6px;max-width:22px;border-radius:3px 3px 0 0;}
+  .sa-cmp td,.sa-cmp th{padding:8px 10px;border-bottom:1px solid var(--line);font-size:.88rem;text-align:left;}
+  .sa-cmp th{color:var(--ink-soft);font-weight:600;}
+</style>
+<script>
+(function () {
+  var W = window.PPMWriting, $ = function (id) { return document.getElementById(id); };
+  var SAMPLE = "I started the blog three years ago. Honestly, it was a mess at first. Posts were written late at night, they were very long, and they were really hard to read. Then a friend told me something simple: read it out loud. So I did. Every sentence that made me run out of breath got cut in half, and every \"very\" got deleted. My readers noticed. Comments doubled within a month, and people finally started finishing the posts instead of skimming the first paragraph and leaving.\n\nWhat changed was not the topic. It was the rhythm. Short sentences hit hard. Longer ones, when they follow a short one, give the reader room to breathe and let an idea unfold with a little detail. Mixing the two is most of the trick.";
+  var RANGES = [
+    ['Words per sentence', function (r) { return r.style.avgSentence; }, [[12, 18], [15, 22], [18, 28]]],
+    ['Flesch reading ease', function (r) { return r.readability.fre; }, [[60, 80], [50, 70], [30, 50]]],
+    ['Passive sentences (%)', function (r) { return r.style.passivePct; }, [[0, 10], [0, 15], [0, 25]]],
+    ['Adverbs per 100 words', function (r) { return r.style.adverbsPer100; }, [[0, 2], [0, 2.5], [0, 3]]],
+    ['Sentence variety', function (r) { return r.style.variety; }, [[0.4, 9], [0.35, 9], [0.3, 9]]]
+  ];
+  function card(v, k, n) { return '<div class="sa-card"><div class="v">' + v + '</div><div class="k">' + k + '</div>' + (n ? '<div class="n">' + n + '</div>' : '') + '</div>'; }
+  function run() {
+    var txt = $('sa-input').value, st = $('sa-status');
+    var r = W.analyze(txt);
+    if (r.counts.words < 20) { st.className = 'status show error'; st.textContent = 'Paste at least a few sentences (20+ words) to get a style profile.'; $('sa-out').hidden = true; return; }
+    st.className = 'status show success'; st.textContent = r.counts.words < 150 ? 'Done. Tip: 150+ words gives a steadier profile.' : 'Done — scroll down for your profile.';
+    var s = r.style, rd = r.readability;
+    $('sa-counts').innerHTML = '<span><strong>' + r.counts.words + '</strong> words</span><span><strong>' + r.counts.sentences + '</strong> sentences</span><span><strong>' + r.counts.paragraphs + '</strong> paragraphs</span><span>about <strong>' + r.counts.readingMinutes + ' min</strong> to read</span>';
+    var voice = { you: 'Talks to the reader (“you”)', me: 'Personal (“I / we”)', mixed: 'Mix of “you” and “I/we”', neutral: 'Neutral / third person' }[s.voice];
+    $('sa-cards').innerHTML = [
+      card(s.avgSentence, 'words per sentence', 'shortest ' + s.shortest + ' · longest ' + s.longest),
+      card(s.variety.toFixed(2), 'sentence variety', s.variety >= 0.4 ? 'lively mix' : s.variety >= 0.3 ? 'a bit even' : 'monotone'),
+      card(rd.fre, 'Flesch reading ease', W.freLabel(rd.fre)),
+      card(rd.fk, 'grade level', 'Gunning fog ' + rd.fog),
+      card(s.passivePct + '%', 'passive sentences', r.tally.passive + ' found'),
+      card(s.adverbsPer100, 'adverbs / 100 words', r.tally.adverb + ' found'),
+      card((Math.round((s.fillersPer100 + s.hedgesPer100) * 10) / 10), 'fillers + hedges / 100', r.tally.filler + ' fillers · ' + r.tally.hedge + ' hedges'),
+      card(s.vocabulary.toFixed(2), 'vocabulary variety', s.vocabulary >= 0.7 ? 'varied' : 'repetitive'),
+      card(s.avgWordLength, 'letters per word', ''),
+      card('', 'point of view', voice)
+    ].join('');
+    var max = Math.max(40, s.longest);
+    $('sa-rhythm').innerHTML = r.sentences.slice(0, 120).map(function (x) {
+      var c = x.words > 35 ? 'var(--orange)' : x.words > 25 ? 'var(--yellow)' : x.words >= 12 ? '#7C8B86' : 'var(--teal)';
+      return '<span title="' + x.words + ' words: ' + W.esc(x.text.slice(0, 80)) + '" style="height:' + Math.max(4, Math.round(x.words / max * 128)) + 'px;background:' + c + '"></span>';
+    }).join('');
+    var flat = 0, run0 = 1; for (var i = 1; i < r.sentences.length; i++) { if (Math.abs(r.sentences[i].words - r.sentences[i - 1].words) <= 3) { run0++; flat = Math.max(flat, run0); } else run0 = 1; }
+    $('sa-rhythm-note').textContent = flat >= 5 ? flat + ' sentences in a row are within 3 words of each other — try splitting or joining one in that stretch.' : s.variety < 0.3 ? 'Your sentences are very similar in length. Mixing in a few short ones adds punch.' : 'Good rhythm: your sentence lengths rise and fall.';
+    $('sa-cmp').innerHTML = '<tr><th>Measurement</th><th>You</th><th>Blog / web</th><th>Business</th><th>Academic</th></tr>' + RANGES.map(function (g) {
+      var v = g[1](r); return '<tr><td>' + g[0] + '</td><td><strong>' + v + '</strong></td>' + g[2].map(function (rg) { var ok = v >= rg[0] && v <= rg[1]; return '<td>' + (ok ? '✅ ' : '⚠️ ') + (rg[1] === 9 ? '≥ ' + rg[0] : rg[0] === 0 ? '≤ ' + rg[1] : rg[0] + '–' + rg[1]) + '</td>'; }).join('') + '</tr>';
+    }).join('');
+    $('sa-top').innerHTML = s.top.length ? s.top.map(function (x) { return '<strong>' + W.esc(x[0]) + '</strong> ×' + x[1]; }).join(' · ') + '<br><span style="font-size:.85rem;">Repeated content words aren’t wrong — but if a word you didn’t mean to stress tops this list, a synonym or a pronoun helps.</span>' : 'No content word appears three or more times. Nicely varied.';
+    $('sa-out').hidden = false;
+  }
+  $('sa-go').addEventListener('click', run);
+  $('sa-sample').addEventListener('click', function () { $('sa-input').value = SAMPLE; run(); });
+})();
+</script>
+</body>
+</html>

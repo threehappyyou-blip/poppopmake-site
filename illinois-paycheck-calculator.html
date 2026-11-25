@@ -6,7 +6,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1C2321">
-<meta name="robots" content="noindex, follow">
 <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
 <title>Illinois Paycheck Calculator (2026) &mdash; PopPopMake</title>
 <meta name="description" content="Free 2026 Illinois paycheck calculator. See your take-home pay after federal tax, FICA, and Illinois state tax. No sign-up, no advisor referrals &mdash; runs entirely in your browser.">
@@ -236,6 +235,7 @@
   footer .fine{font-size:0.85rem;color:var(--ink-soft);}
 </style>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4993996708537660" crossorigin="anonymous"></script>
+<style>.st-table{width:100%;border-collapse:collapse;font-size:0.9rem;margin:12px 0;}.st-table th,.st-table td{padding:8px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap;}.st-table th:first-child,.st-table td:first-child{text-align:left;}.st-table th{font-family:'IBM Plex Mono',monospace;font-size:0.68rem;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);}</style>
 </head>
 <body>
 <a href="#main-content" class="skip-link">Skip to main content</a>
@@ -337,6 +337,28 @@
     <h2>Worked example</h2>
     <p style="margin:0;color:var(--ink-soft);">A single filer in Illinois earning <strong style="color:var(--ink);">$65,000/year</strong>, paid biweekly: federal income tax is about $5,620, FICA (Social Security + Medicare) is about $4,973, and Illinois's state tax comes to about $3,073/year in this example, on top of federal tax and FICA. That leaves roughly <strong style="color:var(--ink);">$51,334/year</strong> take-home (about $1,975 per biweekly paycheck) &mdash; an effective tax rate of about 21.0%. Change the salary above to see your own number.</p>
   </div>
+
+  <div class="panel" id="state-facts">
+    <h2>Illinois take-home pay at common salaries (2026)</h2>
+    <p style="color:var(--ink-soft);">Yearly figures after federal income tax, Social Security, Medicare and Illinois income tax, with the standard deduction and no 401(k) or other deductions. Married figures assume one earner filing jointly.</p>
+      <div style="overflow-x:auto;"><table class="st-table">
+        <thead><tr><th>Salary</th><th>State tax (single)</th><th>State rate on gross</th><th>Take-home (single)</th><th>Take-home (married, one income)</th></tr></thead>
+        <tbody>
+        <tr><td>$30,000</td><td>$1,340</td><td>4.5%</td><td>$24,945</td><td>$26,510</td></tr>
+        <tr><td>$40,000</td><td>$1,835</td><td>4.6%</td><td>$32,485</td><td>$34,470</td></tr>
+        <tr><td>$50,000</td><td>$2,330</td><td>4.7%</td><td>$40,025</td><td>$42,210</td></tr>
+        <tr><td>$65,000</td><td>$3,073</td><td>4.7%</td><td>$51,335</td><td>$53,660</td></tr>
+        <tr><td>$80,000</td><td>$3,815</td><td>4.8%</td><td>$61,295</td><td>$64,970</td></tr>
+        <tr><td>$100,000</td><td>$4,805</td><td>4.8%</td><td>$74,375</td><td>$80,050</td></tr>
+        <tr><td>$150,000</td><td>$7,280</td><td>4.9%</td><td>$106,511</td><td>$116,050</td></tr>
+        </tbody>
+      </table></div>
+    <h2 style="margin-top:22px;">Why everyone in Illinois pays the same 4.95%</h2>
+    <p style="color:var(--ink-soft);">The Illinois Constitution requires a <strong style="color:var(--ink);">single flat rate</strong> on individual income, which is why there are no brackets. Voters were asked in November 2020 to allow graduated rates (the &ldquo;Fair Tax&rdquo; amendment) and rejected it, so 4.95% applies from the first taxable dollar to the last.</p>
+    <p style="color:var(--ink-soft);">What changes your Illinois tax is the <strong style="color:var(--ink);">personal exemption: $2,925 per person</strong> for 2026. A single filer at $65,000 pays 4.95% on $62,075, or $3,073 a year. The exemption disappears entirely once federal adjusted gross income passes $250,000 ($500,000 married filing jointly), so very high earners pay 4.95% on everything. 401(k) contributions lower Illinois wages just as they lower federal wages.</p>
+    <p style="color:var(--ink-soft);margin-bottom:0;">Sources: <a href="https://tax.illinois.gov/individuals.html" target="_blank" rel="noopener">Illinois Department of Revenue</a>; Illinois Constitution, Article IX, Section 3.</p>
+  </div>
+
 
   <div class="panel">
     <h2>Illinois's flat income tax rate, explained</h2>
