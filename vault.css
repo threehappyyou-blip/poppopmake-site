@@ -722,7 +722,7 @@ a.btn { text-decoration: none; display: flex; align-items: center; justify-conte
 
 /* ===== budget views (list · calendar · budget · insights · goals) ===== */
 .seg.bview { margin: 6px 0 12px; }
-.seg.bview button { min-height: 38px; font-size: .84rem; padding: 0 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
+.seg.bview button { min-height: 38px; font-size: .8rem; padding: 0 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: -.01em; }
 @media (max-width: 380px) { .seg.bview button { font-size: .76rem; } }
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .chip-row .goal-chip { margin-top: 0; }
@@ -1609,3 +1609,36 @@ ul.catb { list-style: none; margin: 0; padding: 0; background: var(--card); bord
 .daily-remind input[type=time] { max-width: 9em; }
 .st-shop { display: block; margin: 12px 2px 4px; text-align: center; font-size: .86rem; color: var(--teal); text-decoration: none; font-weight: 600; }
 .st-shop:hover { text-decoration: underline; }
+/* 부업별 진짜 시급 (side gigs: real hourly pay) */
+.gig-title { margin: 0 0 4px; font-size: 1.05rem; }
+.gig-intro .chips { margin-top: 6px; }
+.gig-tip { margin: 4px 0 0; font-weight: 700; color: var(--teal); word-break: keep-all; overflow-wrap: anywhere; }
+.gig-intro .hint, .gig-warn, .gig-formula, .gig-none { word-break: keep-all; }
+.gig-card { display: flex; flex-direction: column; gap: 6px; }
+.gig-card.off { opacity: .62; }
+.gig-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.gig-emoji { font-size: 1.5rem; line-height: 1; }
+.gig-name { font-weight: 800; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gig-tag { font-size: .74rem; font-weight: 700; color: var(--ink-soft); background: var(--paper-2); border-radius: 999px; padding: 2px 8px; }
+.gig-edit { width: 36px; height: 36px; color: var(--ink-soft); }
+.gig-rate { font-size: 1.6rem; letter-spacing: -.02em; line-height: 1.15; overflow-wrap: anywhere; }
+.gig-rate.neg { color: var(--danger); }
+.gig-none { color: var(--ink-soft); font-weight: 600; font-size: .92rem; }
+.gig-warn { margin: 0; font-size: .84rem; font-weight: 700; color: var(--warn); }
+.gig-nums { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; background: var(--paper-2); border-radius: 12px; padding: 8px 10px; }
+.gig-nums span { display: flex; flex-direction: column; min-width: 0; }
+.gig-nums em { font-style: normal; font-size: .74rem; color: var(--ink-soft); font-weight: 600; }
+.gig-nums b { font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gig-actions { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.gig-actions .btn { padding: 0 4px; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.gig-formula { font-size: .78rem; }
+.gig-run { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: linear-gradient(135deg, var(--teal-soft), transparent 80%), var(--card); }
+.gig-run-txt { flex: 1; min-width: 0; font-weight: 700; font-size: .9rem; }
+.gig-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--teal); flex-shrink: 0; animation: gigPulse 1.4s ease-in-out infinite; }
+@keyframes gigPulse { 50% { opacity: .3; } }
+@media (prefers-reduced-motion: reduce) { .gig-dot { animation: none; } }
+.gig-row { align-items: center; flex-wrap: wrap; }
+.gig-row-label { font-size: .8rem; font-weight: 700; color: var(--ink-soft); margin-right: 2px; }
+.gig-work { list-style: none; margin: 0 0 8px; padding: 0; }
+.gig-work li { display: flex; align-items: center; gap: 10px; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: .9rem; }
+.gig-work li span { flex: 1; }

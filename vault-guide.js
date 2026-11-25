@@ -7,7 +7,7 @@
   var F = [
     ['b-add', 'budget', '➕', 'rec'], ['b-quick', 'budget', '⚡', 'rec'], ['b-tiles', 'budget', '☕', 'rec'], ['b-receipt', 'budget', '🧾', 'rec'],
     ['b-recurring', 'budget', '🔁', 'rec'], ['b-import', 'budget', '📥', 'rec'], ['b-paste', 'budget', '📋', 'rec'], ['b-today', 'budget', '🌤', 'rec'], ['b-report', 'budget', '🗓', 'plan'], ['b-methods', 'budget', '💳', 'rec'],
-    ['b-plan', 'budget', '🐷', 'plan'], ['b-budget', 'budget', '🎯', 'plan'], ['b-catbudget', 'budget', '🏷️', 'plan'], ['b-goal', 'budget', '💰', 'plan'],
+    ['b-plan', 'budget', '🐷', 'plan'], ['b-budget', 'budget', '🎯', 'plan'], ['b-catbudget', 'budget', '🏷️', 'plan'], ['b-goal', 'budget', '💰', 'plan'], ['b-gigs', 'budget', '⏱', 'plan'],
     ['b-nobuy', 'budget', '🚫', 'plan'], ['b-challenge', 'budget', '✉️', 'plan'],
     ['b-checkin', 'budget', '✅', 'care'], ['b-worth', 'budget', '💸', 'care'], ['b-notify', 'budget', '🔔', 'care'], ['b-seals', 'budget', '🏅', 'care'],
     ['b-calendar', 'budget', '📅', 'see'], ['b-charts', 'budget', '📊', 'see'], ['b-year', 'budget', '🗓️', 'see'], ['b-search', 'budget', '🔍', 'see'],
@@ -38,6 +38,7 @@
       case 'b-budget': return !!(b.budgets && b.budgets.total);
       case 'b-catbudget': return !!(b.budgets && b.budgets.cats && Object.keys(b.budgets.cats).length);
       case 'b-goal': return (b.goals || []).length > 0;
+      case 'b-gigs': return (b.gigs || []).length > 0;
       case 'b-nobuy': return !!(s.nobuy && (s.nobuy.start || (s.nobuy.past || []).length));
       case 'b-challenge': return any(n, function (x) { return /^(saving24|saving52|envelope100)$/.test(tplOf(x) || ''); });
       case 'b-checkin': return !!(s.helper && s.helper.checkin && (s.helper.checkin.days || []).length);
@@ -114,6 +115,7 @@
       'b-recurring': ['반복 지출·수입', '월세, 구독, 월급처럼 매달·매주 같은 날 나가는 돈은 한 번만 등록.', '월세 구독 고정지출 자동'],
       'b-paste': ['결제 문자로 기록', '카드·은행 문자를 붙여 넣으면 금액·가게·날짜를 읽어 한 번에 넣어요.', '문자 붙여넣기 카드 승인 알림'],
       'b-today': ['오늘의 한 장', '오늘 쓸 수 있는 돈, 내일 나갈 돈, 어제 쓴 돈을 아침에 한눈에.', '오늘 요약 하루'],
+      'b-gigs': ['부업별 진짜 시급', '부업마다 (번 돈 − 쓴 돈) ÷ 일한 시간. 타이머나 시간 버튼 한 번이면 돼요.', '부업 시급 알바 배달 블로그 n잡 투잡'],
       'b-report': ['월간 리포트 카드', '지난달 지출·많이 쓴 곳·일기·기분을 9:16 카드로 보고 저장해요.', '리포트 한달 결산 월말'],
       'b-import': ['카드·은행 내역 불러오기', '은행·카드 앱에서 받은 CSV 파일을 한 번에 넣어요.', '엑셀 csv 카드내역'],
       'b-methods': ['결제수단', '현금·카드·계좌이체를 나눠 적고, 수단별 합계를 봐요.', '카드 현금'],
@@ -216,6 +218,7 @@
       'b-recurring': ['Repeating entries', 'Rent, subscriptions, pay — register once and they add themselves every month or week.', 'rent subscription recurring'],
       'b-paste': ['Record from payment texts', 'Paste card or bank texts: amount, shop and date are read and saved in one go.', 'sms text paste card alert'],
       'b-today': ["Today's card", 'What you can spend today, what goes out tomorrow and yesterday at a glance.', 'today summary daily'],
+      'b-gigs': ['Real hourly pay by side gig', 'For each side gig: (money in − money out) ÷ hours. One timer tap or one hours button.', 'side gig hustle hourly freelance delivery'],
       'b-report': ['Monthly report cards', "Last month's spending, where it went, diary and moods as 9:16 cards.", 'report month review recap'],
       'b-import': ['Import bank or card history', 'Bring in a CSV file from your bank or card app.', 'csv excel import bank'],
       'b-methods': ['Payment methods', 'Mark cash, card or transfer and see totals for each.', 'card cash'],
@@ -318,6 +321,7 @@
       'b-recurring': ['繰り返しの支出・収入', '家賃・サブスク・給料は1回登録すれば毎月・毎週自動。', '家賃 サブスク 固定費'],
       'b-paste': ['利用通知から記録', 'カード・銀行の通知を貼ると金額・お店・日付を読み取ってまとめて記録。', '通知 貼り付け SMS'],
       'b-today': ['今日の一枚', '今日使えるお金・明日の引き落とし・昨日の支出をひと目で。', '今日 まとめ'],
+      'b-gigs': ['副業ごとの本当の時給', '副業ごとに(収入 − 経費)÷ 時間。タイマーか時間ボタンを1回押すだけ。', '副業 時給 アルバイト 配達 ブログ'],
       'b-report': ['月間レポートカード', '先月の支出・使いみち・日記・気分を9:16カードで。', 'レポート 月 ふりかえり'],
       'b-import': ['カード・銀行明細の取り込み', '銀行・カードアプリのCSVをまとめて取り込み。', 'csv 明細'],
       'b-methods': ['支払い方法', '現金・カード・振込に分けて合計を見る。', 'カード 現金'],
