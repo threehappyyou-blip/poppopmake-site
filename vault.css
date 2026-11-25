@@ -1585,3 +1585,27 @@ ul.catb { list-style: none; margin: 0; padding: 0; background: var(--card); bord
 .scene-cats::-webkit-scrollbar { display: none; }
 .scene-cats .chip { flex: none; }
 .pl-foot { background: linear-gradient(180deg, transparent, var(--paper) 30%); }
+
+/* payment texts → budget */
+.quick-pay { display: block; margin: 8px 2px 0; font-size: .86rem; }
+.pp-text { width: 100%; min-height: 96px; resize: vertical; font-size: .9rem; line-height: 1.45; }
+.pp-list .pp-when { color: var(--ink-soft); font-size: .82rem; }
+.pp-list .pp-dup { opacity: .62; }
+.pp-dup-tag { font-style: normal; font-size: .78rem; color: var(--ink-soft); }
+.pp-tip { font-size: .8rem; }
+
+/* 오늘의 한 장 */
+.today-card { background: linear-gradient(135deg, var(--teal-soft), transparent 70%), var(--card); }
+.td-head { display: flex; flex-direction: column; gap: 2px; margin-bottom: 8px; }
+.td-hello { font-weight: 700; font-size: 1.05rem; }
+.td-date { color: var(--ink-soft); font-size: .82rem; }
+.td-rows { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 6px; font-size: .92rem; line-height: 1.45; }
+.td-rows li { display: flex; gap: 8px; align-items: flex-start; }
+.td-ico { flex: none; width: 1.4em; text-align: center; }
+.td-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.td-close { margin-left: auto; font-size: .84rem; }
+.td-remind { display: block; margin-top: 8px; font-size: .84rem; }
+.daily-remind .row { gap: 8px; align-items: center; }
+.daily-remind input[type=time] { max-width: 9em; }
+.st-shop { display: block; margin: 12px 2px 4px; text-align: center; font-size: .86rem; color: var(--teal); text-decoration: none; font-weight: 600; }
+.st-shop:hover { text-decoration: underline; }

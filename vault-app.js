@@ -4,7 +4,7 @@
 (function () {
   'use strict';
 
-  var SE = window.VaultSeals, CO = window.VaultCoach, HP = window.VaultHelper, C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, ST = window.VaultStickers, t = I.t;
+  var SE = window.VaultSeals, CO = window.VaultCoach, HP = window.VaultHelper, C = window.VaultCore, B = window.VaultBudget, I = window.VaultI18n, DY = window.VaultDiary, DC = window.VaultDeco, SN = window.VaultSnap, LS = window.VaultList, ST = window.VaultStickers, VP = window.VaultPaste, t = I.t;
   var NOTE_FONTS = ['base', 'hand', 'pen', 'gamja', 'poor', 'single', 'yeon', 'dongle', 'dodum', 'batang', 'jua', 'dohyeon', 'cute', 'kirang', 'dokdo'], NOTE_SIZES = ['s', 'm', 'l'];
   var app = document.getElementById('app');
   var NOTE_COLORS = ['yellow', 'pink', 'green', 'blue', 'purple', 'gray', 'loveblue', 'chrome', 'ballet'];
@@ -31,6 +31,7 @@
   // Inside the Toss app (the bundle's toss-bridge.js sets window.PPMToss): the same app, with Toss's rules —
   // one part only, light only, no install prompts, no desktop windows, no service worker, no links out, its own storage copy.
   var TOSS = window.PPMToss && window.PPMToss.platform === 'toss' ? window.PPMToss : null;
+  var SHOP_URL = TOSS ? null : 'https://happyyou6.gumroad.com/?utm_source=poppopmake&utm_medium=app';   // PopPopMake's own sticker & planner packs (never inside Toss)
   if (TOSS) { ONLY = /^(diary|notes|budget)$/.test(TOSS.app || '') ? TOSS.app : 'budget'; document.documentElement.classList.add('toss'); }
   if (DY) DY.formLabel = function (k, x) { return t('tf.' + k + '.' + x); };    // names for a ready-made page in lists and the text file
   var TAB_KEY = 'ppm-vault-tab', INSTALL_KEY = 'ppm-vault-install-later', PK_AUTO_KEY = 'ppm-vault-pk-auto';   // only the tab name and two on/off choices, never content
@@ -223,7 +224,7 @@
       if (raw && raw.covers && raw.covers[k] && window.VaultCovers) s.covers[k] = window.VaultCovers.clean(raw.covers[k], k, DY.cleanSticker);
       if (raw && raw.starterHide && raw.starterHide[k] === true) s.starterHide[k] = true;
     });
-    if (raw && raw.starterHide) Object.keys(raw.starterHide).forEach(function (k) { if ((/^wr20\d\d$/.test(k) || /^wk\d{4}-\d{2}-\d{2}$/.test(k)) && raw.starterHide[k] === true) s.starterHide[k] = true; });
+    if (raw && raw.starterHide) Object.keys(raw.starterHide).forEach(function (k) { if ((/^wr20\d\d$/.test(k) || /^wk\d{4}-\d{2}-\d{2}$/.test(k) || /^mr\d{4}-\d{2}$/.test(k)) && raw.starterHide[k] === true) s.starterHide[k] = true; });
     s.ownPass = !raw || raw.ownPass !== false;           // false only in the Toss version until a passcode is chosen
     s.seals = {};
     if (raw && raw.seals && typeof raw.seals === 'object' && SE) SE.IDS.forEach(function (id) { var v = raw.seals[id]; if (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v)) s.seals[id] = v; });
@@ -802,7 +803,7 @@
     else if (S.budgetView === 'year') { main.textContent = ''; renderYear(main); }
     else if (S.budgetView === 'goals') renderGoals(main);
     else {
-      add(main, card, coachCard(), quickLine(), tilesCard(), notice(), stOnB ? null : helperCards('budget'));
+      add(main, monthReportBanner(), stOnB && !S.budget.tx.length ? null : todayCard(), card, coachCard(), quickLine(), tilesCard(), notice(), stOnB ? null : helperCards('budget'));
       var days = B.days(S.budget, ym);
       if (!days.length) add(main, empty('🧾', t('empty.month'), t('empty.monthHint')));
       else add(main, h('div', { class: 'days', id: 'tx-list' }, days.map(function (d) {
@@ -812,6 +813,32 @@
       })));
     }
     add(main, fab(t('add.title'), function () { openAdd(); }, 'add-btn'));
+  }
+  // ----- 오늘의 한 장: the day on one card, the first thing seen when the app opens (closes for the day) -----
+  function todayCard() {
+    if (S.ym !== thisMonth() || !S.budget) return null;
+    var d = today(), key = 'ppm-today-card';
+    if (lsGet(key) === d) return null;
+    var rows = [], al = B.dailyAllowance(S.budget, d), y = B.addDays(d, -1), ySpent = 0, yCount = 0;
+    if (al) rows.push(['💰', al.over ? t('td.over', { amt: money(al.over) }) : al.todayLeft >= 0 ? t('td.left', { amt: money(al.todayLeft), spent: money(al.todaySpent) }) : t('td.leftOver', { amt: money(-al.todayLeft) })]);
+    var tomorrow = B.addDays(d, 1), due = tomorrow.slice(0, 7) === d.slice(0, 7) ? B.upcomingFixed(S.budget, d).items.filter(function (x) { return x.day === +tomorrow.slice(8, 10); }) : [];
+    if (due.length) rows.push(['📅', t('td.due', { what: due.slice(0, 2).map(function (x) { return (x.note || catName(x.cat)) + ' ' + money(x.amt); }).join(', ') + (due.length > 2 ? ' +' + (due.length - 2) : '') })]);
+    S.budget.tx.forEach(function (x) { if (x.date === y && x.type === 'expense' && x.cur === S.budget.currency) { ySpent += x.amt; yCount++; } });
+    if (S.budget.tx.length) rows.push(['🧾', yCount ? t('td.yday', { amt: money(ySpent), n: yCount }) : t('td.ydayNone')]);
+    var diaryOk = S.diary && (!ONLY || ONLY === 'diary') && !TOSS;
+    var wrote = diaryOk && S.diary.entries.some(function (e) { return e.date === d; });
+    if (diaryOk && !wrote) rows.push(['📝', t('td.diary')]);
+    if (!rows.length) return null;
+    var hr = new Date().getHours(), hello = hr < 11 ? t('td.morning') : hr < 17 ? t('td.day') : t('td.evening');
+    var box = h('section', { class: 'card today-card', id: 'today-card', 'aria-label': t('td.title') },
+      h('div', { class: 'td-head' }, h('span', { class: 'td-hello', text: hello }), h('span', { class: 'td-date', text: I.dayLabel(d) + ' · ' + t('td.title') })),
+      h('ul', { class: 'td-rows' }, rows.map(function (r) { return h('li', {}, h('span', { class: 'td-ico', 'aria-hidden': 'true', text: r[0] }), h('span', { text: r[1] })); })),
+      h('div', { class: 'td-actions' },
+        h('button', { type: 'button', class: 'btn small primary', id: 'td-add', text: '+ ' + t('td.add'), on: { click: function () { openAdd(); } } }),
+        diaryOk && !wrote ? h('button', { type: 'button', class: 'btn small', id: 'td-diary', text: '📝 ' + t('td.write'), on: { click: function () { S.tab = 'diary'; render(); newEntry(today()); } } }) : null,
+        h('button', { type: 'button', class: 'link td-close', id: 'td-close', text: t('td.close'), on: { click: function () { lsSet(key, d); render(); } } })),
+      !TOSS && !lsGet(NT_KEY) && !lsGet('ppm-daily-ics') ? h('button', { type: 'button', class: 'link td-remind', id: 'td-remind', text: '🔔 ' + t('td.remind'), on: { click: openNotify } }) : null);
+    return box;
   }
   // ----- one line: "점심 9000" + Enter. The category is guessed (what you chose before, then everyday words);
   // when it can't be guessed, the category buttons appear right there and one tap saves.
@@ -859,9 +886,14 @@
     input.addEventListener('input', function () { st.picked = false; draw(); });
     input.addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.isComposing) { e.preventDefault(); save(); } });
     go.addEventListener('click', save);
+    if (!onSaved && VP) input.addEventListener('paste', function (e) {        // a pasted card / bank text goes to the payment reader
+      var txt = e.clipboardData && e.clipboardData.getData('text') || '';
+      if (txt.length > 15 && VP.looksLikePayment(txt)) { e.preventDefault(); openPayPaste(txt); }
+    });
     draw();
     if (!onSaved && S.quickFocus) { S.quickFocus = false; setTimeout(function () { if (document.contains(input)) input.focus(); }, 0); }
-    return h('section', { class: 'card quick', id: px + 'quick', 'aria-label': t('q.label') }, h('div', { class: 'quick-row' }, input, go), prev, cats);
+    var payLink = !onSaved && VP ? h('button', { type: 'button', class: 'link quick-pay', id: 'pay-paste-open', text: '📋 ' + t('pp.open'), on: { click: function () { openPayPaste(''); } } }) : null;
+    return h('section', { class: 'card quick', id: px + 'quick', 'aria-label': t('q.label') }, h('div', { class: 'quick-row' }, input, go), prev, cats, payLink);
   }
 
   // ----- the money coach (vault-coach.js): says it before the money goes; "why?" shows the numbers -----
@@ -1303,7 +1335,8 @@
           h('span', { class: 'trend-label', text: I.shortMonth(m.ym) }));
       })),
       h('p', { class: 'legend' }, h('span', { class: 'key exp' }), t('sum.spent'), ' ', h('span', { class: 'key inc' }), t('sum.income')),
-      h('button', { type: 'button', class: 'btn block', id: 'open-year', on: { click: function () { S.year = S.ym.slice(0, 4); S.budgetView = 'year'; render(); window.scrollTo(0, 0); } } }, '📅 ', t('year.open'))));
+      h('button', { type: 'button', class: 'btn block', id: 'open-year', on: { click: function () { S.year = S.ym.slice(0, 4); S.budgetView = 'year'; render(); window.scrollTo(0, 0); } } }, '📅 ', t('year.open')),
+      SH && SH.wrapped && sum.expense ? h('button', { type: 'button', class: 'btn block', id: 'open-month-report', on: { click: function () { openMonthReport(S.ym); } } }, '🗓 ', t('mr.btn', { m: I.monthLabel(S.ym) })) : null));
     var mt = (S.budget.methods || []).length ? B.methodTotals(S.budget, S.ym) : [];
     if (mt.length) {
       var mmax = Math.max.apply(null, mt.map(function (x) { return x.amt; }));
@@ -2153,10 +2186,23 @@
     return navigator.serviceWorker.ready.then(function (reg) { return reg.periodicSync && reg.periodicSync.unregister('ppm-due'); }).catch(function () {})
       .then(function () { return window.caches ? caches.open(NT_CACHE).then(function (c) { return c.delete(NT_URL); }) : null; }).catch(function () {});
   }
+  // a daily calendar alarm: the one reminder that works on iPhones and every phone, with no server and nothing private
+  function dailyRemindCard(msg) {
+    var tm = h('input', { type: 'time', class: 'input', id: 'daily-time', value: lsGet('ppm-daily-ics') || '21:00', 'aria-label': t('dr.time') });
+    return h('div', { class: 'card daily-remind', id: 'daily-remind' },
+      h('p', { class: 'field-label', text: '📅 ' + t('dr.title') }), h('p', { class: 'hint', text: t('dr.body') }),
+      h('div', { class: 'row' }, tm, h('button', { type: 'button', class: 'btn primary', id: 'daily-ics', text: t('dr.add'), on: { click: function () {
+        var url = location.origin + (ONLY ? '/' + ONLY + '-app' : '/vault') + '?start=checkin';
+        var text = B.dailyIcs({ today: today(), time: tm.value || '21:00', title: t('dr.evTitle'), body: t('dr.evBody'), url: url });
+        download(text, 'poppopmake-daily-reminder.ics', 'text/calendar;charset=utf-8'); lsSet('ppm-daily-ics', tm.value || '21:00'); setMsg(msg, t('dr.done'), true);
+      } } })));
+  }
   function openNotify() {
     sheet(t('nt.title'), function (body, close) {
       var msg = msgEl(), on = !!lsGet(NT_KEY);
-      add(body, h('p', { text: t('nt.body') }), h('p', { class: 'hint', text: t('nt.private') }));
+      add(body, dailyRemindCard(msg));
+      if (!ntSupported() && !on) { add(body, msg, h('p', { class: 'hint', text: t('nt.other') })); return; }
+      add(body, h('p', { class: 'field-label', text: '🔔 ' + t('dr.android') }), h('p', { text: t('nt.body') }), h('p', { class: 'hint', text: t('nt.private') }));
       if (on) {
         add(body,
           h('button', { type: 'button', class: 'btn block', id: 'notify-test', text: t('nt.test'), on: { click: function () {
@@ -2170,7 +2216,7 @@
         setMsg(msg, '');
         ntOn().then(function () { close(); render(); toast(t('nt.onDone')); }, function (e) { setMsg(msg, e && e.code === 'denied' ? t('nt.denied') : t('nt.needInstall')); });
       } } }), msg, h('p', { class: 'hint', text: t('nt.other') }));
-    });
+    }, { onClose: function () { if (S.phase === 'app') render(); } });
   }
 
   // Open without the passcode on this device: the owner's choice, with the trade-off said plainly before it is on.
@@ -2372,7 +2418,7 @@
       var wrap = h('div', { class: 'note-wrap' }), cl = null;
       var npage = h('div', { class: 'page note-page', id: 'note-page' }, wrap), ndeco = null;
       var nd = new Date(n.created || Date.now()), ndate = nd.getFullYear() + '-' + pad(nd.getMonth() + 1) + '-' + pad(nd.getDate());
-      ndeco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: { deco: n.deco || null, date: ndate }, page: npage, ta: ta,
+      ndeco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, shopUrl: SHOP_URL, entry: { deco: n.deco || null, date: ndate }, page: npage, ta: ta,
         parts: ['page', 'paper', 'stickers'], noTint: true, lookClass: function () { return 'note-page ' + noteLook(n); },
         commit: function (d) { var v = noteDeco(d); if (JSON.stringify(v) === JSON.stringify(n.deco || null)) return; n.deco = v; n.updated = Date.now(); markNote(n); saveNotes(); },
         blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf, feelDict: openFeelDict, letterCard: letterCard });
@@ -2550,6 +2596,7 @@
   }
   function saveShared() {
     var text = S.shared; S.shared = null;
+    if (text && VP && S.budget && VP.looksLikePayment(text)) { S.tab = 'budget'; render(); openPayPaste(text); return; }
     if (!text || !S.notes) return;
     var n = { id: B.uid(), text: text, color: 'yellow', pinned: false, created: Date.now(), updated: Date.now() };
     S.notes.notes.push(n); noteLocal[n.id] = 1; markNote(n); saveNotes();
@@ -3097,6 +3144,68 @@
       }, { onClose: function () { setTimeout(function () { urls.forEach(function (u) { URL.revokeObjectURL(u); }); }, 1000); } });
     }, function () { wait.close(); toast(t('share.err')); });
   }
+  // ===== the month in review: 9:16 cards (spending, where it went, diary and mood), offered in the first days of a month =====
+  function monthReportData(ym, hide) {
+    var cur = S.budget.currency, sum = B.summary(S.budget, ym), prev = B.summary(S.budget, B.addMonths(ym, -1));
+    var days = +B.addDays(B.addMonths(ym, 1) + '-01', -1).slice(8, 10), last = ym === thisMonth() ? +today().slice(8, 10) : days;
+    var spentDays = {}; S.budget.tx.forEach(function (x) { if (x.type === 'expense' && x.date.slice(0, 7) === ym) spentDays[x.date] = 1; });
+    var first = S.budget.tx.map(function (x) { return x.date; }).sort()[0] || ym + '-01', free = 0;
+    for (var d = 1; d <= last; d++) { var ds = ym + '-' + (d < 10 ? '0' : '') + d; if (ds >= first && !spentDays[ds]) free++; }
+    var pct = function (v) { return sum.expense ? Math.round(v / sum.expense * 100) + '%' : ''; };
+    var mName = I.monthLabel(ym), cards = [{ kind: 'cover', line: t('mr.coverLine', { n: S.budget.tx.filter(function (x) { return x.date.slice(0, 7) === ym; }).length }) }];
+    if (sum.expense || sum.income) {
+      var diff = prev.expense ? Math.round((sum.expense - prev.expense) / prev.expense * 100) : null;
+      cards.push({ kind: 'spend', title: t('mr.spendTitle', { m: mName }), spent: hide ? '—' : money(sum.expense, cur), perDay: hide ? '—' : money(Math.round(sum.expense / Math.max(1, last)), cur), noSpend: free,
+        diff: diff === null || !isFinite(diff) ? '' : diff === 0 ? t('mr.same') : t(diff > 0 ? 'mr.up' : 'mr.down', { p: Math.abs(diff) }), diffUp: diff > 0,
+        income: sum.income && !hide ? t('mr.income', { amt: money(sum.income, cur) }) : '' });
+    }
+    if (sum.byCat.length) {
+      var top = sum.byCat[0], prevTop = prev.byCat.find(function (x) { return x.cat === top.cat; });
+      var tip = prevTop && prevTop.amt ? (top.amt > prevTop.amt * 1.2 ? t('mr.tipUp', { what: catName(top.cat) }) : top.amt < prevTop.amt * 0.8 ? t('mr.tipDown', { what: catName(top.cat) }) : '') : '';
+      cards.push({ kind: 'cats', title: t('mr.catsTitle'), tip: tip, rows: sum.byCat.slice(0, 6).map(function (x) { return { emoji: catEmoji(x.cat), name: catName(x.cat), v: x.amt, label: hide ? pct(x.amt) : money(x.amt, cur) + ' · ' + pct(x.amt) }; }) });
+    }
+    if (S.diary && !TOSS) {
+      var es = S.diary.entries.filter(function (e) { return e.date.slice(0, 7) === ym && DY.hasContent(e); }), dd = {}, counts = [0, 0, 0, 0, 0], photos = 0;
+      es.forEach(function (e) { dd[e.date] = 1; photos += e.photos.length; if (e.mood) counts[e.mood - 1]++; });
+      var run = 0, best = 0, pv = null; Object.keys(dd).sort().forEach(function (x) { run = pv && B.addDays(pv, 1) === x ? run + 1 : 1; best = Math.max(best, run); pv = x; });
+      if (es.length) cards.push({ kind: 'writing', title: t('mr.diaryTitle'), entries: es.length, days: Object.keys(dd).length, streak: best, photos: photos });
+      if (counts.some(Boolean)) { var tp = 0; counts.forEach(function (n, i) { if (n >= counts[tp]) tp = i; }); cards.push({ kind: 'mood', title: t('mr.moodTitle'), top: tp + 1, topName: t('mood.' + (tp + 1)), counts: counts, bestMonth: '' }); }
+    }
+    cards.push({ kind: 'end', line: t('mr.endLine', { m: mName }), next: t('mr.next') });
+    return { year: +ym.slice(0, 4), coverBig: mName, scene: coverOf('budget') ? coverOf('budget').art : null, cards: cards, empty: cards.length <= 2,
+      L: { my: t('mr.my'), swipe: t('wr.swipe'), kWriting: t('wr.kWriting'), kMood: t('wr.kMood'), kSpend: t('mr.kSpend'), kCats: t('mr.kCats'), entries: t('wr.entries'), days: t('wr.days'), streak: t('wr.streak'), photos: t('wr.photos'),
+        spent: t('sum.spent'), perDay: t('mr.perDay'), noSpend: t('wr.noSpend'), thanks: t('mr.thanks') } };
+  }
+  function openMonthReport(ym, hide) {
+    if (!SH || !SH.wrapped || !S.budget) return;
+    var data = monthReportData(ym, hide), urls = [];
+    if (data.empty) { toast(t('mr.empty')); return; }
+    var wait = sheet(t('mr.title', { m: I.monthLabel(ym) }), function (body) { add(body, h('div', { class: 'share-wait' }, h('div', { class: 'spinner', 'aria-hidden': 'true' }), h('p', { text: t('wr.making') }))); });
+    SH.wrapped(data, { ST: ST }).then(function (cards) {
+      wait.close();
+      sheet(t('mr.title', { m: I.monthLabel(ym) }), function (body, close) {
+        var strip = h('div', { class: 'wr-strip', id: 'mr-strip' }), dots = h('div', { class: 'wr-dots', 'aria-hidden': 'true' });
+        cards.forEach(function (c, i) { var u = URL.createObjectURL(c.blob); urls.push(u); add(strip, h('img', { src: u, class: 'wr-card', 'data-kind': c.kind, alt: t('wr.cardAlt', { n: i + 1, all: cards.length }) })); add(dots, h('span', { class: i ? '' : 'on' })); });
+        var cur = 0;
+        strip.addEventListener('scroll', function () { var i = Math.round(strip.scrollLeft / Math.max(1, strip.clientWidth * 0.8)); i = Math.max(0, Math.min(cards.length - 1, i)); if (i !== cur) { cur = i; dots.querySelectorAll('span').forEach(function (d, k) { d.classList.toggle('on', k === i); }); } });
+        var hideCb = h('input', { type: 'checkbox', id: 'mr-hide', checked: !!hide, on: { change: function () { close(); openMonthReport(ym, hideCb.checked); } } });
+        add(body, strip, dots, h('label', { class: 'check' }, hideCb, ' ', t('mr.hide')), h('p', { class: 'hint wr-note', text: t('mr.private') }),
+          h('div', { class: 'row wr-actions' },
+            h('button', { type: 'button', class: 'btn primary', id: 'mr-share', on: { click: function () { shareResult({ blob: cards[cur].blob, name: 'month-' + ym + '-' + (cur + 1) + '.png' }); } } }, icon('dshare', 18), ' ', t('wr.shareThis')),
+            h('button', { type: 'button', class: 'btn', id: 'mr-saveall', on: { click: function () { cards.forEach(function (c, i) { setTimeout(function () { saveBlob(c.blob, 'month-' + ym + '-' + (i + 1) + '.png'); }, i * 400); }); } } }, t('wr.saveAll'))));
+      }, { onClose: function () { setTimeout(function () { urls.forEach(function (u) { URL.revokeObjectURL(u); }); }, 1000); } });
+    }, function () { wait.close(); toast(t('share.err')); });
+  }
+  // days 1–7 of a month: last month's report waits at the top of the budget (once it has entries)
+  function monthReportBanner() {
+    if (!SH || !SH.wrapped || S.ym !== thisMonth() || +today().slice(8, 10) > 7) return null;
+    var pm = B.addMonths(thisMonth(), -1);
+    if (S.settings.starterHide['mr' + pm] || S.budget.tx.filter(function (x) { return x.date.slice(0, 7) === pm; }).length < 3) return null;
+    return h('section', { class: 'wr-banner mr-banner', id: 'mr-banner' },
+      h('button', { type: 'button', class: 'wr-banner-go', id: 'mr-open', on: { click: function () { openMonthReport(pm); } } },
+        h('span', { class: 'wr-banner-y', text: String(+pm.slice(5, 7)) }), h('span', { class: 'wr-banner-t' }, h('strong', { text: t('mr.bannerTitle', { m: I.monthLabel(pm) }) }), h('span', { text: t('mr.bannerSub') }))),
+      h('button', { type: 'button', class: 'icon-btn xs', id: 'mr-banner-hide', 'aria-label': t('st0.hide'), on: { click: function () { S.settings.starterHide['mr' + pm] = true; saveSettings(); render(); } } }, icon('x', 14)));
+  }
   // December and January: a card at the top of the diary invites the recap once the year has something in it
   function wrappedBanner(main) {
     var m = +today().slice(5, 7); if (m !== 12 && m !== 1) return;
@@ -3244,7 +3353,7 @@
       function growText() { ta.style.height = 'auto'; ta.style.height = Math.max(ta.scrollHeight + 2, 168) + 'px'; }
       ta.addEventListener('input', growText); setTimeout(growText, 0);
       var dmsg = msgEl();
-      var deco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: e, page: page, ta: ta,
+      var deco = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, shopUrl: SHOP_URL, entry: e, page: page, ta: ta,
         commit: function (d) { if (!S.diary) return; DY.updateEntry(S.diary, e.id, { deco: d }); saveDiary(); },
         blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function (msg, err) { setMsg(dmsg, msg, !err); },
         seals: function () { return seals.mine(); }, moneyDay: moneyDay, money: insertMoney, challengeBase: challengeBase, toBudget: insertToBudget, priceOf: priceOf, feelDict: openFeelDict, letterCard: letterCard });
@@ -3431,8 +3540,8 @@
   }
   function group(title, items) { return h('section', { class: 'set-group' }, h('h2', { text: title }), h('ul', { class: 'set-list card' }, items)); }
   function renderSettings(main) {
-    var ntRow = ntSupported() ? h('li', { id: 'notify-row' }, h('button', { type: 'button', class: 'set-row', id: 'set-notify', on: { click: openNotify } },
-      h('span', { class: 'set-label', text: t('nt.title') }), h('span', { class: 'set-value', text: lsGet(NT_KEY) ? t('pk.stateOn') : t('pk.stateOff') }), icon('chev', 18))) : null;
+    var ntRow = !TOSS && !DESK ? h('li', { id: 'notify-row' }, h('button', { type: 'button', class: 'set-row', id: 'set-notify', on: { click: openNotify } },
+      h('span', { class: 'set-label', text: t('nt.title') }), h('span', { class: 'set-value', text: lsGet(NT_KEY) || lsGet('ppm-daily-ics') ? t('pk.stateOn') : t('pk.stateOff') }), icon('chev', 18))) : null;
     var devRow = h('li', { id: 'devopen-row' });
     C.deviceOpenOn().then(function (on) {
       if (!document.contains(devRow)) return;
@@ -4689,7 +4798,7 @@
     sheet(t('cv.title'), function (body) {
       var pg = h('div', { class: 'page cover-page', id: 'cover-page' }), box = coverBox(c, false);
       add(pg, box);
-      var dc = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, entry: { deco: DY.cleanDeco({ stickers: c.stickers }), date: today() }, page: pg,
+      var dc = DC.attach({ h: h, add: add, icon: icon, t: t, I: I, DY: DY, shopUrl: SHOP_URL, entry: { deco: DY.cleanDeco({ stickers: c.stickers }), date: today() }, page: pg,
         parts: ['stickers'], noTint: true, lookClass: function () { return 'cover-page'; },
         commit: function (d) { c.stickers = d.stickers.map(function (x) { return { k: x.k, x: Math.min(1, Math.max(0, x.x)), y: Math.min(0.62, Math.max(0, x.y)), s: x.s, r: x.r }; }); save(); },
         blobUrl: photoUrl, putBlob: C.putBlob, uid: DY.uid, toast: toast, status: function () {}, seals: function () { return seals.mine(); } });
@@ -4910,6 +5019,58 @@
     });
   }
 
+  // ===== payment messages (card / bank / pay-app texts) pasted or shared → budget entries, after a look =====
+  function payDup(r) {
+    var w = r.note.trim().toLowerCase().split(/\s+/)[0] || '';
+    return S.budget.tx.some(function (x) { return x.date === r.date && x.amt === r.amt && x.cur === r.cur && x.type === r.type && (!w || x.note.trim().toLowerCase().split(/\s+/)[0] === w); });
+  }
+  function openPayPaste(text) {
+    if (!VP || !S.budget) return;
+    sheet(t('pp.title'), function (body, close) {
+      var ta = h('textarea', { class: 'input pp-text', id: 'pp-text', rows: 4, placeholder: t('pp.ph'), 'aria-label': t('pp.title') });
+      ta.value = text || '';
+      var list = h('ul', { class: 'ntb-list pp-list', id: 'pp-list', 'aria-live': 'polite' });
+      var none = h('p', { class: 'hint', id: 'pp-none', hidden: true, text: t('pp.none') });
+      var save = h('button', { type: 'button', class: 'btn primary block', id: 'pp-save', disabled: true });
+      var rows = [], picks = [];
+      function count() { var n = picks.filter(Boolean).length; save.textContent = t('ntb.save', { n: n }); save.disabled = !n; }
+      function draw() {
+        rows = VP.parse(ta.value, { today: today(), currency: S.budget.currency, lang: I.get() });
+        list.textContent = '';
+        picks = rows.map(function (r) { r.dup = payDup(r); return !r.dup; });
+        rows.forEach(function (r, i) {
+          r.cat = B.guessQuick(S.budget, r.note, r.type) || (r.type === 'income' ? (r.cancel ? 'refund' : 'other_income') : 'other');
+          if (!catOf(r.cat)) r.cat = r.type === 'income' ? 'other_income' : 'other';
+          var cb = h('input', { type: 'checkbox', checked: picks[i], 'data-i': i, on: { change: function (e) { picks[i] = e.target.checked; count(); } } });
+          var when = +r.date.slice(5, 7) + '/' + +r.date.slice(8, 10) + (r.time ? ' ' + r.time : '');
+          add(list, h('li', { class: r.dup ? 'pp-dup' : '' }, h('label', { class: 'check' }, cb, h('span', {},
+            h('span', { class: 'pp-when', text: when + ' · ' }), (r.type === 'income' ? '+ ' : '') + catEmoji(r.cat) + ' ' + (r.note || catName(r.cat)) + ' · ' + money(r.amt, r.cur),
+            r.dup ? h('em', { class: 'pp-dup-tag', text: ' ' + t('pp.dup') }) : null))));
+        });
+        none.hidden = !ta.value.trim() || rows.length > 0;
+        count();
+      }
+      ta.addEventListener('input', draw);
+      var pasteBtn = navigator.clipboard && navigator.clipboard.readText ? h('button', { type: 'button', class: 'btn small', id: 'pp-paste', text: '📋 ' + t('pp.paste'), on: { click: function () {
+        navigator.clipboard.readText().then(function (x) { if (x) { ta.value = (ta.value ? ta.value + '\n\n' : '') + x; draw(); } }).catch(function () { ta.focus(); toast(t('pp.pasteHand')); });
+      } } }) : null;
+      save.addEventListener('click', function () {
+        var made = [];
+        rows.forEach(function (r, i) {
+          if (!picks[i]) return;
+          var at = r.time && r.date === today() ? +r.time.slice(0, 2) * 60 + +r.time.slice(3, 5) : undefined;
+          made.push(B.addTx(S.budget, { type: r.type, amt: r.amt, cur: r.cur, cat: r.cat, date: r.date, note: r.note, at: at }));
+        });
+        if (!made.length) return;
+        saveBudget(); close(); S.tab = 'budget'; render(); seals.check();
+        toast(t('ntb.done', { n: made.length }), { label: t('btn.undo'), fn: function () { made.forEach(function (x) { B.deleteTx(S.budget, x.id); }); saveBudget(); render(); } });
+      });
+      add(body, h('p', { class: 'hint', text: t('pp.hint') }), ta, h('div', { class: 'row' }, pasteBtn), none, list, TOSS ? null : h('p', { class: 'hint pp-tip', text: t('pp.tip') }), save);
+      draw();
+      if (!text) setTimeout(function () { ta.focus(); }, 50);
+    });
+  }
+
   // ===== first visit of each screen: what it is and what each button does (replay: the ? button) =====
   function introKey() {
     if (S.phase !== 'app') return null;
@@ -4987,7 +5148,7 @@
   var GRUN = {
     'b-add': function () { runAct('add'); }, 'b-quick': gFocus('budget', 'quick-input'),
     'b-tiles': function () { gFocus('budget', 'quick-input')(); setTimeout(function () { var t0 = document.querySelector('.tiles-card'); if (t0) t0.scrollIntoView({ block: 'center' }); }, 120); },
-    'b-receipt': function () { goTab('budget'); openAdd(); }, 'b-recurring': function () { openRecurring(); }, 'b-import': function () { openImport(); }, 'b-methods': function () { openMethods(); },
+    'b-receipt': function () { goTab('budget'); openAdd(); }, 'b-recurring': function () { openRecurring(); }, 'b-import': function () { openImport(); }, 'b-paste': function () { goTab('budget'); openPayPaste(''); }, 'b-today': function () { lsSet('ppm-today-card', null); goTab('budget'); }, 'b-report': function () { goTab('budget'); openMonthReport(B.addMonths(thisMonth(), -1)); }, 'b-methods': function () { openMethods(); },
     'b-plan': function () { goTab('budget'); S.budgetView = 'plan'; render(); openPlan(S.budget.plan ? 'income' : null); }, 'b-budget': function () { openMonthlyBudget(); }, 'b-catbudget': function () { openCatBudgets(); },
     'b-goal': function () { gView('goals')(); editGoal(null); }, 'b-nobuy': function () { gView('goals')(); if (S.settings.nobuy && S.settings.nobuy.start) openNobuy(); else openNobuyStart(); },
     'b-challenge': function () { gView('goals')(); setTimeout(function () { var x = document.getElementById('ins-shelf'); if (x) x.scrollIntoView({ block: 'start' }); }, 80); },
@@ -5319,7 +5480,7 @@
       { id: 'goals', flow: 'goal', kw: ['저축', '목표', '모으기', '모으', '적금', 'goal', 'saving', 'save up', '目標', '貯金', '貯め'], run: function () { runAct('goals'); } },
       { id: 'charts', kw: ['그래프', '차트', '통계', '분석', '어디에 많이', '어디에 썼', 'chart', 'graph', 'stats', 'where did', 'グラフ', '分析'], run: function () { runAct('charts'); } },
       { id: 'checkin', boost: 1, kw: ['체크인', '하루 정리', '오늘 정리', '정리할', '물어봐', '오늘 하루', 'check in', 'check-in', 'wrap up', 'my day', 'チェックイン', '振り返'], run: function () { openCheckin(); } },
-      { id: 'notify', kw: ['결제 알림', '미리 알려', '결제일', '푸시', '알림 받', 'payment reminder', 'notification', 'notify', 'due date', '支払い通知', 'お知らせ', '支払日'], run: function () { if (ntSupported()) openNotify(); else openRecurring(); } },
+      { id: 'notify', kw: ['결제 알림', '미리 알려', '결제일', '푸시', '알림 받', 'payment reminder', 'notification', 'notify', 'due date', '支払い通知', 'お知らせ', '支払日'], run: function () { if (!TOSS) openNotify(); else openRecurring(); } },
       { id: 'seals', kw: ['씰', '띠부', '스티커 모음', '보상', '배지', 'seal', 'badge', 'reward', 'シール', 'ご褒美'], run: function () { openSealBook(); } },
       { id: 'sheet', kw: ['속지', '테마', '배경', '꾸미기', '예쁘게', 'paper', 'theme', 'background', '中紙', 'テーマ', '背景'], run: function () { openSheets(); } },
       { id: 'plan', kw: ['예산 막대', '분류별 예산', '예산 보기', 'budget bars', 'category budget', '予算の表示'], run: function () { goTab('budget'); S.budgetView = 'plan'; render(); } },

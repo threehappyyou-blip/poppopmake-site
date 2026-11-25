@@ -6,7 +6,7 @@
   'use strict';
   var F = [
     ['b-add', 'budget', '➕', 'rec'], ['b-quick', 'budget', '⚡', 'rec'], ['b-tiles', 'budget', '☕', 'rec'], ['b-receipt', 'budget', '🧾', 'rec'],
-    ['b-recurring', 'budget', '🔁', 'rec'], ['b-import', 'budget', '📥', 'rec'], ['b-methods', 'budget', '💳', 'rec'],
+    ['b-recurring', 'budget', '🔁', 'rec'], ['b-import', 'budget', '📥', 'rec'], ['b-paste', 'budget', '📋', 'rec'], ['b-today', 'budget', '🌤', 'rec'], ['b-report', 'budget', '🗓', 'plan'], ['b-methods', 'budget', '💳', 'rec'],
     ['b-plan', 'budget', '🐷', 'plan'], ['b-budget', 'budget', '🎯', 'plan'], ['b-catbudget', 'budget', '🏷️', 'plan'], ['b-goal', 'budget', '💰', 'plan'],
     ['b-nobuy', 'budget', '🚫', 'plan'], ['b-challenge', 'budget', '✉️', 'plan'],
     ['b-checkin', 'budget', '✅', 'care'], ['b-worth', 'budget', '💸', 'care'], ['b-notify', 'budget', '🔔', 'care'], ['b-seals', 'budget', '🏅', 'care'],
@@ -30,6 +30,7 @@
     var tx = b.tx || [];
     switch (id) {
       case 'b-add': return tx.length > 0;
+      case 'b-report': return !!(s.starterHide && Object.keys(s.starterHide).some(function (k) { return /^mr/.test(k); }));
       case 'b-receipt': return any(tx, function (x) { return !!x.photo; });
       case 'b-recurring': return (b.recurring || []).length > 0;
       case 'b-methods': return (b.methods || []).length > 0;
@@ -111,6 +112,9 @@
       'b-tiles': ['그림 버튼', '커피·편의점·배달… 누르고 금액만 넣어요. 자주 쓰는 건 맨 위에 와요.', '버튼 커피'],
       'b-receipt': ['영수증 사진', '기록할 때 "영수증 사진"을 눌러 찍어 두면 암호화돼 함께 저장돼요.', '영수증 사진'],
       'b-recurring': ['반복 지출·수입', '월세, 구독, 월급처럼 매달·매주 같은 날 나가는 돈은 한 번만 등록.', '월세 구독 고정지출 자동'],
+      'b-paste': ['결제 문자로 기록', '카드·은행 문자를 붙여 넣으면 금액·가게·날짜를 읽어 한 번에 넣어요.', '문자 붙여넣기 카드 승인 알림'],
+      'b-today': ['오늘의 한 장', '오늘 쓸 수 있는 돈, 내일 나갈 돈, 어제 쓴 돈을 아침에 한눈에.', '오늘 요약 하루'],
+      'b-report': ['월간 리포트 카드', '지난달 지출·많이 쓴 곳·일기·기분을 9:16 카드로 보고 저장해요.', '리포트 한달 결산 월말'],
       'b-import': ['카드·은행 내역 불러오기', '은행·카드 앱에서 받은 CSV 파일을 한 번에 넣어요.', '엑셀 csv 카드내역'],
       'b-methods': ['결제수단', '현금·카드·계좌이체를 나눠 적고, 수단별 합계를 봐요.', '카드 현금'],
       'b-plan': ['선저축 후지출 예산표', '월급날 저축부터 떼고, 남은 돈을 주 단위 한도로. 저축날·새 주엔 앱이 먼저 알려요.', '저축 월급 예산표 주 한도'],
@@ -210,6 +214,9 @@
       'b-tiles': ['Picture buttons', 'Coffee, convenience store, delivery… tap and give the amount. Frequent ones come first.', 'button coffee'],
       'b-receipt': ['Receipt photo', 'Tap "Receipt photo" while adding; it is encrypted and kept with the entry.', 'receipt photo'],
       'b-recurring': ['Repeating entries', 'Rent, subscriptions, pay — register once and they add themselves every month or week.', 'rent subscription recurring'],
+      'b-paste': ['Record from payment texts', 'Paste card or bank texts: amount, shop and date are read and saved in one go.', 'sms text paste card alert'],
+      'b-today': ["Today's card", 'What you can spend today, what goes out tomorrow and yesterday at a glance.', 'today summary daily'],
+      'b-report': ['Monthly report cards', "Last month's spending, where it went, diary and moods as 9:16 cards.", 'report month review recap'],
       'b-import': ['Import bank or card history', 'Bring in a CSV file from your bank or card app.', 'csv excel import bank'],
       'b-methods': ['Payment methods', 'Mark cash, card or transfer and see totals for each.', 'card cash'],
       'b-plan': ['Pay-yourself-first plan', 'Saving comes off on payday, the rest becomes a weekly limit. The app speaks up on saving day and each new week.', 'saving payday weekly plan'],
@@ -309,6 +316,9 @@
       'b-tiles': ['絵のボタン', 'コーヒー・コンビニ・デリバリー… 押して金額だけ。', 'ボタン コーヒー'],
       'b-receipt': ['レシート写真', '記録するときに「レシート写真」。暗号化して一緒に保存。', 'レシート 写真'],
       'b-recurring': ['繰り返しの支出・収入', '家賃・サブスク・給料は1回登録すれば毎月・毎週自動。', '家賃 サブスク 固定費'],
+      'b-paste': ['利用通知から記録', 'カード・銀行の通知を貼ると金額・お店・日付を読み取ってまとめて記録。', '通知 貼り付け SMS'],
+      'b-today': ['今日の一枚', '今日使えるお金・明日の引き落とし・昨日の支出をひと目で。', '今日 まとめ'],
+      'b-report': ['月間レポートカード', '先月の支出・使いみち・日記・気分を9:16カードで。', 'レポート 月 ふりかえり'],
       'b-import': ['カード・銀行明細の取り込み', '銀行・カードアプリのCSVをまとめて取り込み。', 'csv 明細'],
       'b-methods': ['支払い方法', '現金・カード・振込に分けて合計を見る。', 'カード 現金'],
       'b-plan': ['先取り貯金の予算表', '給料日にまず貯金、残りを週の上限に。貯金日と新しい週はアプリからお知らせ。', '貯金 給料 予算表 週'],

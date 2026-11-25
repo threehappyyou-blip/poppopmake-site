@@ -197,6 +197,19 @@
     return out.join('\r\n') + '\r\n';
   }
 
+  // ---------- a daily reminder as a calendar event (works on every phone, no server, nothing private in it) ----------
+  // o: { today, time 'HH:MM', title, body, url } → one repeating event every day at that local time, with an alert.
+  function dailyIcs(o) {
+    var stamp = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z', d = o.today.replace(/-/g, ''), hm = String(o.time || '21:00').replace(':', '');
+    var end = ('0' + Math.min(23, +hm.slice(0, 2))).slice(-2) + ('0' + Math.min(59, +hm.slice(2) + 10)).slice(-2);
+    return ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//PopPopMake//Daily//EN', 'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT', 'UID:ppm-daily-' + d + hm + '@poppopmake.com', 'DTSTAMP:' + stamp,
+      'DTSTART:' + d + 'T' + hm + '00', 'DTEND:' + d + 'T' + end + '00', 'RRULE:FREQ=DAILY',
+      'SUMMARY:' + icsText(o.title), 'DESCRIPTION:' + icsText((o.body || '') + (o.url ? ' ' + o.url : '')), o.url ? 'URL:' + o.url : null,
+      'BEGIN:VALARM', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText(o.title), 'TRIGGER:PT0M', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR']
+      .filter(Boolean).join('\r\n') + '\r\n';
+  }
+
   // ---------- a year at a glance ----------
   function yearSummary(doc, year, today) {
     var months = [], byCat = {}, income = 0, expense = 0;
@@ -935,7 +948,7 @@
     addRecurring: addRecurring, updateRecurring: updateRecurring, deleteRecurring: deleteRecurring, applyRecurring: applyRecurring,
     toCSV: toCSV, parseCSV: parseCSV, parseDate: parseDate, guessColumns: guessColumns, importRows: importRows,
     addMonths: addMonths, daysInMonth: daysInMonth, validDate: validDate, uid: uid,
-    calcAmount: calcAmount, dueSchedule: dueSchedule, recurringIcs: recurringIcs, quickParse: quickParse, guessQuick: guessQuick, tiles: tiles, tileAmounts: tileAmounts, shortAmount: shortAmount, addDays: addDays, weekday: weekday, dailyAllowance: dailyAllowance, upcomingFixed: upcomingFixed, yearSummary: yearSummary, yearsWithData: yearsWithData,
+    calcAmount: calcAmount, dueSchedule: dueSchedule, recurringIcs: recurringIcs, dailyIcs: dailyIcs, quickParse: quickParse, guessQuick: guessQuick, tiles: tiles, tileAmounts: tileAmounts, shortAmount: shortAmount, addDays: addDays, weekday: weekday, dailyAllowance: dailyAllowance, upcomingFixed: upcomingFixed, yearSummary: yearSummary, yearsWithData: yearsWithData,
     addMethod: addMethod, updateMethod: updateMethod, removeMethod: removeMethod, methodTotals: methodTotals, photosOf: photosOf,
     addGoal: addGoal, updateGoal: updateGoal, deleteGoal: deleteGoal, goalMove: goalMove, goalProgress: goalProgress, goalSaved: goalSaved, goalsSavedIn: goalsSavedIn,
     planSuggest: planSuggest, planMath: planMath, planCycle: planCycle, planWeek: planWeek, planSaveDue: planSaveDue, planWeekReport: planWeekReport, applyPlan: applyPlan, planSaved: planSaved, planUnsave: planUnsave, cleanPlan: cleanPlan
